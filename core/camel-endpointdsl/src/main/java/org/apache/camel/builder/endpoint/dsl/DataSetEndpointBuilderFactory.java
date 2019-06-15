@@ -37,7 +37,7 @@ public interface DataSetEndpointBuilderFactory {
     public interface DataSetEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDataSetEndpointConsumerBuilder advanced() {
+        default AdvancedDataSetEndpointConsumerBuilder advanced() {
             return (AdvancedDataSetEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointConsumerBuilder name(Object name) {
+        default DataSetEndpointConsumerBuilder name(Object name) {
             setProperty("name", name);
             return this;
         }
@@ -56,7 +56,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointConsumerBuilder name(String name) {
+        default DataSetEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -71,8 +71,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DataSetEndpointConsumerBuilder dataSetIndex(
-                String dataSetIndex) {
+        default DataSetEndpointConsumerBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
             return this;
         }
@@ -81,8 +80,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default DataSetEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -91,8 +89,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default DataSetEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -101,7 +98,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder minRate(int minRate) {
+        default DataSetEndpointConsumerBuilder minRate(int minRate) {
             setProperty("minRate", minRate);
             return this;
         }
@@ -110,7 +107,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder minRate(String minRate) {
+        default DataSetEndpointConsumerBuilder minRate(String minRate) {
             setProperty("minRate", minRate);
             return this;
         }
@@ -120,8 +117,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder preloadSize(
-                long preloadSize) {
+        default DataSetEndpointConsumerBuilder preloadSize(long preloadSize) {
             setProperty("preloadSize", preloadSize);
             return this;
         }
@@ -131,8 +127,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder preloadSize(
-                String preloadSize) {
+        default DataSetEndpointConsumerBuilder preloadSize(String preloadSize) {
             setProperty("preloadSize", preloadSize);
             return this;
         }
@@ -142,8 +137,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder produceDelay(
-                long produceDelay) {
+        default DataSetEndpointConsumerBuilder produceDelay(long produceDelay) {
             setProperty("produceDelay", produceDelay);
             return this;
         }
@@ -153,8 +147,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default DataSetEndpointConsumerBuilder produceDelay(
-                String produceDelay) {
+        default DataSetEndpointConsumerBuilder produceDelay(String produceDelay) {
             setProperty("produceDelay", produceDelay);
             return this;
         }
@@ -166,7 +159,7 @@ public interface DataSetEndpointBuilderFactory {
     public interface AdvancedDataSetEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DataSetEndpointConsumerBuilder basic() {
+        default DataSetEndpointConsumerBuilder basic() {
             return (DataSetEndpointConsumerBuilder) this;
         }
         /**
@@ -175,7 +168,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -186,7 +179,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -197,7 +190,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointConsumerBuilder synchronous(
+        default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -208,7 +201,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointConsumerBuilder synchronous(
+        default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -221,7 +214,7 @@ public interface DataSetEndpointBuilderFactory {
     public static interface DataSetEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDataSetEndpointProducerBuilder advanced() {
+        default AdvancedDataSetEndpointProducerBuilder advanced() {
             return (AdvancedDataSetEndpointProducerBuilder) this;
         }
         /**
@@ -230,7 +223,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointProducerBuilder name(Object name) {
+        default DataSetEndpointProducerBuilder name(Object name) {
             setProperty("name", name);
             return this;
         }
@@ -240,7 +233,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointProducerBuilder name(String name) {
+        default DataSetEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -255,8 +248,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DataSetEndpointProducerBuilder dataSetIndex(
-                String dataSetIndex) {
+        default DataSetEndpointProducerBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
             return this;
         }
@@ -266,8 +258,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder consumeDelay(
-                long consumeDelay) {
+        default DataSetEndpointProducerBuilder consumeDelay(long consumeDelay) {
             setProperty("consumeDelay", consumeDelay);
             return this;
         }
@@ -277,8 +268,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder consumeDelay(
-                String consumeDelay) {
+        default DataSetEndpointProducerBuilder consumeDelay(String consumeDelay) {
             setProperty("consumeDelay", consumeDelay);
             return this;
         }
@@ -294,8 +284,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder assertPeriod(
-                long assertPeriod) {
+        default DataSetEndpointProducerBuilder assertPeriod(long assertPeriod) {
             setProperty("assertPeriod", assertPeriod);
             return this;
         }
@@ -311,8 +300,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder assertPeriod(
-                String assertPeriod) {
+        default DataSetEndpointProducerBuilder assertPeriod(String assertPeriod) {
             setProperty("assertPeriod", assertPeriod);
             return this;
         }
@@ -332,8 +320,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder expectedCount(
-                int expectedCount) {
+        default DataSetEndpointProducerBuilder expectedCount(int expectedCount) {
             setProperty("expectedCount", expectedCount);
             return this;
         }
@@ -353,7 +340,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder expectedCount(
+        default DataSetEndpointProducerBuilder expectedCount(
                 String expectedCount) {
             setProperty("expectedCount", expectedCount);
             return this;
@@ -371,7 +358,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder lazyStartProducer(
+        default DataSetEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -389,7 +376,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder lazyStartProducer(
+        default DataSetEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -400,8 +387,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder reportGroup(
-                int reportGroup) {
+        default DataSetEndpointProducerBuilder reportGroup(int reportGroup) {
             setProperty("reportGroup", reportGroup);
             return this;
         }
@@ -411,8 +397,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder reportGroup(
-                String reportGroup) {
+        default DataSetEndpointProducerBuilder reportGroup(String reportGroup) {
             setProperty("reportGroup", reportGroup);
             return this;
         }
@@ -422,7 +407,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder resultMinimumWaitTime(
+        default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
             setProperty("resultMinimumWaitTime", resultMinimumWaitTime);
             return this;
@@ -433,7 +418,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder resultMinimumWaitTime(
+        default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
             setProperty("resultMinimumWaitTime", resultMinimumWaitTime);
             return this;
@@ -444,7 +429,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder resultWaitTime(
+        default DataSetEndpointProducerBuilder resultWaitTime(
                 long resultWaitTime) {
             setProperty("resultWaitTime", resultWaitTime);
             return this;
@@ -455,7 +440,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder resultWaitTime(
+        default DataSetEndpointProducerBuilder resultWaitTime(
                 String resultWaitTime) {
             setProperty("resultWaitTime", resultWaitTime);
             return this;
@@ -478,8 +463,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder retainFirst(
-                int retainFirst) {
+        default DataSetEndpointProducerBuilder retainFirst(int retainFirst) {
             setProperty("retainFirst", retainFirst);
             return this;
         }
@@ -501,8 +485,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder retainFirst(
-                String retainFirst) {
+        default DataSetEndpointProducerBuilder retainFirst(String retainFirst) {
             setProperty("retainFirst", retainFirst);
             return this;
         }
@@ -524,7 +507,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder retainLast(int retainLast) {
+        default DataSetEndpointProducerBuilder retainLast(int retainLast) {
             setProperty("retainLast", retainLast);
             return this;
         }
@@ -546,8 +529,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder retainLast(
-                String retainLast) {
+        default DataSetEndpointProducerBuilder retainLast(String retainLast) {
             setProperty("retainLast", retainLast);
             return this;
         }
@@ -557,7 +539,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder sleepForEmptyTest(
+        default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 long sleepForEmptyTest) {
             setProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
@@ -568,7 +550,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetEndpointProducerBuilder sleepForEmptyTest(
+        default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 String sleepForEmptyTest) {
             setProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
@@ -581,7 +563,7 @@ public interface DataSetEndpointBuilderFactory {
     public interface AdvancedDataSetEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DataSetEndpointProducerBuilder basic() {
+        default DataSetEndpointProducerBuilder basic() {
             return (DataSetEndpointProducerBuilder) this;
         }
         /**
@@ -590,7 +572,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
+        default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 boolean copyOnExchange) {
             setProperty("copyOnExchange", copyOnExchange);
             return this;
@@ -601,7 +583,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
+        default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 String copyOnExchange) {
             setProperty("copyOnExchange", copyOnExchange);
             return this;
@@ -612,7 +594,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -623,7 +605,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -634,7 +616,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointProducerBuilder synchronous(
+        default AdvancedDataSetEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -645,7 +627,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointProducerBuilder synchronous(
+        default AdvancedDataSetEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -658,7 +640,7 @@ public interface DataSetEndpointBuilderFactory {
     public static interface DataSetEndpointBuilder
             extends
                 DataSetEndpointConsumerBuilder, DataSetEndpointProducerBuilder {
-        public default AdvancedDataSetEndpointBuilder advanced() {
+        default AdvancedDataSetEndpointBuilder advanced() {
             return (AdvancedDataSetEndpointBuilder) this;
         }
         /**
@@ -667,7 +649,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointBuilder name(Object name) {
+        default DataSetEndpointBuilder name(Object name) {
             setProperty("name", name);
             return this;
         }
@@ -677,7 +659,7 @@ public interface DataSetEndpointBuilderFactory {
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
          * @group common
          */
-        public default DataSetEndpointBuilder name(String name) {
+        default DataSetEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -692,7 +674,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DataSetEndpointBuilder dataSetIndex(String dataSetIndex) {
+        default DataSetEndpointBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
             return this;
         }
@@ -704,7 +686,7 @@ public interface DataSetEndpointBuilderFactory {
     public static interface AdvancedDataSetEndpointBuilder
             extends
                 AdvancedDataSetEndpointConsumerBuilder, AdvancedDataSetEndpointProducerBuilder {
-        public default DataSetEndpointBuilder basic() {
+        default DataSetEndpointBuilder basic() {
             return (DataSetEndpointBuilder) this;
         }
         /**
@@ -713,7 +695,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -724,7 +706,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointBuilder basicPropertyBinding(
+        default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -735,8 +717,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDataSetEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -746,8 +727,7 @@ public interface DataSetEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -757,7 +737,7 @@ public interface DataSetEndpointBuilderFactory {
      * testing of your system. Creates a builder to build endpoints for the
      * Dataset component.
      */
-    public default DataSetEndpointBuilder dataSet(String path) {
+    default DataSetEndpointBuilder dataSet(String path) {
         class DataSetEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetEndpointBuilder, AdvancedDataSetEndpointBuilder {
             public DataSetEndpointBuilderImpl(String path) {
                 super("dataset", path);

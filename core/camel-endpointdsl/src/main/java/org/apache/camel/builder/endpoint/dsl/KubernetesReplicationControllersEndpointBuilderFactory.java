@@ -41,7 +41,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public interface KubernetesReplicationControllersEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder advanced() {
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder advanced() {
             return (AdvancedKubernetesReplicationControllersEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder masterUrl(
+        default KubernetesReplicationControllersEndpointConsumerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -59,7 +59,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder apiVersion(
+        default KubernetesReplicationControllersEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -69,7 +69,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder dnsDomain(
+        default KubernetesReplicationControllersEndpointConsumerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -80,7 +80,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -91,7 +91,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -101,7 +101,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder portName(
+        default KubernetesReplicationControllersEndpointConsumerBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -111,7 +111,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder portProtocol(
+        default KubernetesReplicationControllersEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -127,7 +127,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesReplicationControllersEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -143,7 +143,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesReplicationControllersEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -153,7 +153,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder labelKey(
+        default KubernetesReplicationControllersEndpointConsumerBuilder labelKey(
                 String labelKey) {
             setProperty("labelKey", labelKey);
             return this;
@@ -163,7 +163,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder labelValue(
+        default KubernetesReplicationControllersEndpointConsumerBuilder labelValue(
                 String labelValue) {
             setProperty("labelValue", labelValue);
             return this;
@@ -173,7 +173,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder namespace(
+        default KubernetesReplicationControllersEndpointConsumerBuilder namespace(
                 String namespace) {
             setProperty("namespace", namespace);
             return this;
@@ -183,7 +183,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder poolSize(
+        default KubernetesReplicationControllersEndpointConsumerBuilder poolSize(
                 int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
@@ -193,7 +193,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder poolSize(
+        default KubernetesReplicationControllersEndpointConsumerBuilder poolSize(
                 String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
@@ -203,7 +203,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder resourceName(
+        default KubernetesReplicationControllersEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -213,7 +213,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder caCertData(
+        default KubernetesReplicationControllersEndpointConsumerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -223,7 +223,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder caCertFile(
+        default KubernetesReplicationControllersEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -233,7 +233,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientCertData(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -243,7 +243,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientCertFile(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -253,7 +253,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyAlgo(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -263,7 +263,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyData(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -273,7 +273,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyFile(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -283,7 +283,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyPassphrase(
+        default KubernetesReplicationControllersEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -293,7 +293,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder oauthToken(
+        default KubernetesReplicationControllersEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -303,7 +303,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder password(
+        default KubernetesReplicationControllersEndpointConsumerBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -313,7 +313,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -324,7 +324,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -334,7 +334,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointConsumerBuilder username(
+        default KubernetesReplicationControllersEndpointConsumerBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -348,7 +348,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public interface AdvancedKubernetesReplicationControllersEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KubernetesReplicationControllersEndpointConsumerBuilder basic() {
+        default KubernetesReplicationControllersEndpointConsumerBuilder basic() {
             return (KubernetesReplicationControllersEndpointConsumerBuilder) this;
         }
         /**
@@ -360,7 +360,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -374,7 +374,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -384,7 +384,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -395,7 +395,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -406,7 +406,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -417,7 +417,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -428,7 +428,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -440,7 +440,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -451,7 +451,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -462,7 +462,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -476,7 +476,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public static interface KubernetesReplicationControllersEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder advanced() {
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder advanced() {
             return (AdvancedKubernetesReplicationControllersEndpointProducerBuilder) this;
         }
         /**
@@ -484,7 +484,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder masterUrl(
+        default KubernetesReplicationControllersEndpointProducerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -494,7 +494,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder apiVersion(
+        default KubernetesReplicationControllersEndpointProducerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -504,7 +504,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder dnsDomain(
+        default KubernetesReplicationControllersEndpointProducerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -515,7 +515,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -526,7 +526,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -536,7 +536,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder portName(
+        default KubernetesReplicationControllersEndpointProducerBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -546,7 +546,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder portProtocol(
+        default KubernetesReplicationControllersEndpointProducerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -564,7 +564,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder lazyStartProducer(
+        default KubernetesReplicationControllersEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -582,7 +582,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder lazyStartProducer(
+        default KubernetesReplicationControllersEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -592,7 +592,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder operation(
+        default KubernetesReplicationControllersEndpointProducerBuilder operation(
                 String operation) {
             setProperty("operation", operation);
             return this;
@@ -602,7 +602,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder caCertData(
+        default KubernetesReplicationControllersEndpointProducerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -612,7 +612,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder caCertFile(
+        default KubernetesReplicationControllersEndpointProducerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -622,7 +622,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientCertData(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -632,7 +632,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientCertFile(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -642,7 +642,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientKeyAlgo(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -652,7 +652,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientKeyData(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -662,7 +662,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientKeyFile(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -672,7 +672,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder clientKeyPassphrase(
+        default KubernetesReplicationControllersEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -682,7 +682,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder oauthToken(
+        default KubernetesReplicationControllersEndpointProducerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -692,7 +692,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder password(
+        default KubernetesReplicationControllersEndpointProducerBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -702,7 +702,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -713,7 +713,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointProducerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -723,7 +723,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointProducerBuilder username(
+        default KubernetesReplicationControllersEndpointProducerBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -737,7 +737,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public interface AdvancedKubernetesReplicationControllersEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesReplicationControllersEndpointProducerBuilder basic() {
+        default KubernetesReplicationControllersEndpointProducerBuilder basic() {
             return (KubernetesReplicationControllersEndpointProducerBuilder) this;
         }
         /**
@@ -746,7 +746,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -757,7 +757,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -768,7 +768,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -780,7 +780,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -791,7 +791,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -802,7 +802,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -815,7 +815,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public static interface KubernetesReplicationControllersEndpointBuilder
             extends
                 KubernetesReplicationControllersEndpointConsumerBuilder, KubernetesReplicationControllersEndpointProducerBuilder {
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder advanced() {
+        default AdvancedKubernetesReplicationControllersEndpointBuilder advanced() {
             return (AdvancedKubernetesReplicationControllersEndpointBuilder) this;
         }
         /**
@@ -823,7 +823,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder masterUrl(
+        default KubernetesReplicationControllersEndpointBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -833,7 +833,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder apiVersion(
+        default KubernetesReplicationControllersEndpointBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -843,7 +843,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder dnsDomain(
+        default KubernetesReplicationControllersEndpointBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -854,7 +854,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -865,7 +865,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder kubernetesClient(
+        default KubernetesReplicationControllersEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -875,7 +875,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder portName(
+        default KubernetesReplicationControllersEndpointBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -885,7 +885,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesReplicationControllersEndpointBuilder portProtocol(
+        default KubernetesReplicationControllersEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -895,7 +895,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder caCertData(
+        default KubernetesReplicationControllersEndpointBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -905,7 +905,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder caCertFile(
+        default KubernetesReplicationControllersEndpointBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -915,7 +915,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientCertData(
+        default KubernetesReplicationControllersEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -925,7 +925,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientCertFile(
+        default KubernetesReplicationControllersEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -935,7 +935,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientKeyAlgo(
+        default KubernetesReplicationControllersEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -945,7 +945,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientKeyData(
+        default KubernetesReplicationControllersEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -955,7 +955,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientKeyFile(
+        default KubernetesReplicationControllersEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -965,7 +965,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder clientKeyPassphrase(
+        default KubernetesReplicationControllersEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -975,7 +975,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder oauthToken(
+        default KubernetesReplicationControllersEndpointBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -985,7 +985,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder password(
+        default KubernetesReplicationControllersEndpointBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -995,7 +995,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -1006,7 +1006,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder trustCerts(
+        default KubernetesReplicationControllersEndpointBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -1016,7 +1016,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesReplicationControllersEndpointBuilder username(
+        default KubernetesReplicationControllersEndpointBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -1030,7 +1030,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     public static interface AdvancedKubernetesReplicationControllersEndpointBuilder
             extends
                 AdvancedKubernetesReplicationControllersEndpointConsumerBuilder, AdvancedKubernetesReplicationControllersEndpointProducerBuilder {
-        public default KubernetesReplicationControllersEndpointBuilder basic() {
+        default KubernetesReplicationControllersEndpointBuilder basic() {
             return (KubernetesReplicationControllersEndpointBuilder) this;
         }
         /**
@@ -1039,7 +1039,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1050,7 +1050,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1061,7 +1061,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1073,7 +1073,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1084,7 +1084,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1095,7 +1095,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesReplicationControllersEndpointBuilder synchronous(
+        default AdvancedKubernetesReplicationControllersEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1107,7 +1107,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      * consume replication controller events. Creates a builder to build
      * endpoints for the Kubernetes Replication Controller component.
      */
-    public default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
+    default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
             String path) {
         class KubernetesReplicationControllersEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesReplicationControllersEndpointBuilder, AdvancedKubernetesReplicationControllersEndpointBuilder {
             public KubernetesReplicationControllersEndpointBuilderImpl(String path) {

@@ -37,7 +37,7 @@ public interface BeanEndpointBuilderFactory {
     public static interface BeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBeanEndpointBuilder advanced() {
+        default AdvancedBeanEndpointBuilder advanced() {
             return (AdvancedBeanEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface BeanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BeanEndpointBuilder beanName(String beanName) {
+        default BeanEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
             return this;
         }
@@ -56,7 +56,7 @@ public interface BeanEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default BeanEndpointBuilder cache(Boolean cache) {
+        default BeanEndpointBuilder cache(Boolean cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -68,7 +68,7 @@ public interface BeanEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default BeanEndpointBuilder cache(String cache) {
+        default BeanEndpointBuilder cache(String cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -77,7 +77,7 @@ public interface BeanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BeanEndpointBuilder method(String method) {
+        default BeanEndpointBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -87,8 +87,7 @@ public interface BeanEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default BeanEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+        default BeanEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -99,7 +98,7 @@ public interface BeanEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default BeanEndpointBuilder parameters(String parameters) {
+        default BeanEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -111,7 +110,7 @@ public interface BeanEndpointBuilderFactory {
     public static interface AdvancedBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default BeanEndpointBuilder basic() {
+        default BeanEndpointBuilder basic() {
             return (BeanEndpointBuilder) this;
         }
         /**
@@ -120,7 +119,7 @@ public interface BeanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanEndpointBuilder basicPropertyBinding(
+        default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -131,7 +130,7 @@ public interface BeanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanEndpointBuilder basicPropertyBinding(
+        default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,8 +141,7 @@ public interface BeanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedBeanEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -153,8 +151,7 @@ public interface BeanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedBeanEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -163,7 +160,7 @@ public interface BeanEndpointBuilderFactory {
      * The bean component is for invoking Java beans from Camel. Creates a
      * builder to build endpoints for the Bean component.
      */
-    public default BeanEndpointBuilder bean(String path) {
+    default BeanEndpointBuilder bean(String path) {
         class BeanEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanEndpointBuilder, AdvancedBeanEndpointBuilder {
             public BeanEndpointBuilderImpl(String path) {
                 super("bean", path);

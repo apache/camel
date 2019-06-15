@@ -37,7 +37,7 @@ public interface SesEndpointBuilderFactory {
     public static interface SesEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSesEndpointBuilder advanced() {
+        default AdvancedSesEndpointBuilder advanced() {
             return (AdvancedSesEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder from(String from) {
+        default SesEndpointBuilder from(String from) {
             setProperty("from", from);
             return this;
         }
@@ -55,7 +55,7 @@ public interface SesEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
+        default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
             setProperty("amazonSESClient", amazonSESClient);
             return this;
         }
@@ -65,7 +65,7 @@ public interface SesEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
+        default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
             setProperty("amazonSESClient", amazonSESClient);
             return this;
         }
@@ -74,7 +74,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder proxyHost(String proxyHost) {
+        default SesEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -83,7 +83,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder proxyPort(Integer proxyPort) {
+        default SesEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -93,7 +93,7 @@ public interface SesEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SesEndpointBuilder proxyPort(String proxyPort) {
+        default SesEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -102,7 +102,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder region(String region) {
+        default SesEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -113,7 +113,7 @@ public interface SesEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SesEndpointBuilder replyToAddresses(
+        default SesEndpointBuilder replyToAddresses(
                 List<String> replyToAddresses) {
             setProperty("replyToAddresses", replyToAddresses);
             return this;
@@ -125,8 +125,7 @@ public interface SesEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder replyToAddresses(
-                String replyToAddresses) {
+        default SesEndpointBuilder replyToAddresses(String replyToAddresses) {
             setProperty("replyToAddresses", replyToAddresses);
             return this;
         }
@@ -136,7 +135,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder returnPath(String returnPath) {
+        default SesEndpointBuilder returnPath(String returnPath) {
             setProperty("returnPath", returnPath);
             return this;
         }
@@ -146,7 +145,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder subject(String subject) {
+        default SesEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -157,7 +156,7 @@ public interface SesEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SesEndpointBuilder to(List<String> to) {
+        default SesEndpointBuilder to(List<String> to) {
             setProperty("to", to);
             return this;
         }
@@ -168,7 +167,7 @@ public interface SesEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group producer
          */
-        public default SesEndpointBuilder to(String to) {
+        default SesEndpointBuilder to(String to) {
             setProperty("to", to);
             return this;
         }
@@ -177,7 +176,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SesEndpointBuilder accessKey(String accessKey) {
+        default SesEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -186,7 +185,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SesEndpointBuilder secretKey(String secretKey) {
+        default SesEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -198,7 +197,7 @@ public interface SesEndpointBuilderFactory {
     public static interface AdvancedSesEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SesEndpointBuilder basic() {
+        default SesEndpointBuilder basic() {
             return (SesEndpointBuilder) this;
         }
         /**
@@ -207,7 +206,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSesEndpointBuilder basicPropertyBinding(
+        default AdvancedSesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -218,7 +217,7 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSesEndpointBuilder basicPropertyBinding(
+        default AdvancedSesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -229,8 +228,7 @@ public interface SesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSesEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -240,7 +238,7 @@ public interface SesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSesEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSesEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -250,7 +248,7 @@ public interface SesEndpointBuilderFactory {
      * service. Creates a builder to build endpoints for the AWS Simple Email
      * Service component.
      */
-    public default SesEndpointBuilder ses(String path) {
+    default SesEndpointBuilder ses(String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
                 super("aws-ses", path);

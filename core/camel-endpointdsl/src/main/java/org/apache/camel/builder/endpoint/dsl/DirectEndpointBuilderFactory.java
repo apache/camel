@@ -39,7 +39,7 @@ public interface DirectEndpointBuilderFactory {
     public interface DirectEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDirectEndpointConsumerBuilder advanced() {
+        default AdvancedDirectEndpointConsumerBuilder advanced() {
             return (AdvancedDirectEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectEndpointConsumerBuilder name(String name) {
+        default DirectEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DirectEndpointConsumerBuilder bridgeErrorHandler(
+        default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,7 +78,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DirectEndpointConsumerBuilder bridgeErrorHandler(
+        default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -91,7 +91,7 @@ public interface DirectEndpointBuilderFactory {
     public interface AdvancedDirectEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DirectEndpointConsumerBuilder basic() {
+        default DirectEndpointConsumerBuilder basic() {
             return (DirectEndpointConsumerBuilder) this;
         }
         /**
@@ -103,7 +103,7 @@ public interface DirectEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -117,7 +117,7 @@ public interface DirectEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -127,7 +127,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectEndpointConsumerBuilder exchangePattern(
+        default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -138,7 +138,7 @@ public interface DirectEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectEndpointConsumerBuilder exchangePattern(
+        default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -149,7 +149,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,7 +171,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointConsumerBuilder synchronous(
+        default AdvancedDirectEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -182,7 +182,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointConsumerBuilder synchronous(
+        default AdvancedDirectEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -195,7 +195,7 @@ public interface DirectEndpointBuilderFactory {
     public static interface DirectEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDirectEndpointProducerBuilder advanced() {
+        default AdvancedDirectEndpointProducerBuilder advanced() {
             return (AdvancedDirectEndpointProducerBuilder) this;
         }
         /**
@@ -203,7 +203,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectEndpointProducerBuilder name(String name) {
+        default DirectEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -214,7 +214,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder block(boolean block) {
+        default DirectEndpointProducerBuilder block(boolean block) {
             setProperty("block", block);
             return this;
         }
@@ -225,7 +225,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder block(String block) {
+        default DirectEndpointProducerBuilder block(String block) {
             setProperty("block", block);
             return this;
         }
@@ -235,7 +235,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder failIfNoConsumers(
+        default DirectEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -246,7 +246,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder failIfNoConsumers(
+        default DirectEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -264,7 +264,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder lazyStartProducer(
+        default DirectEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -282,7 +282,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder lazyStartProducer(
+        default DirectEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -292,7 +292,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder timeout(long timeout) {
+        default DirectEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -301,7 +301,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DirectEndpointProducerBuilder timeout(String timeout) {
+        default DirectEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -313,7 +313,7 @@ public interface DirectEndpointBuilderFactory {
     public interface AdvancedDirectEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DirectEndpointProducerBuilder basic() {
+        default DirectEndpointProducerBuilder basic() {
             return (DirectEndpointProducerBuilder) this;
         }
         /**
@@ -322,7 +322,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -333,7 +333,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -344,7 +344,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointProducerBuilder synchronous(
+        default AdvancedDirectEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -355,7 +355,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointProducerBuilder synchronous(
+        default AdvancedDirectEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -368,7 +368,7 @@ public interface DirectEndpointBuilderFactory {
     public static interface DirectEndpointBuilder
             extends
                 DirectEndpointConsumerBuilder, DirectEndpointProducerBuilder {
-        public default AdvancedDirectEndpointBuilder advanced() {
+        default AdvancedDirectEndpointBuilder advanced() {
             return (AdvancedDirectEndpointBuilder) this;
         }
         /**
@@ -376,7 +376,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectEndpointBuilder name(String name) {
+        default DirectEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -388,7 +388,7 @@ public interface DirectEndpointBuilderFactory {
     public static interface AdvancedDirectEndpointBuilder
             extends
                 AdvancedDirectEndpointConsumerBuilder, AdvancedDirectEndpointProducerBuilder {
-        public default DirectEndpointBuilder basic() {
+        default DirectEndpointBuilder basic() {
             return (DirectEndpointBuilder) this;
         }
         /**
@@ -397,7 +397,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -408,7 +408,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointBuilder basicPropertyBinding(
+        default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -419,8 +419,7 @@ public interface DirectEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -430,8 +429,7 @@ public interface DirectEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -441,7 +439,7 @@ public interface DirectEndpointBuilderFactory {
      * endpoint from the same CamelContext. Creates a builder to build endpoints
      * for the Direct component.
      */
-    public default DirectEndpointBuilder direct(String path) {
+    default DirectEndpointBuilder direct(String path) {
         class DirectEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectEndpointBuilder, AdvancedDirectEndpointBuilder {
             public DirectEndpointBuilderImpl(String path) {
                 super("direct", path);

@@ -34,7 +34,7 @@ public interface MQEndpointBuilderFactory {
      * Builder for endpoint for the AWS MQ component.
      */
     public static interface MQEndpointBuilder extends EndpointProducerBuilder {
-        public default AdvancedMQEndpointBuilder advanced() {
+        default AdvancedMQEndpointBuilder advanced() {
             return (AdvancedMQEndpointBuilder) this;
         }
         /**
@@ -42,7 +42,7 @@ public interface MQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MQEndpointBuilder label(String label) {
+        default MQEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -51,7 +51,7 @@ public interface MQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MQEndpointBuilder region(String region) {
+        default MQEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -63,7 +63,7 @@ public interface MQEndpointBuilderFactory {
     public static interface AdvancedMQEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MQEndpointBuilder basic() {
+        default MQEndpointBuilder basic() {
             return (MQEndpointBuilder) this;
         }
         /**
@@ -72,7 +72,7 @@ public interface MQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQEndpointBuilder basicPropertyBinding(
+        default AdvancedMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -83,7 +83,7 @@ public interface MQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQEndpointBuilder basicPropertyBinding(
+        default AdvancedMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -94,7 +94,7 @@ public interface MQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQEndpointBuilder synchronous(boolean synchronous) {
+        default AdvancedMQEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -104,7 +104,7 @@ public interface MQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQEndpointBuilder synchronous(String synchronous) {
+        default AdvancedMQEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -121,7 +121,7 @@ public interface MQEndpointBuilderFactory {
      * The aws-mq is used for managing Amazon MQ instances. Creates a builder to
      * build endpoints for the AWS MQ component.
      */
-    public default MQEndpointBuilder mQ(String path) {
+    default MQEndpointBuilder mQ(String path) {
         class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder, AdvancedMQEndpointBuilder {
             public MQEndpointBuilderImpl(String path) {
                 super("aws-mq", path);

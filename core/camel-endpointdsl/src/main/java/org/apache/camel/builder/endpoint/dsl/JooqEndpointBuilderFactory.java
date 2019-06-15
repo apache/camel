@@ -45,7 +45,7 @@ public interface JooqEndpointBuilderFactory {
     public interface JooqEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJooqEndpointConsumerBuilder advanced() {
+        default AdvancedJooqEndpointConsumerBuilder advanced() {
             return (AdvancedJooqEndpointConsumerBuilder) this;
         }
         /**
@@ -54,8 +54,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JooqEndpointConsumerBuilder entityType(
-                Class<Object> entityType) {
+        default JooqEndpointConsumerBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -65,7 +64,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default JooqEndpointConsumerBuilder entityType(String entityType) {
+        default JooqEndpointConsumerBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -80,7 +79,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder bridgeErrorHandler(
+        default JooqEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -96,7 +95,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder bridgeErrorHandler(
+        default JooqEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -106,8 +105,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder consumeDelete(
-                boolean consumeDelete) {
+        default JooqEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
             setProperty("consumeDelete", consumeDelete);
             return this;
         }
@@ -116,8 +114,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder consumeDelete(
-                String consumeDelete) {
+        default JooqEndpointConsumerBuilder consumeDelete(String consumeDelete) {
             setProperty("consumeDelete", consumeDelete);
             return this;
         }
@@ -127,7 +124,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -138,7 +135,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -149,7 +146,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffErrorThreshold(
+        default JooqEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -160,7 +157,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffErrorThreshold(
+        default JooqEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -171,7 +168,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffIdleThreshold(
+        default JooqEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -182,7 +179,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffIdleThreshold(
+        default JooqEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -197,7 +194,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffMultiplier(
+        default JooqEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -212,7 +209,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder backoffMultiplier(
+        default JooqEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -224,7 +221,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder delay(long delay) {
+        default JooqEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -235,7 +232,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder delay(String delay) {
+        default JooqEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -245,7 +242,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder greedy(boolean greedy) {
+        default JooqEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -255,7 +252,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder greedy(String greedy) {
+        default JooqEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -266,8 +263,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default JooqEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -278,8 +274,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default JooqEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -289,7 +284,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder runLoggingLevel(
+        default JooqEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -301,7 +296,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder runLoggingLevel(
+        default JooqEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -314,7 +309,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder scheduledExecutorService(
+        default JooqEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -327,7 +322,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder scheduledExecutorService(
+        default JooqEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -340,7 +335,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder scheduler(
+        default JooqEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -353,7 +348,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder scheduler(String scheduler) {
+        default JooqEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -364,7 +359,7 @@ public interface JooqEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder schedulerProperties(
+        default JooqEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -377,7 +372,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder schedulerProperties(
+        default JooqEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -387,7 +382,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder startScheduler(
+        default JooqEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -397,8 +392,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default JooqEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -407,7 +401,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default JooqEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -417,7 +411,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default JooqEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -427,8 +421,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default JooqEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -438,8 +431,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default JooqEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default JooqEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -451,7 +443,7 @@ public interface JooqEndpointBuilderFactory {
     public interface AdvancedJooqEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JooqEndpointConsumerBuilder basic() {
+        default JooqEndpointConsumerBuilder basic() {
             return (JooqEndpointConsumerBuilder) this;
         }
         /**
@@ -463,7 +455,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -477,7 +469,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -487,7 +479,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder exchangePattern(
+        default AdvancedJooqEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -498,7 +490,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder exchangePattern(
+        default AdvancedJooqEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -512,7 +504,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder pollStrategy(
+        default AdvancedJooqEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -526,7 +518,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJooqEndpointConsumerBuilder pollStrategy(
+        default AdvancedJooqEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -537,7 +529,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -548,7 +540,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -559,7 +551,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointConsumerBuilder synchronous(
+        default AdvancedJooqEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -570,7 +562,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointConsumerBuilder synchronous(
+        default AdvancedJooqEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -583,7 +575,7 @@ public interface JooqEndpointBuilderFactory {
     public static interface JooqEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJooqEndpointProducerBuilder advanced() {
+        default AdvancedJooqEndpointProducerBuilder advanced() {
             return (AdvancedJooqEndpointProducerBuilder) this;
         }
         /**
@@ -592,8 +584,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JooqEndpointProducerBuilder entityType(
-                Class<Object> entityType) {
+        default JooqEndpointProducerBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -603,7 +594,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default JooqEndpointProducerBuilder entityType(String entityType) {
+        default JooqEndpointProducerBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -620,7 +611,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JooqEndpointProducerBuilder lazyStartProducer(
+        default JooqEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -638,7 +629,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JooqEndpointProducerBuilder lazyStartProducer(
+        default JooqEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -649,8 +640,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * @group producer
          */
-        public default JooqEndpointProducerBuilder operation(
-                JooqOperation operation) {
+        default JooqEndpointProducerBuilder operation(JooqOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -660,7 +650,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * @group producer
          */
-        public default JooqEndpointProducerBuilder operation(String operation) {
+        default JooqEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -669,7 +659,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JooqEndpointProducerBuilder query(String query) {
+        default JooqEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -681,7 +671,7 @@ public interface JooqEndpointBuilderFactory {
     public interface AdvancedJooqEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JooqEndpointProducerBuilder basic() {
+        default JooqEndpointProducerBuilder basic() {
             return (JooqEndpointProducerBuilder) this;
         }
         /**
@@ -690,7 +680,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -701,7 +691,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -712,7 +702,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointProducerBuilder synchronous(
+        default AdvancedJooqEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -723,7 +713,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointProducerBuilder synchronous(
+        default AdvancedJooqEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -736,7 +726,7 @@ public interface JooqEndpointBuilderFactory {
     public static interface JooqEndpointBuilder
             extends
                 JooqEndpointConsumerBuilder, JooqEndpointProducerBuilder {
-        public default AdvancedJooqEndpointBuilder advanced() {
+        default AdvancedJooqEndpointBuilder advanced() {
             return (AdvancedJooqEndpointBuilder) this;
         }
         /**
@@ -745,7 +735,7 @@ public interface JooqEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JooqEndpointBuilder entityType(Class<Object> entityType) {
+        default JooqEndpointBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -755,7 +745,7 @@ public interface JooqEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default JooqEndpointBuilder entityType(String entityType) {
+        default JooqEndpointBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
             return this;
         }
@@ -767,7 +757,7 @@ public interface JooqEndpointBuilderFactory {
     public static interface AdvancedJooqEndpointBuilder
             extends
                 AdvancedJooqEndpointConsumerBuilder, AdvancedJooqEndpointProducerBuilder {
-        public default JooqEndpointBuilder basic() {
+        default JooqEndpointBuilder basic() {
             return (JooqEndpointBuilder) this;
         }
         /**
@@ -776,7 +766,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -787,7 +777,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointBuilder basicPropertyBinding(
+        default AdvancedJooqEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -798,8 +788,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJooqEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -809,8 +798,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJooqEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJooqEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -828,7 +816,7 @@ public interface JooqEndpointBuilderFactory {
      * databases using JOOQ Creates a builder to build endpoints for the JOOQ
      * component.
      */
-    public default JooqEndpointBuilder jooq(String path) {
+    default JooqEndpointBuilder jooq(String path) {
         class JooqEndpointBuilderImpl extends AbstractEndpointBuilder implements JooqEndpointBuilder, AdvancedJooqEndpointBuilder {
             public JooqEndpointBuilderImpl(String path) {
                 super("jooq", path);

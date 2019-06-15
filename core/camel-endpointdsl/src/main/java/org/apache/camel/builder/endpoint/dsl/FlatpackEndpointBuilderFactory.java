@@ -45,7 +45,7 @@ public interface FlatpackEndpointBuilderFactory {
     public interface FlatpackEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedFlatpackEndpointConsumerBuilder advanced() {
+        default AdvancedFlatpackEndpointConsumerBuilder advanced() {
             return (AdvancedFlatpackEndpointConsumerBuilder) this;
         }
         /**
@@ -54,7 +54,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder type(FlatpackType type) {
+        default FlatpackEndpointConsumerBuilder type(FlatpackType type) {
             setProperty("type", type);
             return this;
         }
@@ -64,7 +64,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder type(String type) {
+        default FlatpackEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -74,8 +74,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder resourceUri(
-                String resourceUri) {
+        default FlatpackEndpointConsumerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -85,7 +84,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder allowShortLines(
+        default FlatpackEndpointConsumerBuilder allowShortLines(
                 boolean allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
@@ -96,7 +95,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder allowShortLines(
+        default FlatpackEndpointConsumerBuilder allowShortLines(
                 String allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
@@ -106,7 +105,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder delimiter(char delimiter) {
+        default FlatpackEndpointConsumerBuilder delimiter(char delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -115,8 +114,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder delimiter(
-                String delimiter) {
+        default FlatpackEndpointConsumerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -126,7 +124,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
+        default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -137,7 +135,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
+        default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -148,7 +146,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
+        default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -159,7 +157,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
+        default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -170,8 +168,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder splitRows(
-                boolean splitRows) {
+        default FlatpackEndpointConsumerBuilder splitRows(boolean splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -181,8 +178,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder splitRows(
-                String splitRows) {
+        default FlatpackEndpointConsumerBuilder splitRows(String splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -191,8 +187,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder textQualifier(
-                char textQualifier) {
+        default FlatpackEndpointConsumerBuilder textQualifier(char textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
         }
@@ -201,7 +196,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointConsumerBuilder textQualifier(
+        default FlatpackEndpointConsumerBuilder textQualifier(
                 String textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
@@ -217,7 +212,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
+        default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -233,7 +228,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
+        default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -244,7 +239,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -255,7 +250,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -266,7 +261,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
+        default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -277,7 +272,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
+        default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -288,7 +283,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
+        default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -299,7 +294,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
+        default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -314,7 +309,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffMultiplier(
+        default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -329,7 +324,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder backoffMultiplier(
+        default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -341,7 +336,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder delay(long delay) {
+        default FlatpackEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -352,7 +347,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder delay(String delay) {
+        default FlatpackEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -362,7 +357,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder greedy(boolean greedy) {
+        default FlatpackEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -372,7 +367,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder greedy(String greedy) {
+        default FlatpackEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -383,8 +378,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default FlatpackEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -395,8 +389,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default FlatpackEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -406,7 +399,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder runLoggingLevel(
+        default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -418,7 +411,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder runLoggingLevel(
+        default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -431,7 +424,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder scheduledExecutorService(
+        default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -444,7 +437,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder scheduledExecutorService(
+        default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -457,7 +450,7 @@ public interface FlatpackEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder scheduler(
+        default FlatpackEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -470,8 +463,7 @@ public interface FlatpackEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder scheduler(
-                String scheduler) {
+        default FlatpackEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -482,7 +474,7 @@ public interface FlatpackEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder schedulerProperties(
+        default FlatpackEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -495,7 +487,7 @@ public interface FlatpackEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder schedulerProperties(
+        default FlatpackEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -505,7 +497,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder startScheduler(
+        default FlatpackEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -515,7 +507,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder startScheduler(
+        default FlatpackEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -525,8 +517,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder timeUnit(
-                TimeUnit timeUnit) {
+        default FlatpackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -536,7 +527,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default FlatpackEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -546,7 +537,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder useFixedDelay(
+        default FlatpackEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -557,7 +548,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FlatpackEndpointConsumerBuilder useFixedDelay(
+        default FlatpackEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -570,7 +561,7 @@ public interface FlatpackEndpointBuilderFactory {
     public interface AdvancedFlatpackEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default FlatpackEndpointConsumerBuilder basic() {
+        default FlatpackEndpointConsumerBuilder basic() {
             return (FlatpackEndpointConsumerBuilder) this;
         }
         /**
@@ -582,7 +573,7 @@ public interface FlatpackEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -596,7 +587,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -606,7 +597,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
+        default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -617,7 +608,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
+        default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -631,7 +622,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
+        default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -645,7 +636,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
+        default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -656,7 +647,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -667,7 +658,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -678,7 +669,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder synchronous(
+        default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -689,7 +680,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointConsumerBuilder synchronous(
+        default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -702,7 +693,7 @@ public interface FlatpackEndpointBuilderFactory {
     public static interface FlatpackEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFlatpackEndpointProducerBuilder advanced() {
+        default AdvancedFlatpackEndpointProducerBuilder advanced() {
             return (AdvancedFlatpackEndpointProducerBuilder) this;
         }
         /**
@@ -711,7 +702,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder type(FlatpackType type) {
+        default FlatpackEndpointProducerBuilder type(FlatpackType type) {
             setProperty("type", type);
             return this;
         }
@@ -721,7 +712,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder type(String type) {
+        default FlatpackEndpointProducerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -731,8 +722,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder resourceUri(
-                String resourceUri) {
+        default FlatpackEndpointProducerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -742,7 +732,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder allowShortLines(
+        default FlatpackEndpointProducerBuilder allowShortLines(
                 boolean allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
@@ -753,7 +743,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder allowShortLines(
+        default FlatpackEndpointProducerBuilder allowShortLines(
                 String allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
@@ -763,7 +753,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder delimiter(char delimiter) {
+        default FlatpackEndpointProducerBuilder delimiter(char delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -772,8 +762,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder delimiter(
-                String delimiter) {
+        default FlatpackEndpointProducerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -783,7 +772,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder ignoreExtraColumns(
+        default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -794,7 +783,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder ignoreExtraColumns(
+        default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -805,7 +794,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder ignoreFirstRecord(
+        default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -816,7 +805,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder ignoreFirstRecord(
+        default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -827,8 +816,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder splitRows(
-                boolean splitRows) {
+        default FlatpackEndpointProducerBuilder splitRows(boolean splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -838,8 +826,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder splitRows(
-                String splitRows) {
+        default FlatpackEndpointProducerBuilder splitRows(String splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -848,8 +835,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder textQualifier(
-                char textQualifier) {
+        default FlatpackEndpointProducerBuilder textQualifier(char textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
         }
@@ -858,7 +844,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointProducerBuilder textQualifier(
+        default FlatpackEndpointProducerBuilder textQualifier(
                 String textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
@@ -876,7 +862,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FlatpackEndpointProducerBuilder lazyStartProducer(
+        default FlatpackEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -894,7 +880,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FlatpackEndpointProducerBuilder lazyStartProducer(
+        default FlatpackEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -907,7 +893,7 @@ public interface FlatpackEndpointBuilderFactory {
     public interface AdvancedFlatpackEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default FlatpackEndpointProducerBuilder basic() {
+        default FlatpackEndpointProducerBuilder basic() {
             return (FlatpackEndpointProducerBuilder) this;
         }
         /**
@@ -916,7 +902,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -927,7 +913,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -938,7 +924,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointProducerBuilder synchronous(
+        default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -949,7 +935,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointProducerBuilder synchronous(
+        default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -962,7 +948,7 @@ public interface FlatpackEndpointBuilderFactory {
     public static interface FlatpackEndpointBuilder
             extends
                 FlatpackEndpointConsumerBuilder, FlatpackEndpointProducerBuilder {
-        public default AdvancedFlatpackEndpointBuilder advanced() {
+        default AdvancedFlatpackEndpointBuilder advanced() {
             return (AdvancedFlatpackEndpointBuilder) this;
         }
         /**
@@ -971,7 +957,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder type(FlatpackType type) {
+        default FlatpackEndpointBuilder type(FlatpackType type) {
             setProperty("type", type);
             return this;
         }
@@ -981,7 +967,7 @@ public interface FlatpackEndpointBuilderFactory {
          * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder type(String type) {
+        default FlatpackEndpointBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -991,7 +977,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder resourceUri(String resourceUri) {
+        default FlatpackEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -1001,8 +987,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder allowShortLines(
-                boolean allowShortLines) {
+        default FlatpackEndpointBuilder allowShortLines(boolean allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
         }
@@ -1012,8 +997,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder allowShortLines(
-                String allowShortLines) {
+        default FlatpackEndpointBuilder allowShortLines(String allowShortLines) {
             setProperty("allowShortLines", allowShortLines);
             return this;
         }
@@ -1022,7 +1006,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder delimiter(char delimiter) {
+        default FlatpackEndpointBuilder delimiter(char delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -1031,7 +1015,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder delimiter(String delimiter) {
+        default FlatpackEndpointBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -1041,7 +1025,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder ignoreExtraColumns(
+        default FlatpackEndpointBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -1052,7 +1036,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder ignoreExtraColumns(
+        default FlatpackEndpointBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
             setProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
@@ -1063,7 +1047,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder ignoreFirstRecord(
+        default FlatpackEndpointBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -1074,7 +1058,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder ignoreFirstRecord(
+        default FlatpackEndpointBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
             setProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
@@ -1085,7 +1069,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder splitRows(boolean splitRows) {
+        default FlatpackEndpointBuilder splitRows(boolean splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -1095,7 +1079,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder splitRows(String splitRows) {
+        default FlatpackEndpointBuilder splitRows(String splitRows) {
             setProperty("splitRows", splitRows);
             return this;
         }
@@ -1104,7 +1088,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder textQualifier(char textQualifier) {
+        default FlatpackEndpointBuilder textQualifier(char textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
         }
@@ -1113,8 +1097,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default FlatpackEndpointBuilder textQualifier(
-                String textQualifier) {
+        default FlatpackEndpointBuilder textQualifier(String textQualifier) {
             setProperty("textQualifier", textQualifier);
             return this;
         }
@@ -1126,7 +1109,7 @@ public interface FlatpackEndpointBuilderFactory {
     public static interface AdvancedFlatpackEndpointBuilder
             extends
                 AdvancedFlatpackEndpointConsumerBuilder, AdvancedFlatpackEndpointProducerBuilder {
-        public default FlatpackEndpointBuilder basic() {
+        default FlatpackEndpointBuilder basic() {
             return (FlatpackEndpointBuilder) this;
         }
         /**
@@ -1135,7 +1118,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1146,7 +1129,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
+        default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1157,8 +1140,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedFlatpackEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1168,8 +1150,7 @@ public interface FlatpackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlatpackEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedFlatpackEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1187,7 +1168,7 @@ public interface FlatpackEndpointBuilderFactory {
      * via the FlatPack library. Creates a builder to build endpoints for the
      * Flatpack component.
      */
-    public default FlatpackEndpointBuilder flatpack(String path) {
+    default FlatpackEndpointBuilder flatpack(String path) {
         class FlatpackEndpointBuilderImpl extends AbstractEndpointBuilder implements FlatpackEndpointBuilder, AdvancedFlatpackEndpointBuilder {
             public FlatpackEndpointBuilderImpl(String path) {
                 super("flatpack", path);

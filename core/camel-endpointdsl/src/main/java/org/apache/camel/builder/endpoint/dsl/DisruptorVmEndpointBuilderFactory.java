@@ -40,7 +40,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public interface DisruptorVmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDisruptorVmEndpointConsumerBuilder advanced() {
+        default AdvancedDisruptorVmEndpointConsumerBuilder advanced() {
             return (AdvancedDisruptorVmEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointConsumerBuilder name(String name) {
+        default DisruptorVmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointConsumerBuilder size(int size) {
+        default DisruptorVmEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -76,7 +76,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointConsumerBuilder size(String size) {
+        default DisruptorVmEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -91,7 +91,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
+        default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -107,7 +107,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
+        default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -117,7 +117,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
+        default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -127,7 +127,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
+        default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -141,7 +141,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder multipleConsumers(
+        default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -155,7 +155,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder multipleConsumers(
+        default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -168,7 +168,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder waitStrategy(
+        default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 DisruptorWaitStrategy waitStrategy) {
             setProperty("waitStrategy", waitStrategy);
             return this;
@@ -181,7 +181,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * @group consumer
          */
-        public default DisruptorVmEndpointConsumerBuilder waitStrategy(
+        default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 String waitStrategy) {
             setProperty("waitStrategy", waitStrategy);
             return this;
@@ -194,7 +194,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public interface AdvancedDisruptorVmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DisruptorVmEndpointConsumerBuilder basic() {
+        default DisruptorVmEndpointConsumerBuilder basic() {
             return (DisruptorVmEndpointConsumerBuilder) this;
         }
         /**
@@ -206,7 +206,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -220,7 +220,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -230,7 +230,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -241,7 +241,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -252,7 +252,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -263,7 +263,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -274,7 +274,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
+        default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -285,7 +285,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
+        default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -298,7 +298,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public static interface DisruptorVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDisruptorVmEndpointProducerBuilder advanced() {
+        default AdvancedDisruptorVmEndpointProducerBuilder advanced() {
             return (AdvancedDisruptorVmEndpointProducerBuilder) this;
         }
         /**
@@ -306,7 +306,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointProducerBuilder name(String name) {
+        default DisruptorVmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -320,7 +320,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointProducerBuilder size(int size) {
+        default DisruptorVmEndpointProducerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -334,7 +334,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointProducerBuilder size(String size) {
+        default DisruptorVmEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -347,7 +347,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder blockWhenFull(
+        default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
@@ -361,7 +361,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder blockWhenFull(
+        default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
@@ -379,7 +379,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder lazyStartProducer(
+        default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -397,7 +397,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder lazyStartProducer(
+        default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -411,7 +411,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder producerType(
+        default DisruptorVmEndpointProducerBuilder producerType(
                 DisruptorProducerType producerType) {
             setProperty("producerType", producerType);
             return this;
@@ -425,7 +425,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder producerType(
+        default DisruptorVmEndpointProducerBuilder producerType(
                 String producerType) {
             setProperty("producerType", producerType);
             return this;
@@ -437,7 +437,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder timeout(long timeout) {
+        default DisruptorVmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -448,7 +448,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder timeout(String timeout) {
+        default DisruptorVmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -462,7 +462,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
+        default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -477,7 +477,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * @group producer
          */
-        public default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
+        default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -490,7 +490,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public interface AdvancedDisruptorVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DisruptorVmEndpointProducerBuilder basic() {
+        default DisruptorVmEndpointProducerBuilder basic() {
             return (DisruptorVmEndpointProducerBuilder) this;
         }
         /**
@@ -499,7 +499,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -510,7 +510,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -521,7 +521,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
+        default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -532,7 +532,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
+        default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -545,7 +545,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public static interface DisruptorVmEndpointBuilder
             extends
                 DisruptorVmEndpointConsumerBuilder, DisruptorVmEndpointProducerBuilder {
-        public default AdvancedDisruptorVmEndpointBuilder advanced() {
+        default AdvancedDisruptorVmEndpointBuilder advanced() {
             return (AdvancedDisruptorVmEndpointBuilder) this;
         }
         /**
@@ -553,7 +553,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointBuilder name(String name) {
+        default DisruptorVmEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -567,7 +567,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointBuilder size(int size) {
+        default DisruptorVmEndpointBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -581,7 +581,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorVmEndpointBuilder size(String size) {
+        default DisruptorVmEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -593,7 +593,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     public static interface AdvancedDisruptorVmEndpointBuilder
             extends
                 AdvancedDisruptorVmEndpointConsumerBuilder, AdvancedDisruptorVmEndpointProducerBuilder {
-        public default DisruptorVmEndpointBuilder basic() {
+        default DisruptorVmEndpointBuilder basic() {
             return (DisruptorVmEndpointBuilder) this;
         }
         /**
@@ -602,7 +602,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -613,7 +613,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
+        default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -624,7 +624,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointBuilder synchronous(
+        default AdvancedDisruptorVmEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -635,7 +635,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorVmEndpointBuilder synchronous(
+        default AdvancedDisruptorVmEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -664,7 +664,7 @@ public interface DisruptorVmEndpointBuilderFactory {
      * Disruptor. Creates a builder to build endpoints for the Disruptor VM
      * component.
      */
-    public default DisruptorVmEndpointBuilder disruptorVm(String path) {
+    default DisruptorVmEndpointBuilder disruptorVm(String path) {
         class DisruptorVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorVmEndpointBuilder, AdvancedDisruptorVmEndpointBuilder {
             public DisruptorVmEndpointBuilderImpl(String path) {
                 super("disruptor-vm", path);

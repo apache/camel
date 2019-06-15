@@ -42,7 +42,7 @@ public interface JBPMEndpointBuilderFactory {
     public interface JBPMEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJBPMEndpointConsumerBuilder advanced() {
+        default AdvancedJBPMEndpointConsumerBuilder advanced() {
             return (AdvancedJBPMEndpointConsumerBuilder) this;
         }
         /**
@@ -50,8 +50,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder connectionURL(
-                URL connectionURL) {
+        default JBPMEndpointConsumerBuilder connectionURL(URL connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -60,8 +59,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder connectionURL(
-                String connectionURL) {
+        default JBPMEndpointConsumerBuilder connectionURL(String connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -70,7 +68,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder eventListenerType(
+        default JBPMEndpointConsumerBuilder eventListenerType(
                 String eventListenerType) {
             setProperty("eventListenerType", eventListenerType);
             return this;
@@ -80,8 +78,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder attachmentId(
-                Long attachmentId) {
+        default JBPMEndpointConsumerBuilder attachmentId(Long attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -90,8 +87,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder attachmentId(
-                String attachmentId) {
+        default JBPMEndpointConsumerBuilder attachmentId(String attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -100,7 +96,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder contentId(Long contentId) {
+        default JBPMEndpointConsumerBuilder contentId(Long contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -109,7 +105,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder contentId(String contentId) {
+        default JBPMEndpointConsumerBuilder contentId(String contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -118,8 +114,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder deploymentId(
-                String deploymentId) {
+        default JBPMEndpointConsumerBuilder deploymentId(String deploymentId) {
             setProperty("deploymentId", deploymentId);
             return this;
         }
@@ -129,7 +124,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder emitterSendItems(
+        default JBPMEndpointConsumerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
@@ -141,7 +136,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder emitterSendItems(
+        default JBPMEndpointConsumerBuilder emitterSendItems(
                 String emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
@@ -152,7 +147,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder event(Object event) {
+        default JBPMEndpointConsumerBuilder event(Object event) {
             setProperty("event", event);
             return this;
         }
@@ -162,7 +157,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder event(String event) {
+        default JBPMEndpointConsumerBuilder event(String event) {
             setProperty("event", event);
             return this;
         }
@@ -171,7 +166,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder eventType(String eventType) {
+        default JBPMEndpointConsumerBuilder eventType(String eventType) {
             setProperty("eventType", eventType);
             return this;
         }
@@ -180,7 +175,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder identifier(String identifier) {
+        default JBPMEndpointConsumerBuilder identifier(String identifier) {
             setProperty("identifier", identifier);
             return this;
         }
@@ -189,7 +184,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder maxNumber(Integer maxNumber) {
+        default JBPMEndpointConsumerBuilder maxNumber(Integer maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -199,7 +194,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder maxNumber(String maxNumber) {
+        default JBPMEndpointConsumerBuilder maxNumber(String maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -208,7 +203,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder page(Integer page) {
+        default JBPMEndpointConsumerBuilder page(Integer page) {
             setProperty("page", page);
             return this;
         }
@@ -218,7 +213,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder page(String page) {
+        default JBPMEndpointConsumerBuilder page(String page) {
             setProperty("page", page);
             return this;
         }
@@ -227,7 +222,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder pageSize(Integer pageSize) {
+        default JBPMEndpointConsumerBuilder pageSize(Integer pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -237,7 +232,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder pageSize(String pageSize) {
+        default JBPMEndpointConsumerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -246,7 +241,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder processId(String processId) {
+        default JBPMEndpointConsumerBuilder processId(String processId) {
             setProperty("processId", processId);
             return this;
         }
@@ -255,7 +250,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder processInstanceId(
+        default JBPMEndpointConsumerBuilder processInstanceId(
                 Long processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
@@ -265,7 +260,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder processInstanceId(
+        default JBPMEndpointConsumerBuilder processInstanceId(
                 String processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
@@ -275,8 +270,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder targetUserId(
-                String targetUserId) {
+        default JBPMEndpointConsumerBuilder targetUserId(String targetUserId) {
             setProperty("targetUserId", targetUserId);
             return this;
         }
@@ -285,7 +279,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder task(Object task) {
+        default JBPMEndpointConsumerBuilder task(Object task) {
             setProperty("task", task);
             return this;
         }
@@ -295,7 +289,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder task(String task) {
+        default JBPMEndpointConsumerBuilder task(String task) {
             setProperty("task", task);
             return this;
         }
@@ -304,7 +298,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder taskId(Long taskId) {
+        default JBPMEndpointConsumerBuilder taskId(Long taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -313,7 +307,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder taskId(String taskId) {
+        default JBPMEndpointConsumerBuilder taskId(String taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -322,7 +316,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder timeout(Integer timeout) {
+        default JBPMEndpointConsumerBuilder timeout(Integer timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -332,7 +326,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder timeout(String timeout) {
+        default JBPMEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -341,7 +335,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder userId(String userId) {
+        default JBPMEndpointConsumerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -350,7 +344,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder value(Object value) {
+        default JBPMEndpointConsumerBuilder value(Object value) {
             setProperty("value", value);
             return this;
         }
@@ -359,7 +353,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder value(String value) {
+        default JBPMEndpointConsumerBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -368,7 +362,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder workItemId(Long workItemId) {
+        default JBPMEndpointConsumerBuilder workItemId(Long workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -377,7 +371,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointConsumerBuilder workItemId(String workItemId) {
+        default JBPMEndpointConsumerBuilder workItemId(String workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -392,7 +386,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JBPMEndpointConsumerBuilder bridgeErrorHandler(
+        default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -408,7 +402,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JBPMEndpointConsumerBuilder bridgeErrorHandler(
+        default JBPMEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -419,8 +413,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default JBPMEndpointConsumerBuilder statuses(
-                List<String> statuses) {
+        default JBPMEndpointConsumerBuilder statuses(List<String> statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -430,7 +423,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group filter
          */
-        public default JBPMEndpointConsumerBuilder statuses(String statuses) {
+        default JBPMEndpointConsumerBuilder statuses(String statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -439,7 +432,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointConsumerBuilder password(String password) {
+        default JBPMEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -448,7 +441,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointConsumerBuilder userName(String userName) {
+        default JBPMEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -460,7 +453,7 @@ public interface JBPMEndpointBuilderFactory {
     public interface AdvancedJBPMEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JBPMEndpointConsumerBuilder basic() {
+        default JBPMEndpointConsumerBuilder basic() {
             return (JBPMEndpointConsumerBuilder) this;
         }
         /**
@@ -472,7 +465,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -486,7 +479,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJBPMEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -496,7 +489,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
+        default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -507,7 +500,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
+        default AdvancedJBPMEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -518,7 +511,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -529,7 +522,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -540,7 +533,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder entities(
+        default AdvancedJBPMEndpointConsumerBuilder entities(
                 List<String> entities) {
             setProperty("entities", entities);
             return this;
@@ -551,8 +544,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder entities(
-                String entities) {
+        default AdvancedJBPMEndpointConsumerBuilder entities(String entities) {
             setProperty("entities", entities);
             return this;
         }
@@ -561,7 +553,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Class[]</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -572,7 +564,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointConsumerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -583,7 +575,7 @@ public interface JBPMEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder parameters(
+        default AdvancedJBPMEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -595,8 +587,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder parameters(
-                String parameters) {
+        default AdvancedJBPMEndpointConsumerBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -606,7 +597,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder synchronous(
+        default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -617,7 +608,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointConsumerBuilder synchronous(
+        default AdvancedJBPMEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -630,7 +621,7 @@ public interface JBPMEndpointBuilderFactory {
     public static interface JBPMEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJBPMEndpointProducerBuilder advanced() {
+        default AdvancedJBPMEndpointProducerBuilder advanced() {
             return (AdvancedJBPMEndpointProducerBuilder) this;
         }
         /**
@@ -638,8 +629,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder connectionURL(
-                URL connectionURL) {
+        default JBPMEndpointProducerBuilder connectionURL(URL connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -648,8 +638,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder connectionURL(
-                String connectionURL) {
+        default JBPMEndpointProducerBuilder connectionURL(String connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -658,7 +647,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder eventListenerType(
+        default JBPMEndpointProducerBuilder eventListenerType(
                 String eventListenerType) {
             setProperty("eventListenerType", eventListenerType);
             return this;
@@ -668,8 +657,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder attachmentId(
-                Long attachmentId) {
+        default JBPMEndpointProducerBuilder attachmentId(Long attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -678,8 +666,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder attachmentId(
-                String attachmentId) {
+        default JBPMEndpointProducerBuilder attachmentId(String attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -688,7 +675,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder contentId(Long contentId) {
+        default JBPMEndpointProducerBuilder contentId(Long contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -697,7 +684,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder contentId(String contentId) {
+        default JBPMEndpointProducerBuilder contentId(String contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -706,8 +693,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder deploymentId(
-                String deploymentId) {
+        default JBPMEndpointProducerBuilder deploymentId(String deploymentId) {
             setProperty("deploymentId", deploymentId);
             return this;
         }
@@ -717,7 +703,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder emitterSendItems(
+        default JBPMEndpointProducerBuilder emitterSendItems(
                 Boolean emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
@@ -729,7 +715,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder emitterSendItems(
+        default JBPMEndpointProducerBuilder emitterSendItems(
                 String emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
@@ -740,7 +726,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder event(Object event) {
+        default JBPMEndpointProducerBuilder event(Object event) {
             setProperty("event", event);
             return this;
         }
@@ -750,7 +736,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder event(String event) {
+        default JBPMEndpointProducerBuilder event(String event) {
             setProperty("event", event);
             return this;
         }
@@ -759,7 +745,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder eventType(String eventType) {
+        default JBPMEndpointProducerBuilder eventType(String eventType) {
             setProperty("eventType", eventType);
             return this;
         }
@@ -768,7 +754,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder identifier(String identifier) {
+        default JBPMEndpointProducerBuilder identifier(String identifier) {
             setProperty("identifier", identifier);
             return this;
         }
@@ -777,7 +763,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder maxNumber(Integer maxNumber) {
+        default JBPMEndpointProducerBuilder maxNumber(Integer maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -787,7 +773,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder maxNumber(String maxNumber) {
+        default JBPMEndpointProducerBuilder maxNumber(String maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -796,7 +782,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder page(Integer page) {
+        default JBPMEndpointProducerBuilder page(Integer page) {
             setProperty("page", page);
             return this;
         }
@@ -806,7 +792,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder page(String page) {
+        default JBPMEndpointProducerBuilder page(String page) {
             setProperty("page", page);
             return this;
         }
@@ -815,7 +801,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder pageSize(Integer pageSize) {
+        default JBPMEndpointProducerBuilder pageSize(Integer pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -825,7 +811,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder pageSize(String pageSize) {
+        default JBPMEndpointProducerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -834,7 +820,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder processId(String processId) {
+        default JBPMEndpointProducerBuilder processId(String processId) {
             setProperty("processId", processId);
             return this;
         }
@@ -843,7 +829,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder processInstanceId(
+        default JBPMEndpointProducerBuilder processInstanceId(
                 Long processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
@@ -853,7 +839,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder processInstanceId(
+        default JBPMEndpointProducerBuilder processInstanceId(
                 String processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
@@ -863,8 +849,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder targetUserId(
-                String targetUserId) {
+        default JBPMEndpointProducerBuilder targetUserId(String targetUserId) {
             setProperty("targetUserId", targetUserId);
             return this;
         }
@@ -873,7 +858,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder task(Object task) {
+        default JBPMEndpointProducerBuilder task(Object task) {
             setProperty("task", task);
             return this;
         }
@@ -883,7 +868,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder task(String task) {
+        default JBPMEndpointProducerBuilder task(String task) {
             setProperty("task", task);
             return this;
         }
@@ -892,7 +877,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder taskId(Long taskId) {
+        default JBPMEndpointProducerBuilder taskId(Long taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -901,7 +886,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder taskId(String taskId) {
+        default JBPMEndpointProducerBuilder taskId(String taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -910,7 +895,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder timeout(Integer timeout) {
+        default JBPMEndpointProducerBuilder timeout(Integer timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -920,7 +905,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder timeout(String timeout) {
+        default JBPMEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -929,7 +914,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder userId(String userId) {
+        default JBPMEndpointProducerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -938,7 +923,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder value(Object value) {
+        default JBPMEndpointProducerBuilder value(Object value) {
             setProperty("value", value);
             return this;
         }
@@ -947,7 +932,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder value(String value) {
+        default JBPMEndpointProducerBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -956,7 +941,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder workItemId(Long workItemId) {
+        default JBPMEndpointProducerBuilder workItemId(Long workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -965,7 +950,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointProducerBuilder workItemId(String workItemId) {
+        default JBPMEndpointProducerBuilder workItemId(String workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -982,7 +967,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JBPMEndpointProducerBuilder lazyStartProducer(
+        default JBPMEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1000,7 +985,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JBPMEndpointProducerBuilder lazyStartProducer(
+        default JBPMEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1010,7 +995,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JBPMEndpointProducerBuilder operation(String operation) {
+        default JBPMEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -1020,8 +1005,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default JBPMEndpointProducerBuilder statuses(
-                List<String> statuses) {
+        default JBPMEndpointProducerBuilder statuses(List<String> statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -1031,7 +1015,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group filter
          */
-        public default JBPMEndpointProducerBuilder statuses(String statuses) {
+        default JBPMEndpointProducerBuilder statuses(String statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -1040,7 +1024,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointProducerBuilder password(String password) {
+        default JBPMEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1049,7 +1033,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointProducerBuilder userName(String userName) {
+        default JBPMEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -1061,7 +1045,7 @@ public interface JBPMEndpointBuilderFactory {
     public interface AdvancedJBPMEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JBPMEndpointProducerBuilder basic() {
+        default JBPMEndpointProducerBuilder basic() {
             return (JBPMEndpointProducerBuilder) this;
         }
         /**
@@ -1070,7 +1054,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1081,7 +1065,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1092,7 +1076,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder entities(
+        default AdvancedJBPMEndpointProducerBuilder entities(
                 List<String> entities) {
             setProperty("entities", entities);
             return this;
@@ -1103,8 +1087,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder entities(
-                String entities) {
+        default AdvancedJBPMEndpointProducerBuilder entities(String entities) {
             setProperty("entities", entities);
             return this;
         }
@@ -1113,7 +1096,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Class[]</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -1124,7 +1107,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointProducerBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -1135,7 +1118,7 @@ public interface JBPMEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder parameters(
+        default AdvancedJBPMEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -1147,8 +1130,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder parameters(
-                String parameters) {
+        default AdvancedJBPMEndpointProducerBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -1158,7 +1140,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder synchronous(
+        default AdvancedJBPMEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1169,7 +1151,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointProducerBuilder synchronous(
+        default AdvancedJBPMEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1182,7 +1164,7 @@ public interface JBPMEndpointBuilderFactory {
     public static interface JBPMEndpointBuilder
             extends
                 JBPMEndpointConsumerBuilder, JBPMEndpointProducerBuilder {
-        public default AdvancedJBPMEndpointBuilder advanced() {
+        default AdvancedJBPMEndpointBuilder advanced() {
             return (AdvancedJBPMEndpointBuilder) this;
         }
         /**
@@ -1190,7 +1172,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder connectionURL(URL connectionURL) {
+        default JBPMEndpointBuilder connectionURL(URL connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -1199,7 +1181,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder connectionURL(String connectionURL) {
+        default JBPMEndpointBuilder connectionURL(String connectionURL) {
             setProperty("connectionURL", connectionURL);
             return this;
         }
@@ -1208,8 +1190,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder eventListenerType(
-                String eventListenerType) {
+        default JBPMEndpointBuilder eventListenerType(String eventListenerType) {
             setProperty("eventListenerType", eventListenerType);
             return this;
         }
@@ -1218,7 +1199,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder attachmentId(Long attachmentId) {
+        default JBPMEndpointBuilder attachmentId(Long attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -1227,7 +1208,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder attachmentId(String attachmentId) {
+        default JBPMEndpointBuilder attachmentId(String attachmentId) {
             setProperty("attachmentId", attachmentId);
             return this;
         }
@@ -1236,7 +1217,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder contentId(Long contentId) {
+        default JBPMEndpointBuilder contentId(Long contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -1245,7 +1226,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder contentId(String contentId) {
+        default JBPMEndpointBuilder contentId(String contentId) {
             setProperty("contentId", contentId);
             return this;
         }
@@ -1254,7 +1235,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder deploymentId(String deploymentId) {
+        default JBPMEndpointBuilder deploymentId(String deploymentId) {
             setProperty("deploymentId", deploymentId);
             return this;
         }
@@ -1264,8 +1245,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder emitterSendItems(
-                Boolean emitterSendItems) {
+        default JBPMEndpointBuilder emitterSendItems(Boolean emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
         }
@@ -1276,8 +1256,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointBuilder emitterSendItems(
-                String emitterSendItems) {
+        default JBPMEndpointBuilder emitterSendItems(String emitterSendItems) {
             setProperty("emitterSendItems", emitterSendItems);
             return this;
         }
@@ -1287,7 +1266,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder event(Object event) {
+        default JBPMEndpointBuilder event(Object event) {
             setProperty("event", event);
             return this;
         }
@@ -1297,7 +1276,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder event(String event) {
+        default JBPMEndpointBuilder event(String event) {
             setProperty("event", event);
             return this;
         }
@@ -1306,7 +1285,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder eventType(String eventType) {
+        default JBPMEndpointBuilder eventType(String eventType) {
             setProperty("eventType", eventType);
             return this;
         }
@@ -1315,7 +1294,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder identifier(String identifier) {
+        default JBPMEndpointBuilder identifier(String identifier) {
             setProperty("identifier", identifier);
             return this;
         }
@@ -1324,7 +1303,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder maxNumber(Integer maxNumber) {
+        default JBPMEndpointBuilder maxNumber(Integer maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -1334,7 +1313,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointBuilder maxNumber(String maxNumber) {
+        default JBPMEndpointBuilder maxNumber(String maxNumber) {
             setProperty("maxNumber", maxNumber);
             return this;
         }
@@ -1343,7 +1322,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder page(Integer page) {
+        default JBPMEndpointBuilder page(Integer page) {
             setProperty("page", page);
             return this;
         }
@@ -1353,7 +1332,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointBuilder page(String page) {
+        default JBPMEndpointBuilder page(String page) {
             setProperty("page", page);
             return this;
         }
@@ -1362,7 +1341,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder pageSize(Integer pageSize) {
+        default JBPMEndpointBuilder pageSize(Integer pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -1372,7 +1351,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointBuilder pageSize(String pageSize) {
+        default JBPMEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -1381,7 +1360,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder processId(String processId) {
+        default JBPMEndpointBuilder processId(String processId) {
             setProperty("processId", processId);
             return this;
         }
@@ -1390,8 +1369,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder processInstanceId(
-                Long processInstanceId) {
+        default JBPMEndpointBuilder processInstanceId(Long processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
         }
@@ -1400,8 +1378,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder processInstanceId(
-                String processInstanceId) {
+        default JBPMEndpointBuilder processInstanceId(String processInstanceId) {
             setProperty("processInstanceId", processInstanceId);
             return this;
         }
@@ -1410,7 +1387,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder targetUserId(String targetUserId) {
+        default JBPMEndpointBuilder targetUserId(String targetUserId) {
             setProperty("targetUserId", targetUserId);
             return this;
         }
@@ -1419,7 +1396,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder task(Object task) {
+        default JBPMEndpointBuilder task(Object task) {
             setProperty("task", task);
             return this;
         }
@@ -1429,7 +1406,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>org.kie.api.task.model.Task</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder task(String task) {
+        default JBPMEndpointBuilder task(String task) {
             setProperty("task", task);
             return this;
         }
@@ -1438,7 +1415,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder taskId(Long taskId) {
+        default JBPMEndpointBuilder taskId(Long taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -1447,7 +1424,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder taskId(String taskId) {
+        default JBPMEndpointBuilder taskId(String taskId) {
             setProperty("taskId", taskId);
             return this;
         }
@@ -1456,7 +1433,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder timeout(Integer timeout) {
+        default JBPMEndpointBuilder timeout(Integer timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1466,7 +1443,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JBPMEndpointBuilder timeout(String timeout) {
+        default JBPMEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1475,7 +1452,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder userId(String userId) {
+        default JBPMEndpointBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -1484,7 +1461,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder value(Object value) {
+        default JBPMEndpointBuilder value(Object value) {
             setProperty("value", value);
             return this;
         }
@@ -1493,7 +1470,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder value(String value) {
+        default JBPMEndpointBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -1502,7 +1479,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder workItemId(Long workItemId) {
+        default JBPMEndpointBuilder workItemId(Long workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -1511,7 +1488,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default JBPMEndpointBuilder workItemId(String workItemId) {
+        default JBPMEndpointBuilder workItemId(String workItemId) {
             setProperty("workItemId", workItemId);
             return this;
         }
@@ -1521,7 +1498,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default JBPMEndpointBuilder statuses(List<String> statuses) {
+        default JBPMEndpointBuilder statuses(List<String> statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -1531,7 +1508,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group filter
          */
-        public default JBPMEndpointBuilder statuses(String statuses) {
+        default JBPMEndpointBuilder statuses(String statuses) {
             setProperty("statuses", statuses);
             return this;
         }
@@ -1540,7 +1517,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointBuilder password(String password) {
+        default JBPMEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1549,7 +1526,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JBPMEndpointBuilder userName(String userName) {
+        default JBPMEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -1561,7 +1538,7 @@ public interface JBPMEndpointBuilderFactory {
     public static interface AdvancedJBPMEndpointBuilder
             extends
                 AdvancedJBPMEndpointConsumerBuilder, AdvancedJBPMEndpointProducerBuilder {
-        public default JBPMEndpointBuilder basic() {
+        default JBPMEndpointBuilder basic() {
             return (JBPMEndpointBuilder) this;
         }
         /**
@@ -1570,7 +1547,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1581,7 +1558,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder basicPropertyBinding(
+        default AdvancedJBPMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1592,8 +1569,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder entities(
-                List<String> entities) {
+        default AdvancedJBPMEndpointBuilder entities(List<String> entities) {
             setProperty("entities", entities);
             return this;
         }
@@ -1603,7 +1579,7 @@ public interface JBPMEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder entities(String entities) {
+        default AdvancedJBPMEndpointBuilder entities(String entities) {
             setProperty("entities", entities);
             return this;
         }
@@ -1612,7 +1588,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>java.lang.Class[]</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 Class[] extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -1623,7 +1599,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder extraJaxbClasses(
+        default AdvancedJBPMEndpointBuilder extraJaxbClasses(
                 String extraJaxbClasses) {
             setProperty("extraJaxbClasses", extraJaxbClasses);
             return this;
@@ -1634,7 +1610,7 @@ public interface JBPMEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder parameters(
+        default AdvancedJBPMEndpointBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -1646,7 +1622,7 @@ public interface JBPMEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder parameters(String parameters) {
+        default AdvancedJBPMEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -1656,8 +1632,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJBPMEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1667,8 +1642,7 @@ public interface JBPMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJBPMEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJBPMEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1677,7 +1651,7 @@ public interface JBPMEndpointBuilderFactory {
      * The jbpm component provides integration with jBPM (Business Process
      * Management). Creates a builder to build endpoints for the JBPM component.
      */
-    public default JBPMEndpointBuilder jBPM(String path) {
+    default JBPMEndpointBuilder jBPM(String path) {
         class JBPMEndpointBuilderImpl extends AbstractEndpointBuilder implements JBPMEndpointBuilder, AdvancedJBPMEndpointBuilder {
             public JBPMEndpointBuilderImpl(String path) {
                 super("jbpm", path);

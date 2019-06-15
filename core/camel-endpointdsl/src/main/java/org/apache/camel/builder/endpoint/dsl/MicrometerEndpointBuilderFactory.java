@@ -37,7 +37,7 @@ public interface MicrometerEndpointBuilderFactory {
     public static interface MicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMicrometerEndpointBuilder advanced() {
+        default AdvancedMicrometerEndpointBuilder advanced() {
             return (AdvancedMicrometerEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface MicrometerEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder metricsType(Type metricsType) {
+        default MicrometerEndpointBuilder metricsType(Type metricsType) {
             setProperty("metricsType", metricsType);
             return this;
         }
@@ -56,7 +56,7 @@ public interface MicrometerEndpointBuilderFactory {
          * <code>io.micrometer.core.instrument.Meter$Type</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder metricsType(String metricsType) {
+        default MicrometerEndpointBuilder metricsType(String metricsType) {
             setProperty("metricsType", metricsType);
             return this;
         }
@@ -65,7 +65,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder metricsName(String metricsName) {
+        default MicrometerEndpointBuilder metricsName(String metricsName) {
             setProperty("metricsName", metricsName);
             return this;
         }
@@ -75,7 +75,7 @@ public interface MicrometerEndpointBuilderFactory {
          * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder tags(Iterable<Object> tags) {
+        default MicrometerEndpointBuilder tags(Iterable<Object> tags) {
             setProperty("tags", tags);
             return this;
         }
@@ -85,7 +85,7 @@ public interface MicrometerEndpointBuilderFactory {
          * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder tags(String tags) {
+        default MicrometerEndpointBuilder tags(String tags) {
             setProperty("tags", tags);
             return this;
         }
@@ -94,7 +94,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder action(String action) {
+        default MicrometerEndpointBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -103,7 +103,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder decrement(String decrement) {
+        default MicrometerEndpointBuilder decrement(String decrement) {
             setProperty("decrement", decrement);
             return this;
         }
@@ -112,7 +112,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder increment(String increment) {
+        default MicrometerEndpointBuilder increment(String increment) {
             setProperty("increment", increment);
             return this;
         }
@@ -121,7 +121,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MicrometerEndpointBuilder value(String value) {
+        default MicrometerEndpointBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -133,7 +133,7 @@ public interface MicrometerEndpointBuilderFactory {
     public static interface AdvancedMicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MicrometerEndpointBuilder basic() {
+        default MicrometerEndpointBuilder basic() {
             return (MicrometerEndpointBuilder) this;
         }
         /**
@@ -142,7 +142,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
+        default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,7 +153,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
+        default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -164,7 +164,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMicrometerEndpointBuilder synchronous(
+        default AdvancedMicrometerEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -175,8 +175,7 @@ public interface MicrometerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMicrometerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -194,7 +193,7 @@ public interface MicrometerEndpointBuilderFactory {
      * Micrometer library. Creates a builder to build endpoints for the
      * Micrometer component.
      */
-    public default MicrometerEndpointBuilder micrometer(String path) {
+    default MicrometerEndpointBuilder micrometer(String path) {
         class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {
             public MicrometerEndpointBuilderImpl(String path) {
                 super("micrometer", path);

@@ -39,7 +39,7 @@ public interface GrpcEndpointBuilderFactory {
     public interface GrpcEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGrpcEndpointConsumerBuilder advanced() {
+        default AdvancedGrpcEndpointConsumerBuilder advanced() {
             return (AdvancedGrpcEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder host(String host) {
+        default GrpcEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -57,7 +57,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder port(int port) {
+        default GrpcEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -66,7 +66,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder port(String port) {
+        default GrpcEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -76,7 +76,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder service(String service) {
+        default GrpcEndpointConsumerBuilder service(String service) {
             setProperty("service", service);
             return this;
         }
@@ -85,7 +85,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder flowControlWindow(
+        default GrpcEndpointConsumerBuilder flowControlWindow(
                 int flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
@@ -95,7 +95,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder flowControlWindow(
+        default GrpcEndpointConsumerBuilder flowControlWindow(
                 String flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
@@ -105,8 +105,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder maxMessageSize(
-                int maxMessageSize) {
+        default GrpcEndpointConsumerBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -115,8 +114,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointConsumerBuilder maxMessageSize(
-                String maxMessageSize) {
+        default GrpcEndpointConsumerBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -131,7 +129,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder bridgeErrorHandler(
+        default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -147,7 +145,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder bridgeErrorHandler(
+        default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -165,7 +163,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder consumerStrategy(
+        default GrpcEndpointConsumerBuilder consumerStrategy(
                 GrpcConsumerStrategy consumerStrategy) {
             setProperty("consumerStrategy", consumerStrategy);
             return this;
@@ -183,7 +181,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder consumerStrategy(
+        default GrpcEndpointConsumerBuilder consumerStrategy(
                 String consumerStrategy) {
             setProperty("consumerStrategy", consumerStrategy);
             return this;
@@ -193,7 +191,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder forwardOnCompleted(
+        default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 boolean forwardOnCompleted) {
             setProperty("forwardOnCompleted", forwardOnCompleted);
             return this;
@@ -203,7 +201,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder forwardOnCompleted(
+        default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 String forwardOnCompleted) {
             setProperty("forwardOnCompleted", forwardOnCompleted);
             return this;
@@ -214,7 +212,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder forwardOnError(
+        default GrpcEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
             setProperty("forwardOnError", forwardOnError);
             return this;
@@ -225,8 +223,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder forwardOnError(
-                String forwardOnError) {
+        default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
             setProperty("forwardOnError", forwardOnError);
             return this;
         }
@@ -236,7 +233,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
+        default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 int maxConcurrentCallsPerConnection) {
             setProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
             return this;
@@ -247,7 +244,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
+        default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 String maxConcurrentCallsPerConnection) {
             setProperty("maxConcurrentCallsPerConnection", maxConcurrentCallsPerConnection);
             return this;
@@ -258,7 +255,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder authenticationType(
+        default GrpcEndpointConsumerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -269,7 +266,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder authenticationType(
+        default GrpcEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -281,7 +278,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder jwtAlgorithm(
+        default GrpcEndpointConsumerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
@@ -293,8 +290,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder jwtAlgorithm(
-                String jwtAlgorithm) {
+        default GrpcEndpointConsumerBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -303,7 +299,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
+        default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
             return this;
         }
@@ -312,7 +308,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
+        default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
             return this;
         }
@@ -321,7 +317,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
+        default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
             return this;
         }
@@ -330,7 +326,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder keyCertChainResource(
+        default GrpcEndpointConsumerBuilder keyCertChainResource(
                 String keyCertChainResource) {
             setProperty("keyCertChainResource", keyCertChainResource);
             return this;
@@ -340,8 +336,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder keyPassword(
-                String keyPassword) {
+        default GrpcEndpointConsumerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
             return this;
         }
@@ -350,8 +345,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder keyResource(
-                String keyResource) {
+        default GrpcEndpointConsumerBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
             return this;
         }
@@ -361,7 +355,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder negotiationType(
+        default GrpcEndpointConsumerBuilder negotiationType(
                 NegotiationType negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
@@ -373,7 +367,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder negotiationType(
+        default GrpcEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
@@ -384,7 +378,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder serviceAccountResource(
+        default GrpcEndpointConsumerBuilder serviceAccountResource(
                 String serviceAccountResource) {
             setProperty("serviceAccountResource", serviceAccountResource);
             return this;
@@ -395,7 +389,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointConsumerBuilder trustCertCollectionResource(
+        default GrpcEndpointConsumerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
             setProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
@@ -408,7 +402,7 @@ public interface GrpcEndpointBuilderFactory {
     public interface AdvancedGrpcEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GrpcEndpointConsumerBuilder basic() {
+        default GrpcEndpointConsumerBuilder basic() {
             return (GrpcEndpointConsumerBuilder) this;
         }
         /**
@@ -420,7 +414,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -434,7 +428,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -444,7 +438,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
+        default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -455,7 +449,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
+        default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -466,7 +460,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -477,7 +471,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -488,7 +482,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointConsumerBuilder synchronous(
+        default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -499,7 +493,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointConsumerBuilder synchronous(
+        default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -512,7 +506,7 @@ public interface GrpcEndpointBuilderFactory {
     public static interface GrpcEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGrpcEndpointProducerBuilder advanced() {
+        default AdvancedGrpcEndpointProducerBuilder advanced() {
             return (AdvancedGrpcEndpointProducerBuilder) this;
         }
         /**
@@ -521,7 +515,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder host(String host) {
+        default GrpcEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -530,7 +524,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder port(int port) {
+        default GrpcEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -539,7 +533,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder port(String port) {
+        default GrpcEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -549,7 +543,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder service(String service) {
+        default GrpcEndpointProducerBuilder service(String service) {
             setProperty("service", service);
             return this;
         }
@@ -558,7 +552,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder flowControlWindow(
+        default GrpcEndpointProducerBuilder flowControlWindow(
                 int flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
@@ -568,7 +562,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder flowControlWindow(
+        default GrpcEndpointProducerBuilder flowControlWindow(
                 String flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
@@ -578,8 +572,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder maxMessageSize(
-                int maxMessageSize) {
+        default GrpcEndpointProducerBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -588,8 +581,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointProducerBuilder maxMessageSize(
-                String maxMessageSize) {
+        default GrpcEndpointProducerBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -606,7 +598,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder lazyStartProducer(
+        default GrpcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -624,7 +616,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder lazyStartProducer(
+        default GrpcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -634,7 +626,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder method(String method) {
+        default GrpcEndpointProducerBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -649,7 +641,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder producerStrategy(
+        default GrpcEndpointProducerBuilder producerStrategy(
                 GrpcProducerStrategy producerStrategy) {
             setProperty("producerStrategy", producerStrategy);
             return this;
@@ -665,7 +657,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder producerStrategy(
+        default GrpcEndpointProducerBuilder producerStrategy(
                 String producerStrategy) {
             setProperty("producerStrategy", producerStrategy);
             return this;
@@ -676,7 +668,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder streamRepliesTo(
+        default GrpcEndpointProducerBuilder streamRepliesTo(
                 String streamRepliesTo) {
             setProperty("streamRepliesTo", streamRepliesTo);
             return this;
@@ -686,7 +678,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GrpcEndpointProducerBuilder userAgent(String userAgent) {
+        default GrpcEndpointProducerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -696,7 +688,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder authenticationType(
+        default GrpcEndpointProducerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -707,7 +699,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder authenticationType(
+        default GrpcEndpointProducerBuilder authenticationType(
                 String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -719,7 +711,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder jwtAlgorithm(
+        default GrpcEndpointProducerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
@@ -731,8 +723,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder jwtAlgorithm(
-                String jwtAlgorithm) {
+        default GrpcEndpointProducerBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -741,7 +732,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
+        default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
             return this;
         }
@@ -750,7 +741,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
+        default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
             return this;
         }
@@ -759,7 +750,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
+        default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
             return this;
         }
@@ -768,7 +759,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder keyCertChainResource(
+        default GrpcEndpointProducerBuilder keyCertChainResource(
                 String keyCertChainResource) {
             setProperty("keyCertChainResource", keyCertChainResource);
             return this;
@@ -778,8 +769,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder keyPassword(
-                String keyPassword) {
+        default GrpcEndpointProducerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
             return this;
         }
@@ -788,8 +778,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder keyResource(
-                String keyResource) {
+        default GrpcEndpointProducerBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
             return this;
         }
@@ -799,7 +788,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder negotiationType(
+        default GrpcEndpointProducerBuilder negotiationType(
                 NegotiationType negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
@@ -811,7 +800,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder negotiationType(
+        default GrpcEndpointProducerBuilder negotiationType(
                 String negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
@@ -822,7 +811,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder serviceAccountResource(
+        default GrpcEndpointProducerBuilder serviceAccountResource(
                 String serviceAccountResource) {
             setProperty("serviceAccountResource", serviceAccountResource);
             return this;
@@ -833,7 +822,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointProducerBuilder trustCertCollectionResource(
+        default GrpcEndpointProducerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
             setProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
@@ -846,7 +835,7 @@ public interface GrpcEndpointBuilderFactory {
     public interface AdvancedGrpcEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GrpcEndpointProducerBuilder basic() {
+        default GrpcEndpointProducerBuilder basic() {
             return (GrpcEndpointProducerBuilder) this;
         }
         /**
@@ -855,7 +844,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -866,7 +855,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -877,7 +866,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointProducerBuilder synchronous(
+        default AdvancedGrpcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -888,7 +877,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointProducerBuilder synchronous(
+        default AdvancedGrpcEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -901,7 +890,7 @@ public interface GrpcEndpointBuilderFactory {
     public static interface GrpcEndpointBuilder
             extends
                 GrpcEndpointConsumerBuilder, GrpcEndpointProducerBuilder {
-        public default AdvancedGrpcEndpointBuilder advanced() {
+        default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
         }
         /**
@@ -910,7 +899,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder host(String host) {
+        default GrpcEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -919,7 +908,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder port(int port) {
+        default GrpcEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -928,7 +917,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder port(String port) {
+        default GrpcEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -938,7 +927,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder service(String service) {
+        default GrpcEndpointBuilder service(String service) {
             setProperty("service", service);
             return this;
         }
@@ -947,8 +936,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder flowControlWindow(
-                int flowControlWindow) {
+        default GrpcEndpointBuilder flowControlWindow(int flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
         }
@@ -957,8 +945,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder flowControlWindow(
-                String flowControlWindow) {
+        default GrpcEndpointBuilder flowControlWindow(String flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
             return this;
         }
@@ -967,7 +954,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
+        default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -976,7 +963,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default GrpcEndpointBuilder maxMessageSize(String maxMessageSize) {
+        default GrpcEndpointBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
             return this;
         }
@@ -986,7 +973,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder authenticationType(
+        default GrpcEndpointBuilder authenticationType(
                 GrpcAuthType authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -997,8 +984,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder authenticationType(
-                String authenticationType) {
+        default GrpcEndpointBuilder authenticationType(String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
         }
@@ -1009,8 +995,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointBuilder jwtAlgorithm(
-                JwtAlgorithm jwtAlgorithm) {
+        default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -1021,7 +1006,7 @@ public interface GrpcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
+        default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
             return this;
         }
@@ -1030,7 +1015,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
+        default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
             return this;
         }
@@ -1039,7 +1024,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
+        default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
             return this;
         }
@@ -1048,7 +1033,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
+        default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
             return this;
         }
@@ -1057,7 +1042,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder keyCertChainResource(
+        default GrpcEndpointBuilder keyCertChainResource(
                 String keyCertChainResource) {
             setProperty("keyCertChainResource", keyCertChainResource);
             return this;
@@ -1067,7 +1052,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder keyPassword(String keyPassword) {
+        default GrpcEndpointBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
             return this;
         }
@@ -1076,7 +1061,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder keyResource(String keyResource) {
+        default GrpcEndpointBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
             return this;
         }
@@ -1086,7 +1071,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder negotiationType(
+        default GrpcEndpointBuilder negotiationType(
                 NegotiationType negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
@@ -1098,8 +1083,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>io.grpc.netty.NegotiationType</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder negotiationType(
-                String negotiationType) {
+        default GrpcEndpointBuilder negotiationType(String negotiationType) {
             setProperty("negotiationType", negotiationType);
             return this;
         }
@@ -1109,7 +1093,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder serviceAccountResource(
+        default GrpcEndpointBuilder serviceAccountResource(
                 String serviceAccountResource) {
             setProperty("serviceAccountResource", serviceAccountResource);
             return this;
@@ -1120,7 +1104,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GrpcEndpointBuilder trustCertCollectionResource(
+        default GrpcEndpointBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
             setProperty("trustCertCollectionResource", trustCertCollectionResource);
             return this;
@@ -1133,7 +1117,7 @@ public interface GrpcEndpointBuilderFactory {
     public static interface AdvancedGrpcEndpointBuilder
             extends
                 AdvancedGrpcEndpointConsumerBuilder, AdvancedGrpcEndpointProducerBuilder {
-        public default GrpcEndpointBuilder basic() {
+        default GrpcEndpointBuilder basic() {
             return (GrpcEndpointBuilder) this;
         }
         /**
@@ -1142,7 +1126,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1153,7 +1137,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointBuilder basicPropertyBinding(
+        default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1164,8 +1148,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGrpcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1175,8 +1158,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrpcEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGrpcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1225,7 +1207,7 @@ public interface GrpcEndpointBuilderFactory {
      * with protobuf dataformat Creates a builder to build endpoints for the
      * gRPC component.
      */
-    public default GrpcEndpointBuilder grpc(String path) {
+    default GrpcEndpointBuilder grpc(String path) {
         class GrpcEndpointBuilderImpl extends AbstractEndpointBuilder implements GrpcEndpointBuilder, AdvancedGrpcEndpointBuilder {
             public GrpcEndpointBuilderImpl(String path) {
                 super("grpc", path);

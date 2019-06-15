@@ -40,7 +40,7 @@ public interface RestletEndpointBuilderFactory {
     public interface RestletEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedRestletEndpointConsumerBuilder advanced() {
+        default AdvancedRestletEndpointConsumerBuilder advanced() {
             return (AdvancedRestletEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder protocol(String protocol) {
+        default RestletEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -57,7 +57,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder host(String host) {
+        default RestletEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -66,7 +66,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder port(int port) {
+        default RestletEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -75,7 +75,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder port(String port) {
+        default RestletEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -84,8 +84,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder uriPattern(
-                String uriPattern) {
+        default RestletEndpointConsumerBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
             return this;
         }
@@ -96,7 +95,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder restletMethod(
+        default RestletEndpointConsumerBuilder restletMethod(
                 Object restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
@@ -109,7 +108,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointConsumerBuilder restletMethod(
+        default RestletEndpointConsumerBuilder restletMethod(
                 String restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
@@ -125,7 +124,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RestletEndpointConsumerBuilder bridgeErrorHandler(
+        default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +140,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RestletEndpointConsumerBuilder bridgeErrorHandler(
+        default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -155,7 +154,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>org.restlet.data.Method[]</code> type.
          * @group consumer
          */
-        public default RestletEndpointConsumerBuilder restletMethods(
+        default RestletEndpointConsumerBuilder restletMethods(
                 Object[] restletMethods) {
             setProperty("restletMethods", restletMethods);
             return this;
@@ -170,7 +169,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.restlet.data.Method[]</code> type.
          * @group consumer
          */
-        public default RestletEndpointConsumerBuilder restletMethods(
+        default RestletEndpointConsumerBuilder restletMethods(
                 String restletMethods) {
             setProperty("restletMethods", restletMethods);
             return this;
@@ -181,7 +180,7 @@ public interface RestletEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group security
          */
-        public default RestletEndpointConsumerBuilder restletRealm(
+        default RestletEndpointConsumerBuilder restletRealm(
                 Map<String, String> restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
@@ -193,8 +192,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default RestletEndpointConsumerBuilder restletRealm(
-                String restletRealm) {
+        default RestletEndpointConsumerBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
         }
@@ -204,7 +202,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointConsumerBuilder sslContextParameters(
+        default RestletEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -215,7 +213,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointConsumerBuilder sslContextParameters(
+        default RestletEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -228,7 +226,7 @@ public interface RestletEndpointBuilderFactory {
     public interface AdvancedRestletEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default RestletEndpointConsumerBuilder basic() {
+        default RestletEndpointConsumerBuilder basic() {
             return (RestletEndpointConsumerBuilder) this;
         }
         /**
@@ -245,7 +243,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
+        default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -264,7 +262,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
+        default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -278,7 +276,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -292,7 +290,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -302,7 +300,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder exchangePattern(
+        default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -313,7 +311,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestletEndpointConsumerBuilder exchangePattern(
+        default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -324,7 +322,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -335,7 +333,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -347,7 +345,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -359,7 +357,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -371,7 +369,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder restletBinding(
+        default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 Object restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -383,7 +381,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder restletBinding(
+        default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 String restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -394,7 +392,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder synchronous(
+        default AdvancedRestletEndpointConsumerBuilder synchronous(
                 Boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -406,7 +404,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointConsumerBuilder synchronous(
+        default AdvancedRestletEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -419,7 +417,7 @@ public interface RestletEndpointBuilderFactory {
     public static interface RestletEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedRestletEndpointProducerBuilder advanced() {
+        default AdvancedRestletEndpointProducerBuilder advanced() {
             return (AdvancedRestletEndpointProducerBuilder) this;
         }
         /**
@@ -427,7 +425,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder protocol(String protocol) {
+        default RestletEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -436,7 +434,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder host(String host) {
+        default RestletEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -445,7 +443,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder port(int port) {
+        default RestletEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -454,7 +452,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder port(String port) {
+        default RestletEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -463,8 +461,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder uriPattern(
-                String uriPattern) {
+        default RestletEndpointProducerBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
             return this;
         }
@@ -475,7 +472,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder restletMethod(
+        default RestletEndpointProducerBuilder restletMethod(
                 Object restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
@@ -488,7 +485,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointProducerBuilder restletMethod(
+        default RestletEndpointProducerBuilder restletMethod(
                 String restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
@@ -499,8 +496,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder connectTimeout(
-                int connectTimeout) {
+        default RestletEndpointProducerBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -510,7 +506,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder connectTimeout(
+        default RestletEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -521,7 +517,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder cookieHandler(
+        default RestletEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
@@ -532,7 +528,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder cookieHandler(
+        default RestletEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
@@ -550,7 +546,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder lazyStartProducer(
+        default RestletEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -568,7 +564,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder lazyStartProducer(
+        default RestletEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,8 +574,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder socketTimeout(
-                int socketTimeout) {
+        default RestletEndpointProducerBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -588,7 +583,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder socketTimeout(
+        default RestletEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
@@ -600,7 +595,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder throwExceptionOnFailure(
+        default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -612,7 +607,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default RestletEndpointProducerBuilder throwExceptionOnFailure(
+        default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -623,7 +618,7 @@ public interface RestletEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group security
          */
-        public default RestletEndpointProducerBuilder restletRealm(
+        default RestletEndpointProducerBuilder restletRealm(
                 Map<String, String> restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
@@ -635,8 +630,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default RestletEndpointProducerBuilder restletRealm(
-                String restletRealm) {
+        default RestletEndpointProducerBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
         }
@@ -646,7 +640,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointProducerBuilder sslContextParameters(
+        default RestletEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -657,7 +651,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointProducerBuilder sslContextParameters(
+        default RestletEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -670,7 +664,7 @@ public interface RestletEndpointBuilderFactory {
     public interface AdvancedRestletEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default RestletEndpointProducerBuilder basic() {
+        default RestletEndpointProducerBuilder basic() {
             return (RestletEndpointProducerBuilder) this;
         }
         /**
@@ -684,7 +678,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedRestletEndpointProducerBuilder autoCloseStream(
+        default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 boolean autoCloseStream) {
             setProperty("autoCloseStream", autoCloseStream);
             return this;
@@ -700,7 +694,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedRestletEndpointProducerBuilder autoCloseStream(
+        default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 String autoCloseStream) {
             setProperty("autoCloseStream", autoCloseStream);
             return this;
@@ -717,7 +711,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedRestletEndpointProducerBuilder streamRepresentation(
+        default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 boolean streamRepresentation) {
             setProperty("streamRepresentation", streamRepresentation);
             return this;
@@ -734,7 +728,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedRestletEndpointProducerBuilder streamRepresentation(
+        default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 String streamRepresentation) {
             setProperty("streamRepresentation", streamRepresentation);
             return this;
@@ -745,7 +739,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -756,7 +750,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -768,7 +762,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -780,7 +774,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -792,7 +786,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder restletBinding(
+        default AdvancedRestletEndpointProducerBuilder restletBinding(
                 Object restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -804,7 +798,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder restletBinding(
+        default AdvancedRestletEndpointProducerBuilder restletBinding(
                 String restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -815,7 +809,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder synchronous(
+        default AdvancedRestletEndpointProducerBuilder synchronous(
                 Boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -827,7 +821,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointProducerBuilder synchronous(
+        default AdvancedRestletEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -840,7 +834,7 @@ public interface RestletEndpointBuilderFactory {
     public static interface RestletEndpointBuilder
             extends
                 RestletEndpointConsumerBuilder, RestletEndpointProducerBuilder {
-        public default AdvancedRestletEndpointBuilder advanced() {
+        default AdvancedRestletEndpointBuilder advanced() {
             return (AdvancedRestletEndpointBuilder) this;
         }
         /**
@@ -848,7 +842,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder protocol(String protocol) {
+        default RestletEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -857,7 +851,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder host(String host) {
+        default RestletEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -866,7 +860,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder port(int port) {
+        default RestletEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -875,7 +869,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder port(String port) {
+        default RestletEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -884,7 +878,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder uriPattern(String uriPattern) {
+        default RestletEndpointBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
             return this;
         }
@@ -895,7 +889,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder restletMethod(Object restletMethod) {
+        default RestletEndpointBuilder restletMethod(Object restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
         }
@@ -907,7 +901,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.restlet.data.Method</code> type.
          * @group common
          */
-        public default RestletEndpointBuilder restletMethod(String restletMethod) {
+        default RestletEndpointBuilder restletMethod(String restletMethod) {
             setProperty("restletMethod", restletMethod);
             return this;
         }
@@ -917,7 +911,7 @@ public interface RestletEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group security
          */
-        public default RestletEndpointBuilder restletRealm(
+        default RestletEndpointBuilder restletRealm(
                 Map<String, String> restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
@@ -929,7 +923,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default RestletEndpointBuilder restletRealm(String restletRealm) {
+        default RestletEndpointBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
             return this;
         }
@@ -939,7 +933,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointBuilder sslContextParameters(
+        default RestletEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -950,7 +944,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default RestletEndpointBuilder sslContextParameters(
+        default RestletEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -963,7 +957,7 @@ public interface RestletEndpointBuilderFactory {
     public static interface AdvancedRestletEndpointBuilder
             extends
                 AdvancedRestletEndpointConsumerBuilder, AdvancedRestletEndpointProducerBuilder {
-        public default RestletEndpointBuilder basic() {
+        default RestletEndpointBuilder basic() {
             return (RestletEndpointBuilder) this;
         }
         /**
@@ -972,7 +966,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -983,7 +977,7 @@ public interface RestletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder basicPropertyBinding(
+        default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -995,7 +989,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1007,7 +1001,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder headerFilterStrategy(
+        default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1019,7 +1013,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder restletBinding(
+        default AdvancedRestletEndpointBuilder restletBinding(
                 Object restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -1031,7 +1025,7 @@ public interface RestletEndpointBuilderFactory {
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder restletBinding(
+        default AdvancedRestletEndpointBuilder restletBinding(
                 String restletBinding) {
             setProperty("restletBinding", restletBinding);
             return this;
@@ -1042,8 +1036,7 @@ public interface RestletEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder synchronous(
-                Boolean synchronous) {
+        default AdvancedRestletEndpointBuilder synchronous(Boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1054,8 +1047,7 @@ public interface RestletEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedRestletEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedRestletEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1064,7 +1056,7 @@ public interface RestletEndpointBuilderFactory {
      * Component for consuming and producing Restful resources using Restlet.
      * Creates a builder to build endpoints for the Restlet component.
      */
-    public default RestletEndpointBuilder restlet(String path) {
+    default RestletEndpointBuilder restlet(String path) {
         class RestletEndpointBuilderImpl extends AbstractEndpointBuilder implements RestletEndpointBuilder, AdvancedRestletEndpointBuilder {
             public RestletEndpointBuilderImpl(String path) {
                 super("restlet", path);

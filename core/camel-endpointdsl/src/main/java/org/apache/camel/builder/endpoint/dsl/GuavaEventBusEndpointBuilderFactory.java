@@ -39,7 +39,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public interface GuavaEventBusEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder advanced() {
+        default AdvancedGuavaEventBusEndpointConsumerBuilder advanced() {
             return (AdvancedGuavaEventBusEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointConsumerBuilder eventBusRef(
+        default GuavaEventBusEndpointConsumerBuilder eventBusRef(
                 String eventBusRef) {
             setProperty("eventBusRef", eventBusRef);
             return this;
@@ -63,7 +63,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointConsumerBuilder eventClass(
+        default GuavaEventBusEndpointConsumerBuilder eventClass(
                 Class<Object> eventClass) {
             setProperty("eventClass", eventClass);
             return this;
@@ -79,7 +79,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointConsumerBuilder eventClass(
+        default GuavaEventBusEndpointConsumerBuilder eventClass(
                 String eventClass) {
             setProperty("eventClass", eventClass);
             return this;
@@ -94,7 +94,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointConsumerBuilder listenerInterface(
+        default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -109,7 +109,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointConsumerBuilder listenerInterface(
+        default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 String listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -125,7 +125,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
+        default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +141,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
+        default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -154,7 +154,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public interface AdvancedGuavaEventBusEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GuavaEventBusEndpointConsumerBuilder basic() {
+        default GuavaEventBusEndpointConsumerBuilder basic() {
             return (GuavaEventBusEndpointConsumerBuilder) this;
         }
         /**
@@ -166,7 +166,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -180,7 +180,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -190,7 +190,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -201,7 +201,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -212,7 +212,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -223,7 +223,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -234,7 +234,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -245,7 +245,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -258,7 +258,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public static interface GuavaEventBusEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGuavaEventBusEndpointProducerBuilder advanced() {
+        default AdvancedGuavaEventBusEndpointProducerBuilder advanced() {
             return (AdvancedGuavaEventBusEndpointProducerBuilder) this;
         }
         /**
@@ -266,7 +266,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointProducerBuilder eventBusRef(
+        default GuavaEventBusEndpointProducerBuilder eventBusRef(
                 String eventBusRef) {
             setProperty("eventBusRef", eventBusRef);
             return this;
@@ -282,7 +282,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointProducerBuilder eventClass(
+        default GuavaEventBusEndpointProducerBuilder eventClass(
                 Class<Object> eventClass) {
             setProperty("eventClass", eventClass);
             return this;
@@ -298,7 +298,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointProducerBuilder eventClass(
+        default GuavaEventBusEndpointProducerBuilder eventClass(
                 String eventClass) {
             setProperty("eventClass", eventClass);
             return this;
@@ -313,7 +313,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointProducerBuilder listenerInterface(
+        default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -328,7 +328,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointProducerBuilder listenerInterface(
+        default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 String listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -346,7 +346,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
+        default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -364,7 +364,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
+        default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -377,7 +377,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public interface AdvancedGuavaEventBusEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GuavaEventBusEndpointProducerBuilder basic() {
+        default GuavaEventBusEndpointProducerBuilder basic() {
             return (GuavaEventBusEndpointProducerBuilder) this;
         }
         /**
@@ -386,7 +386,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -397,7 +397,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -408,7 +408,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -419,7 +419,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -432,7 +432,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public static interface GuavaEventBusEndpointBuilder
             extends
                 GuavaEventBusEndpointConsumerBuilder, GuavaEventBusEndpointProducerBuilder {
-        public default AdvancedGuavaEventBusEndpointBuilder advanced() {
+        default AdvancedGuavaEventBusEndpointBuilder advanced() {
             return (AdvancedGuavaEventBusEndpointBuilder) this;
         }
         /**
@@ -440,8 +440,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointBuilder eventBusRef(
-                String eventBusRef) {
+        default GuavaEventBusEndpointBuilder eventBusRef(String eventBusRef) {
             setProperty("eventBusRef", eventBusRef);
             return this;
         }
@@ -456,8 +455,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointBuilder eventClass(
-                Class<Object> eventClass) {
+        default GuavaEventBusEndpointBuilder eventClass(Class<Object> eventClass) {
             setProperty("eventClass", eventClass);
             return this;
         }
@@ -472,7 +470,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointBuilder eventClass(String eventClass) {
+        default GuavaEventBusEndpointBuilder eventClass(String eventClass) {
             setProperty("eventClass", eventClass);
             return this;
         }
@@ -486,7 +484,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GuavaEventBusEndpointBuilder listenerInterface(
+        default GuavaEventBusEndpointBuilder listenerInterface(
                 Class<Object> listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -501,7 +499,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default GuavaEventBusEndpointBuilder listenerInterface(
+        default GuavaEventBusEndpointBuilder listenerInterface(
                 String listenerInterface) {
             setProperty("listenerInterface", listenerInterface);
             return this;
@@ -514,7 +512,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     public static interface AdvancedGuavaEventBusEndpointBuilder
             extends
                 AdvancedGuavaEventBusEndpointConsumerBuilder, AdvancedGuavaEventBusEndpointProducerBuilder {
-        public default GuavaEventBusEndpointBuilder basic() {
+        default GuavaEventBusEndpointBuilder basic() {
             return (GuavaEventBusEndpointBuilder) this;
         }
         /**
@@ -523,7 +521,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -534,7 +532,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
+        default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -545,7 +543,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -556,7 +554,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGuavaEventBusEndpointBuilder synchronous(
+        default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -567,7 +565,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
      * and Google Guava EventBus. Creates a builder to build endpoints for the
      * Guava EventBus component.
      */
-    public default GuavaEventBusEndpointBuilder guavaEventBus(String path) {
+    default GuavaEventBusEndpointBuilder guavaEventBus(String path) {
         class GuavaEventBusEndpointBuilderImpl extends AbstractEndpointBuilder implements GuavaEventBusEndpointBuilder, AdvancedGuavaEventBusEndpointBuilder {
             public GuavaEventBusEndpointBuilderImpl(String path) {
                 super("guava-eventbus", path);

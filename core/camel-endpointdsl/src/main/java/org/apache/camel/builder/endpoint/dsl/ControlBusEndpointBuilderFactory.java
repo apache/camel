@@ -39,7 +39,7 @@ public interface ControlBusEndpointBuilderFactory {
     public static interface ControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedControlBusEndpointBuilder advanced() {
+        default AdvancedControlBusEndpointBuilder advanced() {
             return (AdvancedControlBusEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder command(String command) {
+        default ControlBusEndpointBuilder command(String command) {
             setProperty("command", command);
             return this;
         }
@@ -58,7 +58,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.spi.Language</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder language(Language language) {
+        default ControlBusEndpointBuilder language(Language language) {
             setProperty("language", language);
             return this;
         }
@@ -70,7 +70,7 @@ public interface ControlBusEndpointBuilderFactory {
          * <code>org.apache.camel.spi.Language</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder language(String language) {
+        default ControlBusEndpointBuilder language(String language) {
             setProperty("language", language);
             return this;
         }
@@ -87,7 +87,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder action(String action) {
+        default ControlBusEndpointBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -98,7 +98,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder async(boolean async) {
+        default ControlBusEndpointBuilder async(boolean async) {
             setProperty("async", async);
             return this;
         }
@@ -109,7 +109,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder async(String async) {
+        default ControlBusEndpointBuilder async(String async) {
             setProperty("async", async);
             return this;
         }
@@ -119,8 +119,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder loggingLevel(
-                LoggingLevel loggingLevel) {
+        default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
             setProperty("loggingLevel", loggingLevel);
             return this;
         }
@@ -131,8 +130,7 @@ public interface ControlBusEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder loggingLevel(
-                String loggingLevel) {
+        default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {
             setProperty("loggingLevel", loggingLevel);
             return this;
         }
@@ -141,7 +139,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder restartDelay(int restartDelay) {
+        default ControlBusEndpointBuilder restartDelay(int restartDelay) {
             setProperty("restartDelay", restartDelay);
             return this;
         }
@@ -150,8 +148,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder restartDelay(
-                String restartDelay) {
+        default ControlBusEndpointBuilder restartDelay(String restartDelay) {
             setProperty("restartDelay", restartDelay);
             return this;
         }
@@ -161,7 +158,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ControlBusEndpointBuilder routeId(String routeId) {
+        default ControlBusEndpointBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
             return this;
         }
@@ -173,7 +170,7 @@ public interface ControlBusEndpointBuilderFactory {
     public static interface AdvancedControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ControlBusEndpointBuilder basic() {
+        default ControlBusEndpointBuilder basic() {
             return (ControlBusEndpointBuilder) this;
         }
         /**
@@ -182,7 +179,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedControlBusEndpointBuilder basicPropertyBinding(
+        default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -193,7 +190,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedControlBusEndpointBuilder basicPropertyBinding(
+        default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -204,7 +201,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedControlBusEndpointBuilder synchronous(
+        default AdvancedControlBusEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -215,8 +212,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedControlBusEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -226,7 +222,7 @@ public interface ControlBusEndpointBuilderFactory {
      * based on the Control Bus EIP pattern. Creates a builder to build
      * endpoints for the Control Bus component.
      */
-    public default ControlBusEndpointBuilder controlBus(String path) {
+    default ControlBusEndpointBuilder controlBus(String path) {
         class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
                 super("controlbus", path);

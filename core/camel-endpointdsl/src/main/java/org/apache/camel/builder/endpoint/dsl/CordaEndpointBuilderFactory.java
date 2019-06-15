@@ -38,7 +38,7 @@ public interface CordaEndpointBuilderFactory {
     public interface CordaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedCordaEndpointConsumerBuilder advanced() {
+        default AdvancedCordaEndpointConsumerBuilder advanced() {
             return (AdvancedCordaEndpointConsumerBuilder) this;
         }
         /**
@@ -48,8 +48,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointConsumerBuilder configuration(
-                Object configuration) {
+        default CordaEndpointConsumerBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -60,8 +59,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointConsumerBuilder configuration(
-                String configuration) {
+        default CordaEndpointConsumerBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -76,7 +74,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CordaEndpointConsumerBuilder bridgeErrorHandler(
+        default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -92,7 +90,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CordaEndpointConsumerBuilder bridgeErrorHandler(
+        default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -105,7 +103,7 @@ public interface CordaEndpointBuilderFactory {
     public interface AdvancedCordaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default CordaEndpointConsumerBuilder basic() {
+        default CordaEndpointConsumerBuilder basic() {
             return (CordaEndpointConsumerBuilder) this;
         }
         /**
@@ -117,7 +115,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -131,7 +129,7 @@ public interface CordaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -141,7 +139,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCordaEndpointConsumerBuilder exchangePattern(
+        default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -152,7 +150,7 @@ public interface CordaEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCordaEndpointConsumerBuilder exchangePattern(
+        default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -163,7 +161,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -174,7 +172,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -185,7 +183,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointConsumerBuilder synchronous(
+        default AdvancedCordaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -196,7 +194,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointConsumerBuilder synchronous(
+        default AdvancedCordaEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -209,7 +207,7 @@ public interface CordaEndpointBuilderFactory {
     public static interface CordaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCordaEndpointProducerBuilder advanced() {
+        default AdvancedCordaEndpointProducerBuilder advanced() {
             return (AdvancedCordaEndpointProducerBuilder) this;
         }
         /**
@@ -219,8 +217,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointProducerBuilder configuration(
-                Object configuration) {
+        default CordaEndpointProducerBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -231,8 +228,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointProducerBuilder configuration(
-                String configuration) {
+        default CordaEndpointProducerBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -249,7 +245,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CordaEndpointProducerBuilder lazyStartProducer(
+        default CordaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -267,7 +263,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CordaEndpointProducerBuilder lazyStartProducer(
+        default CordaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -280,7 +276,7 @@ public interface CordaEndpointBuilderFactory {
     public interface AdvancedCordaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default CordaEndpointProducerBuilder basic() {
+        default CordaEndpointProducerBuilder basic() {
             return (CordaEndpointProducerBuilder) this;
         }
         /**
@@ -289,7 +285,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -300,7 +296,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -311,7 +307,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointProducerBuilder synchronous(
+        default AdvancedCordaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -322,7 +318,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointProducerBuilder synchronous(
+        default AdvancedCordaEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -335,7 +331,7 @@ public interface CordaEndpointBuilderFactory {
     public static interface CordaEndpointBuilder
             extends
                 CordaEndpointConsumerBuilder, CordaEndpointProducerBuilder {
-        public default AdvancedCordaEndpointBuilder advanced() {
+        default AdvancedCordaEndpointBuilder advanced() {
             return (AdvancedCordaEndpointBuilder) this;
         }
         /**
@@ -345,7 +341,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointBuilder configuration(Object configuration) {
+        default CordaEndpointBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -356,7 +352,7 @@ public interface CordaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CordaEndpointBuilder configuration(String configuration) {
+        default CordaEndpointBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -368,7 +364,7 @@ public interface CordaEndpointBuilderFactory {
     public static interface AdvancedCordaEndpointBuilder
             extends
                 AdvancedCordaEndpointConsumerBuilder, AdvancedCordaEndpointProducerBuilder {
-        public default CordaEndpointBuilder basic() {
+        default CordaEndpointBuilder basic() {
             return (CordaEndpointBuilder) this;
         }
         /**
@@ -377,7 +373,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -388,7 +384,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointBuilder basicPropertyBinding(
+        default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -399,8 +395,7 @@ public interface CordaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCordaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -410,8 +405,7 @@ public interface CordaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCordaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCordaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -420,7 +414,7 @@ public interface CordaEndpointBuilderFactory {
      * The corda component uses the corda-rpc to interact with corda nodes.
      * Creates a builder to build endpoints for the corda component.
      */
-    public default CordaEndpointBuilder corda(String path) {
+    default CordaEndpointBuilder corda(String path) {
         class CordaEndpointBuilderImpl extends AbstractEndpointBuilder implements CordaEndpointBuilder, AdvancedCordaEndpointBuilder {
             public CordaEndpointBuilderImpl(String path) {
                 super("corda", path);

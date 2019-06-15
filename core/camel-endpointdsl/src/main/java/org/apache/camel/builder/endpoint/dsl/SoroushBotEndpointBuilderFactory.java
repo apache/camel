@@ -38,7 +38,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public interface SoroushBotEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSoroushBotEndpointConsumerBuilder advanced() {
+        default AdvancedSoroushBotEndpointConsumerBuilder advanced() {
             return (AdvancedSoroushBotEndpointConsumerBuilder) this;
         }
         /**
@@ -49,8 +49,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointConsumerBuilder endpoint(
-                Endpoint endpoint) {
+        default SoroushBotEndpointConsumerBuilder endpoint(Endpoint endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -62,8 +61,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointConsumerBuilder endpoint(
-                String endpoint) {
+        default SoroushBotEndpointConsumerBuilder endpoint(String endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -78,7 +76,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
+        default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -94,7 +92,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
+        default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,7 +106,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder concurrentConsumers(
+        default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -123,7 +121,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder concurrentConsumers(
+        default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -139,7 +137,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
+        default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 Integer queueCapacityPerThread) {
             setProperty("queueCapacityPerThread", queueCapacityPerThread);
             return this;
@@ -156,7 +154,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
+        default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 String queueCapacityPerThread) {
             setProperty("queueCapacityPerThread", queueCapacityPerThread);
             return this;
@@ -168,7 +166,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointConsumerBuilder autoDownload(
+        default SoroushBotEndpointConsumerBuilder autoDownload(
                 Boolean autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
@@ -181,7 +179,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group getMessage
          */
-        public default SoroushBotEndpointConsumerBuilder autoDownload(
+        default SoroushBotEndpointConsumerBuilder autoDownload(
                 String autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
@@ -193,7 +191,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -205,7 +203,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -217,7 +215,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointConsumerBuilder downloadThumbnail(
+        default SoroushBotEndpointConsumerBuilder downloadThumbnail(
                 Boolean downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -230,7 +228,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointConsumerBuilder downloadThumbnail(
+        default SoroushBotEndpointConsumerBuilder downloadThumbnail(
                 String downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -242,7 +240,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointConsumerBuilder forceDownload(
+        default SoroushBotEndpointConsumerBuilder forceDownload(
                 Boolean forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
@@ -255,7 +253,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointConsumerBuilder forceDownload(
+        default SoroushBotEndpointConsumerBuilder forceDownload(
                 String forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
@@ -270,7 +268,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder backOffStrategy(
+        default SoroushBotEndpointConsumerBuilder backOffStrategy(
                 String backOffStrategy) {
             setProperty("backOffStrategy", backOffStrategy);
             return this;
@@ -280,7 +278,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder connectionTimeout(
+        default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -291,7 +289,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder connectionTimeout(
+        default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -303,7 +301,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
+        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 Integer maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -316,7 +314,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
+        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -327,7 +325,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 Long maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -338,7 +336,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -349,7 +347,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 Long retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -360,7 +358,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -371,7 +369,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
+        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 Long retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -382,7 +380,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
+        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -395,7 +393,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryWaitingTime(
+        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 Long retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
@@ -408,7 +406,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointConsumerBuilder retryWaitingTime(
+        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 String retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
@@ -419,7 +417,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SoroushBotEndpointConsumerBuilder authorizationToken(
+        default SoroushBotEndpointConsumerBuilder authorizationToken(
                 String authorizationToken) {
             setProperty("authorizationToken", authorizationToken);
             return this;
@@ -432,7 +430,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointConsumerBuilder autoUploadFile(
+        default SoroushBotEndpointConsumerBuilder autoUploadFile(
                 Boolean autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
@@ -446,7 +444,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointConsumerBuilder autoUploadFile(
+        default SoroushBotEndpointConsumerBuilder autoUploadFile(
                 String autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
@@ -459,7 +457,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointConsumerBuilder forceUpload(
+        default SoroushBotEndpointConsumerBuilder forceUpload(
                 Boolean forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
@@ -473,8 +471,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointConsumerBuilder forceUpload(
-                String forceUpload) {
+        default SoroushBotEndpointConsumerBuilder forceUpload(String forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
         }
@@ -486,7 +483,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public interface AdvancedSoroushBotEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SoroushBotEndpointConsumerBuilder basic() {
+        default SoroushBotEndpointConsumerBuilder basic() {
             return (SoroushBotEndpointConsumerBuilder) this;
         }
         /**
@@ -498,7 +495,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -512,7 +509,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -522,7 +519,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
+        default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -533,7 +530,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
+        default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -544,7 +541,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -555,7 +552,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -566,7 +563,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
+        default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -577,7 +574,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
+        default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -590,7 +587,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public static interface SoroushBotEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSoroushBotEndpointProducerBuilder advanced() {
+        default AdvancedSoroushBotEndpointProducerBuilder advanced() {
             return (AdvancedSoroushBotEndpointProducerBuilder) this;
         }
         /**
@@ -601,8 +598,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointProducerBuilder endpoint(
-                Endpoint endpoint) {
+        default SoroushBotEndpointProducerBuilder endpoint(Endpoint endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -614,8 +610,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointProducerBuilder endpoint(
-                String endpoint) {
+        default SoroushBotEndpointProducerBuilder endpoint(String endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -632,7 +627,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SoroushBotEndpointProducerBuilder lazyStartProducer(
+        default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -650,7 +645,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SoroushBotEndpointProducerBuilder lazyStartProducer(
+        default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -662,7 +657,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointProducerBuilder autoDownload(
+        default SoroushBotEndpointProducerBuilder autoDownload(
                 Boolean autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
@@ -675,7 +670,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group getMessage
          */
-        public default SoroushBotEndpointProducerBuilder autoDownload(
+        default SoroushBotEndpointProducerBuilder autoDownload(
                 String autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
@@ -687,7 +682,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -699,7 +694,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -711,7 +706,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointProducerBuilder downloadThumbnail(
+        default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 Boolean downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -724,7 +719,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointProducerBuilder downloadThumbnail(
+        default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 String downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -736,7 +731,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointProducerBuilder forceDownload(
+        default SoroushBotEndpointProducerBuilder forceDownload(
                 Boolean forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
@@ -749,7 +744,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointProducerBuilder forceDownload(
+        default SoroushBotEndpointProducerBuilder forceDownload(
                 String forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
@@ -764,7 +759,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder backOffStrategy(
+        default SoroushBotEndpointProducerBuilder backOffStrategy(
                 String backOffStrategy) {
             setProperty("backOffStrategy", backOffStrategy);
             return this;
@@ -774,7 +769,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder connectionTimeout(
+        default SoroushBotEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -785,7 +780,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder connectionTimeout(
+        default SoroushBotEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -797,7 +792,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder maxConnectionRetry(
+        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 Integer maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -810,7 +805,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder maxConnectionRetry(
+        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -821,7 +816,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 Long maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -832,7 +827,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -843,7 +838,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 Long retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -854,7 +849,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -865,7 +860,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryLinearIncrement(
+        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 Long retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -876,7 +871,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryLinearIncrement(
+        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -889,7 +884,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryWaitingTime(
+        default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 Long retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
@@ -902,7 +897,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointProducerBuilder retryWaitingTime(
+        default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 String retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
@@ -913,7 +908,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SoroushBotEndpointProducerBuilder authorizationToken(
+        default SoroushBotEndpointProducerBuilder authorizationToken(
                 String authorizationToken) {
             setProperty("authorizationToken", authorizationToken);
             return this;
@@ -926,7 +921,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointProducerBuilder autoUploadFile(
+        default SoroushBotEndpointProducerBuilder autoUploadFile(
                 Boolean autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
@@ -940,7 +935,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointProducerBuilder autoUploadFile(
+        default SoroushBotEndpointProducerBuilder autoUploadFile(
                 String autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
@@ -953,7 +948,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointProducerBuilder forceUpload(
+        default SoroushBotEndpointProducerBuilder forceUpload(
                 Boolean forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
@@ -967,8 +962,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointProducerBuilder forceUpload(
-                String forceUpload) {
+        default SoroushBotEndpointProducerBuilder forceUpload(String forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
         }
@@ -980,7 +974,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public interface AdvancedSoroushBotEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SoroushBotEndpointProducerBuilder basic() {
+        default SoroushBotEndpointProducerBuilder basic() {
             return (SoroushBotEndpointProducerBuilder) this;
         }
         /**
@@ -989,7 +983,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1000,7 +994,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1011,7 +1005,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointProducerBuilder synchronous(
+        default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1022,7 +1016,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointProducerBuilder synchronous(
+        default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1035,7 +1029,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public static interface SoroushBotEndpointBuilder
             extends
                 SoroushBotEndpointConsumerBuilder, SoroushBotEndpointProducerBuilder {
-        public default AdvancedSoroushBotEndpointBuilder advanced() {
+        default AdvancedSoroushBotEndpointBuilder advanced() {
             return (AdvancedSoroushBotEndpointBuilder) this;
         }
         /**
@@ -1046,7 +1040,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointBuilder endpoint(Endpoint endpoint) {
+        default SoroushBotEndpointBuilder endpoint(Endpoint endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -1058,7 +1052,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SoroushBotEndpointBuilder endpoint(String endpoint) {
+        default SoroushBotEndpointBuilder endpoint(String endpoint) {
             setProperty("endpoint", endpoint);
             return this;
         }
@@ -1069,8 +1063,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointBuilder autoDownload(
-                Boolean autoDownload) {
+        default SoroushBotEndpointBuilder autoDownload(Boolean autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
         }
@@ -1082,8 +1075,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group getMessage
          */
-        public default SoroushBotEndpointBuilder autoDownload(
-                String autoDownload) {
+        default SoroushBotEndpointBuilder autoDownload(String autoDownload) {
             setProperty("autoDownload", autoDownload);
             return this;
         }
@@ -1094,7 +1086,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -1106,7 +1098,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group getMessage
          */
-        public default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
+        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
             setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
             return this;
@@ -1118,7 +1110,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointBuilder downloadThumbnail(
+        default SoroushBotEndpointBuilder downloadThumbnail(
                 Boolean downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -1131,7 +1123,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointBuilder downloadThumbnail(
+        default SoroushBotEndpointBuilder downloadThumbnail(
                 String downloadThumbnail) {
             setProperty("downloadThumbnail", downloadThumbnail);
             return this;
@@ -1143,8 +1135,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointBuilder forceDownload(
-                Boolean forceDownload) {
+        default SoroushBotEndpointBuilder forceDownload(Boolean forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
         }
@@ -1156,8 +1147,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group downloadFile
          */
-        public default SoroushBotEndpointBuilder forceDownload(
-                String forceDownload) {
+        default SoroushBotEndpointBuilder forceDownload(String forceDownload) {
             setProperty("forceDownload", forceDownload);
             return this;
         }
@@ -1171,8 +1161,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder backOffStrategy(
-                String backOffStrategy) {
+        default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
             setProperty("backOffStrategy", backOffStrategy);
             return this;
         }
@@ -1181,7 +1170,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder connectionTimeout(
+        default SoroushBotEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1192,7 +1181,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder connectionTimeout(
+        default SoroushBotEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1204,7 +1193,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder maxConnectionRetry(
+        default SoroushBotEndpointBuilder maxConnectionRetry(
                 Integer maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -1217,7 +1206,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder maxConnectionRetry(
+        default SoroushBotEndpointBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
@@ -1228,7 +1217,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 Long maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -1239,7 +1228,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder maxRetryWaitingTime(
+        default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
             setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
@@ -1250,7 +1239,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 Long retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -1261,7 +1250,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryExponentialCoefficient(
+        default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
             setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
             return this;
@@ -1272,7 +1261,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryLinearIncrement(
+        default SoroushBotEndpointBuilder retryLinearIncrement(
                 Long retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -1283,7 +1272,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryLinearIncrement(
+        default SoroushBotEndpointBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
             setProperty("retryLinearIncrement", retryLinearIncrement);
             return this;
@@ -1296,8 +1285,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryWaitingTime(
-                Long retryWaitingTime) {
+        default SoroushBotEndpointBuilder retryWaitingTime(Long retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
@@ -1309,7 +1297,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group global
          */
-        public default SoroushBotEndpointBuilder retryWaitingTime(
+        default SoroushBotEndpointBuilder retryWaitingTime(
                 String retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
             return this;
@@ -1320,7 +1308,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SoroushBotEndpointBuilder authorizationToken(
+        default SoroushBotEndpointBuilder authorizationToken(
                 String authorizationToken) {
             setProperty("authorizationToken", authorizationToken);
             return this;
@@ -1333,8 +1321,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointBuilder autoUploadFile(
-                Boolean autoUploadFile) {
+        default SoroushBotEndpointBuilder autoUploadFile(Boolean autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
         }
@@ -1347,8 +1334,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group sendMessage
          */
-        public default SoroushBotEndpointBuilder autoUploadFile(
-                String autoUploadFile) {
+        default SoroushBotEndpointBuilder autoUploadFile(String autoUploadFile) {
             setProperty("autoUploadFile", autoUploadFile);
             return this;
         }
@@ -1360,7 +1346,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointBuilder forceUpload(Boolean forceUpload) {
+        default SoroushBotEndpointBuilder forceUpload(Boolean forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
         }
@@ -1373,7 +1359,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * type.
          * @group uploadFile
          */
-        public default SoroushBotEndpointBuilder forceUpload(String forceUpload) {
+        default SoroushBotEndpointBuilder forceUpload(String forceUpload) {
             setProperty("forceUpload", forceUpload);
             return this;
         }
@@ -1385,7 +1371,7 @@ public interface SoroushBotEndpointBuilderFactory {
     public static interface AdvancedSoroushBotEndpointBuilder
             extends
                 AdvancedSoroushBotEndpointConsumerBuilder, AdvancedSoroushBotEndpointProducerBuilder {
-        public default SoroushBotEndpointBuilder basic() {
+        default SoroushBotEndpointBuilder basic() {
             return (SoroushBotEndpointBuilder) this;
         }
         /**
@@ -1394,7 +1380,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1405,7 +1391,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
+        default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1416,7 +1402,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointBuilder synchronous(
+        default AdvancedSoroushBotEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1427,8 +1413,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSoroushBotEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSoroushBotEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1445,7 +1430,7 @@ public interface SoroushBotEndpointBuilderFactory {
      * To integrate with the Soroush chat bot. Creates a builder to build
      * endpoints for the Soroush component.
      */
-    public default SoroushBotEndpointBuilder soroushBot(String path) {
+    default SoroushBotEndpointBuilder soroushBot(String path) {
         class SoroushBotEndpointBuilderImpl extends AbstractEndpointBuilder implements SoroushBotEndpointBuilder, AdvancedSoroushBotEndpointBuilder {
             public SoroushBotEndpointBuilderImpl(String path) {
                 super("soroush", path);

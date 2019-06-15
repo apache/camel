@@ -41,7 +41,7 @@ public interface AS2EndpointBuilderFactory {
     public interface AS2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAS2EndpointConsumerBuilder advanced() {
+        default AdvancedAS2EndpointConsumerBuilder advanced() {
             return (AdvancedAS2EndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder apiName(AS2ApiName apiName) {
+        default AS2EndpointConsumerBuilder apiName(AS2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -60,7 +60,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder apiName(String apiName) {
+        default AS2EndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -69,7 +69,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder methodName(String methodName) {
+        default AS2EndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -78,7 +78,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder as2From(String as2From) {
+        default AS2EndpointConsumerBuilder as2From(String as2From) {
             setProperty("as2From", as2From);
             return this;
         }
@@ -91,7 +91,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder as2MessageStructure(
+        default AS2EndpointConsumerBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -105,7 +105,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder as2MessageStructure(
+        default AS2EndpointConsumerBuilder as2MessageStructure(
                 String as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -115,7 +115,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder as2To(String as2To) {
+        default AS2EndpointConsumerBuilder as2To(String as2To) {
             setProperty("as2To", as2To);
             return this;
         }
@@ -124,7 +124,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder as2Version(String as2Version) {
+        default AS2EndpointConsumerBuilder as2Version(String as2Version) {
             setProperty("as2Version", as2Version);
             return this;
         }
@@ -134,7 +134,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder clientFqdn(String clientFqdn) {
+        default AS2EndpointConsumerBuilder clientFqdn(String clientFqdn) {
             setProperty("clientFqdn", clientFqdn);
             return this;
         }
@@ -144,7 +144,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder compressionAlgorithm(
+        default AS2EndpointConsumerBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -155,7 +155,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder compressionAlgorithm(
+        default AS2EndpointConsumerBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -165,7 +165,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder decryptingPrivateKey(
+        default AS2EndpointConsumerBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -176,7 +176,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder decryptingPrivateKey(
+        default AS2EndpointConsumerBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -188,7 +188,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder dispositionNotificationTo(
+        default AS2EndpointConsumerBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
             setProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
@@ -198,7 +198,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder ediMessageTransferEncoding(
+        default AS2EndpointConsumerBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
             setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
@@ -209,8 +209,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder ediMessageType(
-                Object ediMessageType) {
+        default AS2EndpointConsumerBuilder ediMessageType(Object ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -221,8 +220,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder ediMessageType(
-                String ediMessageType) {
+        default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -232,7 +230,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder encryptingAlgorithm(
+        default AS2EndpointConsumerBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -243,7 +241,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder encryptingAlgorithm(
+        default AS2EndpointConsumerBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -253,7 +251,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder encryptingCertificateChain(
+        default AS2EndpointConsumerBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -264,7 +262,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder encryptingCertificateChain(
+        default AS2EndpointConsumerBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -274,7 +272,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder from(String from) {
+        default AS2EndpointConsumerBuilder from(String from) {
             setProperty("from", from);
             return this;
         }
@@ -283,7 +281,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder inBody(String inBody) {
+        default AS2EndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -292,7 +290,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder mdnMessageTemplate(
+        default AS2EndpointConsumerBuilder mdnMessageTemplate(
                 String mdnMessageTemplate) {
             setProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
@@ -302,7 +300,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder requestUri(String requestUri) {
+        default AS2EndpointConsumerBuilder requestUri(String requestUri) {
             setProperty("requestUri", requestUri);
             return this;
         }
@@ -312,7 +310,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder server(String server) {
+        default AS2EndpointConsumerBuilder server(String server) {
             setProperty("server", server);
             return this;
         }
@@ -322,7 +320,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder serverFqdn(String serverFqdn) {
+        default AS2EndpointConsumerBuilder serverFqdn(String serverFqdn) {
             setProperty("serverFqdn", serverFqdn);
             return this;
         }
@@ -331,7 +329,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder serverPortNumber(
+        default AS2EndpointConsumerBuilder serverPortNumber(
                 Integer serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
@@ -342,7 +340,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder serverPortNumber(
+        default AS2EndpointConsumerBuilder serverPortNumber(
                 String serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
@@ -354,7 +352,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String[]</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -367,7 +365,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -379,7 +377,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingAlgorithm(
+        default AS2EndpointConsumerBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
@@ -391,7 +389,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingAlgorithm(
+        default AS2EndpointConsumerBuilder signingAlgorithm(
                 String signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
@@ -401,7 +399,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingCertificateChain(
+        default AS2EndpointConsumerBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -412,7 +410,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingCertificateChain(
+        default AS2EndpointConsumerBuilder signingCertificateChain(
                 String signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -422,7 +420,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingPrivateKey(
+        default AS2EndpointConsumerBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
@@ -433,7 +431,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder signingPrivateKey(
+        default AS2EndpointConsumerBuilder signingPrivateKey(
                 String signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
@@ -443,7 +441,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder subject(String subject) {
+        default AS2EndpointConsumerBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -452,8 +450,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder targetHostname(
-                String targetHostname) {
+        default AS2EndpointConsumerBuilder targetHostname(String targetHostname) {
             setProperty("targetHostname", targetHostname);
             return this;
         }
@@ -462,7 +459,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder targetPortNumber(
+        default AS2EndpointConsumerBuilder targetPortNumber(
                 Integer targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
@@ -473,7 +470,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder targetPortNumber(
+        default AS2EndpointConsumerBuilder targetPortNumber(
                 String targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
@@ -484,7 +481,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointConsumerBuilder userAgent(String userAgent) {
+        default AS2EndpointConsumerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -499,7 +496,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AS2EndpointConsumerBuilder bridgeErrorHandler(
+        default AS2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -515,7 +512,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AS2EndpointConsumerBuilder bridgeErrorHandler(
+        default AS2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -528,7 +525,7 @@ public interface AS2EndpointBuilderFactory {
     public interface AdvancedAS2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AS2EndpointConsumerBuilder basic() {
+        default AS2EndpointConsumerBuilder basic() {
             return (AS2EndpointConsumerBuilder) this;
         }
         /**
@@ -540,7 +537,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -554,7 +551,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedAS2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -564,7 +561,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAS2EndpointConsumerBuilder exchangePattern(
+        default AdvancedAS2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -575,7 +572,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAS2EndpointConsumerBuilder exchangePattern(
+        default AdvancedAS2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -586,7 +583,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -597,7 +594,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -608,7 +605,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointConsumerBuilder synchronous(
+        default AdvancedAS2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -619,7 +616,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointConsumerBuilder synchronous(
+        default AdvancedAS2EndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -632,7 +629,7 @@ public interface AS2EndpointBuilderFactory {
     public static interface AS2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAS2EndpointProducerBuilder advanced() {
+        default AdvancedAS2EndpointProducerBuilder advanced() {
             return (AdvancedAS2EndpointProducerBuilder) this;
         }
         /**
@@ -641,7 +638,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder apiName(AS2ApiName apiName) {
+        default AS2EndpointProducerBuilder apiName(AS2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -651,7 +648,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder apiName(String apiName) {
+        default AS2EndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -660,7 +657,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder methodName(String methodName) {
+        default AS2EndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -669,7 +666,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder as2From(String as2From) {
+        default AS2EndpointProducerBuilder as2From(String as2From) {
             setProperty("as2From", as2From);
             return this;
         }
@@ -682,7 +679,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder as2MessageStructure(
+        default AS2EndpointProducerBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -696,7 +693,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder as2MessageStructure(
+        default AS2EndpointProducerBuilder as2MessageStructure(
                 String as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -706,7 +703,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder as2To(String as2To) {
+        default AS2EndpointProducerBuilder as2To(String as2To) {
             setProperty("as2To", as2To);
             return this;
         }
@@ -715,7 +712,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder as2Version(String as2Version) {
+        default AS2EndpointProducerBuilder as2Version(String as2Version) {
             setProperty("as2Version", as2Version);
             return this;
         }
@@ -725,7 +722,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder clientFqdn(String clientFqdn) {
+        default AS2EndpointProducerBuilder clientFqdn(String clientFqdn) {
             setProperty("clientFqdn", clientFqdn);
             return this;
         }
@@ -735,7 +732,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder compressionAlgorithm(
+        default AS2EndpointProducerBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -746,7 +743,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder compressionAlgorithm(
+        default AS2EndpointProducerBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -756,7 +753,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder decryptingPrivateKey(
+        default AS2EndpointProducerBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -767,7 +764,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder decryptingPrivateKey(
+        default AS2EndpointProducerBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -779,7 +776,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder dispositionNotificationTo(
+        default AS2EndpointProducerBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
             setProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
@@ -789,7 +786,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder ediMessageTransferEncoding(
+        default AS2EndpointProducerBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
             setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
@@ -800,8 +797,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder ediMessageType(
-                Object ediMessageType) {
+        default AS2EndpointProducerBuilder ediMessageType(Object ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -812,8 +808,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder ediMessageType(
-                String ediMessageType) {
+        default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -823,7 +818,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder encryptingAlgorithm(
+        default AS2EndpointProducerBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -834,7 +829,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder encryptingAlgorithm(
+        default AS2EndpointProducerBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -844,7 +839,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder encryptingCertificateChain(
+        default AS2EndpointProducerBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -855,7 +850,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder encryptingCertificateChain(
+        default AS2EndpointProducerBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -865,7 +860,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder from(String from) {
+        default AS2EndpointProducerBuilder from(String from) {
             setProperty("from", from);
             return this;
         }
@@ -874,7 +869,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder inBody(String inBody) {
+        default AS2EndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -883,7 +878,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder mdnMessageTemplate(
+        default AS2EndpointProducerBuilder mdnMessageTemplate(
                 String mdnMessageTemplate) {
             setProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
@@ -893,7 +888,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder requestUri(String requestUri) {
+        default AS2EndpointProducerBuilder requestUri(String requestUri) {
             setProperty("requestUri", requestUri);
             return this;
         }
@@ -903,7 +898,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder server(String server) {
+        default AS2EndpointProducerBuilder server(String server) {
             setProperty("server", server);
             return this;
         }
@@ -913,7 +908,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder serverFqdn(String serverFqdn) {
+        default AS2EndpointProducerBuilder serverFqdn(String serverFqdn) {
             setProperty("serverFqdn", serverFqdn);
             return this;
         }
@@ -922,7 +917,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder serverPortNumber(
+        default AS2EndpointProducerBuilder serverPortNumber(
                 Integer serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
@@ -933,7 +928,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder serverPortNumber(
+        default AS2EndpointProducerBuilder serverPortNumber(
                 String serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
@@ -945,7 +940,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String[]</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -958,7 +953,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -970,7 +965,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingAlgorithm(
+        default AS2EndpointProducerBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
@@ -982,7 +977,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingAlgorithm(
+        default AS2EndpointProducerBuilder signingAlgorithm(
                 String signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
@@ -992,7 +987,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingCertificateChain(
+        default AS2EndpointProducerBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -1003,7 +998,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingCertificateChain(
+        default AS2EndpointProducerBuilder signingCertificateChain(
                 String signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -1013,7 +1008,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingPrivateKey(
+        default AS2EndpointProducerBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
@@ -1024,7 +1019,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder signingPrivateKey(
+        default AS2EndpointProducerBuilder signingPrivateKey(
                 String signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
@@ -1034,7 +1029,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder subject(String subject) {
+        default AS2EndpointProducerBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -1043,8 +1038,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder targetHostname(
-                String targetHostname) {
+        default AS2EndpointProducerBuilder targetHostname(String targetHostname) {
             setProperty("targetHostname", targetHostname);
             return this;
         }
@@ -1053,7 +1047,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder targetPortNumber(
+        default AS2EndpointProducerBuilder targetPortNumber(
                 Integer targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
@@ -1064,7 +1058,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder targetPortNumber(
+        default AS2EndpointProducerBuilder targetPortNumber(
                 String targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
@@ -1075,7 +1069,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointProducerBuilder userAgent(String userAgent) {
+        default AS2EndpointProducerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -1092,7 +1086,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AS2EndpointProducerBuilder lazyStartProducer(
+        default AS2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1110,7 +1104,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AS2EndpointProducerBuilder lazyStartProducer(
+        default AS2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1123,7 +1117,7 @@ public interface AS2EndpointBuilderFactory {
     public interface AdvancedAS2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AS2EndpointProducerBuilder basic() {
+        default AS2EndpointProducerBuilder basic() {
             return (AS2EndpointProducerBuilder) this;
         }
         /**
@@ -1132,7 +1126,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1143,7 +1137,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1154,7 +1148,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointProducerBuilder synchronous(
+        default AdvancedAS2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1165,7 +1159,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointProducerBuilder synchronous(
+        default AdvancedAS2EndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1178,7 +1172,7 @@ public interface AS2EndpointBuilderFactory {
     public static interface AS2EndpointBuilder
             extends
                 AS2EndpointConsumerBuilder, AS2EndpointProducerBuilder {
-        public default AdvancedAS2EndpointBuilder advanced() {
+        default AdvancedAS2EndpointBuilder advanced() {
             return (AdvancedAS2EndpointBuilder) this;
         }
         /**
@@ -1187,7 +1181,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder apiName(AS2ApiName apiName) {
+        default AS2EndpointBuilder apiName(AS2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -1197,7 +1191,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder apiName(String apiName) {
+        default AS2EndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -1206,7 +1200,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder methodName(String methodName) {
+        default AS2EndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -1215,7 +1209,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder as2From(String as2From) {
+        default AS2EndpointBuilder as2From(String as2From) {
             setProperty("as2From", as2From);
             return this;
         }
@@ -1228,7 +1222,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder as2MessageStructure(
+        default AS2EndpointBuilder as2MessageStructure(
                 AS2MessageStructure as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -1242,7 +1236,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder as2MessageStructure(
+        default AS2EndpointBuilder as2MessageStructure(
                 String as2MessageStructure) {
             setProperty("as2MessageStructure", as2MessageStructure);
             return this;
@@ -1252,7 +1246,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder as2To(String as2To) {
+        default AS2EndpointBuilder as2To(String as2To) {
             setProperty("as2To", as2To);
             return this;
         }
@@ -1261,7 +1255,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder as2Version(String as2Version) {
+        default AS2EndpointBuilder as2Version(String as2Version) {
             setProperty("as2Version", as2Version);
             return this;
         }
@@ -1271,7 +1265,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder clientFqdn(String clientFqdn) {
+        default AS2EndpointBuilder clientFqdn(String clientFqdn) {
             setProperty("clientFqdn", clientFqdn);
             return this;
         }
@@ -1281,7 +1275,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder compressionAlgorithm(
+        default AS2EndpointBuilder compressionAlgorithm(
                 AS2CompressionAlgorithm compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -1292,7 +1286,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2CompressionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder compressionAlgorithm(
+        default AS2EndpointBuilder compressionAlgorithm(
                 String compressionAlgorithm) {
             setProperty("compressionAlgorithm", compressionAlgorithm);
             return this;
@@ -1302,7 +1296,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder decryptingPrivateKey(
+        default AS2EndpointBuilder decryptingPrivateKey(
                 PrivateKey decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -1313,7 +1307,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder decryptingPrivateKey(
+        default AS2EndpointBuilder decryptingPrivateKey(
                 String decryptingPrivateKey) {
             setProperty("decryptingPrivateKey", decryptingPrivateKey);
             return this;
@@ -1325,7 +1319,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder dispositionNotificationTo(
+        default AS2EndpointBuilder dispositionNotificationTo(
                 String dispositionNotificationTo) {
             setProperty("dispositionNotificationTo", dispositionNotificationTo);
             return this;
@@ -1335,7 +1329,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder ediMessageTransferEncoding(
+        default AS2EndpointBuilder ediMessageTransferEncoding(
                 String ediMessageTransferEncoding) {
             setProperty("ediMessageTransferEncoding", ediMessageTransferEncoding);
             return this;
@@ -1346,7 +1340,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
+        default AS2EndpointBuilder ediMessageType(Object ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -1357,7 +1351,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.http.entity.ContentType</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder ediMessageType(String ediMessageType) {
+        default AS2EndpointBuilder ediMessageType(String ediMessageType) {
             setProperty("ediMessageType", ediMessageType);
             return this;
         }
@@ -1367,7 +1361,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder encryptingAlgorithm(
+        default AS2EndpointBuilder encryptingAlgorithm(
                 AS2EncryptionAlgorithm encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -1378,7 +1372,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.as2.api.AS2EncryptionAlgorithm</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder encryptingAlgorithm(
+        default AS2EndpointBuilder encryptingAlgorithm(
                 String encryptingAlgorithm) {
             setProperty("encryptingAlgorithm", encryptingAlgorithm);
             return this;
@@ -1388,7 +1382,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder encryptingCertificateChain(
+        default AS2EndpointBuilder encryptingCertificateChain(
                 Certificate[] encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -1399,7 +1393,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder encryptingCertificateChain(
+        default AS2EndpointBuilder encryptingCertificateChain(
                 String encryptingCertificateChain) {
             setProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
@@ -1409,7 +1403,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder from(String from) {
+        default AS2EndpointBuilder from(String from) {
             setProperty("from", from);
             return this;
         }
@@ -1418,7 +1412,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder inBody(String inBody) {
+        default AS2EndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -1427,8 +1421,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder mdnMessageTemplate(
-                String mdnMessageTemplate) {
+        default AS2EndpointBuilder mdnMessageTemplate(String mdnMessageTemplate) {
             setProperty("mdnMessageTemplate", mdnMessageTemplate);
             return this;
         }
@@ -1437,7 +1430,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder requestUri(String requestUri) {
+        default AS2EndpointBuilder requestUri(String requestUri) {
             setProperty("requestUri", requestUri);
             return this;
         }
@@ -1447,7 +1440,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder server(String server) {
+        default AS2EndpointBuilder server(String server) {
             setProperty("server", server);
             return this;
         }
@@ -1457,7 +1450,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder serverFqdn(String serverFqdn) {
+        default AS2EndpointBuilder serverFqdn(String serverFqdn) {
             setProperty("serverFqdn", serverFqdn);
             return this;
         }
@@ -1466,8 +1459,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder serverPortNumber(
-                Integer serverPortNumber) {
+        default AS2EndpointBuilder serverPortNumber(Integer serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
         }
@@ -1477,8 +1469,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder serverPortNumber(
-                String serverPortNumber) {
+        default AS2EndpointBuilder serverPortNumber(String serverPortNumber) {
             setProperty("serverPortNumber", serverPortNumber);
             return this;
         }
@@ -1489,7 +1480,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String[]</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointBuilder signedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -1502,7 +1493,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder signedReceiptMicAlgorithms(
+        default AS2EndpointBuilder signedReceiptMicAlgorithms(
                 String signedReceiptMicAlgorithms) {
             setProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
             return this;
@@ -1514,7 +1505,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder signingAlgorithm(
+        default AS2EndpointBuilder signingAlgorithm(
                 AS2SignatureAlgorithm signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
@@ -1526,8 +1517,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder signingAlgorithm(
-                String signingAlgorithm) {
+        default AS2EndpointBuilder signingAlgorithm(String signingAlgorithm) {
             setProperty("signingAlgorithm", signingAlgorithm);
             return this;
         }
@@ -1536,7 +1526,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder signingCertificateChain(
+        default AS2EndpointBuilder signingCertificateChain(
                 Certificate[] signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -1547,7 +1537,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.cert.Certificate[]</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder signingCertificateChain(
+        default AS2EndpointBuilder signingCertificateChain(
                 String signingCertificateChain) {
             setProperty("signingCertificateChain", signingCertificateChain);
             return this;
@@ -1557,7 +1547,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder signingPrivateKey(
+        default AS2EndpointBuilder signingPrivateKey(
                 PrivateKey signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
@@ -1568,8 +1558,7 @@ public interface AS2EndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder signingPrivateKey(
-                String signingPrivateKey) {
+        default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
             setProperty("signingPrivateKey", signingPrivateKey);
             return this;
         }
@@ -1578,7 +1567,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder subject(String subject) {
+        default AS2EndpointBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -1587,7 +1576,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder targetHostname(String targetHostname) {
+        default AS2EndpointBuilder targetHostname(String targetHostname) {
             setProperty("targetHostname", targetHostname);
             return this;
         }
@@ -1596,8 +1585,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder targetPortNumber(
-                Integer targetPortNumber) {
+        default AS2EndpointBuilder targetPortNumber(Integer targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
         }
@@ -1607,8 +1595,7 @@ public interface AS2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AS2EndpointBuilder targetPortNumber(
-                String targetPortNumber) {
+        default AS2EndpointBuilder targetPortNumber(String targetPortNumber) {
             setProperty("targetPortNumber", targetPortNumber);
             return this;
         }
@@ -1618,7 +1605,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AS2EndpointBuilder userAgent(String userAgent) {
+        default AS2EndpointBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -1630,7 +1617,7 @@ public interface AS2EndpointBuilderFactory {
     public static interface AdvancedAS2EndpointBuilder
             extends
                 AdvancedAS2EndpointConsumerBuilder, AdvancedAS2EndpointProducerBuilder {
-        public default AS2EndpointBuilder basic() {
+        default AS2EndpointBuilder basic() {
             return (AS2EndpointBuilder) this;
         }
         /**
@@ -1639,7 +1626,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1650,7 +1637,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointBuilder basicPropertyBinding(
+        default AdvancedAS2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1661,8 +1648,7 @@ public interface AS2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAS2EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1672,7 +1658,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAS2EndpointBuilder synchronous(String synchronous) {
+        default AdvancedAS2EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1725,7 +1711,7 @@ public interface AS2EndpointBuilderFactory {
      * internet using the AS2 protocol. Creates a builder to build endpoints for
      * the AS2 component.
      */
-    public default AS2EndpointBuilder aS2(String path) {
+    default AS2EndpointBuilder aS2(String path) {
         class AS2EndpointBuilderImpl extends AbstractEndpointBuilder implements AS2EndpointBuilder, AdvancedAS2EndpointBuilder {
             public AS2EndpointBuilderImpl(String path) {
                 super("as2", path);

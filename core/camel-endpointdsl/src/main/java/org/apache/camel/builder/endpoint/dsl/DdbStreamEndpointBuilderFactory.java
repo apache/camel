@@ -36,7 +36,7 @@ public interface DdbStreamEndpointBuilderFactory {
     public static interface DdbStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDdbStreamEndpointBuilder advanced() {
+        default AdvancedDdbStreamEndpointBuilder advanced() {
             return (AdvancedDdbStreamEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default DdbStreamEndpointBuilder proxyHost(String proxyHost) {
+        default DdbStreamEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -53,7 +53,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default DdbStreamEndpointBuilder proxyPort(Integer proxyPort) {
+        default DdbStreamEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -63,7 +63,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default DdbStreamEndpointBuilder proxyPort(String proxyPort) {
+        default DdbStreamEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -72,7 +72,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default DdbStreamEndpointBuilder region(String region) {
+        default DdbStreamEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -81,7 +81,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DdbStreamEndpointBuilder accessKey(String accessKey) {
+        default DdbStreamEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -90,7 +90,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DdbStreamEndpointBuilder secretKey(String secretKey) {
+        default DdbStreamEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -102,7 +102,7 @@ public interface DdbStreamEndpointBuilderFactory {
     public static interface AdvancedDdbStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DdbStreamEndpointBuilder basic() {
+        default DdbStreamEndpointBuilder basic() {
             return (DdbStreamEndpointBuilder) this;
         }
         /**
@@ -111,7 +111,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -122,7 +122,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -133,8 +133,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbStreamEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDdbStreamEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -144,8 +143,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbStreamEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDdbStreamEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -164,7 +162,7 @@ public interface DdbStreamEndpointBuilderFactory {
      * Streams. Creates a builder to build endpoints for the AWS DynamoDB
      * Streams component.
      */
-    public default DdbStreamEndpointBuilder ddbStream(String path) {
+    default DdbStreamEndpointBuilder ddbStream(String path) {
         class DdbStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbStreamEndpointBuilder, AdvancedDdbStreamEndpointBuilder {
             public DdbStreamEndpointBuilderImpl(String path) {
                 super("aws-ddbstream", path);

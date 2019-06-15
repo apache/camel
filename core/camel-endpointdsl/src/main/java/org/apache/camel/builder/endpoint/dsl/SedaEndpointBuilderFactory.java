@@ -41,7 +41,7 @@ public interface SedaEndpointBuilderFactory {
     public interface SedaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSedaEndpointConsumerBuilder advanced() {
+        default AdvancedSedaEndpointConsumerBuilder advanced() {
             return (AdvancedSedaEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SedaEndpointConsumerBuilder name(String name) {
+        default SedaEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -60,7 +60,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointConsumerBuilder size(int size) {
+        default SedaEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -71,7 +71,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointConsumerBuilder size(String size) {
+        default SedaEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -86,7 +86,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SedaEndpointConsumerBuilder bridgeErrorHandler(
+        default SedaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -102,7 +102,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SedaEndpointConsumerBuilder bridgeErrorHandler(
+        default SedaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -112,7 +112,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SedaEndpointConsumerBuilder concurrentConsumers(
+        default SedaEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -122,7 +122,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SedaEndpointConsumerBuilder concurrentConsumers(
+        default SedaEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -135,7 +135,7 @@ public interface SedaEndpointBuilderFactory {
     public interface AdvancedSedaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SedaEndpointConsumerBuilder basic() {
+        default SedaEndpointConsumerBuilder basic() {
             return (SedaEndpointConsumerBuilder) this;
         }
         /**
@@ -147,7 +147,7 @@ public interface SedaEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -161,7 +161,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSedaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -171,7 +171,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder exchangePattern(
+        default AdvancedSedaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -182,7 +182,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder exchangePattern(
+        default AdvancedSedaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -195,7 +195,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedSedaEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -208,7 +208,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedSedaEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -222,7 +222,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder multipleConsumers(
+        default AdvancedSedaEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -236,7 +236,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder multipleConsumers(
+        default AdvancedSedaEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -248,8 +248,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder pollTimeout(
-                int pollTimeout) {
+        default AdvancedSedaEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -260,7 +259,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder pollTimeout(
+        default AdvancedSedaEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -272,7 +271,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedSedaEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -284,7 +283,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSedaEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedSedaEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -295,7 +294,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -306,7 +305,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -318,8 +317,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedSedaEndpointConsumerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -331,7 +329,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder queue(String queue) {
+        default AdvancedSedaEndpointConsumerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -341,7 +339,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder synchronous(
+        default AdvancedSedaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,7 +350,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointConsumerBuilder synchronous(
+        default AdvancedSedaEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +363,7 @@ public interface SedaEndpointBuilderFactory {
     public static interface SedaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSedaEndpointProducerBuilder advanced() {
+        default AdvancedSedaEndpointProducerBuilder advanced() {
             return (AdvancedSedaEndpointProducerBuilder) this;
         }
         /**
@@ -373,7 +371,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SedaEndpointProducerBuilder name(String name) {
+        default SedaEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -384,7 +382,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointProducerBuilder size(int size) {
+        default SedaEndpointProducerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -395,7 +393,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointProducerBuilder size(String size) {
+        default SedaEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -408,8 +406,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder blockWhenFull(
-                boolean blockWhenFull) {
+        default SedaEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -422,8 +419,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder blockWhenFull(
-                String blockWhenFull) {
+        default SedaEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -435,7 +431,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder discardIfNoConsumers(
+        default SedaEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -448,7 +444,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder discardIfNoConsumers(
+        default SedaEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -461,7 +457,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder failIfNoConsumers(
+        default SedaEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -474,7 +470,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder failIfNoConsumers(
+        default SedaEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -492,7 +488,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder lazyStartProducer(
+        default SedaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -510,7 +506,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder lazyStartProducer(
+        default SedaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -522,8 +518,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder offerTimeout(
-                long offerTimeout) {
+        default SedaEndpointProducerBuilder offerTimeout(long offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -534,8 +529,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder offerTimeout(
-                String offerTimeout) {
+        default SedaEndpointProducerBuilder offerTimeout(String offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -546,7 +540,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder timeout(long timeout) {
+        default SedaEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -557,7 +551,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder timeout(String timeout) {
+        default SedaEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -572,7 +566,7 @@ public interface SedaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder waitForTaskToComplete(
+        default SedaEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -588,7 +582,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * @group producer
          */
-        public default SedaEndpointProducerBuilder waitForTaskToComplete(
+        default SedaEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -601,7 +595,7 @@ public interface SedaEndpointBuilderFactory {
     public interface AdvancedSedaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SedaEndpointProducerBuilder basic() {
+        default SedaEndpointProducerBuilder basic() {
             return (SedaEndpointProducerBuilder) this;
         }
         /**
@@ -610,7 +604,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -621,7 +615,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -633,8 +627,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedSedaEndpointProducerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -646,7 +639,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder queue(String queue) {
+        default AdvancedSedaEndpointProducerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -656,7 +649,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder synchronous(
+        default AdvancedSedaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -667,7 +660,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointProducerBuilder synchronous(
+        default AdvancedSedaEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -680,7 +673,7 @@ public interface SedaEndpointBuilderFactory {
     public static interface SedaEndpointBuilder
             extends
                 SedaEndpointConsumerBuilder, SedaEndpointProducerBuilder {
-        public default AdvancedSedaEndpointBuilder advanced() {
+        default AdvancedSedaEndpointBuilder advanced() {
             return (AdvancedSedaEndpointBuilder) this;
         }
         /**
@@ -688,7 +681,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SedaEndpointBuilder name(String name) {
+        default SedaEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -699,7 +692,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointBuilder size(int size) {
+        default SedaEndpointBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -710,7 +703,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SedaEndpointBuilder size(String size) {
+        default SedaEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -722,7 +715,7 @@ public interface SedaEndpointBuilderFactory {
     public static interface AdvancedSedaEndpointBuilder
             extends
                 AdvancedSedaEndpointConsumerBuilder, AdvancedSedaEndpointProducerBuilder {
-        public default SedaEndpointBuilder basic() {
+        default SedaEndpointBuilder basic() {
             return (SedaEndpointBuilder) this;
         }
         /**
@@ -731,7 +724,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -742,7 +735,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder basicPropertyBinding(
+        default AdvancedSedaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -754,7 +747,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder queue(BlockingQueue queue) {
+        default AdvancedSedaEndpointBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -766,7 +759,7 @@ public interface SedaEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder queue(String queue) {
+        default AdvancedSedaEndpointBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -776,8 +769,7 @@ public interface SedaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSedaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -787,8 +779,7 @@ public interface SedaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSedaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSedaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -798,7 +789,7 @@ public interface SedaEndpointBuilderFactory {
      * any CamelContext in the same JVM. Creates a builder to build endpoints
      * for the SEDA component.
      */
-    public default SedaEndpointBuilder seda(String path) {
+    default SedaEndpointBuilder seda(String path) {
         class SedaEndpointBuilderImpl extends AbstractEndpointBuilder implements SedaEndpointBuilder, AdvancedSedaEndpointBuilder {
             public SedaEndpointBuilderImpl(String path) {
                 super("seda", path);

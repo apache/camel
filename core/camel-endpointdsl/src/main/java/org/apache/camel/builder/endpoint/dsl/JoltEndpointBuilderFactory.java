@@ -37,7 +37,7 @@ public interface JoltEndpointBuilderFactory {
     public static interface JoltEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJoltEndpointBuilder advanced() {
+        default AdvancedJoltEndpointBuilder advanced() {
             return (AdvancedJoltEndpointBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JoltEndpointBuilder resourceUri(String resourceUri) {
+        default JoltEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -59,7 +59,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JoltEndpointBuilder contentCache(boolean contentCache) {
+        default JoltEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -68,7 +68,7 @@ public interface JoltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JoltEndpointBuilder contentCache(String contentCache) {
+        default JoltEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -79,8 +79,7 @@ public interface JoltEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default JoltEndpointBuilder inputType(
-                JoltInputOutputType inputType) {
+        default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
             setProperty("inputType", inputType);
             return this;
         }
@@ -91,7 +90,7 @@ public interface JoltEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default JoltEndpointBuilder inputType(String inputType) {
+        default JoltEndpointBuilder inputType(String inputType) {
             setProperty("inputType", inputType);
             return this;
         }
@@ -102,8 +101,7 @@ public interface JoltEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default JoltEndpointBuilder outputType(
-                JoltInputOutputType outputType) {
+        default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -114,7 +112,7 @@ public interface JoltEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default JoltEndpointBuilder outputType(String outputType) {
+        default JoltEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -125,8 +123,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * @group producer
          */
-        public default JoltEndpointBuilder transformDsl(
-                JoltTransformType transformDsl) {
+        default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
             setProperty("transformDsl", transformDsl);
             return this;
         }
@@ -137,7 +134,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * @group producer
          */
-        public default JoltEndpointBuilder transformDsl(String transformDsl) {
+        default JoltEndpointBuilder transformDsl(String transformDsl) {
             setProperty("transformDsl", transformDsl);
             return this;
         }
@@ -149,7 +146,7 @@ public interface JoltEndpointBuilderFactory {
     public static interface AdvancedJoltEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default JoltEndpointBuilder basic() {
+        default JoltEndpointBuilder basic() {
             return (JoltEndpointBuilder) this;
         }
         /**
@@ -158,7 +155,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJoltEndpointBuilder basicPropertyBinding(
+        default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -169,7 +166,7 @@ public interface JoltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJoltEndpointBuilder basicPropertyBinding(
+        default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -180,8 +177,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJoltEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -191,8 +187,7 @@ public interface JoltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJoltEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJoltEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -218,7 +213,7 @@ public interface JoltEndpointBuilderFactory {
      * specification (such as JSON-JSON transformation). Creates a builder to
      * build endpoints for the JOLT component.
      */
-    public default JoltEndpointBuilder jolt(String path) {
+    default JoltEndpointBuilder jolt(String path) {
         class JoltEndpointBuilderImpl extends AbstractEndpointBuilder implements JoltEndpointBuilder, AdvancedJoltEndpointBuilder {
             public JoltEndpointBuilderImpl(String path) {
                 super("jolt", path);

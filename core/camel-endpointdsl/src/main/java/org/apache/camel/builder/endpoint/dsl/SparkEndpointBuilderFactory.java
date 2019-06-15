@@ -37,7 +37,7 @@ public interface SparkEndpointBuilderFactory {
     public static interface SparkEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSparkEndpointBuilder advanced() {
+        default AdvancedSparkEndpointBuilder advanced() {
             return (AdvancedSparkEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder verb(String verb) {
+        default SparkEndpointBuilder verb(String verb) {
             setProperty("verb", verb);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder path(String path) {
+        default SparkEndpointBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -64,7 +64,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder accept(String accept) {
+        default SparkEndpointBuilder accept(String accept) {
             setProperty("accept", accept);
             return this;
         }
@@ -83,7 +83,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder disableStreamCache(
+        default SparkEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -103,7 +103,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder disableStreamCache(
+        default SparkEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -118,7 +118,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder mapHeaders(boolean mapHeaders) {
+        default SparkEndpointBuilder mapHeaders(boolean mapHeaders) {
             setProperty("mapHeaders", mapHeaders);
             return this;
         }
@@ -132,7 +132,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder mapHeaders(String mapHeaders) {
+        default SparkEndpointBuilder mapHeaders(String mapHeaders) {
             setProperty("mapHeaders", mapHeaders);
             return this;
         }
@@ -146,8 +146,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder transferException(
-                boolean transferException) {
+        default SparkEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -161,8 +160,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder transferException(
-                String transferException) {
+        default SparkEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -173,8 +171,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder urlDecodeHeaders(
-                boolean urlDecodeHeaders) {
+        default SparkEndpointBuilder urlDecodeHeaders(boolean urlDecodeHeaders) {
             setProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
@@ -185,8 +182,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SparkEndpointBuilder urlDecodeHeaders(
-                String urlDecodeHeaders) {
+        default SparkEndpointBuilder urlDecodeHeaders(String urlDecodeHeaders) {
             setProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
@@ -198,7 +194,7 @@ public interface SparkEndpointBuilderFactory {
     public static interface AdvancedSparkEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SparkEndpointBuilder basic() {
+        default SparkEndpointBuilder basic() {
             return (SparkEndpointBuilder) this;
         }
         /**
@@ -207,7 +203,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder basicPropertyBinding(
+        default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -218,7 +214,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder basicPropertyBinding(
+        default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -229,7 +225,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder matchOnUriPrefix(
+        default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -240,7 +236,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder matchOnUriPrefix(
+        default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -251,8 +247,7 @@ public interface SparkEndpointBuilderFactory {
          * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder sparkBinding(
-                Object sparkBinding) {
+        default AdvancedSparkEndpointBuilder sparkBinding(Object sparkBinding) {
             setProperty("sparkBinding", sparkBinding);
             return this;
         }
@@ -262,8 +257,7 @@ public interface SparkEndpointBuilderFactory {
          * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder sparkBinding(
-                String sparkBinding) {
+        default AdvancedSparkEndpointBuilder sparkBinding(String sparkBinding) {
             setProperty("sparkBinding", sparkBinding);
             return this;
         }
@@ -273,8 +267,7 @@ public interface SparkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSparkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -284,8 +277,7 @@ public interface SparkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSparkEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSparkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -295,7 +287,7 @@ public interface SparkEndpointBuilderFactory {
      * defined using Camel rest-dsl. Creates a builder to build endpoints for
      * the Spark Rest component.
      */
-    public default SparkEndpointBuilder spark(String path) {
+    default SparkEndpointBuilder spark(String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
             public SparkEndpointBuilderImpl(String path) {
                 super("spark-rest", path);

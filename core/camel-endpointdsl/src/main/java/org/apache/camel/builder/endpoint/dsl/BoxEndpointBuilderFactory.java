@@ -40,7 +40,7 @@ public interface BoxEndpointBuilderFactory {
     public interface BoxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedBoxEndpointConsumerBuilder advanced() {
+        default AdvancedBoxEndpointConsumerBuilder advanced() {
             return (AdvancedBoxEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder apiName(BoxApiName apiName) {
+        default BoxEndpointConsumerBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -59,7 +59,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder apiName(String apiName) {
+        default BoxEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -68,7 +68,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder methodName(String methodName) {
+        default BoxEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -77,7 +77,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder clientId(String clientId) {
+        default BoxEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -86,8 +86,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder enterpriseId(
-                String enterpriseId) {
+        default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
             return this;
         }
@@ -96,7 +95,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder inBody(String inBody) {
+        default BoxEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -105,7 +104,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointConsumerBuilder userId(String userId) {
+        default BoxEndpointConsumerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -120,7 +119,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default BoxEndpointConsumerBuilder bridgeErrorHandler(
+        default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -136,7 +135,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default BoxEndpointConsumerBuilder bridgeErrorHandler(
+        default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -146,8 +145,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder clientSecret(
-                String clientSecret) {
+        default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -158,7 +156,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group authentication
          */
-        public default BoxEndpointConsumerBuilder authenticationType(
+        default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -168,8 +166,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder privateKeyFile(
-                String privateKeyFile) {
+        default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -178,7 +175,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder privateKeyPassword(
+        default BoxEndpointConsumerBuilder privateKeyPassword(
                 String privateKeyPassword) {
             setProperty("privateKeyPassword", privateKeyPassword);
             return this;
@@ -188,7 +185,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
+        default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
             return this;
         }
@@ -198,7 +195,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder sslContextParameters(
+        default BoxEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -209,7 +206,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder sslContextParameters(
+        default BoxEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -219,7 +216,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder userName(String userName) {
+        default BoxEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -229,8 +226,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointConsumerBuilder userPassword(
-                String userPassword) {
+        default BoxEndpointConsumerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -242,7 +238,7 @@ public interface BoxEndpointBuilderFactory {
     public interface AdvancedBoxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default BoxEndpointConsumerBuilder basic() {
+        default BoxEndpointConsumerBuilder basic() {
             return (BoxEndpointConsumerBuilder) this;
         }
         /**
@@ -254,7 +250,7 @@ public interface BoxEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -268,7 +264,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -278,7 +274,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBoxEndpointConsumerBuilder exchangePattern(
+        default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -289,7 +285,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBoxEndpointConsumerBuilder exchangePattern(
+        default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -300,7 +296,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -311,7 +307,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -322,7 +318,7 @@ public interface BoxEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder httpParams(
+        default AdvancedBoxEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -334,8 +330,7 @@ public interface BoxEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder httpParams(
-                String httpParams) {
+        default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -345,7 +340,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder synchronous(
+        default AdvancedBoxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -356,7 +351,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointConsumerBuilder synchronous(
+        default AdvancedBoxEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -366,7 +361,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
+        default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 Object accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -377,7 +372,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
+        default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 String accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -388,7 +383,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -400,7 +395,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -410,7 +405,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
+        default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 int maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
@@ -420,7 +415,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
+        default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 String maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
@@ -433,7 +428,7 @@ public interface BoxEndpointBuilderFactory {
     public static interface BoxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBoxEndpointProducerBuilder advanced() {
+        default AdvancedBoxEndpointProducerBuilder advanced() {
             return (AdvancedBoxEndpointProducerBuilder) this;
         }
         /**
@@ -442,7 +437,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder apiName(BoxApiName apiName) {
+        default BoxEndpointProducerBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -452,7 +447,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder apiName(String apiName) {
+        default BoxEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -461,7 +456,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder methodName(String methodName) {
+        default BoxEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -470,7 +465,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder clientId(String clientId) {
+        default BoxEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -479,8 +474,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder enterpriseId(
-                String enterpriseId) {
+        default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
             return this;
         }
@@ -489,7 +483,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder inBody(String inBody) {
+        default BoxEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -498,7 +492,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointProducerBuilder userId(String userId) {
+        default BoxEndpointProducerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -515,7 +509,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BoxEndpointProducerBuilder lazyStartProducer(
+        default BoxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -533,7 +527,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BoxEndpointProducerBuilder lazyStartProducer(
+        default BoxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -543,8 +537,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder clientSecret(
-                String clientSecret) {
+        default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -555,7 +548,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group authentication
          */
-        public default BoxEndpointProducerBuilder authenticationType(
+        default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
@@ -565,8 +558,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder privateKeyFile(
-                String privateKeyFile) {
+        default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -575,7 +567,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder privateKeyPassword(
+        default BoxEndpointProducerBuilder privateKeyPassword(
                 String privateKeyPassword) {
             setProperty("privateKeyPassword", privateKeyPassword);
             return this;
@@ -585,7 +577,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
+        default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
             return this;
         }
@@ -595,7 +587,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder sslContextParameters(
+        default BoxEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -606,7 +598,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder sslContextParameters(
+        default BoxEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -616,7 +608,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder userName(String userName) {
+        default BoxEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -626,8 +618,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointProducerBuilder userPassword(
-                String userPassword) {
+        default BoxEndpointProducerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -639,7 +630,7 @@ public interface BoxEndpointBuilderFactory {
     public interface AdvancedBoxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default BoxEndpointProducerBuilder basic() {
+        default BoxEndpointProducerBuilder basic() {
             return (BoxEndpointProducerBuilder) this;
         }
         /**
@@ -648,7 +639,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -659,7 +650,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -670,7 +661,7 @@ public interface BoxEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder httpParams(
+        default AdvancedBoxEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -682,8 +673,7 @@ public interface BoxEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder httpParams(
-                String httpParams) {
+        default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -693,7 +683,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder synchronous(
+        default AdvancedBoxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -704,7 +694,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointProducerBuilder synchronous(
+        default AdvancedBoxEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -714,7 +704,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder accessTokenCache(
+        default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 Object accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -725,7 +715,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder accessTokenCache(
+        default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 String accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -736,7 +726,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -748,7 +738,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -758,7 +748,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
+        default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 int maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
@@ -768,7 +758,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
+        default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 String maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
@@ -781,7 +771,7 @@ public interface BoxEndpointBuilderFactory {
     public static interface BoxEndpointBuilder
             extends
                 BoxEndpointConsumerBuilder, BoxEndpointProducerBuilder {
-        public default AdvancedBoxEndpointBuilder advanced() {
+        default AdvancedBoxEndpointBuilder advanced() {
             return (AdvancedBoxEndpointBuilder) this;
         }
         /**
@@ -790,7 +780,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder apiName(BoxApiName apiName) {
+        default BoxEndpointBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -800,7 +790,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder apiName(String apiName) {
+        default BoxEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -809,7 +799,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder methodName(String methodName) {
+        default BoxEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -818,7 +808,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder clientId(String clientId) {
+        default BoxEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -827,7 +817,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder enterpriseId(String enterpriseId) {
+        default BoxEndpointBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
             return this;
         }
@@ -836,7 +826,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder inBody(String inBody) {
+        default BoxEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -845,7 +835,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BoxEndpointBuilder userId(String userId) {
+        default BoxEndpointBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -854,7 +844,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder clientSecret(String clientSecret) {
+        default BoxEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -865,8 +855,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group authentication
          */
-        public default BoxEndpointBuilder authenticationType(
-                String authenticationType) {
+        default BoxEndpointBuilder authenticationType(String authenticationType) {
             setProperty("authenticationType", authenticationType);
             return this;
         }
@@ -875,7 +864,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
+        default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -884,8 +873,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder privateKeyPassword(
-                String privateKeyPassword) {
+        default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
             setProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
@@ -894,7 +882,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder publicKeyId(String publicKeyId) {
+        default BoxEndpointBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
             return this;
         }
@@ -904,7 +892,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder sslContextParameters(
+        default BoxEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -915,7 +903,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder sslContextParameters(
+        default BoxEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -925,7 +913,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder userName(String userName) {
+        default BoxEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -935,7 +923,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BoxEndpointBuilder userPassword(String userPassword) {
+        default BoxEndpointBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -947,7 +935,7 @@ public interface BoxEndpointBuilderFactory {
     public static interface AdvancedBoxEndpointBuilder
             extends
                 AdvancedBoxEndpointConsumerBuilder, AdvancedBoxEndpointProducerBuilder {
-        public default BoxEndpointBuilder basic() {
+        default BoxEndpointBuilder basic() {
             return (BoxEndpointBuilder) this;
         }
         /**
@@ -956,7 +944,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -967,7 +955,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder basicPropertyBinding(
+        default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -978,7 +966,7 @@ public interface BoxEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder httpParams(
+        default AdvancedBoxEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -990,7 +978,7 @@ public interface BoxEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
+        default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -1000,8 +988,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedBoxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1011,7 +998,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
+        default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1020,7 +1007,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder accessTokenCache(
+        default AdvancedBoxEndpointBuilder accessTokenCache(
                 Object accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -1031,7 +1018,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.IAccessTokenCache</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder accessTokenCache(
+        default AdvancedBoxEndpointBuilder accessTokenCache(
                 String accessTokenCache) {
             setProperty("accessTokenCache", accessTokenCache);
             return this;
@@ -1042,7 +1029,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -1054,7 +1041,7 @@ public interface BoxEndpointBuilderFactory {
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder encryptionAlgorithm(
+        default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
             setProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
@@ -1064,8 +1051,7 @@ public interface BoxEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder maxCacheEntries(
-                int maxCacheEntries) {
+        default AdvancedBoxEndpointBuilder maxCacheEntries(int maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
@@ -1074,7 +1060,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group security
          */
-        public default AdvancedBoxEndpointBuilder maxCacheEntries(
+        default AdvancedBoxEndpointBuilder maxCacheEntries(
                 String maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
@@ -1100,7 +1086,7 @@ public interface BoxEndpointBuilderFactory {
      * collaborations etc on box DOT com. Creates a builder to build endpoints
      * for the Box component.
      */
-    public default BoxEndpointBuilder box(String path) {
+    default BoxEndpointBuilder box(String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {
             public BoxEndpointBuilderImpl(String path) {
                 super("box", path);

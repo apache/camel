@@ -37,7 +37,7 @@ public interface QuartzEndpointBuilderFactory {
     public static interface QuartzEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedQuartzEndpointBuilder advanced() {
+        default AdvancedQuartzEndpointBuilder advanced() {
             return (AdvancedQuartzEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder groupName(String groupName) {
+        default QuartzEndpointBuilder groupName(String groupName) {
             setProperty("groupName", groupName);
             return this;
         }
@@ -56,7 +56,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder triggerName(String triggerName) {
+        default QuartzEndpointBuilder triggerName(String triggerName) {
             setProperty("triggerName", triggerName);
             return this;
         }
@@ -65,7 +65,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder cron(String cron) {
+        default QuartzEndpointBuilder cron(String cron) {
             setProperty("cron", cron);
             return this;
         }
@@ -78,7 +78,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder deleteJob(boolean deleteJob) {
+        default QuartzEndpointBuilder deleteJob(boolean deleteJob) {
             setProperty("deleteJob", deleteJob);
             return this;
         }
@@ -91,7 +91,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder deleteJob(String deleteJob) {
+        default QuartzEndpointBuilder deleteJob(String deleteJob) {
             setProperty("deleteJob", deleteJob);
             return this;
         }
@@ -101,7 +101,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder durableJob(boolean durableJob) {
+        default QuartzEndpointBuilder durableJob(boolean durableJob) {
             setProperty("durableJob", durableJob);
             return this;
         }
@@ -111,7 +111,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder durableJob(String durableJob) {
+        default QuartzEndpointBuilder durableJob(String durableJob) {
             setProperty("durableJob", durableJob);
             return this;
         }
@@ -124,7 +124,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder pauseJob(boolean pauseJob) {
+        default QuartzEndpointBuilder pauseJob(boolean pauseJob) {
             setProperty("pauseJob", pauseJob);
             return this;
         }
@@ -137,7 +137,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder pauseJob(String pauseJob) {
+        default QuartzEndpointBuilder pauseJob(String pauseJob) {
             setProperty("pauseJob", pauseJob);
             return this;
         }
@@ -147,8 +147,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder recoverableJob(
-                boolean recoverableJob) {
+        default QuartzEndpointBuilder recoverableJob(boolean recoverableJob) {
             setProperty("recoverableJob", recoverableJob);
             return this;
         }
@@ -158,8 +157,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder recoverableJob(
-                String recoverableJob) {
+        default QuartzEndpointBuilder recoverableJob(String recoverableJob) {
             setProperty("recoverableJob", recoverableJob);
             return this;
         }
@@ -169,7 +167,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder stateful(boolean stateful) {
+        default QuartzEndpointBuilder stateful(boolean stateful) {
             setProperty("stateful", stateful);
             return this;
         }
@@ -179,7 +177,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuartzEndpointBuilder stateful(String stateful) {
+        default QuartzEndpointBuilder stateful(String stateful) {
             setProperty("stateful", stateful);
             return this;
         }
@@ -188,7 +186,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder autoStartScheduler(
+        default QuartzEndpointBuilder autoStartScheduler(
                 boolean autoStartScheduler) {
             setProperty("autoStartScheduler", autoStartScheduler);
             return this;
@@ -198,7 +196,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder autoStartScheduler(
+        default QuartzEndpointBuilder autoStartScheduler(
                 String autoStartScheduler) {
             setProperty("autoStartScheduler", autoStartScheduler);
             return this;
@@ -209,7 +207,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder fireNow(boolean fireNow) {
+        default QuartzEndpointBuilder fireNow(boolean fireNow) {
             setProperty("fireNow", fireNow);
             return this;
         }
@@ -219,7 +217,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder fireNow(String fireNow) {
+        default QuartzEndpointBuilder fireNow(String fireNow) {
             setProperty("fireNow", fireNow);
             return this;
         }
@@ -228,7 +226,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder startDelayedSeconds(
+        default QuartzEndpointBuilder startDelayedSeconds(
                 int startDelayedSeconds) {
             setProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
@@ -238,7 +236,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder startDelayedSeconds(
+        default QuartzEndpointBuilder startDelayedSeconds(
                 String startDelayedSeconds) {
             setProperty("startDelayedSeconds", startDelayedSeconds);
             return this;
@@ -250,8 +248,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder triggerStartDelay(
-                long triggerStartDelay) {
+        default QuartzEndpointBuilder triggerStartDelay(long triggerStartDelay) {
             setProperty("triggerStartDelay", triggerStartDelay);
             return this;
         }
@@ -262,8 +259,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default QuartzEndpointBuilder triggerStartDelay(
-                String triggerStartDelay) {
+        default QuartzEndpointBuilder triggerStartDelay(String triggerStartDelay) {
             setProperty("triggerStartDelay", triggerStartDelay);
             return this;
         }
@@ -275,7 +271,7 @@ public interface QuartzEndpointBuilderFactory {
     public static interface AdvancedQuartzEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default QuartzEndpointBuilder basic() {
+        default QuartzEndpointBuilder basic() {
             return (QuartzEndpointBuilder) this;
         }
         /**
@@ -284,7 +280,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder basicPropertyBinding(
+        default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -295,7 +291,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder basicPropertyBinding(
+        default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -305,7 +301,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>org.quartz.Calendar</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder customCalendar(
+        default AdvancedQuartzEndpointBuilder customCalendar(
                 Object customCalendar) {
             setProperty("customCalendar", customCalendar);
             return this;
@@ -316,7 +312,7 @@ public interface QuartzEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder customCalendar(
+        default AdvancedQuartzEndpointBuilder customCalendar(
                 String customCalendar) {
             setProperty("customCalendar", customCalendar);
             return this;
@@ -327,7 +323,7 @@ public interface QuartzEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder jobParameters(
+        default AdvancedQuartzEndpointBuilder jobParameters(
                 Map<String, Object> jobParameters) {
             setProperty("jobParameters", jobParameters);
             return this;
@@ -339,8 +335,7 @@ public interface QuartzEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder jobParameters(
-                String jobParameters) {
+        default AdvancedQuartzEndpointBuilder jobParameters(String jobParameters) {
             setProperty("jobParameters", jobParameters);
             return this;
         }
@@ -349,7 +344,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
+        default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 boolean prefixJobNameWithEndpointId) {
             setProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
@@ -359,7 +354,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
+        default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 String prefixJobNameWithEndpointId) {
             setProperty("prefixJobNameWithEndpointId", prefixJobNameWithEndpointId);
             return this;
@@ -370,8 +365,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedQuartzEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -381,8 +375,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedQuartzEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -392,7 +385,7 @@ public interface QuartzEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder triggerParameters(
+        default AdvancedQuartzEndpointBuilder triggerParameters(
                 Map<String, Object> triggerParameters) {
             setProperty("triggerParameters", triggerParameters);
             return this;
@@ -404,7 +397,7 @@ public interface QuartzEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder triggerParameters(
+        default AdvancedQuartzEndpointBuilder triggerParameters(
                 String triggerParameters) {
             setProperty("triggerParameters", triggerParameters);
             return this;
@@ -417,7 +410,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
+        default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 boolean usingFixedCamelContextName) {
             setProperty("usingFixedCamelContextName", usingFixedCamelContextName);
             return this;
@@ -430,7 +423,7 @@ public interface QuartzEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
+        default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 String usingFixedCamelContextName) {
             setProperty("usingFixedCamelContextName", usingFixedCamelContextName);
             return this;
@@ -440,7 +433,7 @@ public interface QuartzEndpointBuilderFactory {
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
      * Creates a builder to build endpoints for the Quartz2 component.
      */
-    public default QuartzEndpointBuilder quartz(String path) {
+    default QuartzEndpointBuilder quartz(String path) {
         class QuartzEndpointBuilderImpl extends AbstractEndpointBuilder implements QuartzEndpointBuilder, AdvancedQuartzEndpointBuilder {
             public QuartzEndpointBuilderImpl(String path) {
                 super("quartz2", path);

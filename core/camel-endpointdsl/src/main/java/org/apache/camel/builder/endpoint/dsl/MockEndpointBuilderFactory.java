@@ -37,7 +37,7 @@ public interface MockEndpointBuilderFactory {
     public static interface MockEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMockEndpointBuilder advanced() {
+        default AdvancedMockEndpointBuilder advanced() {
             return (AdvancedMockEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface MockEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MockEndpointBuilder name(String name) {
+        default MockEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -57,7 +57,7 @@ public interface MockEndpointBuilderFactory {
     public static interface AdvancedMockEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MockEndpointBuilder basic() {
+        default MockEndpointBuilder basic() {
             return (MockEndpointBuilder) this;
         }
         /**
@@ -66,7 +66,7 @@ public interface MockEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMockEndpointBuilder basicPropertyBinding(
+        default AdvancedMockEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +77,7 @@ public interface MockEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMockEndpointBuilder basicPropertyBinding(
+        default AdvancedMockEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -88,8 +88,7 @@ public interface MockEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMockEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMockEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -99,8 +98,7 @@ public interface MockEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMockEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMockEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -109,7 +107,7 @@ public interface MockEndpointBuilderFactory {
      * The mock component is used for testing routes and mediation rules using
      * mocks. Creates a builder to build endpoints for the Mock component.
      */
-    public default MockEndpointBuilder mock(String path) {
+    default MockEndpointBuilder mock(String path) {
         class MockEndpointBuilderImpl extends AbstractEndpointBuilder implements MockEndpointBuilder, AdvancedMockEndpointBuilder {
             public MockEndpointBuilderImpl(String path) {
                 super("mock", path);

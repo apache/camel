@@ -41,7 +41,7 @@ public interface Sjms2EndpointBuilderFactory {
     public interface Sjms2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSjms2EndpointConsumerBuilder advanced() {
+        default AdvancedSjms2EndpointConsumerBuilder advanced() {
             return (AdvancedSjms2EndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder durable(boolean durable) {
+        default Sjms2EndpointConsumerBuilder durable(boolean durable) {
             setProperty("durable", durable);
             return this;
         }
@@ -58,7 +58,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder durable(String durable) {
+        default Sjms2EndpointConsumerBuilder durable(String durable) {
             setProperty("durable", durable);
             return this;
         }
@@ -67,7 +67,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder shared(boolean shared) {
+        default Sjms2EndpointConsumerBuilder shared(boolean shared) {
             setProperty("shared", shared);
             return this;
         }
@@ -76,7 +76,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder shared(String shared) {
+        default Sjms2EndpointConsumerBuilder shared(String shared) {
             setProperty("shared", shared);
             return this;
         }
@@ -85,7 +85,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder subscriptionId(
+        default Sjms2EndpointConsumerBuilder subscriptionId(
                 String subscriptionId) {
             setProperty("subscriptionId", subscriptionId);
             return this;
@@ -95,7 +95,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointConsumerBuilder destinationType(
+        default Sjms2EndpointConsumerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -106,7 +106,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointConsumerBuilder destinationName(
+        default Sjms2EndpointConsumerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -118,7 +118,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointConsumerBuilder acknowledgementMode(
+        default Sjms2EndpointConsumerBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -130,7 +130,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointConsumerBuilder acknowledgementMode(
+        default Sjms2EndpointConsumerBuilder acknowledgementMode(
                 String acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -146,7 +146,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder bridgeErrorHandler(
+        default Sjms2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -162,7 +162,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder bridgeErrorHandler(
+        default Sjms2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -172,8 +172,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder consumerCount(
-                int consumerCount) {
+        default Sjms2EndpointConsumerBuilder consumerCount(int consumerCount) {
             setProperty("consumerCount", consumerCount);
             return this;
         }
@@ -182,8 +181,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder consumerCount(
-                String consumerCount) {
+        default Sjms2EndpointConsumerBuilder consumerCount(String consumerCount) {
             setProperty("consumerCount", consumerCount);
             return this;
         }
@@ -192,7 +190,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder durableSubscriptionId(
+        default Sjms2EndpointConsumerBuilder durableSubscriptionId(
                 String durableSubscriptionId) {
             setProperty("durableSubscriptionId", durableSubscriptionId);
             return this;
@@ -203,8 +201,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder synchronous(
-                boolean synchronous) {
+        default Sjms2EndpointConsumerBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -214,8 +211,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Sjms2EndpointConsumerBuilder synchronous(
-                String synchronous) {
+        default Sjms2EndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -225,7 +221,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
+        default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -237,7 +233,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
+        default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -248,7 +244,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group logging
          */
-        public default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
+        default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -259,7 +255,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group logging
          */
-        public default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
+        default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -269,8 +265,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transacted(
-                boolean transacted) {
+        default Sjms2EndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -279,7 +274,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transacted(String transacted) {
+        default Sjms2EndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -289,7 +284,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionBatchCount(
+        default Sjms2EndpointConsumerBuilder transactionBatchCount(
                 int transactionBatchCount) {
             setProperty("transactionBatchCount", transactionBatchCount);
             return this;
@@ -300,7 +295,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionBatchCount(
+        default Sjms2EndpointConsumerBuilder transactionBatchCount(
                 String transactionBatchCount) {
             setProperty("transactionBatchCount", transactionBatchCount);
             return this;
@@ -311,7 +306,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
+        default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
                 long transactionBatchTimeout) {
             setProperty("transactionBatchTimeout", transactionBatchTimeout);
             return this;
@@ -322,7 +317,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
+        default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
                 String transactionBatchTimeout) {
             setProperty("transactionBatchTimeout", transactionBatchTimeout);
             return this;
@@ -333,7 +328,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
+        default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -344,7 +339,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
+        default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -357,7 +352,7 @@ public interface Sjms2EndpointBuilderFactory {
     public interface AdvancedSjms2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default Sjms2EndpointConsumerBuilder basic() {
+        default Sjms2EndpointConsumerBuilder basic() {
             return (Sjms2EndpointConsumerBuilder) this;
         }
         /**
@@ -369,7 +364,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedSjms2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -383,7 +378,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedSjms2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -393,7 +388,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exchangePattern(
+        default AdvancedSjms2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -404,7 +399,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exchangePattern(
+        default AdvancedSjms2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -414,7 +409,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder messageSelector(
+        default AdvancedSjms2EndpointConsumerBuilder messageSelector(
                 String messageSelector) {
             setProperty("messageSelector", messageSelector);
             return this;
@@ -433,7 +428,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder asyncStartListener(
+        default AdvancedSjms2EndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -452,7 +447,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder asyncStartListener(
+        default AdvancedSjms2EndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -463,7 +458,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder asyncStopListener(
+        default AdvancedSjms2EndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -474,7 +469,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder asyncStopListener(
+        default AdvancedSjms2EndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -485,7 +480,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -496,7 +491,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -506,7 +501,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionCount(
+        default AdvancedSjms2EndpointConsumerBuilder connectionCount(
                 Integer connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -517,7 +512,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionCount(
+        default AdvancedSjms2EndpointConsumerBuilder connectionCount(
                 String connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -528,7 +523,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
+        default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -540,7 +535,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
+        default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -553,7 +548,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionResource(
+        default AdvancedSjms2EndpointConsumerBuilder connectionResource(
                 Object connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -566,7 +561,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder connectionResource(
+        default AdvancedSjms2EndpointConsumerBuilder connectionResource(
                 String connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -577,7 +572,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -588,7 +583,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -599,7 +594,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exceptionListener(
+        default AdvancedSjms2EndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -611,7 +606,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder exceptionListener(
+        default AdvancedSjms2EndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -623,7 +618,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -635,7 +630,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -648,7 +643,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -661,7 +656,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -681,7 +676,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -701,7 +696,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -713,7 +708,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder mapJmsMessage(
+        default AdvancedSjms2EndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -725,7 +720,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder mapJmsMessage(
+        default AdvancedSjms2EndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -738,7 +733,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -751,7 +746,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -764,7 +759,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -777,7 +772,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
                 String sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -790,7 +785,7 @@ public interface Sjms2EndpointBuilderFactory {
     public static interface Sjms2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSjms2EndpointProducerBuilder advanced() {
+        default AdvancedSjms2EndpointProducerBuilder advanced() {
             return (AdvancedSjms2EndpointProducerBuilder) this;
         }
         /**
@@ -798,7 +793,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointProducerBuilder destinationType(
+        default Sjms2EndpointProducerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -809,7 +804,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointProducerBuilder destinationName(
+        default Sjms2EndpointProducerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -821,7 +816,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointProducerBuilder acknowledgementMode(
+        default Sjms2EndpointProducerBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -833,7 +828,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointProducerBuilder acknowledgementMode(
+        default Sjms2EndpointProducerBuilder acknowledgementMode(
                 String acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -851,7 +846,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder lazyStartProducer(
+        default Sjms2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -869,7 +864,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder lazyStartProducer(
+        default Sjms2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -881,8 +876,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder namedReplyTo(
-                String namedReplyTo) {
+        default Sjms2EndpointProducerBuilder namedReplyTo(String namedReplyTo) {
             setProperty("namedReplyTo", namedReplyTo);
             return this;
         }
@@ -891,8 +885,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder persistent(
-                boolean persistent) {
+        default Sjms2EndpointProducerBuilder persistent(boolean persistent) {
             setProperty("persistent", persistent);
             return this;
         }
@@ -901,7 +894,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder persistent(String persistent) {
+        default Sjms2EndpointProducerBuilder persistent(String persistent) {
             setProperty("persistent", persistent);
             return this;
         }
@@ -910,8 +903,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder producerCount(
-                int producerCount) {
+        default Sjms2EndpointProducerBuilder producerCount(int producerCount) {
             setProperty("producerCount", producerCount);
             return this;
         }
@@ -920,8 +912,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder producerCount(
-                String producerCount) {
+        default Sjms2EndpointProducerBuilder producerCount(String producerCount) {
             setProperty("producerCount", producerCount);
             return this;
         }
@@ -930,7 +921,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder ttl(long ttl) {
+        default Sjms2EndpointProducerBuilder ttl(long ttl) {
             setProperty("ttl", ttl);
             return this;
         }
@@ -939,7 +930,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default Sjms2EndpointProducerBuilder ttl(String ttl) {
+        default Sjms2EndpointProducerBuilder ttl(String ttl) {
             setProperty("ttl", ttl);
             return this;
         }
@@ -949,7 +940,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointProducerBuilder transactionCommitStrategy(
+        default Sjms2EndpointProducerBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -960,7 +951,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointProducerBuilder transactionCommitStrategy(
+        default Sjms2EndpointProducerBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -973,7 +964,7 @@ public interface Sjms2EndpointBuilderFactory {
     public interface AdvancedSjms2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default Sjms2EndpointProducerBuilder basic() {
+        default Sjms2EndpointProducerBuilder basic() {
             return (Sjms2EndpointProducerBuilder) this;
         }
         /**
@@ -982,7 +973,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder allowNullBody(
+        default AdvancedSjms2EndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -993,7 +984,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder allowNullBody(
+        default AdvancedSjms2EndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -1004,7 +995,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder prefillPool(
+        default AdvancedSjms2EndpointProducerBuilder prefillPool(
                 boolean prefillPool) {
             setProperty("prefillPool", prefillPool);
             return this;
@@ -1015,7 +1006,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder prefillPool(
+        default AdvancedSjms2EndpointProducerBuilder prefillPool(
                 String prefillPool) {
             setProperty("prefillPool", prefillPool);
             return this;
@@ -1026,7 +1017,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
+        default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
                 long responseTimeOut) {
             setProperty("responseTimeOut", responseTimeOut);
             return this;
@@ -1037,7 +1028,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
+        default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
                 String responseTimeOut) {
             setProperty("responseTimeOut", responseTimeOut);
             return this;
@@ -1056,7 +1047,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder asyncStartListener(
+        default AdvancedSjms2EndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -1075,7 +1066,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder asyncStartListener(
+        default AdvancedSjms2EndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -1086,7 +1077,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
+        default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1097,7 +1088,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
+        default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1108,7 +1099,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1119,7 +1110,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1129,7 +1120,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionCount(
+        default AdvancedSjms2EndpointProducerBuilder connectionCount(
                 Integer connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -1140,7 +1131,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionCount(
+        default AdvancedSjms2EndpointProducerBuilder connectionCount(
                 String connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -1151,7 +1142,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionFactory(
+        default AdvancedSjms2EndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1163,7 +1154,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionFactory(
+        default AdvancedSjms2EndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1176,7 +1167,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionResource(
+        default AdvancedSjms2EndpointProducerBuilder connectionResource(
                 Object connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -1189,7 +1180,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder connectionResource(
+        default AdvancedSjms2EndpointProducerBuilder connectionResource(
                 String connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -1200,7 +1191,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointProducerBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -1211,7 +1202,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointProducerBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -1222,7 +1213,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder exceptionListener(
+        default AdvancedSjms2EndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1234,7 +1225,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder exceptionListener(
+        default AdvancedSjms2EndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1246,7 +1237,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1258,7 +1249,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1271,7 +1262,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1284,7 +1275,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1304,7 +1295,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1324,7 +1315,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1336,7 +1327,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder mapJmsMessage(
+        default AdvancedSjms2EndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1348,7 +1339,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder mapJmsMessage(
+        default AdvancedSjms2EndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1361,7 +1352,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1374,7 +1365,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1387,7 +1378,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -1400,7 +1391,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
                 String sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -1413,7 +1404,7 @@ public interface Sjms2EndpointBuilderFactory {
     public static interface Sjms2EndpointBuilder
             extends
                 Sjms2EndpointConsumerBuilder, Sjms2EndpointProducerBuilder {
-        public default AdvancedSjms2EndpointBuilder advanced() {
+        default AdvancedSjms2EndpointBuilder advanced() {
             return (AdvancedSjms2EndpointBuilder) this;
         }
         /**
@@ -1421,8 +1412,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointBuilder destinationType(
-                String destinationType) {
+        default Sjms2EndpointBuilder destinationType(String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
         }
@@ -1432,8 +1422,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Sjms2EndpointBuilder destinationName(
-                String destinationName) {
+        default Sjms2EndpointBuilder destinationName(String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
         }
@@ -1444,7 +1433,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointBuilder acknowledgementMode(
+        default Sjms2EndpointBuilder acknowledgementMode(
                 SessionAcknowledgementType acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -1456,7 +1445,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * @group common
          */
-        public default Sjms2EndpointBuilder acknowledgementMode(
+        default Sjms2EndpointBuilder acknowledgementMode(
                 String acknowledgementMode) {
             setProperty("acknowledgementMode", acknowledgementMode);
             return this;
@@ -1467,7 +1456,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointBuilder transactionCommitStrategy(
+        default Sjms2EndpointBuilder transactionCommitStrategy(
                 Object transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -1478,7 +1467,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
          * @group transaction
          */
-        public default Sjms2EndpointBuilder transactionCommitStrategy(
+        default Sjms2EndpointBuilder transactionCommitStrategy(
                 String transactionCommitStrategy) {
             setProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
@@ -1491,7 +1480,7 @@ public interface Sjms2EndpointBuilderFactory {
     public static interface AdvancedSjms2EndpointBuilder
             extends
                 AdvancedSjms2EndpointConsumerBuilder, AdvancedSjms2EndpointProducerBuilder {
-        public default Sjms2EndpointBuilder basic() {
+        default Sjms2EndpointBuilder basic() {
             return (Sjms2EndpointBuilder) this;
         }
         /**
@@ -1508,7 +1497,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder asyncStartListener(
+        default AdvancedSjms2EndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -1527,7 +1516,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder asyncStartListener(
+        default AdvancedSjms2EndpointBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -1538,7 +1527,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder asyncStopListener(
+        default AdvancedSjms2EndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1549,7 +1538,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder asyncStopListener(
+        default AdvancedSjms2EndpointBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1560,7 +1549,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1571,7 +1560,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder basicPropertyBinding(
+        default AdvancedSjms2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1581,7 +1570,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionCount(
+        default AdvancedSjms2EndpointBuilder connectionCount(
                 Integer connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -1592,7 +1581,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionCount(
+        default AdvancedSjms2EndpointBuilder connectionCount(
                 String connectionCount) {
             setProperty("connectionCount", connectionCount);
             return this;
@@ -1603,7 +1592,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionFactory(
+        default AdvancedSjms2EndpointBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1615,7 +1604,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionFactory(
+        default AdvancedSjms2EndpointBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1628,7 +1617,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionResource(
+        default AdvancedSjms2EndpointBuilder connectionResource(
                 Object connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -1641,7 +1630,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder connectionResource(
+        default AdvancedSjms2EndpointBuilder connectionResource(
                 String connectionResource) {
             setProperty("connectionResource", connectionResource);
             return this;
@@ -1652,7 +1641,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointBuilder destinationCreationStrategy(
                 Object destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -1663,7 +1652,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder destinationCreationStrategy(
+        default AdvancedSjms2EndpointBuilder destinationCreationStrategy(
                 String destinationCreationStrategy) {
             setProperty("destinationCreationStrategy", destinationCreationStrategy);
             return this;
@@ -1674,7 +1663,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder exceptionListener(
+        default AdvancedSjms2EndpointBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1686,7 +1675,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder exceptionListener(
+        default AdvancedSjms2EndpointBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1698,7 +1687,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1710,7 +1699,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder headerFilterStrategy(
+        default AdvancedSjms2EndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1723,7 +1712,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1736,7 +1725,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder includeAllJMSXProperties(
+        default AdvancedSjms2EndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1756,7 +1745,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1776,7 +1765,7 @@ public interface Sjms2EndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedSjms2EndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1788,8 +1777,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder mapJmsMessage(
-                boolean mapJmsMessage) {
+        default AdvancedSjms2EndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -1800,8 +1788,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder mapJmsMessage(
-                String mapJmsMessage) {
+        default AdvancedSjms2EndpointBuilder mapJmsMessage(String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -1813,7 +1800,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1826,7 +1813,7 @@ public interface Sjms2EndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjms2EndpointBuilder messageCreatedStrategy(
+        default AdvancedSjms2EndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1839,7 +1826,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointBuilder sharedJMSSession(
                 boolean sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -1852,7 +1839,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedSjms2EndpointBuilder sharedJMSSession(
+        default AdvancedSjms2EndpointBuilder sharedJMSSession(
                 String sharedJMSSession) {
             setProperty("sharedJMSSession", sharedJMSSession);
             return this;
@@ -1871,7 +1858,7 @@ public interface Sjms2EndpointBuilderFactory {
      * consumed from) a JMS Queue or Topic (uses JMS 2.x API). Creates a builder
      * to build endpoints for the Simple JMS2 component.
      */
-    public default Sjms2EndpointBuilder sjms2(String path) {
+    default Sjms2EndpointBuilder sjms2(String path) {
         class Sjms2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sjms2EndpointBuilder, AdvancedSjms2EndpointBuilder {
             public Sjms2EndpointBuilderImpl(String path) {
                 super("sjms2", path);

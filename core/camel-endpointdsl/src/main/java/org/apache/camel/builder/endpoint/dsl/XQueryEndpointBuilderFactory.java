@@ -45,7 +45,7 @@ public interface XQueryEndpointBuilderFactory {
     public interface XQueryEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedXQueryEndpointConsumerBuilder advanced() {
+        default AdvancedXQueryEndpointConsumerBuilder advanced() {
             return (AdvancedXQueryEndpointConsumerBuilder) this;
         }
         /**
@@ -53,8 +53,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder resourceUri(
-                String resourceUri) {
+        default XQueryEndpointConsumerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -63,7 +62,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder allowStAX(boolean allowStAX) {
+        default XQueryEndpointConsumerBuilder allowStAX(boolean allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -72,7 +71,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder allowStAX(String allowStAX) {
+        default XQueryEndpointConsumerBuilder allowStAX(String allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -82,8 +81,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder headerName(
-                String headerName) {
+        default XQueryEndpointConsumerBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -94,7 +92,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder namespacePrefixes(
+        default XQueryEndpointConsumerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
@@ -107,7 +105,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder namespacePrefixes(
+        default XQueryEndpointConsumerBuilder namespacePrefixes(
                 String namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
@@ -118,7 +116,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder resultsFormat(
+        default XQueryEndpointConsumerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
@@ -129,8 +127,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder resultsFormat(
-                String resultsFormat) {
+        default XQueryEndpointConsumerBuilder resultsFormat(String resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -140,7 +137,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder resultType(
+        default XQueryEndpointConsumerBuilder resultType(
                 Class<Object> resultType) {
             setProperty("resultType", resultType);
             return this;
@@ -151,8 +148,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder resultType(
-                String resultType) {
+        default XQueryEndpointConsumerBuilder resultType(String resultType) {
             setProperty("resultType", resultType);
             return this;
         }
@@ -161,7 +157,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
+        default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -171,7 +167,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
+        default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -187,7 +183,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default XQueryEndpointConsumerBuilder bridgeErrorHandler(
+        default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -203,7 +199,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default XQueryEndpointConsumerBuilder bridgeErrorHandler(
+        default XQueryEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -214,7 +210,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -225,7 +221,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -236,7 +232,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffErrorThreshold(
+        default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -247,7 +243,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffErrorThreshold(
+        default XQueryEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -258,7 +254,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffIdleThreshold(
+        default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -269,7 +265,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffIdleThreshold(
+        default XQueryEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -284,7 +280,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffMultiplier(
+        default XQueryEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -299,7 +295,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder backoffMultiplier(
+        default XQueryEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -311,7 +307,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder delay(long delay) {
+        default XQueryEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -322,7 +318,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder delay(String delay) {
+        default XQueryEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -332,7 +328,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder greedy(boolean greedy) {
+        default XQueryEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -342,7 +338,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder greedy(String greedy) {
+        default XQueryEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -353,8 +349,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default XQueryEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -365,8 +360,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default XQueryEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -376,7 +370,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder runLoggingLevel(
+        default XQueryEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -388,7 +382,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder runLoggingLevel(
+        default XQueryEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -401,7 +395,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder scheduledExecutorService(
+        default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -414,7 +408,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder scheduledExecutorService(
+        default XQueryEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -427,7 +421,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder scheduler(
+        default XQueryEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -440,7 +434,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder scheduler(String scheduler) {
+        default XQueryEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -451,7 +445,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder schedulerProperties(
+        default XQueryEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -464,7 +458,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder schedulerProperties(
+        default XQueryEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -474,7 +468,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder startScheduler(
+        default XQueryEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -484,7 +478,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder startScheduler(
+        default XQueryEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -494,7 +488,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default XQueryEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -504,7 +498,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -514,7 +508,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder useFixedDelay(
+        default XQueryEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -525,8 +519,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default XQueryEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default XQueryEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -538,7 +531,7 @@ public interface XQueryEndpointBuilderFactory {
     public interface AdvancedXQueryEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default XQueryEndpointConsumerBuilder basic() {
+        default XQueryEndpointConsumerBuilder basic() {
             return (XQueryEndpointConsumerBuilder) this;
         }
         /**
@@ -550,7 +543,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
+        default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -564,7 +557,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
+        default AdvancedXQueryEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -574,7 +567,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
+        default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -585,7 +578,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
+        default AdvancedXQueryEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -599,7 +592,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
+        default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -613,7 +606,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
+        default AdvancedXQueryEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -624,7 +617,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -635,7 +628,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -645,7 +638,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder configuration(
+        default AdvancedXQueryEndpointConsumerBuilder configuration(
                 Object configuration) {
             setProperty("configuration", configuration);
             return this;
@@ -656,7 +649,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder configuration(
+        default AdvancedXQueryEndpointConsumerBuilder configuration(
                 String configuration) {
             setProperty("configuration", configuration);
             return this;
@@ -667,7 +660,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
+        default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -679,7 +672,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
+        default AdvancedXQueryEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -689,7 +682,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -700,7 +693,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointConsumerBuilder moduleURIResolver(
                 String moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -711,7 +704,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder parameters(
+        default AdvancedXQueryEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -723,7 +716,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder parameters(
+        default AdvancedXQueryEndpointConsumerBuilder parameters(
                 String parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -733,7 +726,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder properties(
+        default AdvancedXQueryEndpointConsumerBuilder properties(
                 Properties properties) {
             setProperty("properties", properties);
             return this;
@@ -744,7 +737,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder properties(
+        default AdvancedXQueryEndpointConsumerBuilder properties(
                 String properties) {
             setProperty("properties", properties);
             return this;
@@ -755,7 +748,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
+        default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 Object staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -766,7 +759,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.query.StaticQueryContext</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
+        default AdvancedXQueryEndpointConsumerBuilder staticQueryContext(
                 String staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -777,7 +770,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder synchronous(
+        default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -788,7 +781,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointConsumerBuilder synchronous(
+        default AdvancedXQueryEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -801,7 +794,7 @@ public interface XQueryEndpointBuilderFactory {
     public static interface XQueryEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedXQueryEndpointProducerBuilder advanced() {
+        default AdvancedXQueryEndpointProducerBuilder advanced() {
             return (AdvancedXQueryEndpointProducerBuilder) this;
         }
         /**
@@ -809,8 +802,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder resourceUri(
-                String resourceUri) {
+        default XQueryEndpointProducerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -819,7 +811,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder allowStAX(boolean allowStAX) {
+        default XQueryEndpointProducerBuilder allowStAX(boolean allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -828,7 +820,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder allowStAX(String allowStAX) {
+        default XQueryEndpointProducerBuilder allowStAX(String allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -838,8 +830,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder headerName(
-                String headerName) {
+        default XQueryEndpointProducerBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -850,7 +841,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder namespacePrefixes(
+        default XQueryEndpointProducerBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
@@ -863,7 +854,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder namespacePrefixes(
+        default XQueryEndpointProducerBuilder namespacePrefixes(
                 String namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
@@ -874,7 +865,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder resultsFormat(
+        default XQueryEndpointProducerBuilder resultsFormat(
                 ResultFormat resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
@@ -885,8 +876,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder resultsFormat(
-                String resultsFormat) {
+        default XQueryEndpointProducerBuilder resultsFormat(String resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -896,7 +886,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder resultType(
+        default XQueryEndpointProducerBuilder resultType(
                 Class<Object> resultType) {
             setProperty("resultType", resultType);
             return this;
@@ -907,8 +897,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder resultType(
-                String resultType) {
+        default XQueryEndpointProducerBuilder resultType(String resultType) {
             setProperty("resultType", resultType);
             return this;
         }
@@ -917,7 +906,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
+        default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -927,7 +916,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
+        default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -945,7 +934,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XQueryEndpointProducerBuilder lazyStartProducer(
+        default XQueryEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -963,7 +952,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XQueryEndpointProducerBuilder lazyStartProducer(
+        default XQueryEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -976,7 +965,7 @@ public interface XQueryEndpointBuilderFactory {
     public interface AdvancedXQueryEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default XQueryEndpointProducerBuilder basic() {
+        default XQueryEndpointProducerBuilder basic() {
             return (XQueryEndpointProducerBuilder) this;
         }
         /**
@@ -985,7 +974,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -996,7 +985,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1006,7 +995,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder configuration(
+        default AdvancedXQueryEndpointProducerBuilder configuration(
                 Object configuration) {
             setProperty("configuration", configuration);
             return this;
@@ -1017,7 +1006,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder configuration(
+        default AdvancedXQueryEndpointProducerBuilder configuration(
                 String configuration) {
             setProperty("configuration", configuration);
             return this;
@@ -1028,7 +1017,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder configurationProperties(
+        default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -1040,7 +1029,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder configurationProperties(
+        default AdvancedXQueryEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -1050,7 +1039,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 Object moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -1061,7 +1050,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointProducerBuilder moduleURIResolver(
                 String moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -1072,7 +1061,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder parameters(
+        default AdvancedXQueryEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -1084,7 +1073,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder parameters(
+        default AdvancedXQueryEndpointProducerBuilder parameters(
                 String parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -1094,7 +1083,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder properties(
+        default AdvancedXQueryEndpointProducerBuilder properties(
                 Properties properties) {
             setProperty("properties", properties);
             return this;
@@ -1105,7 +1094,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder properties(
+        default AdvancedXQueryEndpointProducerBuilder properties(
                 String properties) {
             setProperty("properties", properties);
             return this;
@@ -1116,7 +1105,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
+        default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 Object staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -1127,7 +1116,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.query.StaticQueryContext</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
+        default AdvancedXQueryEndpointProducerBuilder staticQueryContext(
                 String staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -1138,7 +1127,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder synchronous(
+        default AdvancedXQueryEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1149,7 +1138,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointProducerBuilder synchronous(
+        default AdvancedXQueryEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1162,7 +1151,7 @@ public interface XQueryEndpointBuilderFactory {
     public static interface XQueryEndpointBuilder
             extends
                 XQueryEndpointConsumerBuilder, XQueryEndpointProducerBuilder {
-        public default AdvancedXQueryEndpointBuilder advanced() {
+        default AdvancedXQueryEndpointBuilder advanced() {
             return (AdvancedXQueryEndpointBuilder) this;
         }
         /**
@@ -1170,7 +1159,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder resourceUri(String resourceUri) {
+        default XQueryEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -1179,7 +1168,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder allowStAX(boolean allowStAX) {
+        default XQueryEndpointBuilder allowStAX(boolean allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -1188,7 +1177,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder allowStAX(String allowStAX) {
+        default XQueryEndpointBuilder allowStAX(String allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -1198,7 +1187,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder headerName(String headerName) {
+        default XQueryEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -1209,7 +1198,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder namespacePrefixes(
+        default XQueryEndpointBuilder namespacePrefixes(
                 Map<String, String> namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
@@ -1222,8 +1211,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointBuilder namespacePrefixes(
-                String namespacePrefixes) {
+        default XQueryEndpointBuilder namespacePrefixes(String namespacePrefixes) {
             setProperty("namespacePrefixes", namespacePrefixes);
             return this;
         }
@@ -1233,8 +1221,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder resultsFormat(
-                ResultFormat resultsFormat) {
+        default XQueryEndpointBuilder resultsFormat(ResultFormat resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -1244,7 +1231,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder resultsFormat(String resultsFormat) {
+        default XQueryEndpointBuilder resultsFormat(String resultsFormat) {
             setProperty("resultsFormat", resultsFormat);
             return this;
         }
@@ -1254,7 +1241,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default XQueryEndpointBuilder resultType(Class<Object> resultType) {
+        default XQueryEndpointBuilder resultType(Class<Object> resultType) {
             setProperty("resultType", resultType);
             return this;
         }
@@ -1264,7 +1251,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder resultType(String resultType) {
+        default XQueryEndpointBuilder resultType(String resultType) {
             setProperty("resultType", resultType);
             return this;
         }
@@ -1273,7 +1260,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder stripsAllWhiteSpace(
+        default XQueryEndpointBuilder stripsAllWhiteSpace(
                 boolean stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -1283,7 +1270,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XQueryEndpointBuilder stripsAllWhiteSpace(
+        default XQueryEndpointBuilder stripsAllWhiteSpace(
                 String stripsAllWhiteSpace) {
             setProperty("stripsAllWhiteSpace", stripsAllWhiteSpace);
             return this;
@@ -1296,7 +1283,7 @@ public interface XQueryEndpointBuilderFactory {
     public static interface AdvancedXQueryEndpointBuilder
             extends
                 AdvancedXQueryEndpointConsumerBuilder, AdvancedXQueryEndpointProducerBuilder {
-        public default XQueryEndpointBuilder basic() {
+        default XQueryEndpointBuilder basic() {
             return (XQueryEndpointBuilder) this;
         }
         /**
@@ -1305,7 +1292,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1316,7 +1303,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder basicPropertyBinding(
+        default AdvancedXQueryEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1326,8 +1313,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder configuration(
-                Object configuration) {
+        default AdvancedXQueryEndpointBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -1337,8 +1323,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder configuration(
-                String configuration) {
+        default AdvancedXQueryEndpointBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -1348,7 +1333,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder configurationProperties(
+        default AdvancedXQueryEndpointBuilder configurationProperties(
                 Map<String, Object> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -1360,7 +1345,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder configurationProperties(
+        default AdvancedXQueryEndpointBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -1370,7 +1355,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 Object moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -1381,7 +1366,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.lib.ModuleURIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder moduleURIResolver(
+        default AdvancedXQueryEndpointBuilder moduleURIResolver(
                 String moduleURIResolver) {
             setProperty("moduleURIResolver", moduleURIResolver);
             return this;
@@ -1392,7 +1377,7 @@ public interface XQueryEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder parameters(
+        default AdvancedXQueryEndpointBuilder parameters(
                 Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
@@ -1404,8 +1389,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder parameters(
-                String parameters) {
+        default AdvancedXQueryEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -1414,8 +1398,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder properties(
-                Properties properties) {
+        default AdvancedXQueryEndpointBuilder properties(Properties properties) {
             setProperty("properties", properties);
             return this;
         }
@@ -1425,8 +1408,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder properties(
-                String properties) {
+        default AdvancedXQueryEndpointBuilder properties(String properties) {
             setProperty("properties", properties);
             return this;
         }
@@ -1436,7 +1418,7 @@ public interface XQueryEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder staticQueryContext(
+        default AdvancedXQueryEndpointBuilder staticQueryContext(
                 Object staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -1447,7 +1429,7 @@ public interface XQueryEndpointBuilderFactory {
          * <code>net.sf.saxon.query.StaticQueryContext</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder staticQueryContext(
+        default AdvancedXQueryEndpointBuilder staticQueryContext(
                 String staticQueryContext) {
             setProperty("staticQueryContext", staticQueryContext);
             return this;
@@ -1458,8 +1440,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedXQueryEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1469,8 +1450,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXQueryEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedXQueryEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1487,7 +1467,7 @@ public interface XQueryEndpointBuilderFactory {
      * Transforms the message using a XQuery template using Saxon. Creates a
      * builder to build endpoints for the XQuery component.
      */
-    public default XQueryEndpointBuilder xQuery(String path) {
+    default XQueryEndpointBuilder xQuery(String path) {
         class XQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements XQueryEndpointBuilder, AdvancedXQueryEndpointBuilder {
             public XQueryEndpointBuilderImpl(String path) {
                 super("xquery", path);

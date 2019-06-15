@@ -45,7 +45,7 @@ public interface MyBatisEndpointBuilderFactory {
     public interface MyBatisEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMyBatisEndpointConsumerBuilder advanced() {
+        default AdvancedMyBatisEndpointConsumerBuilder advanced() {
             return (AdvancedMyBatisEndpointConsumerBuilder) this;
         }
         /**
@@ -54,7 +54,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MyBatisEndpointConsumerBuilder statement(String statement) {
+        default MyBatisEndpointConsumerBuilder statement(String statement) {
             setProperty("statement", statement);
             return this;
         }
@@ -69,7 +69,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
+        default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -85,7 +85,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
+        default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -100,7 +100,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
+        default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -115,7 +115,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
+        default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -125,7 +125,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder onConsume(String onConsume) {
+        default MyBatisEndpointConsumerBuilder onConsume(String onConsume) {
             setProperty("onConsume", onConsume);
             return this;
         }
@@ -134,7 +134,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
+        default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -144,7 +144,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
+        default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -155,7 +155,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -166,7 +166,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -178,8 +178,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder transacted(
-                boolean transacted) {
+        default MyBatisEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -190,8 +189,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder transacted(
-                String transacted) {
+        default MyBatisEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -200,8 +198,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder useIterator(
-                boolean useIterator) {
+        default MyBatisEndpointConsumerBuilder useIterator(boolean useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -210,8 +207,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MyBatisEndpointConsumerBuilder useIterator(
-                String useIterator) {
+        default MyBatisEndpointConsumerBuilder useIterator(String useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -221,7 +217,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
+        default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -232,7 +228,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
+        default MyBatisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -243,7 +239,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
+        default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -254,7 +250,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
+        default MyBatisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -269,7 +265,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffMultiplier(
+        default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -284,7 +280,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder backoffMultiplier(
+        default MyBatisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -296,7 +292,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder delay(long delay) {
+        default MyBatisEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -307,7 +303,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder delay(String delay) {
+        default MyBatisEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -317,7 +313,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder greedy(boolean greedy) {
+        default MyBatisEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -327,7 +323,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder greedy(String greedy) {
+        default MyBatisEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -338,8 +334,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default MyBatisEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -350,8 +345,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default MyBatisEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -361,7 +355,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder runLoggingLevel(
+        default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -373,7 +367,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder runLoggingLevel(
+        default MyBatisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -386,7 +380,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder scheduledExecutorService(
+        default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -399,7 +393,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder scheduledExecutorService(
+        default MyBatisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -412,7 +406,7 @@ public interface MyBatisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder scheduler(
+        default MyBatisEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -425,7 +419,7 @@ public interface MyBatisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder scheduler(String scheduler) {
+        default MyBatisEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -436,7 +430,7 @@ public interface MyBatisEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder schedulerProperties(
+        default MyBatisEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -449,7 +443,7 @@ public interface MyBatisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder schedulerProperties(
+        default MyBatisEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -459,7 +453,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder startScheduler(
+        default MyBatisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -469,7 +463,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder startScheduler(
+        default MyBatisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -479,7 +473,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default MyBatisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -489,7 +483,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -499,7 +493,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder useFixedDelay(
+        default MyBatisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -510,7 +504,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default MyBatisEndpointConsumerBuilder useFixedDelay(
+        default MyBatisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -523,7 +517,7 @@ public interface MyBatisEndpointBuilderFactory {
     public interface AdvancedMyBatisEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MyBatisEndpointConsumerBuilder basic() {
+        default MyBatisEndpointConsumerBuilder basic() {
             return (MyBatisEndpointConsumerBuilder) this;
         }
         /**
@@ -535,7 +529,7 @@ public interface MyBatisEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -549,7 +543,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMyBatisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -559,7 +553,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
+        default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -570,7 +564,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
+        default AdvancedMyBatisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -584,7 +578,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
+        default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -598,7 +592,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
+        default AdvancedMyBatisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -609,7 +603,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
+        default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -620,7 +614,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.component.mybatis.MyBatisProcessingStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
+        default AdvancedMyBatisEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -631,7 +625,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -642,7 +636,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -653,7 +647,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder synchronous(
+        default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -664,7 +658,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointConsumerBuilder synchronous(
+        default AdvancedMyBatisEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -677,7 +671,7 @@ public interface MyBatisEndpointBuilderFactory {
     public static interface MyBatisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMyBatisEndpointProducerBuilder advanced() {
+        default AdvancedMyBatisEndpointProducerBuilder advanced() {
             return (AdvancedMyBatisEndpointProducerBuilder) this;
         }
         /**
@@ -686,7 +680,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MyBatisEndpointProducerBuilder statement(String statement) {
+        default MyBatisEndpointProducerBuilder statement(String statement) {
             setProperty("statement", statement);
             return this;
         }
@@ -698,7 +692,7 @@ public interface MyBatisEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder executorType(
+        default MyBatisEndpointProducerBuilder executorType(
                 ExecutorType executorType) {
             setProperty("executorType", executorType);
             return this;
@@ -711,8 +705,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder executorType(
-                String executorType) {
+        default MyBatisEndpointProducerBuilder executorType(String executorType) {
             setProperty("executorType", executorType);
             return this;
         }
@@ -725,8 +718,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder inputHeader(
-                String inputHeader) {
+        default MyBatisEndpointProducerBuilder inputHeader(String inputHeader) {
             setProperty("inputHeader", inputHeader);
             return this;
         }
@@ -743,7 +735,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder lazyStartProducer(
+        default MyBatisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -761,7 +753,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder lazyStartProducer(
+        default MyBatisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -778,8 +770,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder outputHeader(
-                String outputHeader) {
+        default MyBatisEndpointProducerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -790,7 +781,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.component.mybatis.StatementType</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder statementType(
+        default MyBatisEndpointProducerBuilder statementType(
                 StatementType statementType) {
             setProperty("statementType", statementType);
             return this;
@@ -802,7 +793,7 @@ public interface MyBatisEndpointBuilderFactory {
          * <code>org.apache.camel.component.mybatis.StatementType</code> type.
          * @group producer
          */
-        public default MyBatisEndpointProducerBuilder statementType(
+        default MyBatisEndpointProducerBuilder statementType(
                 String statementType) {
             setProperty("statementType", statementType);
             return this;
@@ -815,7 +806,7 @@ public interface MyBatisEndpointBuilderFactory {
     public interface AdvancedMyBatisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default MyBatisEndpointProducerBuilder basic() {
+        default MyBatisEndpointProducerBuilder basic() {
             return (MyBatisEndpointProducerBuilder) this;
         }
         /**
@@ -824,7 +815,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -835,7 +826,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -846,7 +837,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointProducerBuilder synchronous(
+        default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -857,7 +848,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointProducerBuilder synchronous(
+        default AdvancedMyBatisEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -870,7 +861,7 @@ public interface MyBatisEndpointBuilderFactory {
     public static interface MyBatisEndpointBuilder
             extends
                 MyBatisEndpointConsumerBuilder, MyBatisEndpointProducerBuilder {
-        public default AdvancedMyBatisEndpointBuilder advanced() {
+        default AdvancedMyBatisEndpointBuilder advanced() {
             return (AdvancedMyBatisEndpointBuilder) this;
         }
         /**
@@ -879,7 +870,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MyBatisEndpointBuilder statement(String statement) {
+        default MyBatisEndpointBuilder statement(String statement) {
             setProperty("statement", statement);
             return this;
         }
@@ -891,7 +882,7 @@ public interface MyBatisEndpointBuilderFactory {
     public static interface AdvancedMyBatisEndpointBuilder
             extends
                 AdvancedMyBatisEndpointConsumerBuilder, AdvancedMyBatisEndpointProducerBuilder {
-        public default MyBatisEndpointBuilder basic() {
+        default MyBatisEndpointBuilder basic() {
             return (MyBatisEndpointBuilder) this;
         }
         /**
@@ -900,7 +891,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -911,7 +902,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
+        default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -922,8 +913,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMyBatisEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -933,8 +923,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMyBatisEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -959,7 +948,7 @@ public interface MyBatisEndpointBuilderFactory {
      * using MyBatis. Creates a builder to build endpoints for the MyBatis
      * component.
      */
-    public default MyBatisEndpointBuilder myBatis(String path) {
+    default MyBatisEndpointBuilder myBatis(String path) {
         class MyBatisEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisEndpointBuilder, AdvancedMyBatisEndpointBuilder {
             public MyBatisEndpointBuilderImpl(String path) {
                 super("mybatis", path);

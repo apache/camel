@@ -38,7 +38,7 @@ public interface GitEndpointBuilderFactory {
     public interface GitEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGitEndpointConsumerBuilder advanced() {
+        default AdvancedGitEndpointConsumerBuilder advanced() {
             return (AdvancedGitEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder localPath(String localPath) {
+        default GitEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -55,7 +55,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder branchName(String branchName) {
+        default GitEndpointConsumerBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
             return this;
         }
@@ -64,7 +64,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder password(String password) {
+        default GitEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -73,7 +73,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder remoteName(String remoteName) {
+        default GitEndpointConsumerBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
             return this;
         }
@@ -82,7 +82,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder remotePath(String remotePath) {
+        default GitEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -91,7 +91,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder tagName(String tagName) {
+        default GitEndpointConsumerBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
             return this;
         }
@@ -100,7 +100,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointConsumerBuilder username(String username) {
+        default GitEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -115,7 +115,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GitEndpointConsumerBuilder bridgeErrorHandler(
+        default GitEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -131,7 +131,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GitEndpointConsumerBuilder bridgeErrorHandler(
+        default GitEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -142,7 +142,7 @@ public interface GitEndpointBuilderFactory {
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
          * @group consumer
          */
-        public default GitEndpointConsumerBuilder type(GitType type) {
+        default GitEndpointConsumerBuilder type(GitType type) {
             setProperty("type", type);
             return this;
         }
@@ -152,7 +152,7 @@ public interface GitEndpointBuilderFactory {
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
          * @group consumer
          */
-        public default GitEndpointConsumerBuilder type(String type) {
+        default GitEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -164,7 +164,7 @@ public interface GitEndpointBuilderFactory {
     public interface AdvancedGitEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GitEndpointConsumerBuilder basic() {
+        default GitEndpointConsumerBuilder basic() {
             return (GitEndpointConsumerBuilder) this;
         }
         /**
@@ -176,7 +176,7 @@ public interface GitEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGitEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -190,7 +190,7 @@ public interface GitEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGitEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -200,7 +200,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGitEndpointConsumerBuilder exchangePattern(
+        default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -211,7 +211,7 @@ public interface GitEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGitEndpointConsumerBuilder exchangePattern(
+        default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -222,7 +222,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -233,7 +233,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -244,7 +244,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointConsumerBuilder synchronous(
+        default AdvancedGitEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -255,7 +255,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointConsumerBuilder synchronous(
+        default AdvancedGitEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -268,7 +268,7 @@ public interface GitEndpointBuilderFactory {
     public static interface GitEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGitEndpointProducerBuilder advanced() {
+        default AdvancedGitEndpointProducerBuilder advanced() {
             return (AdvancedGitEndpointProducerBuilder) this;
         }
         /**
@@ -276,7 +276,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder localPath(String localPath) {
+        default GitEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -285,7 +285,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder branchName(String branchName) {
+        default GitEndpointProducerBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
             return this;
         }
@@ -294,7 +294,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder password(String password) {
+        default GitEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -303,7 +303,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder remoteName(String remoteName) {
+        default GitEndpointProducerBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
             return this;
         }
@@ -312,7 +312,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder remotePath(String remotePath) {
+        default GitEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -321,7 +321,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder tagName(String tagName) {
+        default GitEndpointProducerBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
             return this;
         }
@@ -330,7 +330,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointProducerBuilder username(String username) {
+        default GitEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -339,7 +339,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
+        default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
             setProperty("allowEmpty", allowEmpty);
             return this;
         }
@@ -348,7 +348,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
+        default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
             setProperty("allowEmpty", allowEmpty);
             return this;
         }
@@ -365,7 +365,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GitEndpointProducerBuilder lazyStartProducer(
+        default GitEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -383,7 +383,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GitEndpointProducerBuilder lazyStartProducer(
+        default GitEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -393,7 +393,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GitEndpointProducerBuilder operation(String operation) {
+        default GitEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -405,7 +405,7 @@ public interface GitEndpointBuilderFactory {
     public interface AdvancedGitEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GitEndpointProducerBuilder basic() {
+        default GitEndpointProducerBuilder basic() {
             return (GitEndpointProducerBuilder) this;
         }
         /**
@@ -414,7 +414,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -425,7 +425,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -436,7 +436,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointProducerBuilder synchronous(
+        default AdvancedGitEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -447,7 +447,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointProducerBuilder synchronous(
+        default AdvancedGitEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -460,7 +460,7 @@ public interface GitEndpointBuilderFactory {
     public static interface GitEndpointBuilder
             extends
                 GitEndpointConsumerBuilder, GitEndpointProducerBuilder {
-        public default AdvancedGitEndpointBuilder advanced() {
+        default AdvancedGitEndpointBuilder advanced() {
             return (AdvancedGitEndpointBuilder) this;
         }
         /**
@@ -468,7 +468,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder localPath(String localPath) {
+        default GitEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -477,7 +477,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder branchName(String branchName) {
+        default GitEndpointBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
             return this;
         }
@@ -486,7 +486,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder password(String password) {
+        default GitEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -495,7 +495,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder remoteName(String remoteName) {
+        default GitEndpointBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
             return this;
         }
@@ -504,7 +504,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder remotePath(String remotePath) {
+        default GitEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -513,7 +513,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder tagName(String tagName) {
+        default GitEndpointBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
             return this;
         }
@@ -522,7 +522,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GitEndpointBuilder username(String username) {
+        default GitEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -534,7 +534,7 @@ public interface GitEndpointBuilderFactory {
     public static interface AdvancedGitEndpointBuilder
             extends
                 AdvancedGitEndpointConsumerBuilder, AdvancedGitEndpointProducerBuilder {
-        public default GitEndpointBuilder basic() {
+        default GitEndpointBuilder basic() {
             return (GitEndpointBuilder) this;
         }
         /**
@@ -543,7 +543,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointBuilder basicPropertyBinding(
+        default AdvancedGitEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -554,7 +554,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointBuilder basicPropertyBinding(
+        default AdvancedGitEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -565,8 +565,7 @@ public interface GitEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGitEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -576,7 +575,7 @@ public interface GitEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGitEndpointBuilder synchronous(String synchronous) {
+        default AdvancedGitEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -593,7 +592,7 @@ public interface GitEndpointBuilderFactory {
      * The git component is used for working with git repositories. Creates a
      * builder to build endpoints for the Git component.
      */
-    public default GitEndpointBuilder git(String path) {
+    default GitEndpointBuilder git(String path) {
         class GitEndpointBuilderImpl extends AbstractEndpointBuilder implements GitEndpointBuilder, AdvancedGitEndpointBuilder {
             public GitEndpointBuilderImpl(String path) {
                 super("git", path);

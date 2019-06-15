@@ -39,7 +39,7 @@ public interface DropboxEndpointBuilderFactory {
     public interface DropboxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDropboxEndpointConsumerBuilder advanced() {
+        default AdvancedDropboxEndpointConsumerBuilder advanced() {
             return (AdvancedDropboxEndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder operation(
+        default DropboxEndpointConsumerBuilder operation(
                 DropboxOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -63,7 +63,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder operation(String operation) {
+        default DropboxEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -72,8 +72,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder accessToken(
-                String accessToken) {
+        default DropboxEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -82,7 +81,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder client(Object client) {
+        default DropboxEndpointConsumerBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -92,7 +91,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder client(String client) {
+        default DropboxEndpointConsumerBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -101,7 +100,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder clientIdentifier(
+        default DropboxEndpointConsumerBuilder clientIdentifier(
                 String clientIdentifier) {
             setProperty("clientIdentifier", clientIdentifier);
             return this;
@@ -113,7 +112,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder localPath(String localPath) {
+        default DropboxEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -122,7 +121,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder newRemotePath(
+        default DropboxEndpointConsumerBuilder newRemotePath(
                 String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
@@ -134,7 +133,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder query(String query) {
+        default DropboxEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -143,8 +142,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder remotePath(
-                String remotePath) {
+        default DropboxEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -157,7 +155,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder uploadMode(
+        default DropboxEndpointConsumerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
@@ -171,8 +169,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointConsumerBuilder uploadMode(
-                String uploadMode) {
+        default DropboxEndpointConsumerBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
         }
@@ -187,7 +184,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DropboxEndpointConsumerBuilder bridgeErrorHandler(
+        default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -203,7 +200,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DropboxEndpointConsumerBuilder bridgeErrorHandler(
+        default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -216,7 +213,7 @@ public interface DropboxEndpointBuilderFactory {
     public interface AdvancedDropboxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DropboxEndpointConsumerBuilder basic() {
+        default DropboxEndpointConsumerBuilder basic() {
             return (DropboxEndpointConsumerBuilder) this;
         }
         /**
@@ -228,7 +225,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -242,7 +239,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -252,7 +249,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
+        default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -263,7 +260,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
+        default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -274,7 +271,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +282,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -296,7 +293,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointConsumerBuilder synchronous(
+        default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -307,7 +304,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointConsumerBuilder synchronous(
+        default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -320,7 +317,7 @@ public interface DropboxEndpointBuilderFactory {
     public static interface DropboxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDropboxEndpointProducerBuilder advanced() {
+        default AdvancedDropboxEndpointProducerBuilder advanced() {
             return (AdvancedDropboxEndpointProducerBuilder) this;
         }
         /**
@@ -331,7 +328,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder operation(
+        default DropboxEndpointProducerBuilder operation(
                 DropboxOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -344,7 +341,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder operation(String operation) {
+        default DropboxEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -353,8 +350,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder accessToken(
-                String accessToken) {
+        default DropboxEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -363,7 +359,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder client(Object client) {
+        default DropboxEndpointProducerBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -373,7 +369,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder client(String client) {
+        default DropboxEndpointProducerBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -382,7 +378,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder clientIdentifier(
+        default DropboxEndpointProducerBuilder clientIdentifier(
                 String clientIdentifier) {
             setProperty("clientIdentifier", clientIdentifier);
             return this;
@@ -394,7 +390,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder localPath(String localPath) {
+        default DropboxEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -403,7 +399,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder newRemotePath(
+        default DropboxEndpointProducerBuilder newRemotePath(
                 String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
@@ -415,7 +411,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder query(String query) {
+        default DropboxEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -424,8 +420,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder remotePath(
-                String remotePath) {
+        default DropboxEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -438,7 +433,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder uploadMode(
+        default DropboxEndpointProducerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
@@ -452,8 +447,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointProducerBuilder uploadMode(
-                String uploadMode) {
+        default DropboxEndpointProducerBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
         }
@@ -470,7 +464,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DropboxEndpointProducerBuilder lazyStartProducer(
+        default DropboxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -488,7 +482,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DropboxEndpointProducerBuilder lazyStartProducer(
+        default DropboxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -501,7 +495,7 @@ public interface DropboxEndpointBuilderFactory {
     public interface AdvancedDropboxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DropboxEndpointProducerBuilder basic() {
+        default DropboxEndpointProducerBuilder basic() {
             return (DropboxEndpointProducerBuilder) this;
         }
         /**
@@ -510,7 +504,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -521,7 +515,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -532,7 +526,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointProducerBuilder synchronous(
+        default AdvancedDropboxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -543,7 +537,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointProducerBuilder synchronous(
+        default AdvancedDropboxEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -556,7 +550,7 @@ public interface DropboxEndpointBuilderFactory {
     public static interface DropboxEndpointBuilder
             extends
                 DropboxEndpointConsumerBuilder, DropboxEndpointProducerBuilder {
-        public default AdvancedDropboxEndpointBuilder advanced() {
+        default AdvancedDropboxEndpointBuilder advanced() {
             return (AdvancedDropboxEndpointBuilder) this;
         }
         /**
@@ -567,8 +561,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointBuilder operation(
-                DropboxOperation operation) {
+        default DropboxEndpointBuilder operation(DropboxOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -580,7 +573,7 @@ public interface DropboxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DropboxEndpointBuilder operation(String operation) {
+        default DropboxEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -589,7 +582,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder accessToken(String accessToken) {
+        default DropboxEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -598,7 +591,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder client(Object client) {
+        default DropboxEndpointBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -608,7 +601,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder client(String client) {
+        default DropboxEndpointBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -617,8 +610,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder clientIdentifier(
-                String clientIdentifier) {
+        default DropboxEndpointBuilder clientIdentifier(String clientIdentifier) {
             setProperty("clientIdentifier", clientIdentifier);
             return this;
         }
@@ -629,7 +621,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder localPath(String localPath) {
+        default DropboxEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -638,7 +630,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder newRemotePath(String newRemotePath) {
+        default DropboxEndpointBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
         }
@@ -649,7 +641,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder query(String query) {
+        default DropboxEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -658,7 +650,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder remotePath(String remotePath) {
+        default DropboxEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -671,8 +663,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder uploadMode(
-                DropboxUploadMode uploadMode) {
+        default DropboxEndpointBuilder uploadMode(DropboxUploadMode uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
         }
@@ -685,7 +676,7 @@ public interface DropboxEndpointBuilderFactory {
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
          * @group common
          */
-        public default DropboxEndpointBuilder uploadMode(String uploadMode) {
+        default DropboxEndpointBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
             return this;
         }
@@ -697,7 +688,7 @@ public interface DropboxEndpointBuilderFactory {
     public static interface AdvancedDropboxEndpointBuilder
             extends
                 AdvancedDropboxEndpointConsumerBuilder, AdvancedDropboxEndpointProducerBuilder {
-        public default DropboxEndpointBuilder basic() {
+        default DropboxEndpointBuilder basic() {
             return (DropboxEndpointBuilder) this;
         }
         /**
@@ -706,7 +697,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -717,7 +708,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointBuilder basicPropertyBinding(
+        default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -728,8 +719,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDropboxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -739,8 +729,7 @@ public interface DropboxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDropboxEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDropboxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -768,7 +757,7 @@ public interface DropboxEndpointBuilderFactory {
      * collaborations, etc on dropbox DOT com. Creates a builder to build
      * endpoints for the Dropbox component.
      */
-    public default DropboxEndpointBuilder dropbox(String path) {
+    default DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {
             public DropboxEndpointBuilderImpl(String path) {
                 super("dropbox", path);

@@ -36,7 +36,7 @@ public interface MsvEndpointBuilderFactory {
     public static interface MsvEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMsvEndpointBuilder advanced() {
+        default AdvancedMsvEndpointBuilder advanced() {
             return (AdvancedMsvEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder resourceUri(String resourceUri) {
+        default MsvEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -55,7 +55,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
+        default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -64,7 +64,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
+        default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -73,8 +73,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder failOnNullHeader(
-                boolean failOnNullHeader) {
+        default MsvEndpointBuilder failOnNullHeader(boolean failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
@@ -83,8 +82,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder failOnNullHeader(
-                String failOnNullHeader) {
+        default MsvEndpointBuilder failOnNullHeader(String failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
@@ -93,7 +91,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MsvEndpointBuilder headerName(String headerName) {
+        default MsvEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -105,7 +103,7 @@ public interface MsvEndpointBuilderFactory {
     public static interface AdvancedMsvEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MsvEndpointBuilder basic() {
+        default MsvEndpointBuilder basic() {
             return (MsvEndpointBuilder) this;
         }
         /**
@@ -114,7 +112,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder basicPropertyBinding(
+        default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -125,7 +123,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder basicPropertyBinding(
+        default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -138,8 +136,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder errorHandler(
-                Object errorHandler) {
+        default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -151,8 +148,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder errorHandler(
-                String errorHandler) {
+        default AdvancedMsvEndpointBuilder errorHandler(String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -162,7 +158,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder resourceResolver(
+        default AdvancedMsvEndpointBuilder resourceResolver(
                 Object resourceResolver) {
             setProperty("resourceResolver", resourceResolver);
             return this;
@@ -174,7 +170,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder resourceResolver(
+        default AdvancedMsvEndpointBuilder resourceResolver(
                 String resourceResolver) {
             setProperty("resourceResolver", resourceResolver);
             return this;
@@ -188,7 +184,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder resourceResolverFactory(
+        default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
             setProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
@@ -202,7 +198,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder resourceResolverFactory(
+        default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
             setProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
@@ -212,8 +208,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>javax.xml.validation.SchemaFactory</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder schemaFactory(
-                Object schemaFactory) {
+        default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
             return this;
         }
@@ -223,8 +218,7 @@ public interface MsvEndpointBuilderFactory {
          * <code>javax.xml.validation.SchemaFactory</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder schemaFactory(
-                String schemaFactory) {
+        default AdvancedMsvEndpointBuilder schemaFactory(String schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
             return this;
         }
@@ -233,8 +227,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder schemaLanguage(
-                String schemaLanguage) {
+        default AdvancedMsvEndpointBuilder schemaLanguage(String schemaLanguage) {
             setProperty("schemaLanguage", schemaLanguage);
             return this;
         }
@@ -244,8 +237,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMsvEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -255,7 +247,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
+        default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -266,7 +258,7 @@ public interface MsvEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder useSharedSchema(
+        default AdvancedMsvEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
             setProperty("useSharedSchema", useSharedSchema);
             return this;
@@ -278,7 +270,7 @@ public interface MsvEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMsvEndpointBuilder useSharedSchema(
+        default AdvancedMsvEndpointBuilder useSharedSchema(
                 String useSharedSchema) {
             setProperty("useSharedSchema", useSharedSchema);
             return this;
@@ -288,7 +280,7 @@ public interface MsvEndpointBuilderFactory {
      * Validates the payload of a message using the MSV Library. Creates a
      * builder to build endpoints for the MSV component.
      */
-    public default MsvEndpointBuilder msv(String path) {
+    default MsvEndpointBuilder msv(String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {
             public MsvEndpointBuilderImpl(String path) {
                 super("msv", path);

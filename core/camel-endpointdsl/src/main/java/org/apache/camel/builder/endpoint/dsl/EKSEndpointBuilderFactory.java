@@ -36,7 +36,7 @@ public interface EKSEndpointBuilderFactory {
     public static interface EKSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedEKSEndpointBuilder advanced() {
+        default AdvancedEKSEndpointBuilder advanced() {
             return (AdvancedEKSEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface EKSEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default EKSEndpointBuilder label(String label) {
+        default EKSEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -53,7 +53,7 @@ public interface EKSEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default EKSEndpointBuilder region(String region) {
+        default EKSEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -65,7 +65,7 @@ public interface EKSEndpointBuilderFactory {
     public static interface AdvancedEKSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default EKSEndpointBuilder basic() {
+        default EKSEndpointBuilder basic() {
             return (EKSEndpointBuilder) this;
         }
         /**
@@ -74,7 +74,7 @@ public interface EKSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEKSEndpointBuilder basicPropertyBinding(
+        default AdvancedEKSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -85,7 +85,7 @@ public interface EKSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEKSEndpointBuilder basicPropertyBinding(
+        default AdvancedEKSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,8 +96,7 @@ public interface EKSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEKSEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedEKSEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -107,7 +106,7 @@ public interface EKSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEKSEndpointBuilder synchronous(String synchronous) {
+        default AdvancedEKSEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -124,7 +123,7 @@ public interface EKSEndpointBuilderFactory {
      * The aws-kms is used for managing Amazon EKS Creates a builder to build
      * endpoints for the AWS EKS component.
      */
-    public default EKSEndpointBuilder eKS(String path) {
+    default EKSEndpointBuilder eKS(String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {
             public EKSEndpointBuilderImpl(String path) {
                 super("aws-eks", path);

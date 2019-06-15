@@ -37,7 +37,7 @@ public interface SpringLdapEndpointBuilderFactory {
     public static interface SpringLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSpringLdapEndpointBuilder advanced() {
+        default AdvancedSpringLdapEndpointBuilder advanced() {
             return (AdvancedSpringLdapEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringLdapEndpointBuilder templateName(
-                String templateName) {
+        default SpringLdapEndpointBuilder templateName(String templateName) {
             setProperty("templateName", templateName);
             return this;
         }
@@ -57,8 +56,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringLdapEndpointBuilder operation(
-                LdapOperation operation) {
+        default SpringLdapEndpointBuilder operation(LdapOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -69,7 +67,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringLdapEndpointBuilder operation(String operation) {
+        default SpringLdapEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -78,7 +76,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringLdapEndpointBuilder scope(String scope) {
+        default SpringLdapEndpointBuilder scope(String scope) {
             setProperty("scope", scope);
             return this;
         }
@@ -90,7 +88,7 @@ public interface SpringLdapEndpointBuilderFactory {
     public static interface AdvancedSpringLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SpringLdapEndpointBuilder basic() {
+        default SpringLdapEndpointBuilder basic() {
             return (SpringLdapEndpointBuilder) this;
         }
         /**
@@ -99,7 +97,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -110,7 +108,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +119,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringLdapEndpointBuilder synchronous(
+        default AdvancedSpringLdapEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -132,8 +130,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringLdapEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -151,7 +148,7 @@ public interface SpringLdapEndpointBuilderFactory {
      * using filters as the message payload. Creates a builder to build
      * endpoints for the Spring LDAP component.
      */
-    public default SpringLdapEndpointBuilder springLdap(String path) {
+    default SpringLdapEndpointBuilder springLdap(String path) {
         class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder, AdvancedSpringLdapEndpointBuilder {
             public SpringLdapEndpointBuilderImpl(String path) {
                 super("spring-ldap", path);

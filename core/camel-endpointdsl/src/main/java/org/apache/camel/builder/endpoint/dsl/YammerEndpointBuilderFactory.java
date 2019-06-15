@@ -45,7 +45,7 @@ public interface YammerEndpointBuilderFactory {
     public interface YammerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedYammerEndpointConsumerBuilder advanced() {
+        default AdvancedYammerEndpointConsumerBuilder advanced() {
             return (AdvancedYammerEndpointConsumerBuilder) this;
         }
         /**
@@ -55,7 +55,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointConsumerBuilder function(
+        default YammerEndpointConsumerBuilder function(
                 YammerFunctionType function) {
             setProperty("function", function);
             return this;
@@ -67,7 +67,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointConsumerBuilder function(String function) {
+        default YammerEndpointConsumerBuilder function(String function) {
             setProperty("function", function);
             return this;
         }
@@ -77,7 +77,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointConsumerBuilder useJson(boolean useJson) {
+        default YammerEndpointConsumerBuilder useJson(boolean useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -87,7 +87,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointConsumerBuilder useJson(String useJson) {
+        default YammerEndpointConsumerBuilder useJson(String useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -102,7 +102,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder bridgeErrorHandler(
+        default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -118,7 +118,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder bridgeErrorHandler(
+        default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -128,7 +128,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder delay(long delay) {
+        default YammerEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -137,7 +137,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder delay(String delay) {
+        default YammerEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -147,7 +147,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder limit(int limit) {
+        default YammerEndpointConsumerBuilder limit(int limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -157,7 +157,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder limit(String limit) {
+        default YammerEndpointConsumerBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -171,7 +171,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder newerThan(long newerThan) {
+        default YammerEndpointConsumerBuilder newerThan(long newerThan) {
             setProperty("newerThan", newerThan);
             return this;
         }
@@ -185,7 +185,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder newerThan(String newerThan) {
+        default YammerEndpointConsumerBuilder newerThan(String newerThan) {
             setProperty("newerThan", newerThan);
             return this;
         }
@@ -198,7 +198,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder olderThan(long olderThan) {
+        default YammerEndpointConsumerBuilder olderThan(long olderThan) {
             setProperty("olderThan", olderThan);
             return this;
         }
@@ -211,7 +211,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder olderThan(String olderThan) {
+        default YammerEndpointConsumerBuilder olderThan(String olderThan) {
             setProperty("olderThan", olderThan);
             return this;
         }
@@ -221,7 +221,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -232,7 +232,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -247,7 +247,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder threaded(String threaded) {
+        default YammerEndpointConsumerBuilder threaded(String threaded) {
             setProperty("threaded", threaded);
             return this;
         }
@@ -256,7 +256,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default YammerEndpointConsumerBuilder userId(String userId) {
+        default YammerEndpointConsumerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -266,7 +266,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffErrorThreshold(
+        default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -277,7 +277,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffErrorThreshold(
+        default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -288,7 +288,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffIdleThreshold(
+        default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -299,7 +299,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffIdleThreshold(
+        default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -314,7 +314,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffMultiplier(
+        default YammerEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -329,7 +329,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder backoffMultiplier(
+        default YammerEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -340,7 +340,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder greedy(boolean greedy) {
+        default YammerEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -350,7 +350,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder greedy(String greedy) {
+        default YammerEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -361,8 +361,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default YammerEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -373,8 +372,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default YammerEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -384,7 +382,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder runLoggingLevel(
+        default YammerEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -396,7 +394,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder runLoggingLevel(
+        default YammerEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -409,7 +407,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder scheduledExecutorService(
+        default YammerEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -422,7 +420,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder scheduledExecutorService(
+        default YammerEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -435,7 +433,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder scheduler(
+        default YammerEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -448,7 +446,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder scheduler(String scheduler) {
+        default YammerEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -459,7 +457,7 @@ public interface YammerEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder schedulerProperties(
+        default YammerEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -472,7 +470,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder schedulerProperties(
+        default YammerEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -482,7 +480,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder startScheduler(
+        default YammerEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -492,7 +490,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder startScheduler(
+        default YammerEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -502,7 +500,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default YammerEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -512,7 +510,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -522,7 +520,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder useFixedDelay(
+        default YammerEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -533,8 +531,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default YammerEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default YammerEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -543,8 +540,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointConsumerBuilder accessToken(
-                String accessToken) {
+        default YammerEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -553,8 +549,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointConsumerBuilder consumerKey(
-                String consumerKey) {
+        default YammerEndpointConsumerBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -563,7 +558,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointConsumerBuilder consumerSecret(
+        default YammerEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -576,7 +571,7 @@ public interface YammerEndpointBuilderFactory {
     public interface AdvancedYammerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default YammerEndpointConsumerBuilder basic() {
+        default YammerEndpointConsumerBuilder basic() {
             return (YammerEndpointConsumerBuilder) this;
         }
         /**
@@ -588,7 +583,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -602,7 +597,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -612,7 +607,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder exchangePattern(
+        default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -623,7 +618,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder exchangePattern(
+        default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -637,7 +632,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder pollStrategy(
+        default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -651,7 +646,7 @@ public interface YammerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedYammerEndpointConsumerBuilder pollStrategy(
+        default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -662,7 +657,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -673,7 +668,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -684,7 +679,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointConsumerBuilder synchronous(
+        default AdvancedYammerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -695,7 +690,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointConsumerBuilder synchronous(
+        default AdvancedYammerEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -708,7 +703,7 @@ public interface YammerEndpointBuilderFactory {
     public static interface YammerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedYammerEndpointProducerBuilder advanced() {
+        default AdvancedYammerEndpointProducerBuilder advanced() {
             return (AdvancedYammerEndpointProducerBuilder) this;
         }
         /**
@@ -718,7 +713,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointProducerBuilder function(
+        default YammerEndpointProducerBuilder function(
                 YammerFunctionType function) {
             setProperty("function", function);
             return this;
@@ -730,7 +725,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointProducerBuilder function(String function) {
+        default YammerEndpointProducerBuilder function(String function) {
             setProperty("function", function);
             return this;
         }
@@ -740,7 +735,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointProducerBuilder useJson(boolean useJson) {
+        default YammerEndpointProducerBuilder useJson(boolean useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -750,7 +745,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointProducerBuilder useJson(String useJson) {
+        default YammerEndpointProducerBuilder useJson(String useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -767,7 +762,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default YammerEndpointProducerBuilder lazyStartProducer(
+        default YammerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -785,7 +780,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default YammerEndpointProducerBuilder lazyStartProducer(
+        default YammerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -795,8 +790,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointProducerBuilder accessToken(
-                String accessToken) {
+        default YammerEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -805,8 +799,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointProducerBuilder consumerKey(
-                String consumerKey) {
+        default YammerEndpointProducerBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -815,7 +808,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointProducerBuilder consumerSecret(
+        default YammerEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -828,7 +821,7 @@ public interface YammerEndpointBuilderFactory {
     public interface AdvancedYammerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default YammerEndpointProducerBuilder basic() {
+        default YammerEndpointProducerBuilder basic() {
             return (YammerEndpointProducerBuilder) this;
         }
         /**
@@ -837,7 +830,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -848,7 +841,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -859,7 +852,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointProducerBuilder synchronous(
+        default AdvancedYammerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -870,7 +863,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointProducerBuilder synchronous(
+        default AdvancedYammerEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -883,7 +876,7 @@ public interface YammerEndpointBuilderFactory {
     public static interface YammerEndpointBuilder
             extends
                 YammerEndpointConsumerBuilder, YammerEndpointProducerBuilder {
-        public default AdvancedYammerEndpointBuilder advanced() {
+        default AdvancedYammerEndpointBuilder advanced() {
             return (AdvancedYammerEndpointBuilder) this;
         }
         /**
@@ -893,8 +886,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointBuilder function(
-                YammerFunctionType function) {
+        default YammerEndpointBuilder function(YammerFunctionType function) {
             setProperty("function", function);
             return this;
         }
@@ -905,7 +897,7 @@ public interface YammerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default YammerEndpointBuilder function(String function) {
+        default YammerEndpointBuilder function(String function) {
             setProperty("function", function);
             return this;
         }
@@ -915,7 +907,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointBuilder useJson(boolean useJson) {
+        default YammerEndpointBuilder useJson(boolean useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -925,7 +917,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default YammerEndpointBuilder useJson(String useJson) {
+        default YammerEndpointBuilder useJson(String useJson) {
             setProperty("useJson", useJson);
             return this;
         }
@@ -934,7 +926,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointBuilder accessToken(String accessToken) {
+        default YammerEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -943,7 +935,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointBuilder consumerKey(String consumerKey) {
+        default YammerEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -952,8 +944,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default YammerEndpointBuilder consumerSecret(
-                String consumerSecret) {
+        default YammerEndpointBuilder consumerSecret(String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
         }
@@ -965,7 +956,7 @@ public interface YammerEndpointBuilderFactory {
     public static interface AdvancedYammerEndpointBuilder
             extends
                 AdvancedYammerEndpointConsumerBuilder, AdvancedYammerEndpointProducerBuilder {
-        public default YammerEndpointBuilder basic() {
+        default YammerEndpointBuilder basic() {
             return (YammerEndpointBuilder) this;
         }
         /**
@@ -974,7 +965,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -985,7 +976,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointBuilder basicPropertyBinding(
+        default AdvancedYammerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -996,8 +987,7 @@ public interface YammerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedYammerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1007,8 +997,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedYammerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedYammerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1026,7 +1015,7 @@ public interface YammerEndpointBuilderFactory {
      * social network. Creates a builder to build endpoints for the Yammer
      * component.
      */
-    public default YammerEndpointBuilder yammer(String path) {
+    default YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {
             public YammerEndpointBuilderImpl(String path) {
                 super("yammer", path);

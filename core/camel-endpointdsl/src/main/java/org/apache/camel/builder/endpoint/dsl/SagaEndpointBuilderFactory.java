@@ -37,7 +37,7 @@ public interface SagaEndpointBuilderFactory {
     public static interface SagaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSagaEndpointBuilder advanced() {
+        default AdvancedSagaEndpointBuilder advanced() {
             return (AdvancedSagaEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface SagaEndpointBuilderFactory {
          * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
          * @group producer
          */
-        public default SagaEndpointBuilder action(SagaEndpointAction action) {
+        default SagaEndpointBuilder action(SagaEndpointAction action) {
             setProperty("action", action);
             return this;
         }
@@ -56,7 +56,7 @@ public interface SagaEndpointBuilderFactory {
          * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
          * @group producer
          */
-        public default SagaEndpointBuilder action(String action) {
+        default SagaEndpointBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -68,7 +68,7 @@ public interface SagaEndpointBuilderFactory {
     public static interface AdvancedSagaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SagaEndpointBuilder basic() {
+        default SagaEndpointBuilder basic() {
             return (SagaEndpointBuilder) this;
         }
         /**
@@ -77,7 +77,7 @@ public interface SagaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSagaEndpointBuilder basicPropertyBinding(
+        default AdvancedSagaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -88,7 +88,7 @@ public interface SagaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSagaEndpointBuilder basicPropertyBinding(
+        default AdvancedSagaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -99,8 +99,7 @@ public interface SagaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSagaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSagaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -110,8 +109,7 @@ public interface SagaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSagaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSagaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -129,7 +127,7 @@ public interface SagaEndpointBuilderFactory {
      * flow in the Saga EIP. Creates a builder to build endpoints for the Saga
      * component.
      */
-    public default SagaEndpointBuilder saga(String path) {
+    default SagaEndpointBuilder saga(String path) {
         class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {
             public SagaEndpointBuilderImpl(String path) {
                 super("saga", path);

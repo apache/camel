@@ -37,7 +37,7 @@ public interface PaxLoggingEndpointBuilderFactory {
     public static interface PaxLoggingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedPaxLoggingEndpointBuilder advanced() {
+        default AdvancedPaxLoggingEndpointBuilder advanced() {
             return (AdvancedPaxLoggingEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default PaxLoggingEndpointBuilder appender(String appender) {
+        default PaxLoggingEndpointBuilder appender(String appender) {
             setProperty("appender", appender);
             return this;
         }
@@ -58,7 +58,7 @@ public interface PaxLoggingEndpointBuilderFactory {
     public static interface AdvancedPaxLoggingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default PaxLoggingEndpointBuilder basic() {
+        default PaxLoggingEndpointBuilder basic() {
             return (PaxLoggingEndpointBuilder) this;
         }
         /**
@@ -67,7 +67,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
+        default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -78,7 +78,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
+        default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,7 +89,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPaxLoggingEndpointBuilder synchronous(
+        default AdvancedPaxLoggingEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -100,8 +100,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPaxLoggingEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedPaxLoggingEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -111,7 +110,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * PaxLogging events and process them. Creates a builder to build endpoints
      * for the OSGi PAX Logging component.
      */
-    public default PaxLoggingEndpointBuilder paxLogging(String path) {
+    default PaxLoggingEndpointBuilder paxLogging(String path) {
         class PaxLoggingEndpointBuilderImpl extends AbstractEndpointBuilder implements PaxLoggingEndpointBuilder, AdvancedPaxLoggingEndpointBuilder {
             public PaxLoggingEndpointBuilderImpl(String path) {
                 super("paxlogging", path);

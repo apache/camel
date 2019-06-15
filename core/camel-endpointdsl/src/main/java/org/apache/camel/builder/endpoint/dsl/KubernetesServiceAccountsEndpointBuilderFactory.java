@@ -37,7 +37,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
     public static interface KubernetesServiceAccountsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder advanced() {
+        default AdvancedKubernetesServiceAccountsEndpointBuilder advanced() {
             return (AdvancedKubernetesServiceAccountsEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder masterUrl(
+        default KubernetesServiceAccountsEndpointBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -55,7 +55,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder apiVersion(
+        default KubernetesServiceAccountsEndpointBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -65,7 +65,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder dnsDomain(
+        default KubernetesServiceAccountsEndpointBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -76,7 +76,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
+        default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -87,7 +87,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
+        default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -97,7 +97,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder portName(
+        default KubernetesServiceAccountsEndpointBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -107,7 +107,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesServiceAccountsEndpointBuilder portProtocol(
+        default KubernetesServiceAccountsEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -117,7 +117,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder caCertData(
+        default KubernetesServiceAccountsEndpointBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -127,7 +127,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder caCertFile(
+        default KubernetesServiceAccountsEndpointBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -137,7 +137,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientCertData(
+        default KubernetesServiceAccountsEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -147,7 +147,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientCertFile(
+        default KubernetesServiceAccountsEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -157,7 +157,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientKeyAlgo(
+        default KubernetesServiceAccountsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -167,7 +167,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientKeyData(
+        default KubernetesServiceAccountsEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -177,7 +177,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientKeyFile(
+        default KubernetesServiceAccountsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -187,7 +187,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder clientKeyPassphrase(
+        default KubernetesServiceAccountsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -197,7 +197,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder oauthToken(
+        default KubernetesServiceAccountsEndpointBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -207,7 +207,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder password(
+        default KubernetesServiceAccountsEndpointBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -217,7 +217,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder trustCerts(
+        default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -228,7 +228,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder trustCerts(
+        default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -238,7 +238,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesServiceAccountsEndpointBuilder username(
+        default KubernetesServiceAccountsEndpointBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -252,7 +252,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
     public static interface AdvancedKubernetesServiceAccountsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesServiceAccountsEndpointBuilder basic() {
+        default KubernetesServiceAccountsEndpointBuilder basic() {
             return (KubernetesServiceAccountsEndpointBuilder) this;
         }
         /**
@@ -261,7 +261,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -272,7 +272,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -283,7 +283,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -295,7 +295,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -306,7 +306,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -317,7 +317,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
+        default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -328,7 +328,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
      * service account operations. Creates a builder to build endpoints for the
      * Kubernetes Service Account component.
      */
-    public default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
+    default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {
         class KubernetesServiceAccountsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServiceAccountsEndpointBuilder, AdvancedKubernetesServiceAccountsEndpointBuilder {
             public KubernetesServiceAccountsEndpointBuilderImpl(String path) {

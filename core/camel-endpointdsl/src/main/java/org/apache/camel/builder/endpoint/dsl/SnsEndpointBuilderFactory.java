@@ -38,7 +38,7 @@ public interface SnsEndpointBuilderFactory {
     public static interface SnsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSnsEndpointBuilder advanced() {
+        default AdvancedSnsEndpointBuilder advanced() {
             return (AdvancedSnsEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder topicNameOrArn(String topicNameOrArn) {
+        default SnsEndpointBuilder topicNameOrArn(String topicNameOrArn) {
             setProperty("topicNameOrArn", topicNameOrArn);
             return this;
         }
@@ -56,7 +56,7 @@ public interface SnsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
+        default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
             setProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
@@ -66,7 +66,7 @@ public interface SnsEndpointBuilderFactory {
          * <code>com.amazonaws.services.sns.AmazonSNS</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
+        default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
             setProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
@@ -76,7 +76,7 @@ public interface SnsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
+        default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -86,7 +86,7 @@ public interface SnsEndpointBuilderFactory {
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
+        default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -95,8 +95,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder autoCreateTopic(
-                boolean autoCreateTopic) {
+        default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
             setProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
@@ -105,7 +104,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
+        default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
             setProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
@@ -115,7 +114,7 @@ public interface SnsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder headerFilterStrategy(
+        default SnsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -126,7 +125,7 @@ public interface SnsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder headerFilterStrategy(
+        default SnsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -137,7 +136,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
+        default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
             setProperty("kmsMasterKeyId", kmsMasterKeyId);
             return this;
         }
@@ -146,8 +145,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder messageStructure(
-                String messageStructure) {
+        default SnsEndpointBuilder messageStructure(String messageStructure) {
             setProperty("messageStructure", messageStructure);
             return this;
         }
@@ -156,7 +154,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder policy(String policy) {
+        default SnsEndpointBuilder policy(String policy) {
             setProperty("policy", policy);
             return this;
         }
@@ -165,7 +163,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder proxyHost(String proxyHost) {
+        default SnsEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -174,7 +172,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder proxyPort(Integer proxyPort) {
+        default SnsEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -184,7 +182,7 @@ public interface SnsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SnsEndpointBuilder proxyPort(String proxyPort) {
+        default SnsEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -193,7 +191,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder queueUrl(String queueUrl) {
+        default SnsEndpointBuilder queueUrl(String queueUrl) {
             setProperty("queueUrl", queueUrl);
             return this;
         }
@@ -202,7 +200,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder region(String region) {
+        default SnsEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -211,7 +209,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder serverSideEncryptionEnabled(
+        default SnsEndpointBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
             setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
@@ -221,7 +219,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder serverSideEncryptionEnabled(
+        default SnsEndpointBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
             setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
@@ -232,7 +230,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder subject(String subject) {
+        default SnsEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -242,8 +240,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder subscribeSNStoSQS(
-                boolean subscribeSNStoSQS) {
+        default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
             setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
@@ -253,8 +250,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SnsEndpointBuilder subscribeSNStoSQS(
-                String subscribeSNStoSQS) {
+        default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
             setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
@@ -263,7 +259,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnsEndpointBuilder accessKey(String accessKey) {
+        default SnsEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -272,7 +268,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnsEndpointBuilder secretKey(String secretKey) {
+        default SnsEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -285,7 +281,7 @@ public interface SnsEndpointBuilderFactory {
     public static interface AdvancedSnsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SnsEndpointBuilder basic() {
+        default SnsEndpointBuilder basic() {
             return (SnsEndpointBuilder) this;
         }
         /**
@@ -294,7 +290,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnsEndpointBuilder basicPropertyBinding(
+        default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -305,7 +301,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnsEndpointBuilder basicPropertyBinding(
+        default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -316,8 +312,7 @@ public interface SnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -327,7 +322,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -337,7 +332,7 @@ public interface SnsEndpointBuilderFactory {
      * Notification Topic. Creates a builder to build endpoints for the AWS
      * Simple Notification System component.
      */
-    public default SnsEndpointBuilder sns(String path) {
+    default SnsEndpointBuilder sns(String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
                 super("aws-sns", path);

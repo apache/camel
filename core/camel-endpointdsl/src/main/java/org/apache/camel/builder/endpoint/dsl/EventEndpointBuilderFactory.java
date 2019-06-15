@@ -38,7 +38,7 @@ public interface EventEndpointBuilderFactory {
     public interface EventEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedEventEndpointConsumerBuilder advanced() {
+        default AdvancedEventEndpointConsumerBuilder advanced() {
             return (AdvancedEventEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EventEndpointConsumerBuilder name(String name) {
+        default EventEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -61,7 +61,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default EventEndpointConsumerBuilder bridgeErrorHandler(
+        default EventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -77,7 +77,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default EventEndpointConsumerBuilder bridgeErrorHandler(
+        default EventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -90,7 +90,7 @@ public interface EventEndpointBuilderFactory {
     public interface AdvancedEventEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default EventEndpointConsumerBuilder basic() {
+        default EventEndpointConsumerBuilder basic() {
             return (EventEndpointConsumerBuilder) this;
         }
         /**
@@ -102,7 +102,7 @@ public interface EventEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedEventEndpointConsumerBuilder exceptionHandler(
+        default AdvancedEventEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -116,7 +116,7 @@ public interface EventEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEventEndpointConsumerBuilder exceptionHandler(
+        default AdvancedEventEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -126,7 +126,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEventEndpointConsumerBuilder exchangePattern(
+        default AdvancedEventEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -137,7 +137,7 @@ public interface EventEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEventEndpointConsumerBuilder exchangePattern(
+        default AdvancedEventEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -148,7 +148,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedEventEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -159,7 +159,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedEventEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -170,7 +170,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointConsumerBuilder synchronous(
+        default AdvancedEventEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -181,7 +181,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointConsumerBuilder synchronous(
+        default AdvancedEventEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -194,7 +194,7 @@ public interface EventEndpointBuilderFactory {
     public static interface EventEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedEventEndpointProducerBuilder advanced() {
+        default AdvancedEventEndpointProducerBuilder advanced() {
             return (AdvancedEventEndpointProducerBuilder) this;
         }
         /**
@@ -202,7 +202,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EventEndpointProducerBuilder name(String name) {
+        default EventEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -219,7 +219,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default EventEndpointProducerBuilder lazyStartProducer(
+        default EventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -237,7 +237,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default EventEndpointProducerBuilder lazyStartProducer(
+        default EventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -250,7 +250,7 @@ public interface EventEndpointBuilderFactory {
     public interface AdvancedEventEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default EventEndpointProducerBuilder basic() {
+        default EventEndpointProducerBuilder basic() {
             return (EventEndpointProducerBuilder) this;
         }
         /**
@@ -259,7 +259,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedEventEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -270,7 +270,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedEventEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -281,7 +281,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointProducerBuilder synchronous(
+        default AdvancedEventEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -292,7 +292,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointProducerBuilder synchronous(
+        default AdvancedEventEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -305,7 +305,7 @@ public interface EventEndpointBuilderFactory {
     public static interface EventEndpointBuilder
             extends
                 EventEndpointConsumerBuilder, EventEndpointProducerBuilder {
-        public default AdvancedEventEndpointBuilder advanced() {
+        default AdvancedEventEndpointBuilder advanced() {
             return (AdvancedEventEndpointBuilder) this;
         }
         /**
@@ -313,7 +313,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EventEndpointBuilder name(String name) {
+        default EventEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -325,7 +325,7 @@ public interface EventEndpointBuilderFactory {
     public static interface AdvancedEventEndpointBuilder
             extends
                 AdvancedEventEndpointConsumerBuilder, AdvancedEventEndpointProducerBuilder {
-        public default EventEndpointBuilder basic() {
+        default EventEndpointBuilder basic() {
             return (EventEndpointBuilder) this;
         }
         /**
@@ -334,7 +334,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointBuilder basicPropertyBinding(
+        default AdvancedEventEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -345,7 +345,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointBuilder basicPropertyBinding(
+        default AdvancedEventEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -356,8 +356,7 @@ public interface EventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedEventEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -367,8 +366,7 @@ public interface EventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEventEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedEventEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -378,7 +376,7 @@ public interface EventEndpointBuilderFactory {
      * Events. Creates a builder to build endpoints for the Spring Event
      * component.
      */
-    public default EventEndpointBuilder event(String path) {
+    default EventEndpointBuilder event(String path) {
         class EventEndpointBuilderImpl extends AbstractEndpointBuilder implements EventEndpointBuilder, AdvancedEventEndpointBuilder {
             public EventEndpointBuilderImpl(String path) {
                 super("spring-event", path);

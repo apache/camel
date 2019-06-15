@@ -38,7 +38,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public interface ReactiveStreamsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder advanced() {
+        default AdvancedReactiveStreamsEndpointConsumerBuilder advanced() {
             return (AdvancedReactiveStreamsEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ReactiveStreamsEndpointConsumerBuilder stream(
-                String stream) {
+        default ReactiveStreamsEndpointConsumerBuilder stream(String stream) {
             setProperty("stream", stream);
             return this;
         }
@@ -62,7 +61,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
+        default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,7 +77,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
+        default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -88,7 +87,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
+        default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -98,7 +97,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
+        default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -116,7 +115,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>double</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
+        default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 double exchangesRefillLowWatermark) {
             setProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
             return this;
@@ -134,7 +133,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>double</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
+        default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 String exchangesRefillLowWatermark) {
             setProperty("exchangesRefillLowWatermark", exchangesRefillLowWatermark);
             return this;
@@ -144,7 +143,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
+        default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 boolean forwardOnComplete) {
             setProperty("forwardOnComplete", forwardOnComplete);
             return this;
@@ -154,7 +153,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
+        default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 String forwardOnComplete) {
             setProperty("forwardOnComplete", forwardOnComplete);
             return this;
@@ -165,7 +164,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
+        default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
             setProperty("forwardOnError", forwardOnError);
             return this;
@@ -176,7 +175,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
+        default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 String forwardOnError) {
             setProperty("forwardOnError", forwardOnError);
             return this;
@@ -188,7 +187,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
+        default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 Integer maxInflightExchanges) {
             setProperty("maxInflightExchanges", maxInflightExchanges);
             return this;
@@ -201,7 +200,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
+        default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 String maxInflightExchanges) {
             setProperty("maxInflightExchanges", maxInflightExchanges);
             return this;
@@ -215,7 +214,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public interface AdvancedReactiveStreamsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ReactiveStreamsEndpointConsumerBuilder basic() {
+        default ReactiveStreamsEndpointConsumerBuilder basic() {
             return (ReactiveStreamsEndpointConsumerBuilder) this;
         }
         /**
@@ -227,7 +226,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -241,7 +240,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -251,7 +250,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -262,7 +261,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -273,7 +272,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -284,7 +283,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -295,7 +294,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -306,7 +305,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -319,7 +318,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public static interface ReactiveStreamsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedReactiveStreamsEndpointProducerBuilder advanced() {
+        default AdvancedReactiveStreamsEndpointProducerBuilder advanced() {
             return (AdvancedReactiveStreamsEndpointProducerBuilder) this;
         }
         /**
@@ -327,8 +326,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ReactiveStreamsEndpointProducerBuilder stream(
-                String stream) {
+        default ReactiveStreamsEndpointProducerBuilder stream(String stream) {
             setProperty("stream", stream);
             return this;
         }
@@ -339,7 +337,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * @group producer
          */
-        public default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
+        default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 ReactiveStreamsBackpressureStrategy backpressureStrategy) {
             setProperty("backpressureStrategy", backpressureStrategy);
             return this;
@@ -351,7 +349,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * @group producer
          */
-        public default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
+        default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 String backpressureStrategy) {
             setProperty("backpressureStrategy", backpressureStrategy);
             return this;
@@ -369,7 +367,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
+        default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -387,7 +385,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
+        default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -401,7 +399,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public interface AdvancedReactiveStreamsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ReactiveStreamsEndpointProducerBuilder basic() {
+        default ReactiveStreamsEndpointProducerBuilder basic() {
             return (ReactiveStreamsEndpointProducerBuilder) this;
         }
         /**
@@ -410,7 +408,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -421,7 +419,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -432,7 +430,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -443,7 +441,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -456,7 +454,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public static interface ReactiveStreamsEndpointBuilder
             extends
                 ReactiveStreamsEndpointConsumerBuilder, ReactiveStreamsEndpointProducerBuilder {
-        public default AdvancedReactiveStreamsEndpointBuilder advanced() {
+        default AdvancedReactiveStreamsEndpointBuilder advanced() {
             return (AdvancedReactiveStreamsEndpointBuilder) this;
         }
         /**
@@ -464,7 +462,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ReactiveStreamsEndpointBuilder stream(String stream) {
+        default ReactiveStreamsEndpointBuilder stream(String stream) {
             setProperty("stream", stream);
             return this;
         }
@@ -476,7 +474,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     public static interface AdvancedReactiveStreamsEndpointBuilder
             extends
                 AdvancedReactiveStreamsEndpointConsumerBuilder, AdvancedReactiveStreamsEndpointProducerBuilder {
-        public default ReactiveStreamsEndpointBuilder basic() {
+        default ReactiveStreamsEndpointBuilder basic() {
             return (ReactiveStreamsEndpointBuilder) this;
         }
         /**
@@ -485,7 +483,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -496,7 +494,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
+        default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -507,7 +505,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -518,7 +516,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedReactiveStreamsEndpointBuilder synchronous(
+        default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -536,7 +534,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * Reactive Camel using reactive streams Creates a builder to build
      * endpoints for the Reactive Streams component.
      */
-    public default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
+    default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {
             public ReactiveStreamsEndpointBuilderImpl(String path) {
                 super("reactive-streams", path);

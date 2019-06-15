@@ -39,7 +39,7 @@ public interface SmppEndpointBuilderFactory {
     public interface SmppEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSmppEndpointConsumerBuilder advanced() {
+        default AdvancedSmppEndpointConsumerBuilder advanced() {
             return (AdvancedSmppEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder host(String host) {
+        default SmppEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -56,7 +56,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder port(Integer port) {
+        default SmppEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -66,7 +66,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder port(String port) {
+        default SmppEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -76,7 +76,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder initialReconnectDelay(
+        default SmppEndpointConsumerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -87,7 +87,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder initialReconnectDelay(
+        default SmppEndpointConsumerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -98,7 +98,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder maxReconnect(int maxReconnect) {
+        default SmppEndpointConsumerBuilder maxReconnect(int maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -108,8 +108,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder maxReconnect(
-                String maxReconnect) {
+        default SmppEndpointConsumerBuilder maxReconnect(String maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -120,8 +119,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder reconnectDelay(
-                long reconnectDelay) {
+        default SmppEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -132,8 +130,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder reconnectDelay(
-                String reconnectDelay) {
+        default SmppEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -151,7 +148,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder splittingPolicy(
+        default SmppEndpointConsumerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
@@ -170,7 +167,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder splittingPolicy(
+        default SmppEndpointConsumerBuilder splittingPolicy(
                 String splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
@@ -181,7 +178,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointConsumerBuilder systemType(String systemType) {
+        default SmppEndpointConsumerBuilder systemType(String systemType) {
             setProperty("systemType", systemType);
             return this;
         }
@@ -193,8 +190,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SmppEndpointConsumerBuilder addressRange(
-                String addressRange) {
+        default SmppEndpointConsumerBuilder addressRange(String addressRange) {
             setProperty("addressRange", addressRange);
             return this;
         }
@@ -209,7 +205,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SmppEndpointConsumerBuilder bridgeErrorHandler(
+        default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -225,7 +221,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SmppEndpointConsumerBuilder bridgeErrorHandler(
+        default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -237,7 +233,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointConsumerBuilder alphabet(byte alphabet) {
+        default SmppEndpointConsumerBuilder alphabet(byte alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -248,7 +244,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointConsumerBuilder alphabet(String alphabet) {
+        default SmppEndpointConsumerBuilder alphabet(String alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -260,7 +256,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointConsumerBuilder dataCoding(byte dataCoding) {
+        default SmppEndpointConsumerBuilder dataCoding(byte dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -272,7 +268,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointConsumerBuilder dataCoding(String dataCoding) {
+        default SmppEndpointConsumerBuilder dataCoding(String dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -282,7 +278,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default SmppEndpointConsumerBuilder encoding(String encoding) {
+        default SmppEndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -292,8 +288,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder httpProxyHost(
-                String httpProxyHost) {
+        default SmppEndpointConsumerBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -303,7 +298,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder httpProxyPassword(
+        default SmppEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -314,8 +309,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder httpProxyPort(
-                Integer httpProxyPort) {
+        default SmppEndpointConsumerBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -326,8 +320,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder httpProxyPort(
-                String httpProxyPort) {
+        default SmppEndpointConsumerBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -337,7 +330,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder httpProxyUsername(
+        default SmppEndpointConsumerBuilder httpProxyUsername(
                 String httpProxyUsername) {
             setProperty("httpProxyUsername", httpProxyUsername);
             return this;
@@ -349,7 +342,7 @@ public interface SmppEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder proxyHeaders(
+        default SmppEndpointConsumerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
@@ -362,8 +355,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointConsumerBuilder proxyHeaders(
-                String proxyHeaders) {
+        default SmppEndpointConsumerBuilder proxyHeaders(String proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -372,7 +364,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointConsumerBuilder password(String password) {
+        default SmppEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -381,7 +373,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointConsumerBuilder systemId(String systemId) {
+        default SmppEndpointConsumerBuilder systemId(String systemId) {
             setProperty("systemId", systemId);
             return this;
         }
@@ -390,7 +382,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointConsumerBuilder usingSSL(boolean usingSSL) {
+        default SmppEndpointConsumerBuilder usingSSL(boolean usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -399,7 +391,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointConsumerBuilder usingSSL(String usingSSL) {
+        default SmppEndpointConsumerBuilder usingSSL(String usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -411,7 +403,7 @@ public interface SmppEndpointBuilderFactory {
     public interface AdvancedSmppEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SmppEndpointConsumerBuilder basic() {
+        default SmppEndpointConsumerBuilder basic() {
             return (SmppEndpointConsumerBuilder) this;
         }
         /**
@@ -423,7 +415,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -437,7 +429,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -447,7 +439,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSmppEndpointConsumerBuilder exchangePattern(
+        default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -458,7 +450,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSmppEndpointConsumerBuilder exchangePattern(
+        default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -469,7 +461,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -480,7 +472,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -492,7 +484,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -505,7 +497,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -517,7 +509,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
+        default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 Object sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -529,7 +521,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
+        default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 String sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -540,7 +532,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder synchronous(
+        default AdvancedSmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -551,7 +543,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder synchronous(
+        default AdvancedSmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -564,7 +556,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder transactionTimer(
+        default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 Integer transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -578,7 +570,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointConsumerBuilder transactionTimer(
+        default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 String transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -591,7 +583,7 @@ public interface SmppEndpointBuilderFactory {
     public static interface SmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSmppEndpointProducerBuilder advanced() {
+        default AdvancedSmppEndpointProducerBuilder advanced() {
             return (AdvancedSmppEndpointProducerBuilder) this;
         }
         /**
@@ -599,7 +591,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder host(String host) {
+        default SmppEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -608,7 +600,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder port(Integer port) {
+        default SmppEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -618,7 +610,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder port(String port) {
+        default SmppEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -628,7 +620,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder initialReconnectDelay(
+        default SmppEndpointProducerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -639,7 +631,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder initialReconnectDelay(
+        default SmppEndpointProducerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -650,7 +642,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder maxReconnect(int maxReconnect) {
+        default SmppEndpointProducerBuilder maxReconnect(int maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -660,8 +652,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder maxReconnect(
-                String maxReconnect) {
+        default SmppEndpointProducerBuilder maxReconnect(String maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -672,8 +663,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder reconnectDelay(
-                long reconnectDelay) {
+        default SmppEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -684,8 +674,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder reconnectDelay(
-                String reconnectDelay) {
+        default SmppEndpointProducerBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -703,7 +692,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder splittingPolicy(
+        default SmppEndpointProducerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
@@ -722,7 +711,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder splittingPolicy(
+        default SmppEndpointProducerBuilder splittingPolicy(
                 String splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
@@ -733,7 +722,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointProducerBuilder systemType(String systemType) {
+        default SmppEndpointProducerBuilder systemType(String systemType) {
             setProperty("systemType", systemType);
             return this;
         }
@@ -744,7 +733,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder destAddr(String destAddr) {
+        default SmppEndpointProducerBuilder destAddr(String destAddr) {
             setProperty("destAddr", destAddr);
             return this;
         }
@@ -758,7 +747,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder destAddrNpi(byte destAddrNpi) {
+        default SmppEndpointProducerBuilder destAddrNpi(byte destAddrNpi) {
             setProperty("destAddrNpi", destAddrNpi);
             return this;
         }
@@ -772,8 +761,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder destAddrNpi(
-                String destAddrNpi) {
+        default SmppEndpointProducerBuilder destAddrNpi(String destAddrNpi) {
             setProperty("destAddrNpi", destAddrNpi);
             return this;
         }
@@ -786,7 +774,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder destAddrTon(byte destAddrTon) {
+        default SmppEndpointProducerBuilder destAddrTon(byte destAddrTon) {
             setProperty("destAddrTon", destAddrTon);
             return this;
         }
@@ -799,8 +787,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder destAddrTon(
-                String destAddrTon) {
+        default SmppEndpointProducerBuilder destAddrTon(String destAddrTon) {
             setProperty("destAddrTon", destAddrTon);
             return this;
         }
@@ -813,7 +800,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder lazySessionCreation(
+        default SmppEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -827,7 +814,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder lazySessionCreation(
+        default SmppEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -845,7 +832,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder lazyStartProducer(
+        default SmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -863,7 +850,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder lazyStartProducer(
+        default SmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -877,7 +864,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder numberingPlanIndicator(
+        default SmppEndpointProducerBuilder numberingPlanIndicator(
                 byte numberingPlanIndicator) {
             setProperty("numberingPlanIndicator", numberingPlanIndicator);
             return this;
@@ -891,7 +878,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder numberingPlanIndicator(
+        default SmppEndpointProducerBuilder numberingPlanIndicator(
                 String numberingPlanIndicator) {
             setProperty("numberingPlanIndicator", numberingPlanIndicator);
             return this;
@@ -904,8 +891,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder priorityFlag(
-                byte priorityFlag) {
+        default SmppEndpointProducerBuilder priorityFlag(byte priorityFlag) {
             setProperty("priorityFlag", priorityFlag);
             return this;
         }
@@ -917,8 +903,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder priorityFlag(
-                String priorityFlag) {
+        default SmppEndpointProducerBuilder priorityFlag(String priorityFlag) {
             setProperty("priorityFlag", priorityFlag);
             return this;
         }
@@ -927,7 +912,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder protocolId(byte protocolId) {
+        default SmppEndpointProducerBuilder protocolId(byte protocolId) {
             setProperty("protocolId", protocolId);
             return this;
         }
@@ -936,7 +921,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder protocolId(String protocolId) {
+        default SmppEndpointProducerBuilder protocolId(String protocolId) {
             setProperty("protocolId", protocolId);
             return this;
         }
@@ -950,7 +935,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder registeredDelivery(
+        default SmppEndpointProducerBuilder registeredDelivery(
                 byte registeredDelivery) {
             setProperty("registeredDelivery", registeredDelivery);
             return this;
@@ -965,7 +950,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder registeredDelivery(
+        default SmppEndpointProducerBuilder registeredDelivery(
                 String registeredDelivery) {
             setProperty("registeredDelivery", registeredDelivery);
             return this;
@@ -980,7 +965,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder replaceIfPresentFlag(
+        default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 byte replaceIfPresentFlag) {
             setProperty("replaceIfPresentFlag", replaceIfPresentFlag);
             return this;
@@ -995,7 +980,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder replaceIfPresentFlag(
+        default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 String replaceIfPresentFlag) {
             setProperty("replaceIfPresentFlag", replaceIfPresentFlag);
             return this;
@@ -1010,8 +995,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder serviceType(
-                String serviceType) {
+        default SmppEndpointProducerBuilder serviceType(String serviceType) {
             setProperty("serviceType", serviceType);
             return this;
         }
@@ -1021,7 +1005,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder sourceAddr(String sourceAddr) {
+        default SmppEndpointProducerBuilder sourceAddr(String sourceAddr) {
             setProperty("sourceAddr", sourceAddr);
             return this;
         }
@@ -1034,8 +1018,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder sourceAddrNpi(
-                byte sourceAddrNpi) {
+        default SmppEndpointProducerBuilder sourceAddrNpi(byte sourceAddrNpi) {
             setProperty("sourceAddrNpi", sourceAddrNpi);
             return this;
         }
@@ -1048,8 +1031,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder sourceAddrNpi(
-                String sourceAddrNpi) {
+        default SmppEndpointProducerBuilder sourceAddrNpi(String sourceAddrNpi) {
             setProperty("sourceAddrNpi", sourceAddrNpi);
             return this;
         }
@@ -1061,8 +1043,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder sourceAddrTon(
-                byte sourceAddrTon) {
+        default SmppEndpointProducerBuilder sourceAddrTon(byte sourceAddrTon) {
             setProperty("sourceAddrTon", sourceAddrTon);
             return this;
         }
@@ -1074,8 +1055,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder sourceAddrTon(
-                String sourceAddrTon) {
+        default SmppEndpointProducerBuilder sourceAddrTon(String sourceAddrTon) {
             setProperty("sourceAddrTon", sourceAddrTon);
             return this;
         }
@@ -1086,8 +1066,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder typeOfNumber(
-                byte typeOfNumber) {
+        default SmppEndpointProducerBuilder typeOfNumber(byte typeOfNumber) {
             setProperty("typeOfNumber", typeOfNumber);
             return this;
         }
@@ -1098,8 +1077,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group producer
          */
-        public default SmppEndpointProducerBuilder typeOfNumber(
-                String typeOfNumber) {
+        default SmppEndpointProducerBuilder typeOfNumber(String typeOfNumber) {
             setProperty("typeOfNumber", typeOfNumber);
             return this;
         }
@@ -1110,7 +1088,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointProducerBuilder alphabet(byte alphabet) {
+        default SmppEndpointProducerBuilder alphabet(byte alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -1121,7 +1099,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointProducerBuilder alphabet(String alphabet) {
+        default SmppEndpointProducerBuilder alphabet(String alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -1133,7 +1111,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointProducerBuilder dataCoding(byte dataCoding) {
+        default SmppEndpointProducerBuilder dataCoding(byte dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -1145,7 +1123,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointProducerBuilder dataCoding(String dataCoding) {
+        default SmppEndpointProducerBuilder dataCoding(String dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -1155,7 +1133,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default SmppEndpointProducerBuilder encoding(String encoding) {
+        default SmppEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -1165,8 +1143,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder httpProxyHost(
-                String httpProxyHost) {
+        default SmppEndpointProducerBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -1176,7 +1153,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder httpProxyPassword(
+        default SmppEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1187,8 +1164,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder httpProxyPort(
-                Integer httpProxyPort) {
+        default SmppEndpointProducerBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1199,8 +1175,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder httpProxyPort(
-                String httpProxyPort) {
+        default SmppEndpointProducerBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1210,7 +1185,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder httpProxyUsername(
+        default SmppEndpointProducerBuilder httpProxyUsername(
                 String httpProxyUsername) {
             setProperty("httpProxyUsername", httpProxyUsername);
             return this;
@@ -1222,7 +1197,7 @@ public interface SmppEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder proxyHeaders(
+        default SmppEndpointProducerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
@@ -1235,8 +1210,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointProducerBuilder proxyHeaders(
-                String proxyHeaders) {
+        default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -1245,7 +1219,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointProducerBuilder password(String password) {
+        default SmppEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1254,7 +1228,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointProducerBuilder systemId(String systemId) {
+        default SmppEndpointProducerBuilder systemId(String systemId) {
             setProperty("systemId", systemId);
             return this;
         }
@@ -1263,7 +1237,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointProducerBuilder usingSSL(boolean usingSSL) {
+        default SmppEndpointProducerBuilder usingSSL(boolean usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -1272,7 +1246,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointProducerBuilder usingSSL(String usingSSL) {
+        default SmppEndpointProducerBuilder usingSSL(String usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -1284,7 +1258,7 @@ public interface SmppEndpointBuilderFactory {
     public interface AdvancedSmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SmppEndpointProducerBuilder basic() {
+        default SmppEndpointProducerBuilder basic() {
             return (SmppEndpointProducerBuilder) this;
         }
         /**
@@ -1293,7 +1267,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1304,7 +1278,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1316,7 +1290,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -1329,7 +1303,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -1341,7 +1315,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder sessionStateListener(
+        default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 Object sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -1353,7 +1327,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder sessionStateListener(
+        default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 String sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -1364,7 +1338,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder synchronous(
+        default AdvancedSmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1375,7 +1349,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder synchronous(
+        default AdvancedSmppEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1388,7 +1362,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder transactionTimer(
+        default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 Integer transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -1402,7 +1376,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointProducerBuilder transactionTimer(
+        default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 String transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -1415,7 +1389,7 @@ public interface SmppEndpointBuilderFactory {
     public static interface SmppEndpointBuilder
             extends
                 SmppEndpointConsumerBuilder, SmppEndpointProducerBuilder {
-        public default AdvancedSmppEndpointBuilder advanced() {
+        default AdvancedSmppEndpointBuilder advanced() {
             return (AdvancedSmppEndpointBuilder) this;
         }
         /**
@@ -1423,7 +1397,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder host(String host) {
+        default SmppEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1432,7 +1406,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder port(Integer port) {
+        default SmppEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -1442,7 +1416,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointBuilder port(String port) {
+        default SmppEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1452,7 +1426,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder initialReconnectDelay(
+        default SmppEndpointBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -1463,7 +1437,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder initialReconnectDelay(
+        default SmppEndpointBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
             setProperty("initialReconnectDelay", initialReconnectDelay);
             return this;
@@ -1474,7 +1448,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder maxReconnect(int maxReconnect) {
+        default SmppEndpointBuilder maxReconnect(int maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -1484,7 +1458,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder maxReconnect(String maxReconnect) {
+        default SmppEndpointBuilder maxReconnect(String maxReconnect) {
             setProperty("maxReconnect", maxReconnect);
             return this;
         }
@@ -1495,7 +1469,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder reconnectDelay(long reconnectDelay) {
+        default SmppEndpointBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -1506,7 +1480,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder reconnectDelay(String reconnectDelay) {
+        default SmppEndpointBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -1524,7 +1498,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointBuilder splittingPolicy(
+        default SmppEndpointBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
@@ -1543,8 +1517,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SmppEndpointBuilder splittingPolicy(
-                String splittingPolicy) {
+        default SmppEndpointBuilder splittingPolicy(String splittingPolicy) {
             setProperty("splittingPolicy", splittingPolicy);
             return this;
         }
@@ -1554,7 +1527,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SmppEndpointBuilder systemType(String systemType) {
+        default SmppEndpointBuilder systemType(String systemType) {
             setProperty("systemType", systemType);
             return this;
         }
@@ -1565,7 +1538,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointBuilder alphabet(byte alphabet) {
+        default SmppEndpointBuilder alphabet(byte alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -1576,7 +1549,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointBuilder alphabet(String alphabet) {
+        default SmppEndpointBuilder alphabet(String alphabet) {
             setProperty("alphabet", alphabet);
             return this;
         }
@@ -1588,7 +1561,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointBuilder dataCoding(byte dataCoding) {
+        default SmppEndpointBuilder dataCoding(byte dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -1600,7 +1573,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>byte</code> type.
          * @group codec
          */
-        public default SmppEndpointBuilder dataCoding(String dataCoding) {
+        default SmppEndpointBuilder dataCoding(String dataCoding) {
             setProperty("dataCoding", dataCoding);
             return this;
         }
@@ -1610,7 +1583,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default SmppEndpointBuilder encoding(String encoding) {
+        default SmppEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -1620,7 +1593,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointBuilder httpProxyHost(String httpProxyHost) {
+        default SmppEndpointBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -1630,8 +1603,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointBuilder httpProxyPassword(
-                String httpProxyPassword) {
+        default SmppEndpointBuilder httpProxyPassword(String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
@@ -1641,7 +1613,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SmppEndpointBuilder httpProxyPort(Integer httpProxyPort) {
+        default SmppEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1652,7 +1624,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointBuilder httpProxyPort(String httpProxyPort) {
+        default SmppEndpointBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1662,8 +1634,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SmppEndpointBuilder httpProxyUsername(
-                String httpProxyUsername) {
+        default SmppEndpointBuilder httpProxyUsername(String httpProxyUsername) {
             setProperty("httpProxyUsername", httpProxyUsername);
             return this;
         }
@@ -1674,7 +1645,7 @@ public interface SmppEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group proxy
          */
-        public default SmppEndpointBuilder proxyHeaders(
+        default SmppEndpointBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
@@ -1687,7 +1658,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
+        default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
             setProperty("proxyHeaders", proxyHeaders);
             return this;
         }
@@ -1696,7 +1667,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointBuilder password(String password) {
+        default SmppEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1705,7 +1676,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SmppEndpointBuilder systemId(String systemId) {
+        default SmppEndpointBuilder systemId(String systemId) {
             setProperty("systemId", systemId);
             return this;
         }
@@ -1714,7 +1685,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointBuilder usingSSL(boolean usingSSL) {
+        default SmppEndpointBuilder usingSSL(boolean usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -1723,7 +1694,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SmppEndpointBuilder usingSSL(String usingSSL) {
+        default SmppEndpointBuilder usingSSL(String usingSSL) {
             setProperty("usingSSL", usingSSL);
             return this;
         }
@@ -1735,7 +1706,7 @@ public interface SmppEndpointBuilderFactory {
     public static interface AdvancedSmppEndpointBuilder
             extends
                 AdvancedSmppEndpointConsumerBuilder, AdvancedSmppEndpointProducerBuilder {
-        public default SmppEndpointBuilder basic() {
+        default SmppEndpointBuilder basic() {
             return (SmppEndpointBuilder) this;
         }
         /**
@@ -1744,7 +1715,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1755,7 +1726,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder basicPropertyBinding(
+        default AdvancedSmppEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1767,7 +1738,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -1780,7 +1751,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder enquireLinkTimer(
+        default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
             setProperty("enquireLinkTimer", enquireLinkTimer);
             return this;
@@ -1792,7 +1763,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder sessionStateListener(
+        default AdvancedSmppEndpointBuilder sessionStateListener(
                 Object sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -1804,7 +1775,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.jsmpp.session.SessionStateListener</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder sessionStateListener(
+        default AdvancedSmppEndpointBuilder sessionStateListener(
                 String sessionStateListener) {
             setProperty("sessionStateListener", sessionStateListener);
             return this;
@@ -1815,8 +1786,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSmppEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1826,8 +1796,7 @@ public interface SmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSmppEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1839,7 +1808,7 @@ public interface SmppEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder transactionTimer(
+        default AdvancedSmppEndpointBuilder transactionTimer(
                 Integer transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -1853,7 +1822,7 @@ public interface SmppEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSmppEndpointBuilder transactionTimer(
+        default AdvancedSmppEndpointBuilder transactionTimer(
                 String transactionTimer) {
             setProperty("transactionTimer", transactionTimer);
             return this;
@@ -1871,7 +1840,7 @@ public interface SmppEndpointBuilderFactory {
      * To send and receive SMS using a SMSC (Short Message Service Center).
      * Creates a builder to build endpoints for the SMPP component.
      */
-    public default SmppEndpointBuilder smpp(String path) {
+    default SmppEndpointBuilder smpp(String path) {
         class SmppEndpointBuilderImpl extends AbstractEndpointBuilder implements SmppEndpointBuilder, AdvancedSmppEndpointBuilder {
             public SmppEndpointBuilderImpl(String path) {
                 super("smpp", path);

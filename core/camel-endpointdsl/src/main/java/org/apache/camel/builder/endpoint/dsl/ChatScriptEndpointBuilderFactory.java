@@ -36,7 +36,7 @@ public interface ChatScriptEndpointBuilderFactory {
     public static interface ChatScriptEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedChatScriptEndpointBuilder advanced() {
+        default AdvancedChatScriptEndpointBuilder advanced() {
             return (AdvancedChatScriptEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChatScriptEndpointBuilder host(String host) {
+        default ChatScriptEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -53,7 +53,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ChatScriptEndpointBuilder port(int port) {
+        default ChatScriptEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -62,7 +62,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ChatScriptEndpointBuilder port(String port) {
+        default ChatScriptEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -71,7 +71,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChatScriptEndpointBuilder botName(String botName) {
+        default ChatScriptEndpointBuilder botName(String botName) {
             setProperty("botName", botName);
             return this;
         }
@@ -80,7 +80,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group reset
          */
-        public default ChatScriptEndpointBuilder resetchat(boolean resetchat) {
+        default ChatScriptEndpointBuilder resetchat(boolean resetchat) {
             setProperty("resetchat", resetchat);
             return this;
         }
@@ -89,7 +89,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group reset
          */
-        public default ChatScriptEndpointBuilder resetchat(String resetchat) {
+        default ChatScriptEndpointBuilder resetchat(String resetchat) {
             setProperty("resetchat", resetchat);
             return this;
         }
@@ -99,8 +99,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group username
          */
-        public default ChatScriptEndpointBuilder chatUserName(
-                String chatUserName) {
+        default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
             setProperty("chatUserName", chatUserName);
             return this;
         }
@@ -112,7 +111,7 @@ public interface ChatScriptEndpointBuilderFactory {
     public static interface AdvancedChatScriptEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ChatScriptEndpointBuilder basic() {
+        default ChatScriptEndpointBuilder basic() {
             return (ChatScriptEndpointBuilder) this;
         }
         /**
@@ -121,7 +120,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
+        default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +131,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
+        default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -143,7 +142,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChatScriptEndpointBuilder synchronous(
+        default AdvancedChatScriptEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -154,8 +153,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChatScriptEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -164,7 +162,7 @@ public interface ChatScriptEndpointBuilderFactory {
      * Represents a ChatScript endpoint. Creates a builder to build endpoints
      * for the ChatScript component.
      */
-    public default ChatScriptEndpointBuilder chatScript(String path) {
+    default ChatScriptEndpointBuilder chatScript(String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {
             public ChatScriptEndpointBuilderImpl(String path) {
                 super("chatscript", path);

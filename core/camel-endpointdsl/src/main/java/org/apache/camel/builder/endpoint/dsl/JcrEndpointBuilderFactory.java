@@ -39,7 +39,7 @@ public interface JcrEndpointBuilderFactory {
     public interface JcrEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJcrEndpointConsumerBuilder advanced() {
+        default AdvancedJcrEndpointConsumerBuilder advanced() {
             return (AdvancedJcrEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder host(String host) {
+        default JcrEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -57,7 +57,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder base(String base) {
+        default JcrEndpointConsumerBuilder base(String base) {
             setProperty("base", base);
             return this;
         }
@@ -67,7 +67,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder deep(boolean deep) {
+        default JcrEndpointConsumerBuilder deep(boolean deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -77,7 +77,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder deep(String deep) {
+        default JcrEndpointConsumerBuilder deep(String deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -88,7 +88,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder eventTypes(int eventTypes) {
+        default JcrEndpointConsumerBuilder eventTypes(int eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -99,7 +99,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder eventTypes(String eventTypes) {
+        default JcrEndpointConsumerBuilder eventTypes(String eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -110,8 +110,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder nodeTypeNames(
-                String nodeTypeNames) {
+        default JcrEndpointConsumerBuilder nodeTypeNames(String nodeTypeNames) {
             setProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
@@ -122,7 +121,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder noLocal(boolean noLocal) {
+        default JcrEndpointConsumerBuilder noLocal(boolean noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -133,7 +132,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder noLocal(String noLocal) {
+        default JcrEndpointConsumerBuilder noLocal(String noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -142,7 +141,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder password(String password) {
+        default JcrEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -152,7 +151,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
+        default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -163,7 +162,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
+        default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -174,7 +173,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -185,7 +184,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -195,7 +194,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder username(String username) {
+        default JcrEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -206,7 +205,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder uuids(String uuids) {
+        default JcrEndpointConsumerBuilder uuids(String uuids) {
             setProperty("uuids", uuids);
             return this;
         }
@@ -216,8 +215,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointConsumerBuilder workspaceName(
-                String workspaceName) {
+        default JcrEndpointConsumerBuilder workspaceName(String workspaceName) {
             setProperty("workspaceName", workspaceName);
             return this;
         }
@@ -232,7 +230,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JcrEndpointConsumerBuilder bridgeErrorHandler(
+        default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -248,7 +246,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JcrEndpointConsumerBuilder bridgeErrorHandler(
+        default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -261,7 +259,7 @@ public interface JcrEndpointBuilderFactory {
     public interface AdvancedJcrEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JcrEndpointConsumerBuilder basic() {
+        default JcrEndpointConsumerBuilder basic() {
             return (JcrEndpointConsumerBuilder) this;
         }
         /**
@@ -273,7 +271,7 @@ public interface JcrEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -287,7 +285,7 @@ public interface JcrEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -297,7 +295,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcrEndpointConsumerBuilder exchangePattern(
+        default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -308,7 +306,7 @@ public interface JcrEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcrEndpointConsumerBuilder exchangePattern(
+        default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -319,7 +317,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -330,7 +328,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -341,7 +339,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointConsumerBuilder synchronous(
+        default AdvancedJcrEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,7 +350,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointConsumerBuilder synchronous(
+        default AdvancedJcrEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +363,7 @@ public interface JcrEndpointBuilderFactory {
     public static interface JcrEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJcrEndpointProducerBuilder advanced() {
+        default AdvancedJcrEndpointProducerBuilder advanced() {
             return (AdvancedJcrEndpointProducerBuilder) this;
         }
         /**
@@ -374,7 +372,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder host(String host) {
+        default JcrEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -383,7 +381,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder base(String base) {
+        default JcrEndpointProducerBuilder base(String base) {
             setProperty("base", base);
             return this;
         }
@@ -393,7 +391,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder deep(boolean deep) {
+        default JcrEndpointProducerBuilder deep(boolean deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -403,7 +401,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder deep(String deep) {
+        default JcrEndpointProducerBuilder deep(String deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -414,7 +412,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder eventTypes(int eventTypes) {
+        default JcrEndpointProducerBuilder eventTypes(int eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -425,7 +423,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder eventTypes(String eventTypes) {
+        default JcrEndpointProducerBuilder eventTypes(String eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -436,8 +434,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder nodeTypeNames(
-                String nodeTypeNames) {
+        default JcrEndpointProducerBuilder nodeTypeNames(String nodeTypeNames) {
             setProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
@@ -448,7 +445,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder noLocal(boolean noLocal) {
+        default JcrEndpointProducerBuilder noLocal(boolean noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -459,7 +456,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder noLocal(String noLocal) {
+        default JcrEndpointProducerBuilder noLocal(String noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -468,7 +465,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder password(String password) {
+        default JcrEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -478,7 +475,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder sessionLiveCheckInterval(
+        default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -489,7 +486,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder sessionLiveCheckInterval(
+        default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -500,7 +497,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -511,7 +508,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -521,7 +518,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder username(String username) {
+        default JcrEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -532,7 +529,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder uuids(String uuids) {
+        default JcrEndpointProducerBuilder uuids(String uuids) {
             setProperty("uuids", uuids);
             return this;
         }
@@ -542,8 +539,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointProducerBuilder workspaceName(
-                String workspaceName) {
+        default JcrEndpointProducerBuilder workspaceName(String workspaceName) {
             setProperty("workspaceName", workspaceName);
             return this;
         }
@@ -560,7 +556,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JcrEndpointProducerBuilder lazyStartProducer(
+        default JcrEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,7 +574,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JcrEndpointProducerBuilder lazyStartProducer(
+        default JcrEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -591,7 +587,7 @@ public interface JcrEndpointBuilderFactory {
     public interface AdvancedJcrEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JcrEndpointProducerBuilder basic() {
+        default JcrEndpointProducerBuilder basic() {
             return (JcrEndpointProducerBuilder) this;
         }
         /**
@@ -600,7 +596,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -611,7 +607,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -622,7 +618,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointProducerBuilder synchronous(
+        default AdvancedJcrEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -633,7 +629,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointProducerBuilder synchronous(
+        default AdvancedJcrEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -646,7 +642,7 @@ public interface JcrEndpointBuilderFactory {
     public static interface JcrEndpointBuilder
             extends
                 JcrEndpointConsumerBuilder, JcrEndpointProducerBuilder {
-        public default AdvancedJcrEndpointBuilder advanced() {
+        default AdvancedJcrEndpointBuilder advanced() {
             return (AdvancedJcrEndpointBuilder) this;
         }
         /**
@@ -655,7 +651,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder host(String host) {
+        default JcrEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -664,7 +660,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder base(String base) {
+        default JcrEndpointBuilder base(String base) {
             setProperty("base", base);
             return this;
         }
@@ -674,7 +670,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder deep(boolean deep) {
+        default JcrEndpointBuilder deep(boolean deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -684,7 +680,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder deep(String deep) {
+        default JcrEndpointBuilder deep(String deep) {
             setProperty("deep", deep);
             return this;
         }
@@ -695,7 +691,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder eventTypes(int eventTypes) {
+        default JcrEndpointBuilder eventTypes(int eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -706,7 +702,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder eventTypes(String eventTypes) {
+        default JcrEndpointBuilder eventTypes(String eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -717,7 +713,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder nodeTypeNames(String nodeTypeNames) {
+        default JcrEndpointBuilder nodeTypeNames(String nodeTypeNames) {
             setProperty("nodeTypeNames", nodeTypeNames);
             return this;
         }
@@ -728,7 +724,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder noLocal(boolean noLocal) {
+        default JcrEndpointBuilder noLocal(boolean noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -739,7 +735,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder noLocal(String noLocal) {
+        default JcrEndpointBuilder noLocal(String noLocal) {
             setProperty("noLocal", noLocal);
             return this;
         }
@@ -748,7 +744,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder password(String password) {
+        default JcrEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -758,7 +754,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder sessionLiveCheckInterval(
+        default JcrEndpointBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -769,7 +765,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder sessionLiveCheckInterval(
+        default JcrEndpointBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
             setProperty("sessionLiveCheckInterval", sessionLiveCheckInterval);
             return this;
@@ -780,7 +776,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -791,7 +787,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
+        default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
             setProperty("sessionLiveCheckIntervalOnStart", sessionLiveCheckIntervalOnStart);
             return this;
@@ -801,7 +797,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder username(String username) {
+        default JcrEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -812,7 +808,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder uuids(String uuids) {
+        default JcrEndpointBuilder uuids(String uuids) {
             setProperty("uuids", uuids);
             return this;
         }
@@ -822,7 +818,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcrEndpointBuilder workspaceName(String workspaceName) {
+        default JcrEndpointBuilder workspaceName(String workspaceName) {
             setProperty("workspaceName", workspaceName);
             return this;
         }
@@ -834,7 +830,7 @@ public interface JcrEndpointBuilderFactory {
     public static interface AdvancedJcrEndpointBuilder
             extends
                 AdvancedJcrEndpointConsumerBuilder, AdvancedJcrEndpointProducerBuilder {
-        public default JcrEndpointBuilder basic() {
+        default JcrEndpointBuilder basic() {
             return (JcrEndpointBuilder) this;
         }
         /**
@@ -843,7 +839,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -854,7 +850,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointBuilder basicPropertyBinding(
+        default AdvancedJcrEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -865,8 +861,7 @@ public interface JcrEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJcrEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -876,7 +871,7 @@ public interface JcrEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcrEndpointBuilder synchronous(String synchronous) {
+        default AdvancedJcrEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -886,7 +881,7 @@ public interface JcrEndpointBuilderFactory {
      * content repository. Creates a builder to build endpoints for the JCR
      * component.
      */
-    public default JcrEndpointBuilder jcr(String path) {
+    default JcrEndpointBuilder jcr(String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {
             public JcrEndpointBuilderImpl(String path) {
                 super("jcr", path);

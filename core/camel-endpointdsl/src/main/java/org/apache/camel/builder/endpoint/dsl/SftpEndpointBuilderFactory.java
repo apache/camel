@@ -51,7 +51,7 @@ public interface SftpEndpointBuilderFactory {
     public interface SftpEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSftpEndpointConsumerBuilder advanced() {
+        default AdvancedSftpEndpointConsumerBuilder advanced() {
             return (AdvancedSftpEndpointConsumerBuilder) this;
         }
         /**
@@ -59,7 +59,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder host(String host) {
+        default SftpEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -68,7 +68,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder port(int port) {
+        default SftpEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -77,7 +77,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder port(String port) {
+        default SftpEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -86,8 +86,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder directoryName(
-                String directoryName) {
+        default SftpEndpointConsumerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -104,7 +103,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder charset(String charset) {
+        default SftpEndpointConsumerBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -116,7 +115,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder disconnect(boolean disconnect) {
+        default SftpEndpointConsumerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -128,7 +127,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder disconnect(String disconnect) {
+        default SftpEndpointConsumerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -147,8 +146,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder doneFileName(
-                String doneFileName) {
+        default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -172,7 +170,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder fileName(Expression fileName) {
+        default SftpEndpointConsumerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -197,7 +195,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder fileName(String fileName) {
+        default SftpEndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -207,7 +205,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder jschLoggingLevel(
+        default SftpEndpointConsumerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
@@ -219,7 +217,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder jschLoggingLevel(
+        default SftpEndpointConsumerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
@@ -232,8 +230,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder separator(
-                PathSeparator separator) {
+        default SftpEndpointConsumerBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -245,7 +242,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointConsumerBuilder separator(String separator) {
+        default SftpEndpointConsumerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -260,7 +257,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder bridgeErrorHandler(
+        default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -276,7 +273,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder bridgeErrorHandler(
+        default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -286,7 +283,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder delete(boolean delete) {
+        default SftpEndpointConsumerBuilder delete(boolean delete) {
             setProperty("delete", delete);
             return this;
         }
@@ -295,7 +292,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder delete(String delete) {
+        default SftpEndpointConsumerBuilder delete(String delete) {
             setProperty("delete", delete);
             return this;
         }
@@ -307,8 +304,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder moveFailed(
-                Expression moveFailed) {
+        default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
             setProperty("moveFailed", moveFailed);
             return this;
         }
@@ -321,7 +317,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
+        default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
             setProperty("moveFailed", moveFailed);
             return this;
         }
@@ -333,7 +329,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder noop(boolean noop) {
+        default SftpEndpointConsumerBuilder noop(boolean noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -345,7 +341,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder noop(String noop) {
+        default SftpEndpointConsumerBuilder noop(String noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -356,7 +352,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder preMove(Expression preMove) {
+        default SftpEndpointConsumerBuilder preMove(Expression preMove) {
             setProperty("preMove", preMove);
             return this;
         }
@@ -368,7 +364,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder preMove(String preMove) {
+        default SftpEndpointConsumerBuilder preMove(String preMove) {
             setProperty("preMove", preMove);
             return this;
         }
@@ -382,7 +378,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder preSort(boolean preSort) {
+        default SftpEndpointConsumerBuilder preSort(boolean preSort) {
             setProperty("preSort", preSort);
             return this;
         }
@@ -396,7 +392,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder preSort(String preSort) {
+        default SftpEndpointConsumerBuilder preSort(String preSort) {
             setProperty("preSort", preSort);
             return this;
         }
@@ -406,7 +402,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder recursive(boolean recursive) {
+        default SftpEndpointConsumerBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -416,7 +412,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder recursive(String recursive) {
+        default SftpEndpointConsumerBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -426,7 +422,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -437,7 +433,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -450,7 +446,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder streamDownload(
+        default SftpEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
             setProperty("streamDownload", streamDownload);
             return this;
@@ -463,8 +459,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SftpEndpointConsumerBuilder streamDownload(
-                String streamDownload) {
+        default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
             setProperty("streamDownload", streamDownload);
             return this;
         }
@@ -475,7 +470,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder antExclude(String antExclude) {
+        default SftpEndpointConsumerBuilder antExclude(String antExclude) {
             setProperty("antExclude", antExclude);
             return this;
         }
@@ -484,7 +479,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder antFilterCaseSensitive(
+        default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
             setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
@@ -494,7 +489,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder antFilterCaseSensitive(
+        default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
             setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
@@ -505,7 +500,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder antInclude(String antInclude) {
+        default SftpEndpointConsumerBuilder antInclude(String antInclude) {
             setProperty("antInclude", antInclude);
             return this;
         }
@@ -519,7 +514,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
+        default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
             setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
@@ -534,7 +529,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
+        default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
             setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
@@ -548,7 +543,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder exclude(String exclude) {
+        default SftpEndpointConsumerBuilder exclude(String exclude) {
             setProperty("exclude", exclude);
             return this;
         }
@@ -560,7 +555,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filter(Object filter) {
+        default SftpEndpointConsumerBuilder filter(Object filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -572,7 +567,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filter(String filter) {
+        default SftpEndpointConsumerBuilder filter(String filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -583,7 +578,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filterDirectory(
+        default SftpEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
             setProperty("filterDirectory", filterDirectory);
             return this;
@@ -596,7 +591,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filterDirectory(
+        default SftpEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
             setProperty("filterDirectory", filterDirectory);
             return this;
@@ -607,8 +602,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filterFile(
-                Predicate filterFile) {
+        default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
             setProperty("filterFile", filterFile);
             return this;
         }
@@ -619,7 +613,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder filterFile(String filterFile) {
+        default SftpEndpointConsumerBuilder filterFile(String filterFile) {
             setProperty("filterFile", filterFile);
             return this;
         }
@@ -631,7 +625,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotent(Boolean idempotent) {
+        default SftpEndpointConsumerBuilder idempotent(Boolean idempotent) {
             setProperty("idempotent", idempotent);
             return this;
         }
@@ -644,7 +638,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotent(String idempotent) {
+        default SftpEndpointConsumerBuilder idempotent(String idempotent) {
             setProperty("idempotent", idempotent);
             return this;
         }
@@ -656,7 +650,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotentKey(
+        default SftpEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
             setProperty("idempotentKey", idempotentKey);
             return this;
@@ -670,8 +664,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotentKey(
-                String idempotentKey) {
+        default SftpEndpointConsumerBuilder idempotentKey(String idempotentKey) {
             setProperty("idempotentKey", idempotentKey);
             return this;
         }
@@ -683,7 +676,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotentRepository(
+        default SftpEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
             setProperty("idempotentRepository", idempotentRepository);
             return this;
@@ -696,7 +689,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder idempotentRepository(
+        default SftpEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
             setProperty("idempotentRepository", idempotentRepository);
             return this;
@@ -710,7 +703,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder include(String include) {
+        default SftpEndpointConsumerBuilder include(String include) {
             setProperty("include", include);
             return this;
         }
@@ -720,7 +713,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder maxDepth(int maxDepth) {
+        default SftpEndpointConsumerBuilder maxDepth(int maxDepth) {
             setProperty("maxDepth", maxDepth);
             return this;
         }
@@ -730,7 +723,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder maxDepth(String maxDepth) {
+        default SftpEndpointConsumerBuilder maxDepth(String maxDepth) {
             setProperty("maxDepth", maxDepth);
             return this;
         }
@@ -747,7 +740,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder maxMessagesPerPoll(
+        default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -765,7 +758,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder maxMessagesPerPoll(
+        default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -777,7 +770,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder minDepth(int minDepth) {
+        default SftpEndpointConsumerBuilder minDepth(int minDepth) {
             setProperty("minDepth", minDepth);
             return this;
         }
@@ -788,7 +781,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder minDepth(String minDepth) {
+        default SftpEndpointConsumerBuilder minDepth(String minDepth) {
             setProperty("minDepth", minDepth);
             return this;
         }
@@ -799,7 +792,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder move(Expression move) {
+        default SftpEndpointConsumerBuilder move(Expression move) {
             setProperty("move", move);
             return this;
         }
@@ -811,7 +804,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default SftpEndpointConsumerBuilder move(String move) {
+        default SftpEndpointConsumerBuilder move(String move) {
             setProperty("move", move);
             return this;
         }
@@ -823,7 +816,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
+        default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
             setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
@@ -836,7 +829,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
+        default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
             setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
@@ -883,7 +876,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLock(String readLock) {
+        default SftpEndpointConsumerBuilder readLock(String readLock) {
             setProperty("readLock", readLock);
             return this;
         }
@@ -902,7 +895,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockCheckInterval(
+        default SftpEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
             setProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
@@ -922,7 +915,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockCheckInterval(
+        default SftpEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
             setProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
@@ -938,7 +931,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
+        default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
             setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
@@ -954,7 +947,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
+        default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
             setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
@@ -966,7 +959,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
             setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
@@ -978,7 +971,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
             setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
@@ -995,7 +988,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
             setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
@@ -1012,7 +1005,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
             setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
@@ -1029,7 +1022,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
             setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
@@ -1046,7 +1039,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
             setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
@@ -1058,7 +1051,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
             setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
@@ -1070,7 +1063,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
+        default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
             setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
@@ -1084,7 +1077,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockLoggingLevel(
+        default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
             setProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
@@ -1099,7 +1092,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockLoggingLevel(
+        default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
             setProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
@@ -1114,7 +1107,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMarkerFile(
+        default SftpEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
             setProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
@@ -1129,7 +1122,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMarkerFile(
+        default SftpEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
             setProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
@@ -1144,8 +1137,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMinAge(
-                long readLockMinAge) {
+        default SftpEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
             return this;
         }
@@ -1159,8 +1151,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMinAge(
-                String readLockMinAge) {
+        default SftpEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
             return this;
         }
@@ -1172,7 +1163,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMinLength(
+        default SftpEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
             setProperty("readLockMinLength", readLockMinLength);
             return this;
@@ -1185,7 +1176,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockMinLength(
+        default SftpEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
             setProperty("readLockMinLength", readLockMinLength);
             return this;
@@ -1203,7 +1194,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
+        default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
             setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
@@ -1221,7 +1212,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
+        default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
             setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
@@ -1235,7 +1226,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
+        default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
             setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
@@ -1249,7 +1240,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
+        default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
             setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
@@ -1270,8 +1261,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockTimeout(
-                long readLockTimeout) {
+        default SftpEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
             setProperty("readLockTimeout", readLockTimeout);
             return this;
         }
@@ -1291,7 +1281,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default SftpEndpointConsumerBuilder readLockTimeout(
+        default SftpEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
             setProperty("readLockTimeout", readLockTimeout);
             return this;
@@ -1302,7 +1292,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffErrorThreshold(
+        default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -1313,7 +1303,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffErrorThreshold(
+        default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -1324,7 +1314,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffIdleThreshold(
+        default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -1335,7 +1325,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffIdleThreshold(
+        default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -1350,7 +1340,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffMultiplier(
+        default SftpEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -1365,7 +1355,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder backoffMultiplier(
+        default SftpEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -1377,7 +1367,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder delay(long delay) {
+        default SftpEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -1388,7 +1378,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder delay(String delay) {
+        default SftpEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -1398,7 +1388,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder greedy(boolean greedy) {
+        default SftpEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -1408,7 +1398,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder greedy(String greedy) {
+        default SftpEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -1419,8 +1409,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default SftpEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -1431,8 +1420,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default SftpEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -1442,7 +1430,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder runLoggingLevel(
+        default SftpEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -1454,7 +1442,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder runLoggingLevel(
+        default SftpEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -1467,7 +1455,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder scheduledExecutorService(
+        default SftpEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -1480,7 +1468,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder scheduledExecutorService(
+        default SftpEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -1493,7 +1481,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder scheduler(
+        default SftpEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -1506,7 +1494,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder scheduler(String scheduler) {
+        default SftpEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -1517,7 +1505,7 @@ public interface SftpEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder schedulerProperties(
+        default SftpEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -1530,7 +1518,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder schedulerProperties(
+        default SftpEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -1540,7 +1528,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder startScheduler(
+        default SftpEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -1550,8 +1538,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default SftpEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -1560,7 +1547,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default SftpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -1570,7 +1557,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -1580,8 +1567,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default SftpEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -1591,8 +1577,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SftpEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default SftpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -1601,7 +1586,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder shuffle(boolean shuffle) {
+        default SftpEndpointConsumerBuilder shuffle(boolean shuffle) {
             setProperty("shuffle", shuffle);
             return this;
         }
@@ -1610,7 +1595,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder shuffle(String shuffle) {
+        default SftpEndpointConsumerBuilder shuffle(String shuffle) {
             setProperty("shuffle", shuffle);
             return this;
         }
@@ -1623,8 +1608,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder sortBy(
-                Comparator<Exchange> sortBy) {
+        default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
             setProperty("sortBy", sortBy);
             return this;
         }
@@ -1637,7 +1621,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder sortBy(String sortBy) {
+        default SftpEndpointConsumerBuilder sortBy(String sortBy) {
             setProperty("sortBy", sortBy);
             return this;
         }
@@ -1647,8 +1631,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder sorter(
-                Comparator<Object> sorter) {
+        default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
             setProperty("sorter", sorter);
             return this;
         }
@@ -1658,7 +1641,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
          * @group sort
          */
-        public default SftpEndpointConsumerBuilder sorter(String sorter) {
+        default SftpEndpointConsumerBuilder sorter(String sorter) {
             setProperty("sorter", sorter);
             return this;
         }
@@ -1670,7 +1653,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder ciphers(String ciphers) {
+        default SftpEndpointConsumerBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
             return this;
         }
@@ -1680,7 +1663,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.security.KeyPair</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -1691,7 +1674,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder keyPair(String keyPair) {
+        default SftpEndpointConsumerBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -1701,7 +1684,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -1711,7 +1694,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
+        default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -1721,8 +1704,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder knownHostsFile(
-                String knownHostsFile) {
+        default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
             return this;
         }
@@ -1732,8 +1714,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder knownHostsUri(
-                String knownHostsUri) {
+        default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
             return this;
         }
@@ -1742,7 +1723,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder password(String password) {
+        default SftpEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1753,7 +1734,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder preferredAuthentications(
+        default SftpEndpointConsumerBuilder preferredAuthentications(
                 String preferredAuthentications) {
             setProperty("preferredAuthentications", preferredAuthentications);
             return this;
@@ -1764,7 +1745,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -1774,7 +1755,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder privateKey(String privateKey) {
+        default SftpEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -1784,8 +1765,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder privateKeyFile(
-                String privateKeyFile) {
+        default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -1795,7 +1775,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder privateKeyPassphrase(
+        default SftpEndpointConsumerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
             setProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
@@ -1806,8 +1786,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder privateKeyUri(
-                String privateKeyUri) {
+        default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
             return this;
         }
@@ -1816,7 +1795,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder strictHostKeyChecking(
+        default SftpEndpointConsumerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
             setProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
@@ -1826,7 +1805,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder username(String username) {
+        default SftpEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1836,7 +1815,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder useUserKnownHostsFile(
+        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -1847,7 +1826,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointConsumerBuilder useUserKnownHostsFile(
+        default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -1860,7 +1839,7 @@ public interface SftpEndpointBuilderFactory {
     public interface AdvancedSftpEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SftpEndpointConsumerBuilder basic() {
+        default SftpEndpointConsumerBuilder basic() {
             return (SftpEndpointConsumerBuilder) this;
         }
         /**
@@ -1875,7 +1854,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
+        default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -1892,7 +1871,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
+        default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 String fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -1906,8 +1885,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder download(
-                boolean download) {
+        default AdvancedSftpEndpointConsumerBuilder download(boolean download) {
             setProperty("download", download);
             return this;
         }
@@ -1920,8 +1898,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder download(
-                String download) {
+        default AdvancedSftpEndpointConsumerBuilder download(String download) {
             setProperty("download", download);
             return this;
         }
@@ -1934,7 +1911,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1948,7 +1925,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1958,7 +1935,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder exchangePattern(
+        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1969,7 +1946,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder exchangePattern(
+        default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1983,7 +1960,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
+        default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 boolean ignoreFileNotFoundOrPermissionError) {
             setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
@@ -1997,7 +1974,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
+        default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
             setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
@@ -2011,7 +1988,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
+        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
             setProperty("inProgressRepository", inProgressRepository);
             return this;
@@ -2025,7 +2002,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
+        default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
             setProperty("inProgressRepository", inProgressRepository);
             return this;
@@ -2038,7 +2015,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
+        default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
             setProperty("localWorkDirectory", localWorkDirectory);
             return this;
@@ -2052,7 +2029,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
+        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
             setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
@@ -2066,7 +2043,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
+        default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
             setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
@@ -2080,7 +2057,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder pollStrategy(
+        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -2094,7 +2071,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder pollStrategy(
+        default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -2110,7 +2087,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder processStrategy(
+        default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
             setProperty("processStrategy", processStrategy);
             return this;
@@ -2126,7 +2103,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder processStrategy(
+        default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
             setProperty("processStrategy", processStrategy);
             return this;
@@ -2142,8 +2119,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder useList(
-                boolean useList) {
+        default AdvancedSftpEndpointConsumerBuilder useList(boolean useList) {
             setProperty("useList", useList);
             return this;
         }
@@ -2158,8 +2134,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSftpEndpointConsumerBuilder useList(
-                String useList) {
+        default AdvancedSftpEndpointConsumerBuilder useList(String useList) {
             setProperty("useList", useList);
             return this;
         }
@@ -2171,7 +2146,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder autoCreate(
+        default AdvancedSftpEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
@@ -2184,8 +2159,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder autoCreate(
-                String autoCreate) {
+        default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -2195,7 +2169,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2206,7 +2180,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2217,7 +2191,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder bindAddress(
+        default AdvancedSftpEndpointConsumerBuilder bindAddress(
                 String bindAddress) {
             setProperty("bindAddress", bindAddress);
             return this;
@@ -2227,8 +2201,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder bufferSize(
-                int bufferSize) {
+        default AdvancedSftpEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2237,8 +2210,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder bufferSize(
-                String bufferSize) {
+        default AdvancedSftpEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2249,7 +2221,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder bulkRequests(
+        default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 Integer bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
@@ -2262,7 +2234,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder bulkRequests(
+        default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 String bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
@@ -2274,8 +2246,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder compression(
-                int compression) {
+        default AdvancedSftpEndpointConsumerBuilder compression(int compression) {
             setProperty("compression", compression);
             return this;
         }
@@ -2286,7 +2257,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder compression(
+        default AdvancedSftpEndpointConsumerBuilder compression(
                 String compression) {
             setProperty("compression", compression);
             return this;
@@ -2297,7 +2268,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder connectTimeout(
+        default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -2308,7 +2279,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder connectTimeout(
+        default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -2319,7 +2290,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -2330,7 +2301,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -2341,7 +2312,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>com.jcraft.jsch.Proxy</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -2352,7 +2323,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
+        default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -2362,7 +2333,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
+        default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
@@ -2373,7 +2344,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
+        default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
@@ -2383,7 +2354,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -2393,7 +2364,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -2403,7 +2374,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
+        default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 int serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -2413,7 +2384,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
+        default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 String serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -2427,8 +2398,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder soTimeout(
-                int soTimeout) {
+        default AdvancedSftpEndpointConsumerBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -2441,8 +2411,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder soTimeout(
-                String soTimeout) {
+        default AdvancedSftpEndpointConsumerBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -2455,8 +2424,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder stepwise(
-                boolean stepwise) {
+        default AdvancedSftpEndpointConsumerBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -2469,8 +2437,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder stepwise(
-                String stepwise) {
+        default AdvancedSftpEndpointConsumerBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -2480,7 +2447,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder synchronous(
+        default AdvancedSftpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2491,7 +2458,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder synchronous(
+        default AdvancedSftpEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2505,7 +2472,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -2519,7 +2486,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -2529,7 +2496,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder timeout(int timeout) {
+        default AdvancedSftpEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -2538,8 +2505,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointConsumerBuilder timeout(
-                String timeout) {
+        default AdvancedSftpEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -2551,7 +2517,7 @@ public interface SftpEndpointBuilderFactory {
     public static interface SftpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSftpEndpointProducerBuilder advanced() {
+        default AdvancedSftpEndpointProducerBuilder advanced() {
             return (AdvancedSftpEndpointProducerBuilder) this;
         }
         /**
@@ -2559,7 +2525,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder host(String host) {
+        default SftpEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -2568,7 +2534,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder port(int port) {
+        default SftpEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -2577,7 +2543,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder port(String port) {
+        default SftpEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -2586,8 +2552,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder directoryName(
-                String directoryName) {
+        default SftpEndpointProducerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -2604,7 +2569,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder charset(String charset) {
+        default SftpEndpointProducerBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -2616,7 +2581,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder disconnect(boolean disconnect) {
+        default SftpEndpointProducerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -2628,7 +2593,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder disconnect(String disconnect) {
+        default SftpEndpointProducerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -2647,8 +2612,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder doneFileName(
-                String doneFileName) {
+        default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -2672,7 +2636,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder fileName(Expression fileName) {
+        default SftpEndpointProducerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2697,7 +2661,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder fileName(String fileName) {
+        default SftpEndpointProducerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2707,7 +2671,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder jschLoggingLevel(
+        default SftpEndpointProducerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
@@ -2719,7 +2683,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder jschLoggingLevel(
+        default SftpEndpointProducerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
@@ -2732,8 +2696,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder separator(
-                PathSeparator separator) {
+        default SftpEndpointProducerBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -2745,7 +2708,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointProducerBuilder separator(String separator) {
+        default SftpEndpointProducerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -2769,8 +2732,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder fileExist(
-                GenericFileExist fileExist) {
+        default SftpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
             setProperty("fileExist", fileExist);
             return this;
         }
@@ -2794,7 +2756,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder fileExist(String fileExist) {
+        default SftpEndpointProducerBuilder fileExist(String fileExist) {
             setProperty("fileExist", fileExist);
             return this;
         }
@@ -2808,7 +2770,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder flatten(boolean flatten) {
+        default SftpEndpointProducerBuilder flatten(boolean flatten) {
             setProperty("flatten", flatten);
             return this;
         }
@@ -2822,7 +2784,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder flatten(String flatten) {
+        default SftpEndpointProducerBuilder flatten(String flatten) {
             setProperty("flatten", flatten);
             return this;
         }
@@ -2836,7 +2798,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder jailStartingDirectory(
+        default SftpEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
             setProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
@@ -2851,7 +2813,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder jailStartingDirectory(
+        default SftpEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
             setProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
@@ -2869,7 +2831,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder lazyStartProducer(
+        default SftpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2887,7 +2849,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder lazyStartProducer(
+        default SftpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2904,8 +2866,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder moveExisting(
-                Expression moveExisting) {
+        default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
             setProperty("moveExisting", moveExisting);
             return this;
         }
@@ -2922,8 +2883,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder moveExisting(
-                String moveExisting) {
+        default SftpEndpointProducerBuilder moveExisting(String moveExisting) {
             setProperty("moveExisting", moveExisting);
             return this;
         }
@@ -2938,8 +2898,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder tempFileName(
-                Expression tempFileName) {
+        default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
             setProperty("tempFileName", tempFileName);
             return this;
         }
@@ -2955,8 +2914,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder tempFileName(
-                String tempFileName) {
+        default SftpEndpointProducerBuilder tempFileName(String tempFileName) {
             setProperty("tempFileName", tempFileName);
             return this;
         }
@@ -2969,7 +2927,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
+        default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
             setProperty("tempPrefix", tempPrefix);
             return this;
         }
@@ -2981,7 +2939,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder ciphers(String ciphers) {
+        default SftpEndpointProducerBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
             return this;
         }
@@ -2991,7 +2949,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.security.KeyPair</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -3002,7 +2960,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder keyPair(String keyPair) {
+        default SftpEndpointProducerBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -3012,7 +2970,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -3022,7 +2980,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
+        default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -3032,8 +2990,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder knownHostsFile(
-                String knownHostsFile) {
+        default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
             return this;
         }
@@ -3043,8 +3000,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder knownHostsUri(
-                String knownHostsUri) {
+        default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
             return this;
         }
@@ -3053,7 +3009,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder password(String password) {
+        default SftpEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -3064,7 +3020,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder preferredAuthentications(
+        default SftpEndpointProducerBuilder preferredAuthentications(
                 String preferredAuthentications) {
             setProperty("preferredAuthentications", preferredAuthentications);
             return this;
@@ -3075,7 +3031,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -3085,7 +3041,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder privateKey(String privateKey) {
+        default SftpEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -3095,8 +3051,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder privateKeyFile(
-                String privateKeyFile) {
+        default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -3106,7 +3061,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder privateKeyPassphrase(
+        default SftpEndpointProducerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
             setProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
@@ -3117,8 +3072,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder privateKeyUri(
-                String privateKeyUri) {
+        default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
             return this;
         }
@@ -3127,7 +3081,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder strictHostKeyChecking(
+        default SftpEndpointProducerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
             setProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
@@ -3137,7 +3091,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder username(String username) {
+        default SftpEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -3147,7 +3101,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder useUserKnownHostsFile(
+        default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -3158,7 +3112,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointProducerBuilder useUserKnownHostsFile(
+        default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -3171,7 +3125,7 @@ public interface SftpEndpointBuilderFactory {
     public interface AdvancedSftpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SftpEndpointProducerBuilder basic() {
+        default SftpEndpointProducerBuilder basic() {
             return (SftpEndpointProducerBuilder) this;
         }
         /**
@@ -3186,7 +3140,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
+        default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -3203,7 +3157,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
+        default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 String fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -3219,7 +3173,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder allowNullBody(
+        default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -3235,7 +3189,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder allowNullBody(
+        default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -3245,7 +3199,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
+        default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
             setProperty("chmod", chmod);
             return this;
         }
@@ -3256,7 +3210,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
+        default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
             setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
@@ -3268,7 +3222,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
+        default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
             setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
@@ -3290,7 +3244,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
+        default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
             setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
@@ -3312,7 +3266,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
+        default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
             setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
@@ -3328,7 +3282,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder keepLastModified(
+        default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
             setProperty("keepLastModified", keepLastModified);
             return this;
@@ -3344,7 +3298,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder keepLastModified(
+        default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
             setProperty("keepLastModified", keepLastModified);
             return this;
@@ -3357,7 +3311,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
+        default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
             setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
@@ -3370,7 +3324,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
+        default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
             setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
@@ -3384,8 +3338,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder sendNoop(
-                boolean sendNoop) {
+        default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
             setProperty("sendNoop", sendNoop);
             return this;
         }
@@ -3398,8 +3351,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedSftpEndpointProducerBuilder sendNoop(
-                String sendNoop) {
+        default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
             setProperty("sendNoop", sendNoop);
             return this;
         }
@@ -3411,7 +3363,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder autoCreate(
+        default AdvancedSftpEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
@@ -3424,8 +3376,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder autoCreate(
-                String autoCreate) {
+        default AdvancedSftpEndpointProducerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -3435,7 +3386,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3446,7 +3397,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3457,7 +3408,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder bindAddress(
+        default AdvancedSftpEndpointProducerBuilder bindAddress(
                 String bindAddress) {
             setProperty("bindAddress", bindAddress);
             return this;
@@ -3467,8 +3418,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder bufferSize(
-                int bufferSize) {
+        default AdvancedSftpEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -3477,8 +3427,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder bufferSize(
-                String bufferSize) {
+        default AdvancedSftpEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -3489,7 +3438,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder bulkRequests(
+        default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 Integer bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
@@ -3502,7 +3451,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder bulkRequests(
+        default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 String bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
@@ -3514,8 +3463,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder compression(
-                int compression) {
+        default AdvancedSftpEndpointProducerBuilder compression(int compression) {
             setProperty("compression", compression);
             return this;
         }
@@ -3526,7 +3474,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder compression(
+        default AdvancedSftpEndpointProducerBuilder compression(
                 String compression) {
             setProperty("compression", compression);
             return this;
@@ -3537,7 +3485,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder connectTimeout(
+        default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -3548,7 +3496,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder connectTimeout(
+        default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -3559,7 +3507,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -3570,7 +3518,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -3581,7 +3529,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>com.jcraft.jsch.Proxy</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -3592,7 +3540,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
+        default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -3602,7 +3550,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder reconnectDelay(
+        default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
@@ -3613,7 +3561,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder reconnectDelay(
+        default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
@@ -3623,7 +3571,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -3633,7 +3581,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -3643,7 +3591,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
+        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 int serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -3653,7 +3601,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
+        default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 String serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -3667,8 +3615,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder soTimeout(
-                int soTimeout) {
+        default AdvancedSftpEndpointProducerBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -3681,8 +3628,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder soTimeout(
-                String soTimeout) {
+        default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -3695,8 +3641,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder stepwise(
-                boolean stepwise) {
+        default AdvancedSftpEndpointProducerBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -3709,8 +3654,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder stepwise(
-                String stepwise) {
+        default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -3720,7 +3664,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder synchronous(
+        default AdvancedSftpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3731,7 +3675,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder synchronous(
+        default AdvancedSftpEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3745,7 +3689,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -3759,7 +3703,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -3769,7 +3713,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
+        default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -3778,8 +3722,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointProducerBuilder timeout(
-                String timeout) {
+        default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -3791,7 +3734,7 @@ public interface SftpEndpointBuilderFactory {
     public static interface SftpEndpointBuilder
             extends
                 SftpEndpointConsumerBuilder, SftpEndpointProducerBuilder {
-        public default AdvancedSftpEndpointBuilder advanced() {
+        default AdvancedSftpEndpointBuilder advanced() {
             return (AdvancedSftpEndpointBuilder) this;
         }
         /**
@@ -3799,7 +3742,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder host(String host) {
+        default SftpEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -3808,7 +3751,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder port(int port) {
+        default SftpEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -3817,7 +3760,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder port(String port) {
+        default SftpEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -3826,7 +3769,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder directoryName(String directoryName) {
+        default SftpEndpointBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -3843,7 +3786,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder charset(String charset) {
+        default SftpEndpointBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -3855,7 +3798,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder disconnect(boolean disconnect) {
+        default SftpEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -3867,7 +3810,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder disconnect(String disconnect) {
+        default SftpEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -3886,7 +3829,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder doneFileName(String doneFileName) {
+        default SftpEndpointBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -3910,7 +3853,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder fileName(Expression fileName) {
+        default SftpEndpointBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -3935,7 +3878,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder fileName(String fileName) {
+        default SftpEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -3945,7 +3888,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder jschLoggingLevel(
+        default SftpEndpointBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
@@ -3957,8 +3900,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder jschLoggingLevel(
-                String jschLoggingLevel) {
+        default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
@@ -3970,7 +3912,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder separator(PathSeparator separator) {
+        default SftpEndpointBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -3982,7 +3924,7 @@ public interface SftpEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * @group common
          */
-        public default SftpEndpointBuilder separator(String separator) {
+        default SftpEndpointBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -3994,7 +3936,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder ciphers(String ciphers) {
+        default SftpEndpointBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
             return this;
         }
@@ -4004,7 +3946,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.security.KeyPair</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder keyPair(KeyPair keyPair) {
+        default SftpEndpointBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -4015,7 +3957,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default SftpEndpointBuilder keyPair(String keyPair) {
+        default SftpEndpointBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
             return this;
         }
@@ -4025,7 +3967,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
+        default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -4035,7 +3977,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder knownHosts(String knownHosts) {
+        default SftpEndpointBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
             return this;
         }
@@ -4045,7 +3987,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
+        default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
             return this;
         }
@@ -4055,7 +3997,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
+        default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
             return this;
         }
@@ -4064,7 +4006,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder password(String password) {
+        default SftpEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -4075,7 +4017,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder preferredAuthentications(
+        default SftpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
             setProperty("preferredAuthentications", preferredAuthentications);
             return this;
@@ -4086,7 +4028,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder privateKey(Byte[] privateKey) {
+        default SftpEndpointBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -4096,7 +4038,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder privateKey(String privateKey) {
+        default SftpEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -4106,7 +4048,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
+        default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -4116,7 +4058,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder privateKeyPassphrase(
+        default SftpEndpointBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
             setProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
@@ -4127,7 +4069,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
+        default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
             return this;
         }
@@ -4136,7 +4078,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder strictHostKeyChecking(
+        default SftpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
             setProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
@@ -4146,7 +4088,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder username(String username) {
+        default SftpEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -4156,7 +4098,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder useUserKnownHostsFile(
+        default SftpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -4167,7 +4109,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SftpEndpointBuilder useUserKnownHostsFile(
+        default SftpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -4180,7 +4122,7 @@ public interface SftpEndpointBuilderFactory {
     public static interface AdvancedSftpEndpointBuilder
             extends
                 AdvancedSftpEndpointConsumerBuilder, AdvancedSftpEndpointProducerBuilder {
-        public default SftpEndpointBuilder basic() {
+        default SftpEndpointBuilder basic() {
             return (SftpEndpointBuilder) this;
         }
         /**
@@ -4195,7 +4137,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointBuilder fastExistsCheck(
+        default AdvancedSftpEndpointBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -4212,7 +4154,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedSftpEndpointBuilder fastExistsCheck(
+        default AdvancedSftpEndpointBuilder fastExistsCheck(
                 String fastExistsCheck) {
             setProperty("fastExistsCheck", fastExistsCheck);
             return this;
@@ -4225,7 +4167,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
+        default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -4237,7 +4179,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
+        default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -4247,7 +4189,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -4258,7 +4200,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder basicPropertyBinding(
+        default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -4269,8 +4211,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder bindAddress(
-                String bindAddress) {
+        default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
             setProperty("bindAddress", bindAddress);
             return this;
         }
@@ -4279,7 +4220,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder bufferSize(int bufferSize) {
+        default AdvancedSftpEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -4288,7 +4229,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder bufferSize(String bufferSize) {
+        default AdvancedSftpEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -4299,8 +4240,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder bulkRequests(
-                Integer bulkRequests) {
+        default AdvancedSftpEndpointBuilder bulkRequests(Integer bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
         }
@@ -4312,8 +4252,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder bulkRequests(
-                String bulkRequests) {
+        default AdvancedSftpEndpointBuilder bulkRequests(String bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
             return this;
         }
@@ -4324,7 +4263,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder compression(int compression) {
+        default AdvancedSftpEndpointBuilder compression(int compression) {
             setProperty("compression", compression);
             return this;
         }
@@ -4335,8 +4274,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder compression(
-                String compression) {
+        default AdvancedSftpEndpointBuilder compression(String compression) {
             setProperty("compression", compression);
             return this;
         }
@@ -4346,8 +4284,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder connectTimeout(
-                int connectTimeout) {
+        default AdvancedSftpEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -4357,8 +4294,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder connectTimeout(
-                String connectTimeout) {
+        default AdvancedSftpEndpointBuilder connectTimeout(String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -4368,7 +4304,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -4379,7 +4315,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
+        default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
             setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
@@ -4390,7 +4326,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>com.jcraft.jsch.Proxy</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder proxy(Object proxy) {
+        default AdvancedSftpEndpointBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -4401,7 +4337,7 @@ public interface SftpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder proxy(String proxy) {
+        default AdvancedSftpEndpointBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -4411,8 +4347,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder reconnectDelay(
-                long reconnectDelay) {
+        default AdvancedSftpEndpointBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -4422,8 +4357,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder reconnectDelay(
-                String reconnectDelay) {
+        default AdvancedSftpEndpointBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -4432,7 +4366,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -4442,7 +4376,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder serverAliveCountMax(
+        default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
             setProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
@@ -4452,7 +4386,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder serverAliveInterval(
+        default AdvancedSftpEndpointBuilder serverAliveInterval(
                 int serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -4462,7 +4396,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder serverAliveInterval(
+        default AdvancedSftpEndpointBuilder serverAliveInterval(
                 String serverAliveInterval) {
             setProperty("serverAliveInterval", serverAliveInterval);
             return this;
@@ -4476,7 +4410,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder soTimeout(int soTimeout) {
+        default AdvancedSftpEndpointBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -4489,7 +4423,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder soTimeout(String soTimeout) {
+        default AdvancedSftpEndpointBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -4502,7 +4436,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder stepwise(boolean stepwise) {
+        default AdvancedSftpEndpointBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -4515,7 +4449,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder stepwise(String stepwise) {
+        default AdvancedSftpEndpointBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
             return this;
         }
@@ -4525,8 +4459,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSftpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4536,8 +4469,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4550,7 +4482,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -4564,7 +4496,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
+        default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
             setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
@@ -4574,7 +4506,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder timeout(int timeout) {
+        default AdvancedSftpEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -4583,7 +4515,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSftpEndpointBuilder timeout(String timeout) {
+        default AdvancedSftpEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -4609,7 +4541,7 @@ public interface SftpEndpointBuilderFactory {
      * files from SFTP servers. Creates a builder to build endpoints for the
      * SFTP component.
      */
-    public default SftpEndpointBuilder sftp(String path) {
+    default SftpEndpointBuilder sftp(String path) {
         class SftpEndpointBuilderImpl extends AbstractEndpointBuilder implements SftpEndpointBuilder, AdvancedSftpEndpointBuilder {
             public SftpEndpointBuilderImpl(String path) {
                 super("sftp", path);

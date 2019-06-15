@@ -36,7 +36,7 @@ public interface SchematronEndpointBuilderFactory {
     public static interface SchematronEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSchematronEndpointBuilder advanced() {
+        default AdvancedSchematronEndpointBuilder advanced() {
             return (AdvancedSchematronEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SchematronEndpointBuilder path(String path) {
+        default SchematronEndpointBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SchematronEndpointBuilder abort(boolean abort) {
+        default SchematronEndpointBuilder abort(boolean abort) {
             setProperty("abort", abort);
             return this;
         }
@@ -63,7 +63,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SchematronEndpointBuilder abort(String abort) {
+        default SchematronEndpointBuilder abort(String abort) {
             setProperty("abort", abort);
             return this;
         }
@@ -72,7 +72,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>javax.xml.transform.Templates</code> type.
          * @group producer
          */
-        public default SchematronEndpointBuilder rules(Object rules) {
+        default SchematronEndpointBuilder rules(Object rules) {
             setProperty("rules", rules);
             return this;
         }
@@ -82,7 +82,7 @@ public interface SchematronEndpointBuilderFactory {
          * <code>javax.xml.transform.Templates</code> type.
          * @group producer
          */
-        public default SchematronEndpointBuilder rules(String rules) {
+        default SchematronEndpointBuilder rules(String rules) {
             setProperty("rules", rules);
             return this;
         }
@@ -94,7 +94,7 @@ public interface SchematronEndpointBuilderFactory {
     public static interface AdvancedSchematronEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SchematronEndpointBuilder basic() {
+        default SchematronEndpointBuilder basic() {
             return (SchematronEndpointBuilder) this;
         }
         /**
@@ -103,7 +103,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder basicPropertyBinding(
+        default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -114,7 +114,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder basicPropertyBinding(
+        default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -125,7 +125,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder synchronous(
+        default AdvancedSchematronEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -136,8 +136,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSchematronEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -147,8 +146,7 @@ public interface SchematronEndpointBuilderFactory {
          * The option is a <code>javax.xml.transform.URIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder uriResolver(
-                Object uriResolver) {
+        default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
             setProperty("uriResolver", uriResolver);
             return this;
         }
@@ -159,8 +157,7 @@ public interface SchematronEndpointBuilderFactory {
          * <code>javax.xml.transform.URIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedSchematronEndpointBuilder uriResolver(
-                String uriResolver) {
+        default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {
             setProperty("uriResolver", uriResolver);
             return this;
         }
@@ -169,7 +166,7 @@ public interface SchematronEndpointBuilderFactory {
      * Validates the payload of a message using the Schematron Library. Creates
      * a builder to build endpoints for the Schematron component.
      */
-    public default SchematronEndpointBuilder schematron(String path) {
+    default SchematronEndpointBuilder schematron(String path) {
         class SchematronEndpointBuilderImpl extends AbstractEndpointBuilder implements SchematronEndpointBuilder, AdvancedSchematronEndpointBuilder {
             public SchematronEndpointBuilderImpl(String path) {
                 super("schematron", path);

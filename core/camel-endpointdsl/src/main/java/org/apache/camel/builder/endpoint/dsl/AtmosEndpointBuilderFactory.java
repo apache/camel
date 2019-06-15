@@ -38,7 +38,7 @@ public interface AtmosEndpointBuilderFactory {
     public interface AtmosEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAtmosEndpointConsumerBuilder advanced() {
+        default AdvancedAtmosEndpointConsumerBuilder advanced() {
             return (AdvancedAtmosEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder name(String name) {
+        default AtmosEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -57,8 +57,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder operation(
-                AtmosOperation operation) {
+        default AtmosEndpointConsumerBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -69,7 +68,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder operation(String operation) {
+        default AtmosEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -78,7 +77,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder enableSslValidation(
+        default AtmosEndpointConsumerBuilder enableSslValidation(
                 boolean enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -88,7 +87,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder enableSslValidation(
+        default AtmosEndpointConsumerBuilder enableSslValidation(
                 String enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -98,8 +97,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder fullTokenId(
-                String fullTokenId) {
+        default AtmosEndpointConsumerBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
             return this;
         }
@@ -108,7 +106,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder localPath(String localPath) {
+        default AtmosEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -117,8 +115,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder newRemotePath(
-                String newRemotePath) {
+        default AtmosEndpointConsumerBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
         }
@@ -127,7 +124,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder query(String query) {
+        default AtmosEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -136,7 +133,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
+        default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -145,7 +142,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
+        default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -154,7 +151,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointConsumerBuilder uri(String uri) {
+        default AtmosEndpointConsumerBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -169,7 +166,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosEndpointConsumerBuilder bridgeErrorHandler(
+        default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -185,7 +182,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosEndpointConsumerBuilder bridgeErrorHandler(
+        default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -198,7 +195,7 @@ public interface AtmosEndpointBuilderFactory {
     public interface AdvancedAtmosEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AtmosEndpointConsumerBuilder basic() {
+        default AtmosEndpointConsumerBuilder basic() {
             return (AtmosEndpointConsumerBuilder) this;
         }
         /**
@@ -210,7 +207,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -224,7 +221,7 @@ public interface AtmosEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -234,7 +231,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -245,7 +242,7 @@ public interface AtmosEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -256,7 +253,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -267,7 +264,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -278,7 +275,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointConsumerBuilder synchronous(
+        default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -289,7 +286,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointConsumerBuilder synchronous(
+        default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -302,7 +299,7 @@ public interface AtmosEndpointBuilderFactory {
     public static interface AtmosEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAtmosEndpointProducerBuilder advanced() {
+        default AdvancedAtmosEndpointProducerBuilder advanced() {
             return (AdvancedAtmosEndpointProducerBuilder) this;
         }
         /**
@@ -310,7 +307,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder name(String name) {
+        default AtmosEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -321,8 +318,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder operation(
-                AtmosOperation operation) {
+        default AtmosEndpointProducerBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -333,7 +329,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder operation(String operation) {
+        default AtmosEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -342,7 +338,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder enableSslValidation(
+        default AtmosEndpointProducerBuilder enableSslValidation(
                 boolean enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -352,7 +348,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder enableSslValidation(
+        default AtmosEndpointProducerBuilder enableSslValidation(
                 String enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -362,8 +358,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder fullTokenId(
-                String fullTokenId) {
+        default AtmosEndpointProducerBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
             return this;
         }
@@ -372,7 +367,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder localPath(String localPath) {
+        default AtmosEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -381,8 +376,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder newRemotePath(
-                String newRemotePath) {
+        default AtmosEndpointProducerBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
         }
@@ -391,7 +385,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder query(String query) {
+        default AtmosEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -400,7 +394,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder remotePath(String remotePath) {
+        default AtmosEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -409,7 +403,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder secretKey(String secretKey) {
+        default AtmosEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -418,7 +412,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointProducerBuilder uri(String uri) {
+        default AtmosEndpointProducerBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -435,7 +429,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AtmosEndpointProducerBuilder lazyStartProducer(
+        default AtmosEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -453,7 +447,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AtmosEndpointProducerBuilder lazyStartProducer(
+        default AtmosEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -466,7 +460,7 @@ public interface AtmosEndpointBuilderFactory {
     public interface AdvancedAtmosEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AtmosEndpointProducerBuilder basic() {
+        default AtmosEndpointProducerBuilder basic() {
             return (AtmosEndpointProducerBuilder) this;
         }
         /**
@@ -475,7 +469,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -486,7 +480,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -497,7 +491,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointProducerBuilder synchronous(
+        default AdvancedAtmosEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -508,7 +502,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointProducerBuilder synchronous(
+        default AdvancedAtmosEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -521,7 +515,7 @@ public interface AtmosEndpointBuilderFactory {
     public static interface AtmosEndpointBuilder
             extends
                 AtmosEndpointConsumerBuilder, AtmosEndpointProducerBuilder {
-        public default AdvancedAtmosEndpointBuilder advanced() {
+        default AdvancedAtmosEndpointBuilder advanced() {
             return (AdvancedAtmosEndpointBuilder) this;
         }
         /**
@@ -529,7 +523,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder name(String name) {
+        default AtmosEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -540,7 +534,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointBuilder operation(AtmosOperation operation) {
+        default AtmosEndpointBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -551,7 +545,7 @@ public interface AtmosEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtmosEndpointBuilder operation(String operation) {
+        default AtmosEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -560,7 +554,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder enableSslValidation(
+        default AtmosEndpointBuilder enableSslValidation(
                 boolean enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -570,7 +564,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder enableSslValidation(
+        default AtmosEndpointBuilder enableSslValidation(
                 String enableSslValidation) {
             setProperty("enableSslValidation", enableSslValidation);
             return this;
@@ -580,7 +574,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
+        default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
             return this;
         }
@@ -589,7 +583,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder localPath(String localPath) {
+        default AtmosEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
             return this;
         }
@@ -598,7 +592,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
+        default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
             return this;
         }
@@ -607,7 +601,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder query(String query) {
+        default AtmosEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -616,7 +610,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder remotePath(String remotePath) {
+        default AtmosEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
             return this;
         }
@@ -625,7 +619,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder secretKey(String secretKey) {
+        default AtmosEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -634,7 +628,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosEndpointBuilder uri(String uri) {
+        default AtmosEndpointBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -646,7 +640,7 @@ public interface AtmosEndpointBuilderFactory {
     public static interface AdvancedAtmosEndpointBuilder
             extends
                 AdvancedAtmosEndpointConsumerBuilder, AdvancedAtmosEndpointProducerBuilder {
-        public default AtmosEndpointBuilder basic() {
+        default AtmosEndpointBuilder basic() {
             return (AtmosEndpointBuilder) this;
         }
         /**
@@ -655,7 +649,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -666,7 +660,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointBuilder basicPropertyBinding(
+        default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -677,8 +671,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAtmosEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -688,8 +681,7 @@ public interface AtmosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedAtmosEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -706,7 +698,7 @@ public interface AtmosEndpointBuilderFactory {
      * The atmos component is used for integrating with EMC's Atomos Storage.
      * Creates a builder to build endpoints for the Atmos component.
      */
-    public default AtmosEndpointBuilder atmos(String path) {
+    default AtmosEndpointBuilder atmos(String path) {
         class AtmosEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosEndpointBuilder, AdvancedAtmosEndpointBuilder {
             public AtmosEndpointBuilderImpl(String path) {
                 super("atmos", path);

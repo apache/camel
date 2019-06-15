@@ -41,7 +41,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public interface BlobServiceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedBlobServiceEndpointConsumerBuilder advanced() {
+        default AdvancedBlobServiceEndpointConsumerBuilder advanced() {
             return (AdvancedBlobServiceEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder containerOrBlobUri(
+        default BlobServiceEndpointConsumerBuilder containerOrBlobUri(
                 String containerOrBlobUri) {
             setProperty("containerOrBlobUri", containerOrBlobUri);
             return this;
@@ -60,7 +60,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder azureBlobClient(
+        default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 Object azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -71,7 +71,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder azureBlobClient(
+        default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 String azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -82,8 +82,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder blobOffset(
-                Long blobOffset) {
+        default BlobServiceEndpointConsumerBuilder blobOffset(Long blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -93,8 +92,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder blobOffset(
-                String blobOffset) {
+        default BlobServiceEndpointConsumerBuilder blobOffset(String blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -104,8 +102,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder blobType(
-                BlobType blobType) {
+        default BlobServiceEndpointConsumerBuilder blobType(BlobType blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -115,8 +112,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder blobType(
-                String blobType) {
+        default BlobServiceEndpointConsumerBuilder blobType(String blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -125,7 +121,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
+        default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -135,7 +131,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
+        default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -146,7 +142,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder credentials(
+        default BlobServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -157,7 +153,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder credentials(
+        default BlobServiceEndpointConsumerBuilder credentials(
                 String credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -167,8 +163,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder dataLength(
-                Long dataLength) {
+        default BlobServiceEndpointConsumerBuilder dataLength(Long dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -177,8 +172,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder dataLength(
-                String dataLength) {
+        default BlobServiceEndpointConsumerBuilder dataLength(String dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -187,7 +181,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder fileDir(String fileDir) {
+        default BlobServiceEndpointConsumerBuilder fileDir(String fileDir) {
             setProperty("fileDir", fileDir);
             return this;
         }
@@ -197,7 +191,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder publicForRead(
+        default BlobServiceEndpointConsumerBuilder publicForRead(
                 boolean publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
@@ -208,7 +202,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder publicForRead(
+        default BlobServiceEndpointConsumerBuilder publicForRead(
                 String publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
@@ -218,7 +212,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder streamReadSize(
+        default BlobServiceEndpointConsumerBuilder streamReadSize(
                 int streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
@@ -228,7 +222,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointConsumerBuilder streamReadSize(
+        default BlobServiceEndpointConsumerBuilder streamReadSize(
                 String streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
@@ -244,7 +238,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
+        default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -260,7 +254,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
+        default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -274,7 +268,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public interface AdvancedBlobServiceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default BlobServiceEndpointConsumerBuilder basic() {
+        default BlobServiceEndpointConsumerBuilder basic() {
             return (BlobServiceEndpointConsumerBuilder) this;
         }
         /**
@@ -286,7 +280,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -300,7 +294,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -310,7 +304,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
+        default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -321,7 +315,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
+        default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -332,7 +326,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -343,7 +337,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -354,7 +348,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
+        default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +359,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
+        default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -379,7 +373,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public static interface BlobServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBlobServiceEndpointProducerBuilder advanced() {
+        default AdvancedBlobServiceEndpointProducerBuilder advanced() {
             return (AdvancedBlobServiceEndpointProducerBuilder) this;
         }
         /**
@@ -387,7 +381,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder containerOrBlobUri(
+        default BlobServiceEndpointProducerBuilder containerOrBlobUri(
                 String containerOrBlobUri) {
             setProperty("containerOrBlobUri", containerOrBlobUri);
             return this;
@@ -398,7 +392,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder azureBlobClient(
+        default BlobServiceEndpointProducerBuilder azureBlobClient(
                 Object azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -409,7 +403,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder azureBlobClient(
+        default BlobServiceEndpointProducerBuilder azureBlobClient(
                 String azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -420,8 +414,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder blobOffset(
-                Long blobOffset) {
+        default BlobServiceEndpointProducerBuilder blobOffset(Long blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -431,8 +424,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder blobOffset(
-                String blobOffset) {
+        default BlobServiceEndpointProducerBuilder blobOffset(String blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -442,8 +434,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder blobType(
-                BlobType blobType) {
+        default BlobServiceEndpointProducerBuilder blobType(BlobType blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -453,8 +444,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder blobType(
-                String blobType) {
+        default BlobServiceEndpointProducerBuilder blobType(String blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -463,7 +453,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
+        default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -473,7 +463,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
+        default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -484,7 +474,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder credentials(
+        default BlobServiceEndpointProducerBuilder credentials(
                 Object credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -495,7 +485,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder credentials(
+        default BlobServiceEndpointProducerBuilder credentials(
                 String credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -505,8 +495,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder dataLength(
-                Long dataLength) {
+        default BlobServiceEndpointProducerBuilder dataLength(Long dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -515,8 +504,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder dataLength(
-                String dataLength) {
+        default BlobServiceEndpointProducerBuilder dataLength(String dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -525,7 +513,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder fileDir(String fileDir) {
+        default BlobServiceEndpointProducerBuilder fileDir(String fileDir) {
             setProperty("fileDir", fileDir);
             return this;
         }
@@ -535,7 +523,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder publicForRead(
+        default BlobServiceEndpointProducerBuilder publicForRead(
                 boolean publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
@@ -546,7 +534,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder publicForRead(
+        default BlobServiceEndpointProducerBuilder publicForRead(
                 String publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
@@ -556,7 +544,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder streamReadSize(
+        default BlobServiceEndpointProducerBuilder streamReadSize(
                 int streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
@@ -566,7 +554,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointProducerBuilder streamReadSize(
+        default BlobServiceEndpointProducerBuilder streamReadSize(
                 String streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
@@ -577,7 +565,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder blobMetadata(
+        default BlobServiceEndpointProducerBuilder blobMetadata(
                 Map<String, String> blobMetadata) {
             setProperty("blobMetadata", blobMetadata);
             return this;
@@ -589,7 +577,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder blobMetadata(
+        default BlobServiceEndpointProducerBuilder blobMetadata(
                 String blobMetadata) {
             setProperty("blobMetadata", blobMetadata);
             return this;
@@ -599,8 +587,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder blobPrefix(
-                String blobPrefix) {
+        default BlobServiceEndpointProducerBuilder blobPrefix(String blobPrefix) {
             setProperty("blobPrefix", blobPrefix);
             return this;
         }
@@ -609,7 +596,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
+        default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
             setProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
@@ -619,7 +606,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
+        default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 String closeStreamAfterWrite) {
             setProperty("closeStreamAfterWrite", closeStreamAfterWrite);
             return this;
@@ -637,7 +624,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder lazyStartProducer(
+        default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -655,7 +642,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder lazyStartProducer(
+        default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -666,7 +653,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder operation(
+        default BlobServiceEndpointProducerBuilder operation(
                 BlobServiceOperations operation) {
             setProperty("operation", operation);
             return this;
@@ -677,8 +664,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder operation(
-                String operation) {
+        default BlobServiceEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -687,7 +673,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder streamWriteSize(
+        default BlobServiceEndpointProducerBuilder streamWriteSize(
                 int streamWriteSize) {
             setProperty("streamWriteSize", streamWriteSize);
             return this;
@@ -697,7 +683,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder streamWriteSize(
+        default BlobServiceEndpointProducerBuilder streamWriteSize(
                 String streamWriteSize) {
             setProperty("streamWriteSize", streamWriteSize);
             return this;
@@ -707,7 +693,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder useFlatListing(
+        default BlobServiceEndpointProducerBuilder useFlatListing(
                 boolean useFlatListing) {
             setProperty("useFlatListing", useFlatListing);
             return this;
@@ -717,7 +703,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BlobServiceEndpointProducerBuilder useFlatListing(
+        default BlobServiceEndpointProducerBuilder useFlatListing(
                 String useFlatListing) {
             setProperty("useFlatListing", useFlatListing);
             return this;
@@ -731,7 +717,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public interface AdvancedBlobServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default BlobServiceEndpointProducerBuilder basic() {
+        default BlobServiceEndpointProducerBuilder basic() {
             return (BlobServiceEndpointProducerBuilder) this;
         }
         /**
@@ -740,7 +726,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -751,7 +737,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -762,7 +748,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointProducerBuilder synchronous(
+        default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -773,7 +759,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointProducerBuilder synchronous(
+        default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -786,7 +772,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public static interface BlobServiceEndpointBuilder
             extends
                 BlobServiceEndpointConsumerBuilder, BlobServiceEndpointProducerBuilder {
-        public default AdvancedBlobServiceEndpointBuilder advanced() {
+        default AdvancedBlobServiceEndpointBuilder advanced() {
             return (AdvancedBlobServiceEndpointBuilder) this;
         }
         /**
@@ -794,7 +780,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder containerOrBlobUri(
+        default BlobServiceEndpointBuilder containerOrBlobUri(
                 String containerOrBlobUri) {
             setProperty("containerOrBlobUri", containerOrBlobUri);
             return this;
@@ -805,7 +791,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder azureBlobClient(
+        default BlobServiceEndpointBuilder azureBlobClient(
                 Object azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -816,7 +802,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder azureBlobClient(
+        default BlobServiceEndpointBuilder azureBlobClient(
                 String azureBlobClient) {
             setProperty("azureBlobClient", azureBlobClient);
             return this;
@@ -827,7 +813,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder blobOffset(Long blobOffset) {
+        default BlobServiceEndpointBuilder blobOffset(Long blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -837,7 +823,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder blobOffset(String blobOffset) {
+        default BlobServiceEndpointBuilder blobOffset(String blobOffset) {
             setProperty("blobOffset", blobOffset);
             return this;
         }
@@ -847,7 +833,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder blobType(BlobType blobType) {
+        default BlobServiceEndpointBuilder blobType(BlobType blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -857,7 +843,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder blobType(String blobType) {
+        default BlobServiceEndpointBuilder blobType(String blobType) {
             setProperty("blobType", blobType);
             return this;
         }
@@ -866,7 +852,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder closeStreamAfterRead(
+        default BlobServiceEndpointBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -876,7 +862,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder closeStreamAfterRead(
+        default BlobServiceEndpointBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
             setProperty("closeStreamAfterRead", closeStreamAfterRead);
             return this;
@@ -887,7 +873,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder credentials(Object credentials) {
+        default BlobServiceEndpointBuilder credentials(Object credentials) {
             setProperty("credentials", credentials);
             return this;
         }
@@ -897,7 +883,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder credentials(String credentials) {
+        default BlobServiceEndpointBuilder credentials(String credentials) {
             setProperty("credentials", credentials);
             return this;
         }
@@ -906,7 +892,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder dataLength(Long dataLength) {
+        default BlobServiceEndpointBuilder dataLength(Long dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -915,7 +901,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder dataLength(String dataLength) {
+        default BlobServiceEndpointBuilder dataLength(String dataLength) {
             setProperty("dataLength", dataLength);
             return this;
         }
@@ -924,7 +910,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder fileDir(String fileDir) {
+        default BlobServiceEndpointBuilder fileDir(String fileDir) {
             setProperty("fileDir", fileDir);
             return this;
         }
@@ -934,8 +920,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder publicForRead(
-                boolean publicForRead) {
+        default BlobServiceEndpointBuilder publicForRead(boolean publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
         }
@@ -945,8 +930,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder publicForRead(
-                String publicForRead) {
+        default BlobServiceEndpointBuilder publicForRead(String publicForRead) {
             setProperty("publicForRead", publicForRead);
             return this;
         }
@@ -955,8 +939,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder streamReadSize(
-                int streamReadSize) {
+        default BlobServiceEndpointBuilder streamReadSize(int streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
         }
@@ -965,8 +948,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default BlobServiceEndpointBuilder streamReadSize(
-                String streamReadSize) {
+        default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {
             setProperty("streamReadSize", streamReadSize);
             return this;
         }
@@ -979,7 +961,7 @@ public interface BlobServiceEndpointBuilderFactory {
     public static interface AdvancedBlobServiceEndpointBuilder
             extends
                 AdvancedBlobServiceEndpointConsumerBuilder, AdvancedBlobServiceEndpointProducerBuilder {
-        public default BlobServiceEndpointBuilder basic() {
+        default BlobServiceEndpointBuilder basic() {
             return (BlobServiceEndpointBuilder) this;
         }
         /**
@@ -988,7 +970,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -999,7 +981,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1010,7 +992,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointBuilder synchronous(
+        default AdvancedBlobServiceEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1021,7 +1003,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBlobServiceEndpointBuilder synchronous(
+        default AdvancedBlobServiceEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1049,7 +1031,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Azure Storage Blob Service. Creates a builder to build endpoints for the
      * Azure Storage Blob Service component.
      */
-    public default BlobServiceEndpointBuilder blobService(String path) {
+    default BlobServiceEndpointBuilder blobService(String path) {
         class BlobServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobServiceEndpointBuilder, AdvancedBlobServiceEndpointBuilder {
             public BlobServiceEndpointBuilderImpl(String path) {
                 super("azure-blob", path);

@@ -39,7 +39,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public interface KubernetesJobEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKubernetesJobEndpointConsumerBuilder advanced() {
+        default AdvancedKubernetesJobEndpointConsumerBuilder advanced() {
             return (AdvancedKubernetesJobEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesJobEndpointConsumerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -57,7 +56,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder apiVersion(
+        default KubernetesJobEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -67,8 +66,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesJobEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -78,7 +76,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder kubernetesClient(
+        default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -89,7 +87,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder kubernetesClient(
+        default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -99,8 +97,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder portName(
-                String portName) {
+        default KubernetesJobEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -109,7 +106,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointConsumerBuilder portProtocol(
+        default KubernetesJobEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -125,7 +122,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +138,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -151,8 +148,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder labelKey(
-                String labelKey) {
+        default KubernetesJobEndpointConsumerBuilder labelKey(String labelKey) {
             setProperty("labelKey", labelKey);
             return this;
         }
@@ -161,7 +157,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder labelValue(
+        default KubernetesJobEndpointConsumerBuilder labelValue(
                 String labelValue) {
             setProperty("labelValue", labelValue);
             return this;
@@ -171,8 +167,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder namespace(
-                String namespace) {
+        default KubernetesJobEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -181,8 +176,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder poolSize(
-                int poolSize) {
+        default KubernetesJobEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -191,8 +185,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder poolSize(
-                String poolSize) {
+        default KubernetesJobEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -201,7 +194,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesJobEndpointConsumerBuilder resourceName(
+        default KubernetesJobEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -211,7 +204,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder caCertData(
+        default KubernetesJobEndpointConsumerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -221,7 +214,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder caCertFile(
+        default KubernetesJobEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -231,7 +224,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientCertData(
+        default KubernetesJobEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -241,7 +234,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientCertFile(
+        default KubernetesJobEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -251,7 +244,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientKeyAlgo(
+        default KubernetesJobEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -261,7 +254,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientKeyData(
+        default KubernetesJobEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -271,7 +264,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientKeyFile(
+        default KubernetesJobEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -281,7 +274,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder clientKeyPassphrase(
+        default KubernetesJobEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -291,7 +284,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder oauthToken(
+        default KubernetesJobEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -301,8 +294,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder password(
-                String password) {
+        default KubernetesJobEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -311,7 +303,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder trustCerts(
+        default KubernetesJobEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -322,7 +314,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder trustCerts(
+        default KubernetesJobEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -332,8 +324,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointConsumerBuilder username(
-                String username) {
+        default KubernetesJobEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -345,7 +336,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public interface AdvancedKubernetesJobEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KubernetesJobEndpointConsumerBuilder basic() {
+        default KubernetesJobEndpointConsumerBuilder basic() {
             return (KubernetesJobEndpointConsumerBuilder) this;
         }
         /**
@@ -357,7 +348,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -371,7 +362,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -381,7 +372,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -392,7 +383,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -403,7 +394,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -414,7 +405,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -425,7 +416,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -437,7 +428,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -448,7 +439,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -459,7 +450,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -472,7 +463,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public static interface KubernetesJobEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesJobEndpointProducerBuilder advanced() {
+        default AdvancedKubernetesJobEndpointProducerBuilder advanced() {
             return (AdvancedKubernetesJobEndpointProducerBuilder) this;
         }
         /**
@@ -480,8 +471,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesJobEndpointProducerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -490,7 +480,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder apiVersion(
+        default KubernetesJobEndpointProducerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -500,8 +490,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesJobEndpointProducerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -511,7 +500,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder kubernetesClient(
+        default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -522,7 +511,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder kubernetesClient(
+        default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -532,8 +521,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder portName(
-                String portName) {
+        default KubernetesJobEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -542,7 +530,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointProducerBuilder portProtocol(
+        default KubernetesJobEndpointProducerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -560,7 +548,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesJobEndpointProducerBuilder lazyStartProducer(
+        default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,7 +566,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesJobEndpointProducerBuilder lazyStartProducer(
+        default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -588,8 +576,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesJobEndpointProducerBuilder operation(
-                String operation) {
+        default KubernetesJobEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -598,7 +585,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder caCertData(
+        default KubernetesJobEndpointProducerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -608,7 +595,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder caCertFile(
+        default KubernetesJobEndpointProducerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -618,7 +605,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientCertData(
+        default KubernetesJobEndpointProducerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -628,7 +615,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientCertFile(
+        default KubernetesJobEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -638,7 +625,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientKeyAlgo(
+        default KubernetesJobEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -648,7 +635,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientKeyData(
+        default KubernetesJobEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -658,7 +645,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientKeyFile(
+        default KubernetesJobEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -668,7 +655,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder clientKeyPassphrase(
+        default KubernetesJobEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -678,7 +665,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder oauthToken(
+        default KubernetesJobEndpointProducerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -688,8 +675,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder password(
-                String password) {
+        default KubernetesJobEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -698,7 +684,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder trustCerts(
+        default KubernetesJobEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -709,7 +695,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder trustCerts(
+        default KubernetesJobEndpointProducerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -719,8 +705,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointProducerBuilder username(
-                String username) {
+        default KubernetesJobEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -732,7 +717,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public interface AdvancedKubernetesJobEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesJobEndpointProducerBuilder basic() {
+        default KubernetesJobEndpointProducerBuilder basic() {
             return (KubernetesJobEndpointProducerBuilder) this;
         }
         /**
@@ -741,7 +726,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -752,7 +737,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -763,7 +748,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -775,7 +760,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -786,7 +771,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -797,7 +782,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -810,7 +795,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public static interface KubernetesJobEndpointBuilder
             extends
                 KubernetesJobEndpointConsumerBuilder, KubernetesJobEndpointProducerBuilder {
-        public default AdvancedKubernetesJobEndpointBuilder advanced() {
+        default AdvancedKubernetesJobEndpointBuilder advanced() {
             return (AdvancedKubernetesJobEndpointBuilder) this;
         }
         /**
@@ -818,7 +803,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder masterUrl(String masterUrl) {
+        default KubernetesJobEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -827,7 +812,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder apiVersion(String apiVersion) {
+        default KubernetesJobEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -836,7 +821,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder dnsDomain(String dnsDomain) {
+        default KubernetesJobEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -846,7 +831,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder kubernetesClient(
+        default KubernetesJobEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -857,7 +842,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder kubernetesClient(
+        default KubernetesJobEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -867,7 +852,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder portName(String portName) {
+        default KubernetesJobEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -876,8 +861,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesJobEndpointBuilder portProtocol(
-                String portProtocol) {
+        default KubernetesJobEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
         }
@@ -886,7 +870,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder caCertData(String caCertData) {
+        default KubernetesJobEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
         }
@@ -895,7 +879,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder caCertFile(String caCertFile) {
+        default KubernetesJobEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
         }
@@ -904,7 +888,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientCertData(
+        default KubernetesJobEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -914,7 +898,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientCertFile(
+        default KubernetesJobEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -924,8 +908,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientKeyAlgo(
-                String clientKeyAlgo) {
+        default KubernetesJobEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
@@ -934,8 +917,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientKeyData(
-                String clientKeyData) {
+        default KubernetesJobEndpointBuilder clientKeyData(String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
         }
@@ -944,8 +926,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientKeyFile(
-                String clientKeyFile) {
+        default KubernetesJobEndpointBuilder clientKeyFile(String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
         }
@@ -954,7 +935,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder clientKeyPassphrase(
+        default KubernetesJobEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -964,7 +945,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder oauthToken(String oauthToken) {
+        default KubernetesJobEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -973,7 +954,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder password(String password) {
+        default KubernetesJobEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -982,8 +963,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder trustCerts(
-                Boolean trustCerts) {
+        default KubernetesJobEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -993,7 +973,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder trustCerts(String trustCerts) {
+        default KubernetesJobEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -1002,7 +982,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesJobEndpointBuilder username(String username) {
+        default KubernetesJobEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1014,7 +994,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     public static interface AdvancedKubernetesJobEndpointBuilder
             extends
                 AdvancedKubernetesJobEndpointConsumerBuilder, AdvancedKubernetesJobEndpointProducerBuilder {
-        public default KubernetesJobEndpointBuilder basic() {
+        default KubernetesJobEndpointBuilder basic() {
             return (KubernetesJobEndpointBuilder) this;
         }
         /**
@@ -1023,7 +1003,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1034,7 +1014,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1045,7 +1025,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1057,7 +1037,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1068,7 +1048,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder synchronous(
+        default AdvancedKubernetesJobEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1079,7 +1059,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesJobEndpointBuilder synchronous(
+        default AdvancedKubernetesJobEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1090,7 +1070,7 @@ public interface KubernetesJobEndpointBuilderFactory {
      * job operations Creates a builder to build endpoints for the Kubernetes
      * Job component.
      */
-    public default KubernetesJobEndpointBuilder kubernetesJob(String path) {
+    default KubernetesJobEndpointBuilder kubernetesJob(String path) {
         class KubernetesJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesJobEndpointBuilder, AdvancedKubernetesJobEndpointBuilder {
             public KubernetesJobEndpointBuilderImpl(String path) {
                 super("kubernetes-job", path);

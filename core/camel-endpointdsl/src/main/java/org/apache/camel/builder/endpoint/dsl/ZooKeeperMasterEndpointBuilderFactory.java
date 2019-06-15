@@ -37,7 +37,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
     public static interface ZooKeeperMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedZooKeeperMasterEndpointBuilder advanced() {
+        default AdvancedZooKeeperMasterEndpointBuilder advanced() {
             return (AdvancedZooKeeperMasterEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ZooKeeperMasterEndpointBuilder groupName(String groupName) {
+        default ZooKeeperMasterEndpointBuilder groupName(String groupName) {
             setProperty("groupName", groupName);
             return this;
         }
@@ -54,7 +54,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ZooKeeperMasterEndpointBuilder consumerEndpointUri(
+        default ZooKeeperMasterEndpointBuilder consumerEndpointUri(
                 String consumerEndpointUri) {
             setProperty("consumerEndpointUri", consumerEndpointUri);
             return this;
@@ -67,7 +67,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
     public static interface AdvancedZooKeeperMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ZooKeeperMasterEndpointBuilder basic() {
+        default ZooKeeperMasterEndpointBuilder basic() {
             return (ZooKeeperMasterEndpointBuilder) this;
         }
         /**
@@ -76,7 +76,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
+        default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -87,7 +87,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
+        default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -98,7 +98,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZooKeeperMasterEndpointBuilder synchronous(
+        default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -109,7 +109,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZooKeeperMasterEndpointBuilder synchronous(
+        default AdvancedZooKeeperMasterEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -120,7 +120,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
      * master lock Creates a builder to build endpoints for the ZooKeeper Master
      * component.
      */
-    public default ZooKeeperMasterEndpointBuilder zooKeeperMaster(String path) {
+    default ZooKeeperMasterEndpointBuilder zooKeeperMaster(String path) {
         class ZooKeeperMasterEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperMasterEndpointBuilder, AdvancedZooKeeperMasterEndpointBuilder {
             public ZooKeeperMasterEndpointBuilderImpl(String path) {
                 super("zookeeper-master", path);

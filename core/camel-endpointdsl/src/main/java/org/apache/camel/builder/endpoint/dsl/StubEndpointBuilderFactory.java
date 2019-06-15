@@ -41,7 +41,7 @@ public interface StubEndpointBuilderFactory {
     public interface StubEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedStubEndpointConsumerBuilder advanced() {
+        default AdvancedStubEndpointConsumerBuilder advanced() {
             return (AdvancedStubEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StubEndpointConsumerBuilder name(String name) {
+        default StubEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -60,7 +60,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointConsumerBuilder size(int size) {
+        default StubEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -71,7 +71,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointConsumerBuilder size(String size) {
+        default StubEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -86,7 +86,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StubEndpointConsumerBuilder bridgeErrorHandler(
+        default StubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -102,7 +102,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StubEndpointConsumerBuilder bridgeErrorHandler(
+        default StubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -112,7 +112,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default StubEndpointConsumerBuilder concurrentConsumers(
+        default StubEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -122,7 +122,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default StubEndpointConsumerBuilder concurrentConsumers(
+        default StubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -135,7 +135,7 @@ public interface StubEndpointBuilderFactory {
     public interface AdvancedStubEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default StubEndpointConsumerBuilder basic() {
+        default StubEndpointConsumerBuilder basic() {
             return (StubEndpointConsumerBuilder) this;
         }
         /**
@@ -147,7 +147,7 @@ public interface StubEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -161,7 +161,7 @@ public interface StubEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -171,7 +171,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder exchangePattern(
+        default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -182,7 +182,7 @@ public interface StubEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder exchangePattern(
+        default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -195,7 +195,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -208,7 +208,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -222,7 +222,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder multipleConsumers(
+        default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -236,7 +236,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder multipleConsumers(
+        default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -248,8 +248,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder pollTimeout(
-                int pollTimeout) {
+        default AdvancedStubEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -260,7 +259,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder pollTimeout(
+        default AdvancedStubEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -272,7 +271,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -284,7 +283,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -295,7 +294,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -306,7 +305,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -318,8 +317,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedStubEndpointConsumerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -331,7 +329,7 @@ public interface StubEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder queue(String queue) {
+        default AdvancedStubEndpointConsumerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -341,7 +339,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder synchronous(
+        default AdvancedStubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,7 +350,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointConsumerBuilder synchronous(
+        default AdvancedStubEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +363,7 @@ public interface StubEndpointBuilderFactory {
     public static interface StubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedStubEndpointProducerBuilder advanced() {
+        default AdvancedStubEndpointProducerBuilder advanced() {
             return (AdvancedStubEndpointProducerBuilder) this;
         }
         /**
@@ -373,7 +371,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StubEndpointProducerBuilder name(String name) {
+        default StubEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -384,7 +382,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointProducerBuilder size(int size) {
+        default StubEndpointProducerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -395,7 +393,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointProducerBuilder size(String size) {
+        default StubEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -408,8 +406,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder blockWhenFull(
-                boolean blockWhenFull) {
+        default StubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -422,8 +419,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder blockWhenFull(
-                String blockWhenFull) {
+        default StubEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -435,7 +431,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder discardIfNoConsumers(
+        default StubEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -448,7 +444,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder discardIfNoConsumers(
+        default StubEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -461,7 +457,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder failIfNoConsumers(
+        default StubEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -474,7 +470,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder failIfNoConsumers(
+        default StubEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -492,7 +488,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder lazyStartProducer(
+        default StubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -510,7 +506,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder lazyStartProducer(
+        default StubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -522,8 +518,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder offerTimeout(
-                long offerTimeout) {
+        default StubEndpointProducerBuilder offerTimeout(long offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -534,8 +529,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder offerTimeout(
-                String offerTimeout) {
+        default StubEndpointProducerBuilder offerTimeout(String offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -546,7 +540,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder timeout(long timeout) {
+        default StubEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -557,7 +551,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder timeout(String timeout) {
+        default StubEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -572,7 +566,7 @@ public interface StubEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder waitForTaskToComplete(
+        default StubEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -588,7 +582,7 @@ public interface StubEndpointBuilderFactory {
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * @group producer
          */
-        public default StubEndpointProducerBuilder waitForTaskToComplete(
+        default StubEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -601,7 +595,7 @@ public interface StubEndpointBuilderFactory {
     public interface AdvancedStubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default StubEndpointProducerBuilder basic() {
+        default StubEndpointProducerBuilder basic() {
             return (StubEndpointProducerBuilder) this;
         }
         /**
@@ -610,7 +604,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -621,7 +615,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -633,8 +627,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedStubEndpointProducerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -646,7 +639,7 @@ public interface StubEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder queue(String queue) {
+        default AdvancedStubEndpointProducerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -656,7 +649,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder synchronous(
+        default AdvancedStubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -667,7 +660,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointProducerBuilder synchronous(
+        default AdvancedStubEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -680,7 +673,7 @@ public interface StubEndpointBuilderFactory {
     public static interface StubEndpointBuilder
             extends
                 StubEndpointConsumerBuilder, StubEndpointProducerBuilder {
-        public default AdvancedStubEndpointBuilder advanced() {
+        default AdvancedStubEndpointBuilder advanced() {
             return (AdvancedStubEndpointBuilder) this;
         }
         /**
@@ -688,7 +681,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StubEndpointBuilder name(String name) {
+        default StubEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -699,7 +692,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointBuilder size(int size) {
+        default StubEndpointBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -710,7 +703,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default StubEndpointBuilder size(String size) {
+        default StubEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -722,7 +715,7 @@ public interface StubEndpointBuilderFactory {
     public static interface AdvancedStubEndpointBuilder
             extends
                 AdvancedStubEndpointConsumerBuilder, AdvancedStubEndpointProducerBuilder {
-        public default StubEndpointBuilder basic() {
+        default StubEndpointBuilder basic() {
             return (StubEndpointBuilder) this;
         }
         /**
@@ -731,7 +724,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder basicPropertyBinding(
+        default AdvancedStubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -742,7 +735,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder basicPropertyBinding(
+        default AdvancedStubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -754,7 +747,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
+        default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -766,7 +759,7 @@ public interface StubEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder queue(String queue) {
+        default AdvancedStubEndpointBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -776,8 +769,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedStubEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -787,8 +779,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStubEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedStubEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -798,7 +789,7 @@ public interface StubEndpointBuilderFactory {
      * endpoints while in development or testing. Creates a builder to build
      * endpoints for the Stub component.
      */
-    public default StubEndpointBuilder stub(String path) {
+    default StubEndpointBuilder stub(String path) {
         class StubEndpointBuilderImpl extends AbstractEndpointBuilder implements StubEndpointBuilder, AdvancedStubEndpointBuilder {
             public StubEndpointBuilderImpl(String path) {
                 super("stub", path);

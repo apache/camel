@@ -37,7 +37,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     public static interface HazelcastRingbufferEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHazelcastRingbufferEndpointBuilder advanced() {
+        default AdvancedHazelcastRingbufferEndpointBuilder advanced() {
             return (AdvancedHazelcastRingbufferEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder cacheName(
-                String cacheName) {
+        default HazelcastRingbufferEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -55,8 +54,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastRingbufferEndpointBuilder reliable(
-                boolean reliable) {
+        default HazelcastRingbufferEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -65,8 +63,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastRingbufferEndpointBuilder reliable(
-                String reliable) {
+        default HazelcastRingbufferEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -78,7 +75,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder defaultOperation(
+        default HazelcastRingbufferEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -91,7 +88,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder defaultOperation(
+        default HazelcastRingbufferEndpointBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -103,7 +100,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder hazelcastInstance(
+        default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -115,7 +112,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder hazelcastInstance(
+        default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -127,7 +124,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default HazelcastRingbufferEndpointBuilder hazelcastInstanceName(
+        default HazelcastRingbufferEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -137,7 +134,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder concurrentConsumers(
+        default HazelcastRingbufferEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -147,7 +144,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder concurrentConsumers(
+        default HazelcastRingbufferEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -158,8 +155,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder onErrorDelay(
-                int onErrorDelay) {
+        default HazelcastRingbufferEndpointBuilder onErrorDelay(int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
         }
@@ -169,7 +165,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder onErrorDelay(
+        default HazelcastRingbufferEndpointBuilder onErrorDelay(
                 String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -182,8 +178,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder pollTimeout(
-                int pollTimeout) {
+        default HazelcastRingbufferEndpointBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -195,7 +190,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder pollTimeout(
+        default HazelcastRingbufferEndpointBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -207,8 +202,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder transacted(
-                boolean transacted) {
+        default HazelcastRingbufferEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -219,8 +213,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder transacted(
-                String transacted) {
+        default HazelcastRingbufferEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -230,7 +223,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder transferExchange(
+        default HazelcastRingbufferEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -241,7 +234,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastRingbufferEndpointBuilder transferExchange(
+        default HazelcastRingbufferEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -254,7 +247,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     public static interface AdvancedHazelcastRingbufferEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default HazelcastRingbufferEndpointBuilder basic() {
+        default HazelcastRingbufferEndpointBuilder basic() {
             return (HazelcastRingbufferEndpointBuilder) this;
         }
         /**
@@ -263,7 +256,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -274,7 +267,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +278,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
+        default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -296,7 +289,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
+        default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -316,8 +309,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
      * distributed ringbuffer. Creates a builder to build endpoints for the
      * Hazelcast Ringbuffer component.
      */
-    public default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
-            String path) {
+    default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
         class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {
             public HazelcastRingbufferEndpointBuilderImpl(String path) {
                 super("hazelcast-ringbuffer", path);

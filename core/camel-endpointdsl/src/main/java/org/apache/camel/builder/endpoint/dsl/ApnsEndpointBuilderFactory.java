@@ -44,7 +44,7 @@ public interface ApnsEndpointBuilderFactory {
     public interface ApnsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedApnsEndpointConsumerBuilder advanced() {
+        default AdvancedApnsEndpointConsumerBuilder advanced() {
             return (AdvancedApnsEndpointConsumerBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointConsumerBuilder name(String name) {
+        default ApnsEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointConsumerBuilder tokens(String tokens) {
+        default ApnsEndpointConsumerBuilder tokens(String tokens) {
             setProperty("tokens", tokens);
             return this;
         }
@@ -77,7 +77,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ApnsEndpointConsumerBuilder bridgeErrorHandler(
+        default ApnsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -93,7 +93,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ApnsEndpointConsumerBuilder bridgeErrorHandler(
+        default ApnsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -104,7 +104,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ApnsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default ApnsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -115,7 +115,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ApnsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default ApnsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -126,7 +126,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffErrorThreshold(
+        default ApnsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -137,7 +137,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffErrorThreshold(
+        default ApnsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -148,7 +148,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffIdleThreshold(
+        default ApnsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -159,7 +159,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffIdleThreshold(
+        default ApnsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -174,7 +174,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffMultiplier(
+        default ApnsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -189,7 +189,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder backoffMultiplier(
+        default ApnsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -201,7 +201,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder delay(long delay) {
+        default ApnsEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -212,7 +212,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder delay(String delay) {
+        default ApnsEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -222,7 +222,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder greedy(boolean greedy) {
+        default ApnsEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -232,7 +232,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder greedy(String greedy) {
+        default ApnsEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -243,8 +243,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default ApnsEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -255,8 +254,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default ApnsEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -266,7 +264,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder runLoggingLevel(
+        default ApnsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -278,7 +276,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder runLoggingLevel(
+        default ApnsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -291,7 +289,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder scheduledExecutorService(
+        default ApnsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -304,7 +302,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder scheduledExecutorService(
+        default ApnsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -317,7 +315,7 @@ public interface ApnsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder scheduler(
+        default ApnsEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -330,7 +328,7 @@ public interface ApnsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder scheduler(String scheduler) {
+        default ApnsEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -341,7 +339,7 @@ public interface ApnsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder schedulerProperties(
+        default ApnsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -354,7 +352,7 @@ public interface ApnsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder schedulerProperties(
+        default ApnsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -364,7 +362,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder startScheduler(
+        default ApnsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -374,8 +372,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default ApnsEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -384,7 +381,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default ApnsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -394,7 +391,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default ApnsEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -404,8 +401,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default ApnsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -415,8 +411,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ApnsEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default ApnsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -428,7 +423,7 @@ public interface ApnsEndpointBuilderFactory {
     public interface AdvancedApnsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ApnsEndpointConsumerBuilder basic() {
+        default ApnsEndpointConsumerBuilder basic() {
             return (ApnsEndpointConsumerBuilder) this;
         }
         /**
@@ -440,7 +435,7 @@ public interface ApnsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -454,7 +449,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedApnsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -464,7 +459,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder exchangePattern(
+        default AdvancedApnsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -475,7 +470,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder exchangePattern(
+        default AdvancedApnsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -489,7 +484,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder pollStrategy(
+        default AdvancedApnsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -503,7 +498,7 @@ public interface ApnsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedApnsEndpointConsumerBuilder pollStrategy(
+        default AdvancedApnsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -514,7 +509,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -525,7 +520,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -536,7 +531,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointConsumerBuilder synchronous(
+        default AdvancedApnsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -547,7 +542,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointConsumerBuilder synchronous(
+        default AdvancedApnsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -560,7 +555,7 @@ public interface ApnsEndpointBuilderFactory {
     public static interface ApnsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedApnsEndpointProducerBuilder advanced() {
+        default AdvancedApnsEndpointProducerBuilder advanced() {
             return (AdvancedApnsEndpointProducerBuilder) this;
         }
         /**
@@ -568,7 +563,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointProducerBuilder name(String name) {
+        default ApnsEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -578,7 +573,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointProducerBuilder tokens(String tokens) {
+        default ApnsEndpointProducerBuilder tokens(String tokens) {
             setProperty("tokens", tokens);
             return this;
         }
@@ -595,7 +590,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ApnsEndpointProducerBuilder lazyStartProducer(
+        default ApnsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -613,7 +608,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ApnsEndpointProducerBuilder lazyStartProducer(
+        default ApnsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -626,7 +621,7 @@ public interface ApnsEndpointBuilderFactory {
     public interface AdvancedApnsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ApnsEndpointProducerBuilder basic() {
+        default ApnsEndpointProducerBuilder basic() {
             return (ApnsEndpointProducerBuilder) this;
         }
         /**
@@ -635,7 +630,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -646,7 +641,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -657,7 +652,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointProducerBuilder synchronous(
+        default AdvancedApnsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -668,7 +663,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointProducerBuilder synchronous(
+        default AdvancedApnsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -681,7 +676,7 @@ public interface ApnsEndpointBuilderFactory {
     public static interface ApnsEndpointBuilder
             extends
                 ApnsEndpointConsumerBuilder, ApnsEndpointProducerBuilder {
-        public default AdvancedApnsEndpointBuilder advanced() {
+        default AdvancedApnsEndpointBuilder advanced() {
             return (AdvancedApnsEndpointBuilder) this;
         }
         /**
@@ -689,7 +684,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointBuilder name(String name) {
+        default ApnsEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -699,7 +694,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ApnsEndpointBuilder tokens(String tokens) {
+        default ApnsEndpointBuilder tokens(String tokens) {
             setProperty("tokens", tokens);
             return this;
         }
@@ -711,7 +706,7 @@ public interface ApnsEndpointBuilderFactory {
     public static interface AdvancedApnsEndpointBuilder
             extends
                 AdvancedApnsEndpointConsumerBuilder, AdvancedApnsEndpointProducerBuilder {
-        public default ApnsEndpointBuilder basic() {
+        default ApnsEndpointBuilder basic() {
             return (ApnsEndpointBuilder) this;
         }
         /**
@@ -720,7 +715,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -731,7 +726,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointBuilder basicPropertyBinding(
+        default AdvancedApnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -742,8 +737,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedApnsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -753,8 +747,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedApnsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedApnsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -763,7 +756,7 @@ public interface ApnsEndpointBuilderFactory {
      * For sending notifications to Apple iOS devices. Creates a builder to
      * build endpoints for the APNS component.
      */
-    public default ApnsEndpointBuilder apns(String path) {
+    default ApnsEndpointBuilder apns(String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {
             public ApnsEndpointBuilderImpl(String path) {
                 super("apns", path);

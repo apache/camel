@@ -42,7 +42,7 @@ public interface InfinispanEndpointBuilderFactory {
     public interface InfinispanEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedInfinispanEndpointConsumerBuilder advanced() {
+        default AdvancedInfinispanEndpointConsumerBuilder advanced() {
             return (AdvancedInfinispanEndpointConsumerBuilder) this;
         }
         /**
@@ -50,8 +50,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointConsumerBuilder cacheName(
-                String cacheName) {
+        default InfinispanEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -60,7 +59,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointConsumerBuilder hosts(String hosts) {
+        default InfinispanEndpointConsumerBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
             return this;
         }
@@ -70,7 +69,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointConsumerBuilder queryBuilder(
+        default InfinispanEndpointConsumerBuilder queryBuilder(
                 Object queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
@@ -81,7 +80,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointConsumerBuilder queryBuilder(
+        default InfinispanEndpointConsumerBuilder queryBuilder(
                 String queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
@@ -97,7 +96,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
+        default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -113,7 +112,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
+        default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,7 +122,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder clusteredListener(
+        default InfinispanEndpointConsumerBuilder clusteredListener(
                 boolean clusteredListener) {
             setProperty("clusteredListener", clusteredListener);
             return this;
@@ -133,7 +132,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder clusteredListener(
+        default InfinispanEndpointConsumerBuilder clusteredListener(
                 String clusteredListener) {
             setProperty("clusteredListener", clusteredListener);
             return this;
@@ -144,7 +143,7 @@ public interface InfinispanEndpointBuilderFactory {
          * @group consumer
          */
         @Deprecated
-        public default InfinispanEndpointConsumerBuilder command(String command) {
+        default InfinispanEndpointConsumerBuilder command(String command) {
             setProperty("command", command);
             return this;
         }
@@ -154,7 +153,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder customListener(
+        default InfinispanEndpointConsumerBuilder customListener(
                 Object customListener) {
             setProperty("customListener", customListener);
             return this;
@@ -165,7 +164,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanCustomListener</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder customListener(
+        default InfinispanEndpointConsumerBuilder customListener(
                 String customListener) {
             setProperty("customListener", customListener);
             return this;
@@ -183,7 +182,7 @@ public interface InfinispanEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder eventTypes(
+        default InfinispanEndpointConsumerBuilder eventTypes(
                 Set<String> eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
@@ -201,8 +200,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder eventTypes(
-                String eventTypes) {
+        default InfinispanEndpointConsumerBuilder eventTypes(String eventTypes) {
             setProperty("eventTypes", eventTypes);
             return this;
         }
@@ -211,7 +209,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder sync(boolean sync) {
+        default InfinispanEndpointConsumerBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -220,7 +218,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default InfinispanEndpointConsumerBuilder sync(String sync) {
+        default InfinispanEndpointConsumerBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -232,7 +230,7 @@ public interface InfinispanEndpointBuilderFactory {
     public interface AdvancedInfinispanEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default InfinispanEndpointConsumerBuilder basic() {
+        default InfinispanEndpointConsumerBuilder basic() {
             return (InfinispanEndpointConsumerBuilder) this;
         }
         /**
@@ -244,7 +242,7 @@ public interface InfinispanEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
+        default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -258,7 +256,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
+        default AdvancedInfinispanEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -268,7 +266,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
+        default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -279,7 +277,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
+        default AdvancedInfinispanEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -290,7 +288,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -301,7 +299,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -312,7 +310,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
+        default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 Object cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -323,7 +321,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
+        default AdvancedInfinispanEndpointConsumerBuilder cacheContainer(
                 String cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -338,7 +336,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -353,7 +351,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointConsumerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -364,7 +362,7 @@ public interface InfinispanEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
+        default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -376,7 +374,7 @@ public interface InfinispanEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
+        default AdvancedInfinispanEndpointConsumerBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -386,7 +384,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder configurationUri(
+        default AdvancedInfinispanEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -397,8 +395,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder flags(
-                Flag[] flags) {
+        default AdvancedInfinispanEndpointConsumerBuilder flags(Flag[] flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -409,8 +406,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder flags(
-                String flags) {
+        default AdvancedInfinispanEndpointConsumerBuilder flags(String flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -419,7 +415,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
+        default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 BiFunction remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -430,7 +426,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
+        default AdvancedInfinispanEndpointConsumerBuilder remappingFunction(
                 String remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -446,7 +442,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
+        default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 Object resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -462,7 +458,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
+        default AdvancedInfinispanEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -473,7 +469,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder synchronous(
+        default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -484,7 +480,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointConsumerBuilder synchronous(
+        default AdvancedInfinispanEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -497,7 +493,7 @@ public interface InfinispanEndpointBuilderFactory {
     public static interface InfinispanEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedInfinispanEndpointProducerBuilder advanced() {
+        default AdvancedInfinispanEndpointProducerBuilder advanced() {
             return (AdvancedInfinispanEndpointProducerBuilder) this;
         }
         /**
@@ -505,8 +501,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointProducerBuilder cacheName(
-                String cacheName) {
+        default InfinispanEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -515,7 +510,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointProducerBuilder hosts(String hosts) {
+        default InfinispanEndpointProducerBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
             return this;
         }
@@ -525,7 +520,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointProducerBuilder queryBuilder(
+        default InfinispanEndpointProducerBuilder queryBuilder(
                 Object queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
@@ -536,7 +531,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointProducerBuilder queryBuilder(
+        default InfinispanEndpointProducerBuilder queryBuilder(
                 String queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
@@ -554,7 +549,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default InfinispanEndpointProducerBuilder lazyStartProducer(
+        default InfinispanEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -572,7 +567,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default InfinispanEndpointProducerBuilder lazyStartProducer(
+        default InfinispanEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -583,7 +578,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * @group producer
          */
-        public default InfinispanEndpointProducerBuilder operation(
+        default InfinispanEndpointProducerBuilder operation(
                 InfinispanOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -594,8 +589,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * @group producer
          */
-        public default InfinispanEndpointProducerBuilder operation(
-                String operation) {
+        default InfinispanEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -607,7 +601,7 @@ public interface InfinispanEndpointBuilderFactory {
     public interface AdvancedInfinispanEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default InfinispanEndpointProducerBuilder basic() {
+        default InfinispanEndpointProducerBuilder basic() {
             return (InfinispanEndpointProducerBuilder) this;
         }
         /**
@@ -616,7 +610,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -627,7 +621,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -638,7 +632,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
+        default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 Object cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -649,7 +643,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
+        default AdvancedInfinispanEndpointProducerBuilder cacheContainer(
                 String cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -664,7 +658,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -679,7 +673,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointProducerBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -690,7 +684,7 @@ public interface InfinispanEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
+        default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -702,7 +696,7 @@ public interface InfinispanEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
+        default AdvancedInfinispanEndpointProducerBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -712,7 +706,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder configurationUri(
+        default AdvancedInfinispanEndpointProducerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -723,8 +717,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder flags(
-                Flag[] flags) {
+        default AdvancedInfinispanEndpointProducerBuilder flags(Flag[] flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -735,8 +728,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder flags(
-                String flags) {
+        default AdvancedInfinispanEndpointProducerBuilder flags(String flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -745,7 +737,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
+        default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 BiFunction remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -756,7 +748,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
+        default AdvancedInfinispanEndpointProducerBuilder remappingFunction(
                 String remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -772,7 +764,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder resultHeader(
+        default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 Object resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -788,7 +780,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder resultHeader(
+        default AdvancedInfinispanEndpointProducerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -799,7 +791,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder synchronous(
+        default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -810,7 +802,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointProducerBuilder synchronous(
+        default AdvancedInfinispanEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -823,7 +815,7 @@ public interface InfinispanEndpointBuilderFactory {
     public static interface InfinispanEndpointBuilder
             extends
                 InfinispanEndpointConsumerBuilder, InfinispanEndpointProducerBuilder {
-        public default AdvancedInfinispanEndpointBuilder advanced() {
+        default AdvancedInfinispanEndpointBuilder advanced() {
             return (AdvancedInfinispanEndpointBuilder) this;
         }
         /**
@@ -831,7 +823,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointBuilder cacheName(String cacheName) {
+        default InfinispanEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -840,7 +832,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default InfinispanEndpointBuilder hosts(String hosts) {
+        default InfinispanEndpointBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
             return this;
         }
@@ -850,8 +842,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointBuilder queryBuilder(
-                Object queryBuilder) {
+        default InfinispanEndpointBuilder queryBuilder(Object queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -861,8 +852,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.apache.camel.component.infinispan.InfinispanQueryBuilder</code> type.
          * @group common
          */
-        public default InfinispanEndpointBuilder queryBuilder(
-                String queryBuilder) {
+        default InfinispanEndpointBuilder queryBuilder(String queryBuilder) {
             setProperty("queryBuilder", queryBuilder);
             return this;
         }
@@ -874,7 +864,7 @@ public interface InfinispanEndpointBuilderFactory {
     public static interface AdvancedInfinispanEndpointBuilder
             extends
                 AdvancedInfinispanEndpointConsumerBuilder, AdvancedInfinispanEndpointProducerBuilder {
-        public default InfinispanEndpointBuilder basic() {
+        default InfinispanEndpointBuilder basic() {
             return (InfinispanEndpointBuilder) this;
         }
         /**
@@ -883,7 +873,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -894,7 +884,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
+        default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -905,7 +895,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder cacheContainer(
+        default AdvancedInfinispanEndpointBuilder cacheContainer(
                 Object cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -916,7 +906,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.commons.api.BasicCacheContainer</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder cacheContainer(
+        default AdvancedInfinispanEndpointBuilder cacheContainer(
                 String cacheContainer) {
             setProperty("cacheContainer", cacheContainer);
             return this;
@@ -931,7 +921,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 Object cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -946,7 +936,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
+        default AdvancedInfinispanEndpointBuilder cacheContainerConfiguration(
                 String cacheContainerConfiguration) {
             setProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
@@ -957,7 +947,7 @@ public interface InfinispanEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder configurationProperties(
+        default AdvancedInfinispanEndpointBuilder configurationProperties(
                 Map<String, String> configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -969,7 +959,7 @@ public interface InfinispanEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder configurationProperties(
+        default AdvancedInfinispanEndpointBuilder configurationProperties(
                 String configurationProperties) {
             setProperty("configurationProperties", configurationProperties);
             return this;
@@ -979,7 +969,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder configurationUri(
+        default AdvancedInfinispanEndpointBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -990,7 +980,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder flags(Flag[] flags) {
+        default AdvancedInfinispanEndpointBuilder flags(Flag[] flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -1001,7 +991,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>org.infinispan.context.Flag[]</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder flags(String flags) {
+        default AdvancedInfinispanEndpointBuilder flags(String flags) {
             setProperty("flags", flags);
             return this;
         }
@@ -1010,7 +1000,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder remappingFunction(
+        default AdvancedInfinispanEndpointBuilder remappingFunction(
                 BiFunction remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -1021,7 +1011,7 @@ public interface InfinispanEndpointBuilderFactory {
          * <code>java.util.function.BiFunction</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder remappingFunction(
+        default AdvancedInfinispanEndpointBuilder remappingFunction(
                 String remappingFunction) {
             setProperty("remappingFunction", remappingFunction);
             return this;
@@ -1037,7 +1027,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder resultHeader(
+        default AdvancedInfinispanEndpointBuilder resultHeader(
                 Object resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -1053,7 +1043,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder resultHeader(
+        default AdvancedInfinispanEndpointBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -1064,7 +1054,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder synchronous(
+        default AdvancedInfinispanEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1075,8 +1065,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfinispanEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedInfinispanEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1102,7 +1091,7 @@ public interface InfinispanEndpointBuilderFactory {
      * data grid. Creates a builder to build endpoints for the Infinispan
      * component.
      */
-    public default InfinispanEndpointBuilder infinispan(String path) {
+    default InfinispanEndpointBuilder infinispan(String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {
             public InfinispanEndpointBuilderImpl(String path) {
                 super("infinispan", path);

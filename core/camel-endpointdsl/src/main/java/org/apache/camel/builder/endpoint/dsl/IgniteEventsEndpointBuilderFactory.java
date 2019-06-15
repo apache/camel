@@ -37,7 +37,7 @@ public interface IgniteEventsEndpointBuilderFactory {
     public static interface IgniteEventsEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedIgniteEventsEndpointBuilder advanced() {
+        default AdvancedIgniteEventsEndpointBuilder advanced() {
             return (AdvancedIgniteEventsEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default IgniteEventsEndpointBuilder endpointId(String endpointId) {
+        default IgniteEventsEndpointBuilder endpointId(String endpointId) {
             setProperty("endpointId", endpointId);
             return this;
         }
@@ -55,7 +55,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -66,7 +66,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -77,7 +77,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -88,7 +88,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -101,7 +101,7 @@ public interface IgniteEventsEndpointBuilderFactory {
     public static interface AdvancedIgniteEventsEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default IgniteEventsEndpointBuilder basic() {
+        default IgniteEventsEndpointBuilder basic() {
             return (IgniteEventsEndpointBuilder) this;
         }
         /**
@@ -110,7 +110,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +121,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +132,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteEventsEndpointBuilder synchronous(
+        default AdvancedIgniteEventsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -143,7 +143,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteEventsEndpointBuilder synchronous(
+        default AdvancedIgniteEventsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -155,7 +155,7 @@ public interface IgniteEventsEndpointBuilderFactory {
      * listener. Creates a builder to build endpoints for the Ignite Events
      * component.
      */
-    public default IgniteEventsEndpointBuilder igniteEvents(String path) {
+    default IgniteEventsEndpointBuilder igniteEvents(String path) {
         class IgniteEventsEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteEventsEndpointBuilder, AdvancedIgniteEventsEndpointBuilder {
             public IgniteEventsEndpointBuilderImpl(String path) {
                 super("ignite-events", path);

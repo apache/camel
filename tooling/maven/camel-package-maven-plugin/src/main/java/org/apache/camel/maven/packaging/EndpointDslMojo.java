@@ -232,9 +232,9 @@ public class EndpointDslMojo extends AbstractMojo {
                 advancedConsumerClass.getJavaDoc().setText("Advanced builder for endpoint consumers for the " + model.getTitle() + " component.");
 
                 consumerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedConsumerClass.getCanonicalName()))
-                        .setPublic().setDefault().setBody("return (Advanced" + consumerName + ") this;");
+                        .setDefault().setBody("return (Advanced" + consumerName + ") this;");
                 advancedConsumerClass.addMethod().setName("basic").setReturnType(loadClass(consumerClass.getCanonicalName()))
-                        .setPublic().setDefault().setBody("return (" + consumerName + ") this;");
+                        .setDefault().setBody("return (" + consumerName + ") this;");
             }
 
             String producerName = builderName.replace("Endpoint", "EndpointProducer");
@@ -252,9 +252,9 @@ public class EndpointDslMojo extends AbstractMojo {
                 advancedProducerClass.getJavaDoc().setText("Advanced builder for endpoint producers for the " + model.getTitle() + " component.");
 
                 producerClass.addMethod().setName("advanced").setReturnType(loadClass(advancedProducerClass.getCanonicalName()))
-                        .setPublic().setDefault().setBody("return (Advanced" + producerName + ") this;");
+                        .setDefault().setBody("return (Advanced" + producerName + ") this;");
                 advancedProducerClass.addMethod().setName("basic").setReturnType(loadClass(producerClass.getCanonicalName()))
-                        .setPublic().setDefault().setBody("return (" + producerName + ") this;");
+                        .setDefault().setBody("return (" + producerName + ") this;");
             }
         }
 
@@ -287,9 +287,9 @@ public class EndpointDslMojo extends AbstractMojo {
             advancedBuilderClass.getJavaDoc().setText("Advanced builder for endpoint for the " + model.getTitle() + " component.");
 
             builderClass.addMethod().setName("advanced").setReturnType(loadClass(advancedBuilderClass.getCanonicalName()))
-                    .setPublic().setDefault().setBody("return (Advanced" + builderName + ") this;");
+                    .setDefault().setBody("return (Advanced" + builderName + ") this;");
             advancedBuilderClass.addMethod().setName("basic").setReturnType(loadClass(builderClass.getCanonicalName()))
-                    .setPublic().setDefault().setBody("return (" + builderName + ") this;");
+                    .setDefault().setBody("return (" + builderName + ") this;");
         }
 
         generateDummyClass(packageName + ".T");
@@ -346,7 +346,7 @@ public class EndpointDslMojo extends AbstractMojo {
                 if (target == null) {
                     continue;
                 }
-                Method fluent = target.addMethod().setPublic().setDefault().setName(option.getName())
+                Method fluent = target.addMethod().setDefault().setName(option.getName())
                         .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                         .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
                         .setBody("setProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" +
@@ -367,7 +367,7 @@ public class EndpointDslMojo extends AbstractMojo {
                 }
 
                 if (ogtype.getRawClass() != String.class) {
-                    fluent = target.addMethod().setPublic().setDefault().setName(option.getName())
+                    fluent = target.addMethod().setDefault().setName(option.getName())
                             .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(String.class), option.getName())
                             .setBody("setProperty(\"" + option.getName() + "\", " + option.getName() + ");\n" +
@@ -393,7 +393,7 @@ public class EndpointDslMojo extends AbstractMojo {
         javaClass.removeImport("T");
 
         Method method = javaClass.addMethod()
-                .setPublic().setDefault()
+                .setDefault()
                 .setName(methodName)
                 .addParameter(String.class, "path")
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))

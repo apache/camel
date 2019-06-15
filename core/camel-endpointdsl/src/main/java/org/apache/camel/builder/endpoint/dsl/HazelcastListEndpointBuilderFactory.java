@@ -38,7 +38,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public interface HazelcastListEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedHazelcastListEndpointConsumerBuilder advanced() {
+        default AdvancedHazelcastListEndpointConsumerBuilder advanced() {
             return (AdvancedHazelcastListEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder cacheName(
-                String cacheName) {
+        default HazelcastListEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -59,7 +58,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder defaultOperation(
+        default HazelcastListEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -72,7 +71,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder defaultOperation(
+        default HazelcastListEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -84,7 +83,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder hazelcastInstance(
+        default HazelcastListEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -96,7 +95,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder hazelcastInstance(
+        default HazelcastListEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -108,7 +107,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder hazelcastInstanceName(
+        default HazelcastListEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -118,8 +117,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder reliable(
-                boolean reliable) {
+        default HazelcastListEndpointConsumerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -128,8 +126,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointConsumerBuilder reliable(
-                String reliable) {
+        default HazelcastListEndpointConsumerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -144,7 +141,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
+        default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -160,7 +157,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
+        default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -170,7 +167,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder pollingTimeout(
+        default HazelcastListEndpointConsumerBuilder pollingTimeout(
                 long pollingTimeout) {
             setProperty("pollingTimeout", pollingTimeout);
             return this;
@@ -180,7 +177,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder pollingTimeout(
+        default HazelcastListEndpointConsumerBuilder pollingTimeout(
                 String pollingTimeout) {
             setProperty("pollingTimeout", pollingTimeout);
             return this;
@@ -190,8 +187,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder poolSize(
-                int poolSize) {
+        default HazelcastListEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -200,8 +196,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder poolSize(
-                String poolSize) {
+        default HazelcastListEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -211,7 +206,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder queueConsumerMode(
+        default HazelcastListEndpointConsumerBuilder queueConsumerMode(
                 HazelcastQueueConsumerMode queueConsumerMode) {
             setProperty("queueConsumerMode", queueConsumerMode);
             return this;
@@ -222,7 +217,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * @group consumer
          */
-        public default HazelcastListEndpointConsumerBuilder queueConsumerMode(
+        default HazelcastListEndpointConsumerBuilder queueConsumerMode(
                 String queueConsumerMode) {
             setProperty("queueConsumerMode", queueConsumerMode);
             return this;
@@ -232,7 +227,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder concurrentConsumers(
+        default HazelcastListEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -242,7 +237,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder concurrentConsumers(
+        default HazelcastListEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -253,7 +248,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder onErrorDelay(
+        default HazelcastListEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -264,7 +259,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder onErrorDelay(
+        default HazelcastListEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -277,8 +272,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder pollTimeout(
-                int pollTimeout) {
+        default HazelcastListEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -290,7 +284,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder pollTimeout(
+        default HazelcastListEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -302,7 +296,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder transacted(
+        default HazelcastListEndpointConsumerBuilder transacted(
                 boolean transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -314,7 +308,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder transacted(
+        default HazelcastListEndpointConsumerBuilder transacted(
                 String transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -325,7 +319,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder transferExchange(
+        default HazelcastListEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -336,7 +330,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointConsumerBuilder transferExchange(
+        default HazelcastListEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -349,7 +343,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public interface AdvancedHazelcastListEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default HazelcastListEndpointConsumerBuilder basic() {
+        default HazelcastListEndpointConsumerBuilder basic() {
             return (HazelcastListEndpointConsumerBuilder) this;
         }
         /**
@@ -361,7 +355,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -375,7 +369,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -385,7 +379,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
+        default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -396,7 +390,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
+        default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -407,7 +401,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -418,7 +412,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -429,7 +423,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
+        default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -440,7 +434,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
+        default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -453,7 +447,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public static interface HazelcastListEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHazelcastListEndpointProducerBuilder advanced() {
+        default AdvancedHazelcastListEndpointProducerBuilder advanced() {
             return (AdvancedHazelcastListEndpointProducerBuilder) this;
         }
         /**
@@ -461,8 +455,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder cacheName(
-                String cacheName) {
+        default HazelcastListEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -474,7 +467,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder defaultOperation(
+        default HazelcastListEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -487,7 +480,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder defaultOperation(
+        default HazelcastListEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -499,7 +492,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder hazelcastInstance(
+        default HazelcastListEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -511,7 +504,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder hazelcastInstance(
+        default HazelcastListEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -523,7 +516,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder hazelcastInstanceName(
+        default HazelcastListEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -533,8 +526,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder reliable(
-                boolean reliable) {
+        default HazelcastListEndpointProducerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -543,8 +535,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointProducerBuilder reliable(
-                String reliable) {
+        default HazelcastListEndpointProducerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -561,7 +552,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HazelcastListEndpointProducerBuilder lazyStartProducer(
+        default HazelcastListEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -579,7 +570,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HazelcastListEndpointProducerBuilder lazyStartProducer(
+        default HazelcastListEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -589,7 +580,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder concurrentConsumers(
+        default HazelcastListEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -599,7 +590,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder concurrentConsumers(
+        default HazelcastListEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -610,7 +601,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder onErrorDelay(
+        default HazelcastListEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -621,7 +612,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder onErrorDelay(
+        default HazelcastListEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -634,8 +625,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder pollTimeout(
-                int pollTimeout) {
+        default HazelcastListEndpointProducerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -647,7 +637,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder pollTimeout(
+        default HazelcastListEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -659,7 +649,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder transacted(
+        default HazelcastListEndpointProducerBuilder transacted(
                 boolean transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -671,7 +661,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder transacted(
+        default HazelcastListEndpointProducerBuilder transacted(
                 String transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -682,7 +672,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder transferExchange(
+        default HazelcastListEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -693,7 +683,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointProducerBuilder transferExchange(
+        default HazelcastListEndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -706,7 +696,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public interface AdvancedHazelcastListEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default HazelcastListEndpointProducerBuilder basic() {
+        default HazelcastListEndpointProducerBuilder basic() {
             return (HazelcastListEndpointProducerBuilder) this;
         }
         /**
@@ -715,7 +705,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -726,7 +716,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -737,7 +727,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointProducerBuilder synchronous(
+        default AdvancedHazelcastListEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -748,7 +738,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointProducerBuilder synchronous(
+        default AdvancedHazelcastListEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -761,7 +751,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public static interface HazelcastListEndpointBuilder
             extends
                 HazelcastListEndpointConsumerBuilder, HazelcastListEndpointProducerBuilder {
-        public default AdvancedHazelcastListEndpointBuilder advanced() {
+        default AdvancedHazelcastListEndpointBuilder advanced() {
             return (AdvancedHazelcastListEndpointBuilder) this;
         }
         /**
@@ -769,7 +759,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder cacheName(String cacheName) {
+        default HazelcastListEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -781,7 +771,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder defaultOperation(
+        default HazelcastListEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -794,7 +784,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder defaultOperation(
+        default HazelcastListEndpointBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -806,7 +796,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder hazelcastInstance(
+        default HazelcastListEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -818,7 +808,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder hazelcastInstance(
+        default HazelcastListEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -830,7 +820,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder hazelcastInstanceName(
+        default HazelcastListEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -840,7 +830,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder reliable(boolean reliable) {
+        default HazelcastListEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -849,7 +839,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastListEndpointBuilder reliable(String reliable) {
+        default HazelcastListEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -858,7 +848,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder concurrentConsumers(
+        default HazelcastListEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -868,7 +858,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder concurrentConsumers(
+        default HazelcastListEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -879,8 +869,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder onErrorDelay(
-                int onErrorDelay) {
+        default HazelcastListEndpointBuilder onErrorDelay(int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
         }
@@ -890,8 +879,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder onErrorDelay(
-                String onErrorDelay) {
+        default HazelcastListEndpointBuilder onErrorDelay(String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
         }
@@ -903,7 +891,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder pollTimeout(int pollTimeout) {
+        default HazelcastListEndpointBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -915,8 +903,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder pollTimeout(
-                String pollTimeout) {
+        default HazelcastListEndpointBuilder pollTimeout(String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -927,8 +914,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder transacted(
-                boolean transacted) {
+        default HazelcastListEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -939,7 +925,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder transacted(String transacted) {
+        default HazelcastListEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -949,7 +935,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder transferExchange(
+        default HazelcastListEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -960,7 +946,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastListEndpointBuilder transferExchange(
+        default HazelcastListEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -973,7 +959,7 @@ public interface HazelcastListEndpointBuilderFactory {
     public static interface AdvancedHazelcastListEndpointBuilder
             extends
                 AdvancedHazelcastListEndpointConsumerBuilder, AdvancedHazelcastListEndpointProducerBuilder {
-        public default HazelcastListEndpointBuilder basic() {
+        default HazelcastListEndpointBuilder basic() {
             return (HazelcastListEndpointBuilder) this;
         }
         /**
@@ -982,7 +968,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -993,7 +979,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1004,7 +990,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointBuilder synchronous(
+        default AdvancedHazelcastListEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1015,7 +1001,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastListEndpointBuilder synchronous(
+        default AdvancedHazelcastListEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1043,7 +1029,7 @@ public interface HazelcastListEndpointBuilderFactory {
      * list. Creates a builder to build endpoints for the Hazelcast List
      * component.
      */
-    public default HazelcastListEndpointBuilder hazelcastList(String path) {
+    default HazelcastListEndpointBuilder hazelcastList(String path) {
         class HazelcastListEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastListEndpointBuilder, AdvancedHazelcastListEndpointBuilder {
             public HazelcastListEndpointBuilderImpl(String path) {
                 super("hazelcast-list", path);

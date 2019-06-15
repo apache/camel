@@ -39,7 +39,7 @@ public interface WordpressEndpointBuilderFactory {
     public interface WordpressEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedWordpressEndpointConsumerBuilder advanced() {
+        default AdvancedWordpressEndpointConsumerBuilder advanced() {
             return (AdvancedWordpressEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder operation(
-                String operation) {
+        default WordpressEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -58,7 +57,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder operationDetail(
+        default WordpressEndpointConsumerBuilder operationDetail(
                 String operationDetail) {
             setProperty("operationDetail", operationDetail);
             return this;
@@ -68,8 +67,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder apiVersion(
-                String apiVersion) {
+        default WordpressEndpointConsumerBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -79,7 +77,7 @@ public interface WordpressEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder criteria(
+        default WordpressEndpointConsumerBuilder criteria(
                 Map<String, Object> criteria) {
             setProperty("criteria", criteria);
             return this;
@@ -91,7 +89,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder criteria(String criteria) {
+        default WordpressEndpointConsumerBuilder criteria(String criteria) {
             setProperty("criteria", criteria);
             return this;
         }
@@ -100,7 +98,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder force(Boolean force) {
+        default WordpressEndpointConsumerBuilder force(Boolean force) {
             setProperty("force", force);
             return this;
         }
@@ -110,7 +108,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder force(String force) {
+        default WordpressEndpointConsumerBuilder force(String force) {
             setProperty("force", force);
             return this;
         }
@@ -120,7 +118,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder id(Integer id) {
+        default WordpressEndpointConsumerBuilder id(Integer id) {
             setProperty("id", id);
             return this;
         }
@@ -131,7 +129,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder id(String id) {
+        default WordpressEndpointConsumerBuilder id(String id) {
             setProperty("id", id);
             return this;
         }
@@ -140,7 +138,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder password(String password) {
+        default WordpressEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -150,7 +148,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder searchCriteria(
+        default WordpressEndpointConsumerBuilder searchCriteria(
                 Object searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
@@ -161,7 +159,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder searchCriteria(
+        default WordpressEndpointConsumerBuilder searchCriteria(
                 String searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
@@ -172,7 +170,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder url(String url) {
+        default WordpressEndpointConsumerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -181,7 +179,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointConsumerBuilder user(String user) {
+        default WordpressEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -196,7 +194,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default WordpressEndpointConsumerBuilder bridgeErrorHandler(
+        default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -212,7 +210,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default WordpressEndpointConsumerBuilder bridgeErrorHandler(
+        default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -225,7 +223,7 @@ public interface WordpressEndpointBuilderFactory {
     public interface AdvancedWordpressEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default WordpressEndpointConsumerBuilder basic() {
+        default WordpressEndpointConsumerBuilder basic() {
             return (WordpressEndpointConsumerBuilder) this;
         }
         /**
@@ -237,7 +235,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
+        default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -251,7 +249,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
+        default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -261,7 +259,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
+        default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -272,7 +270,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
+        default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -283,7 +281,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -294,7 +292,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -305,7 +303,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointConsumerBuilder synchronous(
+        default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -316,7 +314,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointConsumerBuilder synchronous(
+        default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -329,7 +327,7 @@ public interface WordpressEndpointBuilderFactory {
     public static interface WordpressEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedWordpressEndpointProducerBuilder advanced() {
+        default AdvancedWordpressEndpointProducerBuilder advanced() {
             return (AdvancedWordpressEndpointProducerBuilder) this;
         }
         /**
@@ -337,8 +335,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder operation(
-                String operation) {
+        default WordpressEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -348,7 +345,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder operationDetail(
+        default WordpressEndpointProducerBuilder operationDetail(
                 String operationDetail) {
             setProperty("operationDetail", operationDetail);
             return this;
@@ -358,8 +355,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder apiVersion(
-                String apiVersion) {
+        default WordpressEndpointProducerBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -369,7 +365,7 @@ public interface WordpressEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder criteria(
+        default WordpressEndpointProducerBuilder criteria(
                 Map<String, Object> criteria) {
             setProperty("criteria", criteria);
             return this;
@@ -381,7 +377,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder criteria(String criteria) {
+        default WordpressEndpointProducerBuilder criteria(String criteria) {
             setProperty("criteria", criteria);
             return this;
         }
@@ -390,7 +386,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder force(Boolean force) {
+        default WordpressEndpointProducerBuilder force(Boolean force) {
             setProperty("force", force);
             return this;
         }
@@ -400,7 +396,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder force(String force) {
+        default WordpressEndpointProducerBuilder force(String force) {
             setProperty("force", force);
             return this;
         }
@@ -410,7 +406,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder id(Integer id) {
+        default WordpressEndpointProducerBuilder id(Integer id) {
             setProperty("id", id);
             return this;
         }
@@ -421,7 +417,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder id(String id) {
+        default WordpressEndpointProducerBuilder id(String id) {
             setProperty("id", id);
             return this;
         }
@@ -430,7 +426,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder password(String password) {
+        default WordpressEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -440,7 +436,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder searchCriteria(
+        default WordpressEndpointProducerBuilder searchCriteria(
                 Object searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
@@ -451,7 +447,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder searchCriteria(
+        default WordpressEndpointProducerBuilder searchCriteria(
                 String searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
@@ -462,7 +458,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder url(String url) {
+        default WordpressEndpointProducerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -471,7 +467,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointProducerBuilder user(String user) {
+        default WordpressEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -488,7 +484,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WordpressEndpointProducerBuilder lazyStartProducer(
+        default WordpressEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -506,7 +502,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WordpressEndpointProducerBuilder lazyStartProducer(
+        default WordpressEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -519,7 +515,7 @@ public interface WordpressEndpointBuilderFactory {
     public interface AdvancedWordpressEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default WordpressEndpointProducerBuilder basic() {
+        default WordpressEndpointProducerBuilder basic() {
             return (WordpressEndpointProducerBuilder) this;
         }
         /**
@@ -528,7 +524,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -539,7 +535,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -550,7 +546,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointProducerBuilder synchronous(
+        default AdvancedWordpressEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -561,7 +557,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointProducerBuilder synchronous(
+        default AdvancedWordpressEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -574,7 +570,7 @@ public interface WordpressEndpointBuilderFactory {
     public static interface WordpressEndpointBuilder
             extends
                 WordpressEndpointConsumerBuilder, WordpressEndpointProducerBuilder {
-        public default AdvancedWordpressEndpointBuilder advanced() {
+        default AdvancedWordpressEndpointBuilder advanced() {
             return (AdvancedWordpressEndpointBuilder) this;
         }
         /**
@@ -582,7 +578,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder operation(String operation) {
+        default WordpressEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -592,8 +588,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder operationDetail(
-                String operationDetail) {
+        default WordpressEndpointBuilder operationDetail(String operationDetail) {
             setProperty("operationDetail", operationDetail);
             return this;
         }
@@ -602,7 +597,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder apiVersion(String apiVersion) {
+        default WordpressEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -612,8 +607,7 @@ public interface WordpressEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder criteria(
-                Map<String, Object> criteria) {
+        default WordpressEndpointBuilder criteria(Map<String, Object> criteria) {
             setProperty("criteria", criteria);
             return this;
         }
@@ -624,7 +618,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointBuilder criteria(String criteria) {
+        default WordpressEndpointBuilder criteria(String criteria) {
             setProperty("criteria", criteria);
             return this;
         }
@@ -633,7 +627,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder force(Boolean force) {
+        default WordpressEndpointBuilder force(Boolean force) {
             setProperty("force", force);
             return this;
         }
@@ -643,7 +637,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointBuilder force(String force) {
+        default WordpressEndpointBuilder force(String force) {
             setProperty("force", force);
             return this;
         }
@@ -653,7 +647,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder id(Integer id) {
+        default WordpressEndpointBuilder id(Integer id) {
             setProperty("id", id);
             return this;
         }
@@ -664,7 +658,7 @@ public interface WordpressEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WordpressEndpointBuilder id(String id) {
+        default WordpressEndpointBuilder id(String id) {
             setProperty("id", id);
             return this;
         }
@@ -673,7 +667,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder password(String password) {
+        default WordpressEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -683,8 +677,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder searchCriteria(
-                Object searchCriteria) {
+        default WordpressEndpointBuilder searchCriteria(Object searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
         }
@@ -694,8 +687,7 @@ public interface WordpressEndpointBuilderFactory {
          * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder searchCriteria(
-                String searchCriteria) {
+        default WordpressEndpointBuilder searchCriteria(String searchCriteria) {
             setProperty("searchCriteria", searchCriteria);
             return this;
         }
@@ -705,7 +697,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder url(String url) {
+        default WordpressEndpointBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -714,7 +706,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WordpressEndpointBuilder user(String user) {
+        default WordpressEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -726,7 +718,7 @@ public interface WordpressEndpointBuilderFactory {
     public static interface AdvancedWordpressEndpointBuilder
             extends
                 AdvancedWordpressEndpointConsumerBuilder, AdvancedWordpressEndpointProducerBuilder {
-        public default WordpressEndpointBuilder basic() {
+        default WordpressEndpointBuilder basic() {
             return (WordpressEndpointBuilder) this;
         }
         /**
@@ -735,7 +727,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -746,7 +738,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointBuilder basicPropertyBinding(
+        default AdvancedWordpressEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -757,8 +749,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedWordpressEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -768,8 +759,7 @@ public interface WordpressEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWordpressEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedWordpressEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -778,7 +768,7 @@ public interface WordpressEndpointBuilderFactory {
      * Integrates Camel with Wordpress. Creates a builder to build endpoints for
      * the Wordpress component.
      */
-    public default WordpressEndpointBuilder wordpress(String path) {
+    default WordpressEndpointBuilder wordpress(String path) {
         class WordpressEndpointBuilderImpl extends AbstractEndpointBuilder implements WordpressEndpointBuilder, AdvancedWordpressEndpointBuilder {
             public WordpressEndpointBuilderImpl(String path) {
                 super("wordpress", path);

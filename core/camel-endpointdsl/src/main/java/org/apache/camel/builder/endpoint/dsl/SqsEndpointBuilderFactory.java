@@ -47,7 +47,7 @@ public interface SqsEndpointBuilderFactory {
     public interface SqsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSqsEndpointConsumerBuilder advanced() {
+        default AdvancedSqsEndpointConsumerBuilder advanced() {
             return (AdvancedSqsEndpointConsumerBuilder) this;
         }
         /**
@@ -55,8 +55,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder queueNameOrArn(
-                String queueNameOrArn) {
+        default SqsEndpointConsumerBuilder queueNameOrArn(String queueNameOrArn) {
             setProperty("queueNameOrArn", queueNameOrArn);
             return this;
         }
@@ -65,8 +64,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder amazonAWSHost(
-                String amazonAWSHost) {
+        default SqsEndpointConsumerBuilder amazonAWSHost(String amazonAWSHost) {
             setProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
@@ -76,7 +74,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder amazonSQSClient(
+        default SqsEndpointConsumerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
@@ -87,7 +85,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder amazonSQSClient(
+        default SqsEndpointConsumerBuilder amazonSQSClient(
                 String amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
@@ -97,7 +95,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder autoCreateQueue(
+        default SqsEndpointConsumerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
@@ -107,7 +105,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder autoCreateQueue(
+        default SqsEndpointConsumerBuilder autoCreateQueue(
                 String autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
@@ -118,7 +116,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder headerFilterStrategy(
+        default SqsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -129,7 +127,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder headerFilterStrategy(
+        default SqsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -140,7 +138,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder queueOwnerAWSAccountId(
+        default SqsEndpointConsumerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
             setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
@@ -151,7 +149,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointConsumerBuilder region(String region) {
+        default SqsEndpointConsumerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -161,8 +159,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder attributeNames(
-                String attributeNames) {
+        default SqsEndpointConsumerBuilder attributeNames(String attributeNames) {
             setProperty("attributeNames", attributeNames);
             return this;
         }
@@ -177,7 +174,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder bridgeErrorHandler(
+        default SqsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -193,7 +190,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder bridgeErrorHandler(
+        default SqsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -204,7 +201,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder concurrentConsumers(
+        default SqsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -215,7 +212,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder concurrentConsumers(
+        default SqsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -225,7 +222,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
+        default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
                 Integer defaultVisibilityTimeout) {
             setProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
             return this;
@@ -236,7 +233,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
+        default SqsEndpointConsumerBuilder defaultVisibilityTimeout(
                 String defaultVisibilityTimeout) {
             setProperty("defaultVisibilityTimeout", defaultVisibilityTimeout);
             return this;
@@ -246,7 +243,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder deleteAfterRead(
+        default SqsEndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
             setProperty("deleteAfterRead", deleteAfterRead);
             return this;
@@ -256,7 +253,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder deleteAfterRead(
+        default SqsEndpointConsumerBuilder deleteAfterRead(
                 String deleteAfterRead) {
             setProperty("deleteAfterRead", deleteAfterRead);
             return this;
@@ -269,7 +266,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder deleteIfFiltered(
+        default SqsEndpointConsumerBuilder deleteIfFiltered(
                 boolean deleteIfFiltered) {
             setProperty("deleteIfFiltered", deleteIfFiltered);
             return this;
@@ -282,7 +279,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder deleteIfFiltered(
+        default SqsEndpointConsumerBuilder deleteIfFiltered(
                 String deleteIfFiltered) {
             setProperty("deleteIfFiltered", deleteIfFiltered);
             return this;
@@ -295,7 +292,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder extendMessageVisibility(
+        default SqsEndpointConsumerBuilder extendMessageVisibility(
                 boolean extendMessageVisibility) {
             setProperty("extendMessageVisibility", extendMessageVisibility);
             return this;
@@ -308,7 +305,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder extendMessageVisibility(
+        default SqsEndpointConsumerBuilder extendMessageVisibility(
                 String extendMessageVisibility) {
             setProperty("extendMessageVisibility", extendMessageVisibility);
             return this;
@@ -321,7 +318,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
+        default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 Integer kmsDataKeyReusePeriodSeconds) {
             setProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
             return this;
@@ -335,7 +332,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
+        default SqsEndpointConsumerBuilder kmsDataKeyReusePeriodSeconds(
                 String kmsDataKeyReusePeriodSeconds) {
             setProperty("kmsDataKeyReusePeriodSeconds", kmsDataKeyReusePeriodSeconds);
             return this;
@@ -346,8 +343,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder kmsMasterKeyId(
-                String kmsMasterKeyId) {
+        default SqsEndpointConsumerBuilder kmsMasterKeyId(String kmsMasterKeyId) {
             setProperty("kmsMasterKeyId", kmsMasterKeyId);
             return this;
         }
@@ -358,7 +354,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder maxMessagesPerPoll(
+        default SqsEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -370,7 +366,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder maxMessagesPerPoll(
+        default SqsEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -381,7 +377,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder messageAttributeNames(
+        default SqsEndpointConsumerBuilder messageAttributeNames(
                 String messageAttributeNames) {
             setProperty("messageAttributeNames", messageAttributeNames);
             return this;
@@ -392,7 +388,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -403,7 +399,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -413,7 +409,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
+        default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
             setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
@@ -423,7 +419,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
+        default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
             setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
@@ -438,7 +434,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder visibilityTimeout(
+        default SqsEndpointConsumerBuilder visibilityTimeout(
                 Integer visibilityTimeout) {
             setProperty("visibilityTimeout", visibilityTimeout);
             return this;
@@ -454,7 +450,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder visibilityTimeout(
+        default SqsEndpointConsumerBuilder visibilityTimeout(
                 String visibilityTimeout) {
             setProperty("visibilityTimeout", visibilityTimeout);
             return this;
@@ -465,7 +461,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder waitTimeSeconds(
+        default SqsEndpointConsumerBuilder waitTimeSeconds(
                 Integer waitTimeSeconds) {
             setProperty("waitTimeSeconds", waitTimeSeconds);
             return this;
@@ -477,7 +473,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SqsEndpointConsumerBuilder waitTimeSeconds(
+        default SqsEndpointConsumerBuilder waitTimeSeconds(
                 String waitTimeSeconds) {
             setProperty("waitTimeSeconds", waitTimeSeconds);
             return this;
@@ -488,7 +484,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffErrorThreshold(
+        default SqsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -499,7 +495,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffErrorThreshold(
+        default SqsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -510,7 +506,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffIdleThreshold(
+        default SqsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -521,7 +517,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffIdleThreshold(
+        default SqsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -536,7 +532,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffMultiplier(
+        default SqsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -551,7 +547,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder backoffMultiplier(
+        default SqsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -563,7 +559,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder delay(long delay) {
+        default SqsEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -574,7 +570,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder delay(String delay) {
+        default SqsEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -584,7 +580,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder greedy(boolean greedy) {
+        default SqsEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -594,7 +590,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder greedy(String greedy) {
+        default SqsEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -605,7 +601,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder initialDelay(long initialDelay) {
+        default SqsEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -616,8 +612,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default SqsEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -627,7 +622,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder runLoggingLevel(
+        default SqsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -639,7 +634,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder runLoggingLevel(
+        default SqsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -652,7 +647,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder scheduledExecutorService(
+        default SqsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -665,7 +660,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder scheduledExecutorService(
+        default SqsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -678,7 +673,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder scheduler(
+        default SqsEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -691,7 +686,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder scheduler(String scheduler) {
+        default SqsEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -702,7 +697,7 @@ public interface SqsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder schedulerProperties(
+        default SqsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -715,7 +710,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder schedulerProperties(
+        default SqsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -725,8 +720,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder startScheduler(
-                boolean startScheduler) {
+        default SqsEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -735,8 +729,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default SqsEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -745,7 +738,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default SqsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -755,7 +748,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default SqsEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -765,8 +758,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default SqsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -776,8 +768,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqsEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default SqsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -786,7 +777,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
+        default SqsEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -795,7 +786,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
+        default SqsEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -805,7 +796,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
+        default SqsEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -815,7 +806,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder maximumMessageSize(
+        default SqsEndpointConsumerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
@@ -827,7 +818,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder maximumMessageSize(
+        default SqsEndpointConsumerBuilder maximumMessageSize(
                 String maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
@@ -838,7 +829,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder messageRetentionPeriod(
+        default SqsEndpointConsumerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -850,7 +841,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder messageRetentionPeriod(
+        default SqsEndpointConsumerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -860,7 +851,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder policy(String policy) {
+        default SqsEndpointConsumerBuilder policy(String policy) {
             setProperty("policy", policy);
             return this;
         }
@@ -871,7 +862,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -884,7 +875,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointConsumerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -895,8 +886,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointConsumerBuilder redrivePolicy(
-                String redrivePolicy) {
+        default SqsEndpointConsumerBuilder redrivePolicy(String redrivePolicy) {
             setProperty("redrivePolicy", redrivePolicy);
             return this;
         }
@@ -905,7 +895,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointConsumerBuilder accessKey(String accessKey) {
+        default SqsEndpointConsumerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -914,7 +904,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointConsumerBuilder secretKey(String secretKey) {
+        default SqsEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -927,7 +917,7 @@ public interface SqsEndpointBuilderFactory {
     public interface AdvancedSqsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SqsEndpointConsumerBuilder basic() {
+        default SqsEndpointConsumerBuilder basic() {
             return (SqsEndpointConsumerBuilder) this;
         }
         /**
@@ -939,7 +929,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -953,7 +943,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSqsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -963,7 +953,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder exchangePattern(
+        default AdvancedSqsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -974,7 +964,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder exchangePattern(
+        default AdvancedSqsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -988,7 +978,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder pollStrategy(
+        default AdvancedSqsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -1002,7 +992,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqsEndpointConsumerBuilder pollStrategy(
+        default AdvancedSqsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -1013,7 +1003,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1024,7 +1014,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1035,8 +1025,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder delayQueue(
-                boolean delayQueue) {
+        default AdvancedSqsEndpointConsumerBuilder delayQueue(boolean delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1046,8 +1035,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder delayQueue(
-                String delayQueue) {
+        default AdvancedSqsEndpointConsumerBuilder delayQueue(String delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1059,8 +1047,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder queueUrl(
-                String queueUrl) {
+        default AdvancedSqsEndpointConsumerBuilder queueUrl(String queueUrl) {
             setProperty("queueUrl", queueUrl);
             return this;
         }
@@ -1070,7 +1057,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder synchronous(
+        default AdvancedSqsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1081,7 +1068,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointConsumerBuilder synchronous(
+        default AdvancedSqsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1095,7 +1082,7 @@ public interface SqsEndpointBuilderFactory {
     public static interface SqsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSqsEndpointProducerBuilder advanced() {
+        default AdvancedSqsEndpointProducerBuilder advanced() {
             return (AdvancedSqsEndpointProducerBuilder) this;
         }
         /**
@@ -1103,8 +1090,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder queueNameOrArn(
-                String queueNameOrArn) {
+        default SqsEndpointProducerBuilder queueNameOrArn(String queueNameOrArn) {
             setProperty("queueNameOrArn", queueNameOrArn);
             return this;
         }
@@ -1113,8 +1099,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder amazonAWSHost(
-                String amazonAWSHost) {
+        default SqsEndpointProducerBuilder amazonAWSHost(String amazonAWSHost) {
             setProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
@@ -1124,7 +1109,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder amazonSQSClient(
+        default SqsEndpointProducerBuilder amazonSQSClient(
                 Object amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
@@ -1135,7 +1120,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder amazonSQSClient(
+        default SqsEndpointProducerBuilder amazonSQSClient(
                 String amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
@@ -1145,7 +1130,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder autoCreateQueue(
+        default SqsEndpointProducerBuilder autoCreateQueue(
                 boolean autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
@@ -1155,7 +1140,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder autoCreateQueue(
+        default SqsEndpointProducerBuilder autoCreateQueue(
                 String autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
@@ -1166,7 +1151,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder headerFilterStrategy(
+        default SqsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1177,7 +1162,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder headerFilterStrategy(
+        default SqsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1188,7 +1173,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder queueOwnerAWSAccountId(
+        default SqsEndpointProducerBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
             setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
@@ -1199,7 +1184,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointProducerBuilder region(String region) {
+        default SqsEndpointProducerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -1208,8 +1193,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder delaySeconds(
-                Integer delaySeconds) {
+        default SqsEndpointProducerBuilder delaySeconds(Integer delaySeconds) {
             setProperty("delaySeconds", delaySeconds);
             return this;
         }
@@ -1219,8 +1203,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder delaySeconds(
-                String delaySeconds) {
+        default SqsEndpointProducerBuilder delaySeconds(String delaySeconds) {
             setProperty("delaySeconds", delaySeconds);
             return this;
         }
@@ -1237,7 +1220,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder lazyStartProducer(
+        default SqsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1255,7 +1238,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder lazyStartProducer(
+        default SqsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1269,7 +1252,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
+        default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
                 Object messageDeduplicationIdStrategy) {
             setProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
             return this;
@@ -1283,7 +1266,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
+        default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
                 String messageDeduplicationIdStrategy) {
             setProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
             return this;
@@ -1297,7 +1280,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.MessageGroupIdStrategy</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder messageGroupIdStrategy(
+        default SqsEndpointProducerBuilder messageGroupIdStrategy(
                 Object messageGroupIdStrategy) {
             setProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
@@ -1311,7 +1294,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.MessageGroupIdStrategy</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder messageGroupIdStrategy(
+        default SqsEndpointProducerBuilder messageGroupIdStrategy(
                 String messageGroupIdStrategy) {
             setProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
@@ -1323,8 +1306,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder operation(
-                SqsOperations operation) {
+        default SqsEndpointProducerBuilder operation(SqsOperations operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -1335,7 +1317,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> type.
          * @group producer
          */
-        public default SqsEndpointProducerBuilder operation(String operation) {
+        default SqsEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -1344,7 +1326,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SqsEndpointProducerBuilder proxyHost(String proxyHost) {
+        default SqsEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -1353,7 +1335,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SqsEndpointProducerBuilder proxyPort(Integer proxyPort) {
+        default SqsEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -1363,7 +1345,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SqsEndpointProducerBuilder proxyPort(String proxyPort) {
+        default SqsEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -1373,7 +1355,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder maximumMessageSize(
+        default SqsEndpointProducerBuilder maximumMessageSize(
                 Integer maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
@@ -1385,7 +1367,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder maximumMessageSize(
+        default SqsEndpointProducerBuilder maximumMessageSize(
                 String maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
@@ -1396,7 +1378,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder messageRetentionPeriod(
+        default SqsEndpointProducerBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -1408,7 +1390,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder messageRetentionPeriod(
+        default SqsEndpointProducerBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -1418,7 +1400,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder policy(String policy) {
+        default SqsEndpointProducerBuilder policy(String policy) {
             setProperty("policy", policy);
             return this;
         }
@@ -1429,7 +1411,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -1442,7 +1424,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointProducerBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -1453,8 +1435,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointProducerBuilder redrivePolicy(
-                String redrivePolicy) {
+        default SqsEndpointProducerBuilder redrivePolicy(String redrivePolicy) {
             setProperty("redrivePolicy", redrivePolicy);
             return this;
         }
@@ -1463,7 +1444,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointProducerBuilder accessKey(String accessKey) {
+        default SqsEndpointProducerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -1472,7 +1453,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointProducerBuilder secretKey(String secretKey) {
+        default SqsEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -1485,7 +1466,7 @@ public interface SqsEndpointBuilderFactory {
     public interface AdvancedSqsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SqsEndpointProducerBuilder basic() {
+        default SqsEndpointProducerBuilder basic() {
             return (SqsEndpointProducerBuilder) this;
         }
         /**
@@ -1494,7 +1475,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1505,7 +1486,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1516,8 +1497,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder delayQueue(
-                boolean delayQueue) {
+        default AdvancedSqsEndpointProducerBuilder delayQueue(boolean delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1527,8 +1507,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder delayQueue(
-                String delayQueue) {
+        default AdvancedSqsEndpointProducerBuilder delayQueue(String delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1540,8 +1519,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder queueUrl(
-                String queueUrl) {
+        default AdvancedSqsEndpointProducerBuilder queueUrl(String queueUrl) {
             setProperty("queueUrl", queueUrl);
             return this;
         }
@@ -1551,7 +1529,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder synchronous(
+        default AdvancedSqsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1562,7 +1540,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointProducerBuilder synchronous(
+        default AdvancedSqsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1575,7 +1553,7 @@ public interface SqsEndpointBuilderFactory {
     public static interface SqsEndpointBuilder
             extends
                 SqsEndpointConsumerBuilder, SqsEndpointProducerBuilder {
-        public default AdvancedSqsEndpointBuilder advanced() {
+        default AdvancedSqsEndpointBuilder advanced() {
             return (AdvancedSqsEndpointBuilder) this;
         }
         /**
@@ -1583,7 +1561,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder queueNameOrArn(String queueNameOrArn) {
+        default SqsEndpointBuilder queueNameOrArn(String queueNameOrArn) {
             setProperty("queueNameOrArn", queueNameOrArn);
             return this;
         }
@@ -1592,7 +1570,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder amazonAWSHost(String amazonAWSHost) {
+        default SqsEndpointBuilder amazonAWSHost(String amazonAWSHost) {
             setProperty("amazonAWSHost", amazonAWSHost);
             return this;
         }
@@ -1602,7 +1580,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
+        default SqsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -1612,7 +1590,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
+        default SqsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
@@ -1621,8 +1599,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder autoCreateQueue(
-                boolean autoCreateQueue) {
+        default SqsEndpointBuilder autoCreateQueue(boolean autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
@@ -1631,7 +1608,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder autoCreateQueue(String autoCreateQueue) {
+        default SqsEndpointBuilder autoCreateQueue(String autoCreateQueue) {
             setProperty("autoCreateQueue", autoCreateQueue);
             return this;
         }
@@ -1641,7 +1618,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder headerFilterStrategy(
+        default SqsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1652,7 +1629,7 @@ public interface SqsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder headerFilterStrategy(
+        default SqsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1663,7 +1640,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder queueOwnerAWSAccountId(
+        default SqsEndpointBuilder queueOwnerAWSAccountId(
                 String queueOwnerAWSAccountId) {
             setProperty("queueOwnerAWSAccountId", queueOwnerAWSAccountId);
             return this;
@@ -1674,7 +1651,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqsEndpointBuilder region(String region) {
+        default SqsEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -1683,7 +1660,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default SqsEndpointBuilder proxyHost(String proxyHost) {
+        default SqsEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -1692,7 +1669,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default SqsEndpointBuilder proxyPort(Integer proxyPort) {
+        default SqsEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -1702,7 +1679,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default SqsEndpointBuilder proxyPort(String proxyPort) {
+        default SqsEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -1712,8 +1689,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointBuilder maximumMessageSize(
-                Integer maximumMessageSize) {
+        default SqsEndpointBuilder maximumMessageSize(Integer maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
@@ -1724,8 +1700,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointBuilder maximumMessageSize(
-                String maximumMessageSize) {
+        default SqsEndpointBuilder maximumMessageSize(String maximumMessageSize) {
             setProperty("maximumMessageSize", maximumMessageSize);
             return this;
         }
@@ -1735,7 +1710,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointBuilder messageRetentionPeriod(
+        default SqsEndpointBuilder messageRetentionPeriod(
                 Integer messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -1747,7 +1722,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointBuilder messageRetentionPeriod(
+        default SqsEndpointBuilder messageRetentionPeriod(
                 String messageRetentionPeriod) {
             setProperty("messageRetentionPeriod", messageRetentionPeriod);
             return this;
@@ -1757,7 +1732,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointBuilder policy(String policy) {
+        default SqsEndpointBuilder policy(String policy) {
             setProperty("policy", policy);
             return this;
         }
@@ -1768,7 +1743,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group queue
          */
-        public default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
                 Integer receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -1781,7 +1756,7 @@ public interface SqsEndpointBuilderFactory {
          * type.
          * @group queue
          */
-        public default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
+        default SqsEndpointBuilder receiveMessageWaitTimeSeconds(
                 String receiveMessageWaitTimeSeconds) {
             setProperty("receiveMessageWaitTimeSeconds", receiveMessageWaitTimeSeconds);
             return this;
@@ -1792,7 +1767,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group queue
          */
-        public default SqsEndpointBuilder redrivePolicy(String redrivePolicy) {
+        default SqsEndpointBuilder redrivePolicy(String redrivePolicy) {
             setProperty("redrivePolicy", redrivePolicy);
             return this;
         }
@@ -1801,7 +1776,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointBuilder accessKey(String accessKey) {
+        default SqsEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -1810,7 +1785,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SqsEndpointBuilder secretKey(String secretKey) {
+        default SqsEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -1822,7 +1797,7 @@ public interface SqsEndpointBuilderFactory {
     public static interface AdvancedSqsEndpointBuilder
             extends
                 AdvancedSqsEndpointConsumerBuilder, AdvancedSqsEndpointProducerBuilder {
-        public default SqsEndpointBuilder basic() {
+        default SqsEndpointBuilder basic() {
             return (SqsEndpointBuilder) this;
         }
         /**
@@ -1831,7 +1806,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1842,7 +1817,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder basicPropertyBinding(
+        default AdvancedSqsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1853,7 +1828,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder delayQueue(boolean delayQueue) {
+        default AdvancedSqsEndpointBuilder delayQueue(boolean delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1863,7 +1838,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder delayQueue(String delayQueue) {
+        default AdvancedSqsEndpointBuilder delayQueue(String delayQueue) {
             setProperty("delayQueue", delayQueue);
             return this;
         }
@@ -1875,7 +1850,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder queueUrl(String queueUrl) {
+        default AdvancedSqsEndpointBuilder queueUrl(String queueUrl) {
             setProperty("queueUrl", queueUrl);
             return this;
         }
@@ -1885,8 +1860,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSqsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1896,7 +1870,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqsEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSqsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1914,7 +1888,7 @@ public interface SqsEndpointBuilderFactory {
      * Amazon's SQS service. Creates a builder to build endpoints for the AWS
      * Simple Queue Service component.
      */
-    public default SqsEndpointBuilder sqs(String path) {
+    default SqsEndpointBuilder sqs(String path) {
         class SqsEndpointBuilderImpl extends AbstractEndpointBuilder implements SqsEndpointBuilder, AdvancedSqsEndpointBuilder {
             public SqsEndpointBuilderImpl(String path) {
                 super("aws-sqs", path);

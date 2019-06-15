@@ -40,7 +40,7 @@ public interface CryptoCmsEndpointBuilderFactory {
     public static interface CryptoCmsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCryptoCmsEndpointBuilder advanced() {
+        default AdvancedCryptoCmsEndpointBuilder advanced() {
             return (AdvancedCryptoCmsEndpointBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default CryptoCmsEndpointBuilder cryptoOperation(
+        default CryptoCmsEndpointBuilder cryptoOperation(
                 CryptoOperation cryptoOperation) {
             setProperty("cryptoOperation", cryptoOperation);
             return this;
@@ -66,8 +66,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default CryptoCmsEndpointBuilder cryptoOperation(
-                String cryptoOperation) {
+        default CryptoCmsEndpointBuilder cryptoOperation(String cryptoOperation) {
             setProperty("cryptoOperation", cryptoOperation);
             return this;
         }
@@ -78,7 +77,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CryptoCmsEndpointBuilder name(String name) {
+        default CryptoCmsEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -90,7 +89,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.security.KeyStore</code> type.
          * @group common
          */
-        public default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
+        default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
             setProperty("keyStore", keyStore);
             return this;
         }
@@ -103,7 +102,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CryptoCmsEndpointBuilder keyStore(String keyStore) {
+        default CryptoCmsEndpointBuilder keyStore(String keyStore) {
             setProperty("keyStore", keyStore);
             return this;
         }
@@ -115,7 +114,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * @group common
          */
-        public default CryptoCmsEndpointBuilder keyStoreParameters(
+        default CryptoCmsEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
             setProperty("keyStoreParameters", keyStoreParameters);
             return this;
@@ -128,7 +127,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * @group common
          */
-        public default CryptoCmsEndpointBuilder keyStoreParameters(
+        default CryptoCmsEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
             setProperty("keyStoreParameters", keyStoreParameters);
             return this;
@@ -141,7 +140,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>char[]</code> type.
          * @group decrypt
          */
-        public default CryptoCmsEndpointBuilder password(Character[] password) {
+        default CryptoCmsEndpointBuilder password(Character[] password) {
             setProperty("password", password);
             return this;
         }
@@ -153,7 +152,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a <code>char[]</code> type.
          * @group decrypt
          */
-        public default CryptoCmsEndpointBuilder password(String password) {
+        default CryptoCmsEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -163,7 +162,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group decrypt_verify
          */
-        public default CryptoCmsEndpointBuilder fromBase64(Boolean fromBase64) {
+        default CryptoCmsEndpointBuilder fromBase64(Boolean fromBase64) {
             setProperty("fromBase64", fromBase64);
             return this;
         }
@@ -174,7 +173,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group decrypt_verify
          */
-        public default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
+        default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
             setProperty("fromBase64", fromBase64);
             return this;
         }
@@ -185,7 +184,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
+        default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
                 String contentEncryptionAlgorithm) {
             setProperty("contentEncryptionAlgorithm", contentEncryptionAlgorithm);
             return this;
@@ -198,7 +197,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder originatorInformationProvider(
+        default CryptoCmsEndpointBuilder originatorInformationProvider(
                 Object originatorInformationProvider) {
             setProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
@@ -211,7 +210,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder originatorInformationProvider(
+        default CryptoCmsEndpointBuilder originatorInformationProvider(
                 String originatorInformationProvider) {
             setProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
@@ -223,7 +222,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
+        default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
             setProperty("recipient", recipient);
             return this;
         }
@@ -234,7 +233,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder recipient(String recipient) {
+        default CryptoCmsEndpointBuilder recipient(String recipient) {
             setProperty("recipient", recipient);
             return this;
         }
@@ -251,8 +250,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder secretKeyLength(
-                int secretKeyLength) {
+        default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
             setProperty("secretKeyLength", secretKeyLength);
             return this;
         }
@@ -269,8 +267,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder secretKeyLength(
-                String secretKeyLength) {
+        default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
             setProperty("secretKeyLength", secretKeyLength);
             return this;
         }
@@ -283,7 +280,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
+        default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 Object unprotectedAttributesGeneratorProvider) {
             setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
@@ -297,7 +294,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
          * @group encrypt
          */
-        public default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
+        default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 String unprotectedAttributesGeneratorProvider) {
             setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
@@ -308,7 +305,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group encrypt_sign
          */
-        public default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
+        default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
             setProperty("toBase64", toBase64);
             return this;
         }
@@ -319,7 +316,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group encrypt_sign
          */
-        public default CryptoCmsEndpointBuilder toBase64(String toBase64) {
+        default CryptoCmsEndpointBuilder toBase64(String toBase64) {
             setProperty("toBase64", toBase64);
             return this;
         }
@@ -330,8 +327,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group sign
          */
-        public default CryptoCmsEndpointBuilder includeContent(
-                Boolean includeContent) {
+        default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
             setProperty("includeContent", includeContent);
             return this;
         }
@@ -343,8 +339,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group sign
          */
-        public default CryptoCmsEndpointBuilder includeContent(
-                String includeContent) {
+        default CryptoCmsEndpointBuilder includeContent(String includeContent) {
             setProperty("includeContent", includeContent);
             return this;
         }
@@ -356,7 +351,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
          * @group sign
          */
-        public default CryptoCmsEndpointBuilder signer(List<Object> signer) {
+        default CryptoCmsEndpointBuilder signer(List<Object> signer) {
             setProperty("signer", signer);
             return this;
         }
@@ -368,7 +363,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
          * @group sign
          */
-        public default CryptoCmsEndpointBuilder signer(String signer) {
+        default CryptoCmsEndpointBuilder signer(String signer) {
             setProperty("signer", signer);
             return this;
         }
@@ -380,7 +375,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group verify
          */
-        public default CryptoCmsEndpointBuilder signedDataHeaderBase64(
+        default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 Boolean signedDataHeaderBase64) {
             setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
@@ -394,7 +389,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group verify
          */
-        public default CryptoCmsEndpointBuilder signedDataHeaderBase64(
+        default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 String signedDataHeaderBase64) {
             setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
@@ -407,7 +402,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group verify
          */
-        public default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
+        default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 Boolean verifySignaturesOfAllSigners) {
             setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
@@ -421,7 +416,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * type.
          * @group verify
          */
-        public default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
+        default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 String verifySignaturesOfAllSigners) {
             setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
@@ -434,7 +429,7 @@ public interface CryptoCmsEndpointBuilderFactory {
     public static interface AdvancedCryptoCmsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default CryptoCmsEndpointBuilder basic() {
+        default CryptoCmsEndpointBuilder basic() {
             return (CryptoCmsEndpointBuilder) this;
         }
         /**
@@ -443,7 +438,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
+        default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -454,7 +449,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
+        default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -465,8 +460,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCryptoCmsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -476,8 +470,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCryptoCmsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -496,7 +489,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Data format, and verifying CMS Signed Data. Creates a builder to build
      * endpoints for the Crypto CMS component.
      */
-    public default CryptoCmsEndpointBuilder cryptoCms(String path) {
+    default CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {
             public CryptoCmsEndpointBuilderImpl(String path) {
                 super("crypto-cms", path);

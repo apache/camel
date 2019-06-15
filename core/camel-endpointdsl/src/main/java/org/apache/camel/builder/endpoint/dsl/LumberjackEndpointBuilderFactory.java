@@ -37,7 +37,7 @@ public interface LumberjackEndpointBuilderFactory {
     public static interface LumberjackEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedLumberjackEndpointBuilder advanced() {
+        default AdvancedLumberjackEndpointBuilder advanced() {
             return (AdvancedLumberjackEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default LumberjackEndpointBuilder host(String host) {
+        default LumberjackEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default LumberjackEndpointBuilder port(int port) {
+        default LumberjackEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -63,7 +63,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default LumberjackEndpointBuilder port(String port) {
+        default LumberjackEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -73,7 +73,7 @@ public interface LumberjackEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group consumer
          */
-        public default LumberjackEndpointBuilder sslContextParameters(
+        default LumberjackEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -84,7 +84,7 @@ public interface LumberjackEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group consumer
          */
-        public default LumberjackEndpointBuilder sslContextParameters(
+        default LumberjackEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -97,7 +97,7 @@ public interface LumberjackEndpointBuilderFactory {
     public static interface AdvancedLumberjackEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default LumberjackEndpointBuilder basic() {
+        default LumberjackEndpointBuilder basic() {
             return (LumberjackEndpointBuilder) this;
         }
         /**
@@ -106,7 +106,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
+        default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -117,7 +117,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
+        default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -128,7 +128,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLumberjackEndpointBuilder synchronous(
+        default AdvancedLumberjackEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -139,8 +139,7 @@ public interface LumberjackEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLumberjackEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLumberjackEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -150,7 +149,7 @@ public interface LumberjackEndpointBuilderFactory {
      * protocol. Creates a builder to build endpoints for the Lumberjack
      * component.
      */
-    public default LumberjackEndpointBuilder lumberjack(String path) {
+    default LumberjackEndpointBuilder lumberjack(String path) {
         class LumberjackEndpointBuilderImpl extends AbstractEndpointBuilder implements LumberjackEndpointBuilder, AdvancedLumberjackEndpointBuilder {
             public LumberjackEndpointBuilderImpl(String path) {
                 super("lumberjack", path);

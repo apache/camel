@@ -37,7 +37,7 @@ public interface ServiceEndpointBuilderFactory {
     public static interface ServiceEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedServiceEndpointBuilder advanced() {
+        default AdvancedServiceEndpointBuilder advanced() {
             return (AdvancedServiceEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ServiceEndpointBuilder delegateUri(String delegateUri) {
+        default ServiceEndpointBuilder delegateUri(String delegateUri) {
             setProperty("delegateUri", delegateUri);
             return this;
         }
@@ -57,7 +57,7 @@ public interface ServiceEndpointBuilderFactory {
     public static interface AdvancedServiceEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ServiceEndpointBuilder basic() {
+        default ServiceEndpointBuilder basic() {
             return (ServiceEndpointBuilder) this;
         }
         /**
@@ -66,7 +66,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -77,7 +77,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -88,8 +88,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedServiceEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -99,8 +98,7 @@ public interface ServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedServiceEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -110,7 +108,7 @@ public interface ServiceEndpointBuilderFactory {
      * Consul, Etcd. Creates a builder to build endpoints for the Service
      * component.
      */
-    public default ServiceEndpointBuilder service(String path) {
+    default ServiceEndpointBuilder service(String path) {
         class ServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceEndpointBuilder, AdvancedServiceEndpointBuilder {
             public ServiceEndpointBuilderImpl(String path) {
                 super("service", path);

@@ -38,7 +38,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public interface GoogleSheetsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder advanced() {
+        default AdvancedGoogleSheetsEndpointConsumerBuilder advanced() {
             return (AdvancedGoogleSheetsEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder apiName(
+        default GoogleSheetsEndpointConsumerBuilder apiName(
                 GoogleSheetsApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -58,8 +58,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder apiName(
-                String apiName) {
+        default GoogleSheetsEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -68,8 +67,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder methodName(
-                String methodName) {
+        default GoogleSheetsEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -79,7 +77,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder accessToken(
+        default GoogleSheetsEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -90,7 +88,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder applicationName(
+        default GoogleSheetsEndpointConsumerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -100,8 +98,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder clientId(
-                String clientId) {
+        default GoogleSheetsEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -110,7 +107,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder clientSecret(
+        default GoogleSheetsEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -120,7 +117,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder inBody(String inBody) {
+        default GoogleSheetsEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -131,7 +128,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointConsumerBuilder refreshToken(
+        default GoogleSheetsEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -147,7 +144,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -163,7 +160,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -176,7 +173,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public interface AdvancedGoogleSheetsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleSheetsEndpointConsumerBuilder basic() {
+        default GoogleSheetsEndpointConsumerBuilder basic() {
             return (GoogleSheetsEndpointConsumerBuilder) this;
         }
         /**
@@ -188,7 +185,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -202,7 +199,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -212,7 +209,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -223,7 +220,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -234,7 +231,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -245,7 +242,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -256,7 +253,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -267,7 +264,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -280,7 +277,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public static interface GoogleSheetsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoogleSheetsEndpointProducerBuilder advanced() {
+        default AdvancedGoogleSheetsEndpointProducerBuilder advanced() {
             return (AdvancedGoogleSheetsEndpointProducerBuilder) this;
         }
         /**
@@ -289,7 +286,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder apiName(
+        default GoogleSheetsEndpointProducerBuilder apiName(
                 GoogleSheetsApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -300,8 +297,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder apiName(
-                String apiName) {
+        default GoogleSheetsEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -310,8 +306,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder methodName(
-                String methodName) {
+        default GoogleSheetsEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -321,7 +316,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder accessToken(
+        default GoogleSheetsEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -332,7 +327,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder applicationName(
+        default GoogleSheetsEndpointProducerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -342,8 +337,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder clientId(
-                String clientId) {
+        default GoogleSheetsEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -352,7 +346,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder clientSecret(
+        default GoogleSheetsEndpointProducerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -362,7 +356,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder inBody(String inBody) {
+        default GoogleSheetsEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -373,7 +367,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointProducerBuilder refreshToken(
+        default GoogleSheetsEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -391,7 +385,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
+        default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -409,7 +403,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
+        default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -422,7 +416,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public interface AdvancedGoogleSheetsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoogleSheetsEndpointProducerBuilder basic() {
+        default GoogleSheetsEndpointProducerBuilder basic() {
             return (GoogleSheetsEndpointProducerBuilder) this;
         }
         /**
@@ -431,7 +425,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -442,7 +436,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -453,7 +447,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -464,7 +458,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -477,7 +471,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public static interface GoogleSheetsEndpointBuilder
             extends
                 GoogleSheetsEndpointConsumerBuilder, GoogleSheetsEndpointProducerBuilder {
-        public default AdvancedGoogleSheetsEndpointBuilder advanced() {
+        default AdvancedGoogleSheetsEndpointBuilder advanced() {
             return (AdvancedGoogleSheetsEndpointBuilder) this;
         }
         /**
@@ -486,8 +480,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder apiName(
-                GoogleSheetsApiName apiName) {
+        default GoogleSheetsEndpointBuilder apiName(GoogleSheetsApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -497,7 +490,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder apiName(String apiName) {
+        default GoogleSheetsEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -506,7 +499,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder methodName(String methodName) {
+        default GoogleSheetsEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -516,8 +509,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder accessToken(
-                String accessToken) {
+        default GoogleSheetsEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -527,7 +519,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder applicationName(
+        default GoogleSheetsEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -537,7 +529,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder clientId(String clientId) {
+        default GoogleSheetsEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -546,8 +538,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder clientSecret(
-                String clientSecret) {
+        default GoogleSheetsEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -556,7 +547,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder inBody(String inBody) {
+        default GoogleSheetsEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -567,8 +558,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleSheetsEndpointBuilder refreshToken(
-                String refreshToken) {
+        default GoogleSheetsEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
         }
@@ -580,7 +570,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     public static interface AdvancedGoogleSheetsEndpointBuilder
             extends
                 AdvancedGoogleSheetsEndpointConsumerBuilder, AdvancedGoogleSheetsEndpointProducerBuilder {
-        public default GoogleSheetsEndpointBuilder basic() {
+        default GoogleSheetsEndpointBuilder basic() {
             return (GoogleSheetsEndpointBuilder) this;
         }
         /**
@@ -589,7 +579,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -600,7 +590,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -611,7 +601,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -622,7 +612,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsEndpointBuilder synchronous(
+        default AdvancedGoogleSheetsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -640,7 +630,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * The google-sheets component provides access to Google Sheets. Creates a
      * builder to build endpoints for the Google Sheets component.
      */
-    public default GoogleSheetsEndpointBuilder googleSheets(String path) {
+    default GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {
             public GoogleSheetsEndpointBuilderImpl(String path) {
                 super("google-sheets", path);

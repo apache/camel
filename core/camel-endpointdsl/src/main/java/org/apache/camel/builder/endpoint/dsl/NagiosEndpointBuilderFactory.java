@@ -36,7 +36,7 @@ public interface NagiosEndpointBuilderFactory {
     public static interface NagiosEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNagiosEndpointBuilder advanced() {
+        default AdvancedNagiosEndpointBuilder advanced() {
             return (AdvancedNagiosEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder host(String host) {
+        default NagiosEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -53,7 +53,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder port(int port) {
+        default NagiosEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -62,7 +62,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder port(String port) {
+        default NagiosEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -71,8 +71,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder connectionTimeout(
-                int connectionTimeout) {
+        default NagiosEndpointBuilder connectionTimeout(int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -81,8 +80,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder connectionTimeout(
-                String connectionTimeout) {
+        default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -93,7 +91,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder sendSync(boolean sendSync) {
+        default NagiosEndpointBuilder sendSync(boolean sendSync) {
             setProperty("sendSync", sendSync);
             return this;
         }
@@ -104,7 +102,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder sendSync(String sendSync) {
+        default NagiosEndpointBuilder sendSync(String sendSync) {
             setProperty("sendSync", sendSync);
             return this;
         }
@@ -113,7 +111,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder timeout(int timeout) {
+        default NagiosEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -122,7 +120,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default NagiosEndpointBuilder timeout(String timeout) {
+        default NagiosEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -132,7 +130,7 @@ public interface NagiosEndpointBuilderFactory {
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
          * @group security
          */
-        public default NagiosEndpointBuilder encryption(Encryption encryption) {
+        default NagiosEndpointBuilder encryption(Encryption encryption) {
             setProperty("encryption", encryption);
             return this;
         }
@@ -142,7 +140,7 @@ public interface NagiosEndpointBuilderFactory {
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
          * @group security
          */
-        public default NagiosEndpointBuilder encryption(String encryption) {
+        default NagiosEndpointBuilder encryption(String encryption) {
             setProperty("encryption", encryption);
             return this;
         }
@@ -154,7 +152,7 @@ public interface NagiosEndpointBuilderFactory {
          * @group security
          */
         @Deprecated
-        public default NagiosEndpointBuilder encryptionMethod(
+        default NagiosEndpointBuilder encryptionMethod(
                 NagiosEncryptionMethod encryptionMethod) {
             setProperty("encryptionMethod", encryptionMethod);
             return this;
@@ -167,8 +165,7 @@ public interface NagiosEndpointBuilderFactory {
          * @group security
          */
         @Deprecated
-        public default NagiosEndpointBuilder encryptionMethod(
-                String encryptionMethod) {
+        default NagiosEndpointBuilder encryptionMethod(String encryptionMethod) {
             setProperty("encryptionMethod", encryptionMethod);
             return this;
         }
@@ -177,7 +174,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NagiosEndpointBuilder password(String password) {
+        default NagiosEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -189,7 +186,7 @@ public interface NagiosEndpointBuilderFactory {
     public static interface AdvancedNagiosEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default NagiosEndpointBuilder basic() {
+        default NagiosEndpointBuilder basic() {
             return (NagiosEndpointBuilder) this;
         }
         /**
@@ -198,7 +195,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNagiosEndpointBuilder basicPropertyBinding(
+        default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -209,7 +206,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNagiosEndpointBuilder basicPropertyBinding(
+        default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -220,8 +217,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNagiosEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -231,8 +227,7 @@ public interface NagiosEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNagiosEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -258,7 +253,7 @@ public interface NagiosEndpointBuilderFactory {
      * To send passive checks to Nagios using JSendNSCA. Creates a builder to
      * build endpoints for the Nagios component.
      */
-    public default NagiosEndpointBuilder nagios(String path) {
+    default NagiosEndpointBuilder nagios(String path) {
         class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder, AdvancedNagiosEndpointBuilder {
             public NagiosEndpointBuilderImpl(String path) {
                 super("nagios", path);

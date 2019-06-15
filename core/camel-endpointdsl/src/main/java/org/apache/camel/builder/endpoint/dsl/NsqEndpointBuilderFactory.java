@@ -38,7 +38,7 @@ public interface NsqEndpointBuilderFactory {
     public interface NsqEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedNsqEndpointConsumerBuilder advanced() {
+        default AdvancedNsqEndpointConsumerBuilder advanced() {
             return (AdvancedNsqEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointConsumerBuilder servers(String servers) {
+        default NsqEndpointConsumerBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -56,7 +56,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointConsumerBuilder topic(String topic) {
+        default NsqEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -65,7 +65,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointConsumerBuilder userAgent(String userAgent) {
+        default NsqEndpointConsumerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -75,7 +75,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder autoFinish(Boolean autoFinish) {
+        default NsqEndpointConsumerBuilder autoFinish(Boolean autoFinish) {
             setProperty("autoFinish", autoFinish);
             return this;
         }
@@ -86,7 +86,7 @@ public interface NsqEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder autoFinish(String autoFinish) {
+        default NsqEndpointConsumerBuilder autoFinish(String autoFinish) {
             setProperty("autoFinish", autoFinish);
             return this;
         }
@@ -101,7 +101,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder bridgeErrorHandler(
+        default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -117,7 +117,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder bridgeErrorHandler(
+        default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,7 +127,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder channel(String channel) {
+        default NsqEndpointConsumerBuilder channel(String channel) {
             setProperty("channel", channel);
             return this;
         }
@@ -136,8 +136,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder lookupInterval(
-                long lookupInterval) {
+        default NsqEndpointConsumerBuilder lookupInterval(long lookupInterval) {
             setProperty("lookupInterval", lookupInterval);
             return this;
         }
@@ -146,8 +145,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder lookupInterval(
-                String lookupInterval) {
+        default NsqEndpointConsumerBuilder lookupInterval(String lookupInterval) {
             setProperty("lookupInterval", lookupInterval);
             return this;
         }
@@ -156,8 +154,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder lookupServerPort(
-                int lookupServerPort) {
+        default NsqEndpointConsumerBuilder lookupServerPort(int lookupServerPort) {
             setProperty("lookupServerPort", lookupServerPort);
             return this;
         }
@@ -166,7 +163,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder lookupServerPort(
+        default NsqEndpointConsumerBuilder lookupServerPort(
                 String lookupServerPort) {
             setProperty("lookupServerPort", lookupServerPort);
             return this;
@@ -176,8 +173,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder messageTimeout(
-                long messageTimeout) {
+        default NsqEndpointConsumerBuilder messageTimeout(long messageTimeout) {
             setProperty("messageTimeout", messageTimeout);
             return this;
         }
@@ -186,8 +182,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder messageTimeout(
-                String messageTimeout) {
+        default NsqEndpointConsumerBuilder messageTimeout(String messageTimeout) {
             setProperty("messageTimeout", messageTimeout);
             return this;
         }
@@ -196,7 +191,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder poolSize(int poolSize) {
+        default NsqEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -205,7 +200,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder poolSize(String poolSize) {
+        default NsqEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -214,8 +209,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder requeueInterval(
-                long requeueInterval) {
+        default NsqEndpointConsumerBuilder requeueInterval(long requeueInterval) {
             setProperty("requeueInterval", requeueInterval);
             return this;
         }
@@ -224,7 +218,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default NsqEndpointConsumerBuilder requeueInterval(
+        default NsqEndpointConsumerBuilder requeueInterval(
                 String requeueInterval) {
             setProperty("requeueInterval", requeueInterval);
             return this;
@@ -234,7 +228,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointConsumerBuilder secure(boolean secure) {
+        default NsqEndpointConsumerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -243,7 +237,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointConsumerBuilder secure(String secure) {
+        default NsqEndpointConsumerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -253,7 +247,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointConsumerBuilder sslContextParameters(
+        default NsqEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -264,7 +258,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointConsumerBuilder sslContextParameters(
+        default NsqEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -277,7 +271,7 @@ public interface NsqEndpointBuilderFactory {
     public interface AdvancedNsqEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default NsqEndpointConsumerBuilder basic() {
+        default NsqEndpointConsumerBuilder basic() {
             return (NsqEndpointConsumerBuilder) this;
         }
         /**
@@ -289,7 +283,7 @@ public interface NsqEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -303,7 +297,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -313,7 +307,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNsqEndpointConsumerBuilder exchangePattern(
+        default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -324,7 +318,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNsqEndpointConsumerBuilder exchangePattern(
+        default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -335,7 +329,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -346,7 +340,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -357,7 +351,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointConsumerBuilder synchronous(
+        default AdvancedNsqEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -368,7 +362,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointConsumerBuilder synchronous(
+        default AdvancedNsqEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -381,7 +375,7 @@ public interface NsqEndpointBuilderFactory {
     public static interface NsqEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNsqEndpointProducerBuilder advanced() {
+        default AdvancedNsqEndpointProducerBuilder advanced() {
             return (AdvancedNsqEndpointProducerBuilder) this;
         }
         /**
@@ -390,7 +384,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointProducerBuilder servers(String servers) {
+        default NsqEndpointProducerBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -399,7 +393,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointProducerBuilder topic(String topic) {
+        default NsqEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -408,7 +402,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointProducerBuilder userAgent(String userAgent) {
+        default NsqEndpointProducerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -425,7 +419,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NsqEndpointProducerBuilder lazyStartProducer(
+        default NsqEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -443,7 +437,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NsqEndpointProducerBuilder lazyStartProducer(
+        default NsqEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -453,7 +447,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default NsqEndpointProducerBuilder port(int port) {
+        default NsqEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -462,7 +456,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default NsqEndpointProducerBuilder port(String port) {
+        default NsqEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -471,7 +465,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointProducerBuilder secure(boolean secure) {
+        default NsqEndpointProducerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -480,7 +474,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointProducerBuilder secure(String secure) {
+        default NsqEndpointProducerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -490,7 +484,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointProducerBuilder sslContextParameters(
+        default NsqEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -501,7 +495,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointProducerBuilder sslContextParameters(
+        default NsqEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -514,7 +508,7 @@ public interface NsqEndpointBuilderFactory {
     public interface AdvancedNsqEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default NsqEndpointProducerBuilder basic() {
+        default NsqEndpointProducerBuilder basic() {
             return (NsqEndpointProducerBuilder) this;
         }
         /**
@@ -523,7 +517,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -534,7 +528,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -545,7 +539,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointProducerBuilder synchronous(
+        default AdvancedNsqEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -556,7 +550,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointProducerBuilder synchronous(
+        default AdvancedNsqEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -569,7 +563,7 @@ public interface NsqEndpointBuilderFactory {
     public static interface NsqEndpointBuilder
             extends
                 NsqEndpointConsumerBuilder, NsqEndpointProducerBuilder {
-        public default AdvancedNsqEndpointBuilder advanced() {
+        default AdvancedNsqEndpointBuilder advanced() {
             return (AdvancedNsqEndpointBuilder) this;
         }
         /**
@@ -578,7 +572,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointBuilder servers(String servers) {
+        default NsqEndpointBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -587,7 +581,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointBuilder topic(String topic) {
+        default NsqEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -596,7 +590,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NsqEndpointBuilder userAgent(String userAgent) {
+        default NsqEndpointBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
             return this;
         }
@@ -605,7 +599,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointBuilder secure(boolean secure) {
+        default NsqEndpointBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -614,7 +608,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NsqEndpointBuilder secure(String secure) {
+        default NsqEndpointBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -624,7 +618,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointBuilder sslContextParameters(
+        default NsqEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -635,7 +629,7 @@ public interface NsqEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NsqEndpointBuilder sslContextParameters(
+        default NsqEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -648,7 +642,7 @@ public interface NsqEndpointBuilderFactory {
     public static interface AdvancedNsqEndpointBuilder
             extends
                 AdvancedNsqEndpointConsumerBuilder, AdvancedNsqEndpointProducerBuilder {
-        public default NsqEndpointBuilder basic() {
+        default NsqEndpointBuilder basic() {
             return (NsqEndpointBuilder) this;
         }
         /**
@@ -657,7 +651,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -668,7 +662,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointBuilder basicPropertyBinding(
+        default AdvancedNsqEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -679,8 +673,7 @@ public interface NsqEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNsqEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -690,7 +683,7 @@ public interface NsqEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNsqEndpointBuilder synchronous(String synchronous) {
+        default AdvancedNsqEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -699,7 +692,7 @@ public interface NsqEndpointBuilderFactory {
      * Represents a nsq endpoint. Creates a builder to build endpoints for the
      * NSQ component.
      */
-    public default NsqEndpointBuilder nsq(String path) {
+    default NsqEndpointBuilder nsq(String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {
             public NsqEndpointBuilderImpl(String path) {
                 super("nsq", path);

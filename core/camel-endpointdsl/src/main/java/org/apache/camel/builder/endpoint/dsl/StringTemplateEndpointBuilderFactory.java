@@ -36,7 +36,7 @@ public interface StringTemplateEndpointBuilderFactory {
     public static interface StringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedStringTemplateEndpointBuilder advanced() {
+        default AdvancedStringTemplateEndpointBuilder advanced() {
             return (AdvancedStringTemplateEndpointBuilder) this;
         }
         /**
@@ -49,8 +49,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder resourceUri(
-                String resourceUri) {
+        default StringTemplateEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -59,8 +58,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder contentCache(
-                boolean contentCache) {
+        default StringTemplateEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -69,8 +67,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder contentCache(
-                String contentCache) {
+        default StringTemplateEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -79,8 +76,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder delimiterStart(
-                char delimiterStart) {
+        default StringTemplateEndpointBuilder delimiterStart(char delimiterStart) {
             setProperty("delimiterStart", delimiterStart);
             return this;
         }
@@ -89,7 +85,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder delimiterStart(
+        default StringTemplateEndpointBuilder delimiterStart(
                 String delimiterStart) {
             setProperty("delimiterStart", delimiterStart);
             return this;
@@ -99,8 +95,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder delimiterStop(
-                char delimiterStop) {
+        default StringTemplateEndpointBuilder delimiterStop(char delimiterStop) {
             setProperty("delimiterStop", delimiterStop);
             return this;
         }
@@ -109,8 +104,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group producer
          */
-        public default StringTemplateEndpointBuilder delimiterStop(
-                String delimiterStop) {
+        default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
             setProperty("delimiterStop", delimiterStop);
             return this;
         }
@@ -122,7 +116,7 @@ public interface StringTemplateEndpointBuilderFactory {
     public static interface AdvancedStringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default StringTemplateEndpointBuilder basic() {
+        default StringTemplateEndpointBuilder basic() {
             return (StringTemplateEndpointBuilder) this;
         }
         /**
@@ -131,7 +125,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
+        default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,7 +136,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
+        default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,7 +147,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStringTemplateEndpointBuilder synchronous(
+        default AdvancedStringTemplateEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -164,7 +158,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStringTemplateEndpointBuilder synchronous(
+        default AdvancedStringTemplateEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -174,7 +168,7 @@ public interface StringTemplateEndpointBuilderFactory {
      * Transforms the message using a String template. Creates a builder to
      * build endpoints for the String Template component.
      */
-    public default StringTemplateEndpointBuilder stringTemplate(String path) {
+    default StringTemplateEndpointBuilder stringTemplate(String path) {
         class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
                 super("string-template", path);

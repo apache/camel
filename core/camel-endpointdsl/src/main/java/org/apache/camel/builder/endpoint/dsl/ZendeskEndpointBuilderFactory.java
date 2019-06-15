@@ -38,7 +38,7 @@ public interface ZendeskEndpointBuilderFactory {
     public interface ZendeskEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedZendeskEndpointConsumerBuilder advanced() {
+        default AdvancedZendeskEndpointConsumerBuilder advanced() {
             return (AdvancedZendeskEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointConsumerBuilder methodName(
-                String methodName) {
+        default ZendeskEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -56,7 +55,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointConsumerBuilder inBody(String inBody) {
+        default ZendeskEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -65,7 +64,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointConsumerBuilder serverUrl(String serverUrl) {
+        default ZendeskEndpointConsumerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
             return this;
         }
@@ -80,7 +79,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
+        default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -96,7 +95,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
+        default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -106,8 +105,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointConsumerBuilder oauthToken(
-                String oauthToken) {
+        default ZendeskEndpointConsumerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -116,7 +114,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointConsumerBuilder password(String password) {
+        default ZendeskEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -125,7 +123,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointConsumerBuilder token(String token) {
+        default ZendeskEndpointConsumerBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -134,7 +132,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointConsumerBuilder username(String username) {
+        default ZendeskEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -146,7 +144,7 @@ public interface ZendeskEndpointBuilderFactory {
     public interface AdvancedZendeskEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ZendeskEndpointConsumerBuilder basic() {
+        default ZendeskEndpointConsumerBuilder basic() {
             return (ZendeskEndpointConsumerBuilder) this;
         }
         /**
@@ -158,7 +156,7 @@ public interface ZendeskEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
+        default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -172,7 +170,7 @@ public interface ZendeskEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
+        default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -182,7 +180,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
+        default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -193,7 +191,7 @@ public interface ZendeskEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
+        default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -204,7 +202,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -215,7 +213,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -226,7 +224,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointConsumerBuilder synchronous(
+        default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -237,7 +235,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointConsumerBuilder synchronous(
+        default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -250,7 +248,7 @@ public interface ZendeskEndpointBuilderFactory {
     public static interface ZendeskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedZendeskEndpointProducerBuilder advanced() {
+        default AdvancedZendeskEndpointProducerBuilder advanced() {
             return (AdvancedZendeskEndpointProducerBuilder) this;
         }
         /**
@@ -258,8 +256,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointProducerBuilder methodName(
-                String methodName) {
+        default ZendeskEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -268,7 +265,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointProducerBuilder inBody(String inBody) {
+        default ZendeskEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -277,7 +274,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointProducerBuilder serverUrl(String serverUrl) {
+        default ZendeskEndpointProducerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
             return this;
         }
@@ -294,7 +291,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ZendeskEndpointProducerBuilder lazyStartProducer(
+        default ZendeskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -312,7 +309,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ZendeskEndpointProducerBuilder lazyStartProducer(
+        default ZendeskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -322,8 +319,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointProducerBuilder oauthToken(
-                String oauthToken) {
+        default ZendeskEndpointProducerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -332,7 +328,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointProducerBuilder password(String password) {
+        default ZendeskEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -341,7 +337,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointProducerBuilder token(String token) {
+        default ZendeskEndpointProducerBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -350,7 +346,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointProducerBuilder username(String username) {
+        default ZendeskEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -362,7 +358,7 @@ public interface ZendeskEndpointBuilderFactory {
     public interface AdvancedZendeskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ZendeskEndpointProducerBuilder basic() {
+        default ZendeskEndpointProducerBuilder basic() {
             return (ZendeskEndpointProducerBuilder) this;
         }
         /**
@@ -371,7 +367,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -382,7 +378,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -393,7 +389,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointProducerBuilder synchronous(
+        default AdvancedZendeskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -404,7 +400,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointProducerBuilder synchronous(
+        default AdvancedZendeskEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -417,7 +413,7 @@ public interface ZendeskEndpointBuilderFactory {
     public static interface ZendeskEndpointBuilder
             extends
                 ZendeskEndpointConsumerBuilder, ZendeskEndpointProducerBuilder {
-        public default AdvancedZendeskEndpointBuilder advanced() {
+        default AdvancedZendeskEndpointBuilder advanced() {
             return (AdvancedZendeskEndpointBuilder) this;
         }
         /**
@@ -425,7 +421,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointBuilder methodName(String methodName) {
+        default ZendeskEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -434,7 +430,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointBuilder inBody(String inBody) {
+        default ZendeskEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -443,7 +439,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ZendeskEndpointBuilder serverUrl(String serverUrl) {
+        default ZendeskEndpointBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
             return this;
         }
@@ -452,7 +448,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointBuilder oauthToken(String oauthToken) {
+        default ZendeskEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -461,7 +457,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointBuilder password(String password) {
+        default ZendeskEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -470,7 +466,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointBuilder token(String token) {
+        default ZendeskEndpointBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -479,7 +475,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ZendeskEndpointBuilder username(String username) {
+        default ZendeskEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -491,7 +487,7 @@ public interface ZendeskEndpointBuilderFactory {
     public static interface AdvancedZendeskEndpointBuilder
             extends
                 AdvancedZendeskEndpointConsumerBuilder, AdvancedZendeskEndpointProducerBuilder {
-        public default ZendeskEndpointBuilder basic() {
+        default ZendeskEndpointBuilder basic() {
             return (ZendeskEndpointBuilder) this;
         }
         /**
@@ -500,7 +496,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -511,7 +507,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointBuilder basicPropertyBinding(
+        default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -522,8 +518,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedZendeskEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -533,8 +528,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedZendeskEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedZendeskEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -543,7 +537,7 @@ public interface ZendeskEndpointBuilderFactory {
      * Allows producing messages to manage Zendesk ticket, user, organization,
      * etc. Creates a builder to build endpoints for the Zendesk component.
      */
-    public default ZendeskEndpointBuilder zendesk(String path) {
+    default ZendeskEndpointBuilder zendesk(String path) {
         class ZendeskEndpointBuilderImpl extends AbstractEndpointBuilder implements ZendeskEndpointBuilder, AdvancedZendeskEndpointBuilder {
             public ZendeskEndpointBuilderImpl(String path) {
                 super("zendesk", path);

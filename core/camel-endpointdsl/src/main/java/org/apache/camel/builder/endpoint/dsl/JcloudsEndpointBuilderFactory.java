@@ -38,7 +38,7 @@ public interface JcloudsEndpointBuilderFactory {
     public interface JcloudsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJcloudsEndpointConsumerBuilder advanced() {
+        default AdvancedJcloudsEndpointConsumerBuilder advanced() {
             return (AdvancedJcloudsEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointConsumerBuilder command(
-                JcloudsCommand command) {
+        default JcloudsEndpointConsumerBuilder command(JcloudsCommand command) {
             setProperty("command", command);
             return this;
         }
@@ -58,7 +57,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointConsumerBuilder command(String command) {
+        default JcloudsEndpointConsumerBuilder command(String command) {
             setProperty("command", command);
             return this;
         }
@@ -68,8 +67,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcloudsEndpointConsumerBuilder providerId(
-                String providerId) {
+        default JcloudsEndpointConsumerBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
             return this;
         }
@@ -84,7 +82,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
+        default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -100,7 +98,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
+        default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -110,7 +108,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group blobstore
          */
-        public default JcloudsEndpointConsumerBuilder container(String container) {
+        default JcloudsEndpointConsumerBuilder container(String container) {
             setProperty("container", container);
             return this;
         }
@@ -119,7 +117,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group blobstore
          */
-        public default JcloudsEndpointConsumerBuilder directory(String directory) {
+        default JcloudsEndpointConsumerBuilder directory(String directory) {
             setProperty("directory", directory);
             return this;
         }
@@ -131,7 +129,7 @@ public interface JcloudsEndpointBuilderFactory {
     public interface AdvancedJcloudsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JcloudsEndpointConsumerBuilder basic() {
+        default JcloudsEndpointConsumerBuilder basic() {
             return (JcloudsEndpointConsumerBuilder) this;
         }
         /**
@@ -143,7 +141,7 @@ public interface JcloudsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -157,7 +155,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -167,7 +165,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
+        default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -178,7 +176,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
+        default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -189,7 +187,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -200,7 +198,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -211,7 +209,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder synchronous(
+        default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -222,7 +220,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointConsumerBuilder synchronous(
+        default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -235,7 +233,7 @@ public interface JcloudsEndpointBuilderFactory {
     public static interface JcloudsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJcloudsEndpointProducerBuilder advanced() {
+        default AdvancedJcloudsEndpointProducerBuilder advanced() {
             return (AdvancedJcloudsEndpointProducerBuilder) this;
         }
         /**
@@ -244,8 +242,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointProducerBuilder command(
-                JcloudsCommand command) {
+        default JcloudsEndpointProducerBuilder command(JcloudsCommand command) {
             setProperty("command", command);
             return this;
         }
@@ -255,7 +252,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointProducerBuilder command(String command) {
+        default JcloudsEndpointProducerBuilder command(String command) {
             setProperty("command", command);
             return this;
         }
@@ -265,8 +262,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcloudsEndpointProducerBuilder providerId(
-                String providerId) {
+        default JcloudsEndpointProducerBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
             return this;
         }
@@ -283,7 +279,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JcloudsEndpointProducerBuilder lazyStartProducer(
+        default JcloudsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -301,7 +297,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JcloudsEndpointProducerBuilder lazyStartProducer(
+        default JcloudsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -311,7 +307,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group blobstore
          */
-        public default JcloudsEndpointProducerBuilder blobName(String blobName) {
+        default JcloudsEndpointProducerBuilder blobName(String blobName) {
             setProperty("blobName", blobName);
             return this;
         }
@@ -320,7 +316,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group blobstore
          */
-        public default JcloudsEndpointProducerBuilder container(String container) {
+        default JcloudsEndpointProducerBuilder container(String container) {
             setProperty("container", container);
             return this;
         }
@@ -330,7 +326,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder group(String group) {
+        default JcloudsEndpointProducerBuilder group(String group) {
             setProperty("group", group);
             return this;
         }
@@ -340,8 +336,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder hardwareId(
-                String hardwareId) {
+        default JcloudsEndpointProducerBuilder hardwareId(String hardwareId) {
             setProperty("hardwareId", hardwareId);
             return this;
         }
@@ -351,7 +346,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder imageId(String imageId) {
+        default JcloudsEndpointProducerBuilder imageId(String imageId) {
             setProperty("imageId", imageId);
             return this;
         }
@@ -361,8 +356,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder locationId(
-                String locationId) {
+        default JcloudsEndpointProducerBuilder locationId(String locationId) {
             setProperty("locationId", locationId);
             return this;
         }
@@ -371,7 +365,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
+        default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
             setProperty("nodeId", nodeId);
             return this;
         }
@@ -380,7 +374,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
+        default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
             setProperty("nodeState", nodeState);
             return this;
         }
@@ -390,7 +384,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder operation(String operation) {
+        default JcloudsEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -399,7 +393,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group compute
          */
-        public default JcloudsEndpointProducerBuilder user(String user) {
+        default JcloudsEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -411,7 +405,7 @@ public interface JcloudsEndpointBuilderFactory {
     public interface AdvancedJcloudsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JcloudsEndpointProducerBuilder basic() {
+        default JcloudsEndpointProducerBuilder basic() {
             return (JcloudsEndpointProducerBuilder) this;
         }
         /**
@@ -420,7 +414,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -431,7 +425,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -442,7 +436,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointProducerBuilder synchronous(
+        default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -453,7 +447,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointProducerBuilder synchronous(
+        default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -466,7 +460,7 @@ public interface JcloudsEndpointBuilderFactory {
     public static interface JcloudsEndpointBuilder
             extends
                 JcloudsEndpointConsumerBuilder, JcloudsEndpointProducerBuilder {
-        public default AdvancedJcloudsEndpointBuilder advanced() {
+        default AdvancedJcloudsEndpointBuilder advanced() {
             return (AdvancedJcloudsEndpointBuilder) this;
         }
         /**
@@ -475,7 +469,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointBuilder command(JcloudsCommand command) {
+        default JcloudsEndpointBuilder command(JcloudsCommand command) {
             setProperty("command", command);
             return this;
         }
@@ -485,7 +479,7 @@ public interface JcloudsEndpointBuilderFactory {
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
          * @group common
          */
-        public default JcloudsEndpointBuilder command(String command) {
+        default JcloudsEndpointBuilder command(String command) {
             setProperty("command", command);
             return this;
         }
@@ -495,7 +489,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JcloudsEndpointBuilder providerId(String providerId) {
+        default JcloudsEndpointBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
             return this;
         }
@@ -504,7 +498,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group blobstore
          */
-        public default JcloudsEndpointBuilder container(String container) {
+        default JcloudsEndpointBuilder container(String container) {
             setProperty("container", container);
             return this;
         }
@@ -516,7 +510,7 @@ public interface JcloudsEndpointBuilderFactory {
     public static interface AdvancedJcloudsEndpointBuilder
             extends
                 AdvancedJcloudsEndpointConsumerBuilder, AdvancedJcloudsEndpointProducerBuilder {
-        public default JcloudsEndpointBuilder basic() {
+        default JcloudsEndpointBuilder basic() {
             return (JcloudsEndpointBuilder) this;
         }
         /**
@@ -525,7 +519,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -536,7 +530,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
+        default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -547,8 +541,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJcloudsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -558,8 +551,7 @@ public interface JcloudsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJcloudsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJcloudsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -576,7 +568,7 @@ public interface JcloudsEndpointBuilderFactory {
      * For interacting with cloud compute & blobstore service via jclouds.
      * Creates a builder to build endpoints for the JClouds component.
      */
-    public default JcloudsEndpointBuilder jclouds(String path) {
+    default JcloudsEndpointBuilder jclouds(String path) {
         class JcloudsEndpointBuilderImpl extends AbstractEndpointBuilder implements JcloudsEndpointBuilder, AdvancedJcloudsEndpointBuilder {
             public JcloudsEndpointBuilderImpl(String path) {
                 super("jclouds", path);

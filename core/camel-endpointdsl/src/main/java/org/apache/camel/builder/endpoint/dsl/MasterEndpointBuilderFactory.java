@@ -37,7 +37,7 @@ public interface MasterEndpointBuilderFactory {
     public static interface MasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMasterEndpointBuilder advanced() {
+        default AdvancedMasterEndpointBuilder advanced() {
             return (AdvancedMasterEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface MasterEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default MasterEndpointBuilder namespace(String namespace) {
+        default MasterEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -54,7 +54,7 @@ public interface MasterEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default MasterEndpointBuilder delegateUri(String delegateUri) {
+        default MasterEndpointBuilder delegateUri(String delegateUri) {
             setProperty("delegateUri", delegateUri);
             return this;
         }
@@ -66,7 +66,7 @@ public interface MasterEndpointBuilderFactory {
     public static interface AdvancedMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MasterEndpointBuilder basic() {
+        default MasterEndpointBuilder basic() {
             return (MasterEndpointBuilder) this;
         }
         /**
@@ -75,7 +75,7 @@ public interface MasterEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMasterEndpointBuilder basicPropertyBinding(
+        default AdvancedMasterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -86,7 +86,7 @@ public interface MasterEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMasterEndpointBuilder basicPropertyBinding(
+        default AdvancedMasterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -97,8 +97,7 @@ public interface MasterEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMasterEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMasterEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -108,8 +107,7 @@ public interface MasterEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMasterEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMasterEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -119,7 +117,7 @@ public interface MasterEndpointBuilderFactory {
      * CamelClusterView has the leadership. Creates a builder to build endpoints
      * for the Master component.
      */
-    public default MasterEndpointBuilder master(String path) {
+    default MasterEndpointBuilder master(String path) {
         class MasterEndpointBuilderImpl extends AbstractEndpointBuilder implements MasterEndpointBuilder, AdvancedMasterEndpointBuilder {
             public MasterEndpointBuilderImpl(String path) {
                 super("master", path);

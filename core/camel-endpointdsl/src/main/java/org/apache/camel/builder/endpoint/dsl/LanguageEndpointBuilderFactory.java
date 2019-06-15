@@ -37,7 +37,7 @@ public interface LanguageEndpointBuilderFactory {
     public static interface LanguageEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLanguageEndpointBuilder advanced() {
+        default AdvancedLanguageEndpointBuilder advanced() {
             return (AdvancedLanguageEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder languageName(String languageName) {
+        default LanguageEndpointBuilder languageName(String languageName) {
             setProperty("languageName", languageName);
             return this;
         }
@@ -55,7 +55,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder resourceUri(String resourceUri) {
+        default LanguageEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -65,7 +65,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder binary(boolean binary) {
+        default LanguageEndpointBuilder binary(boolean binary) {
             setProperty("binary", binary);
             return this;
         }
@@ -75,7 +75,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder binary(String binary) {
+        default LanguageEndpointBuilder binary(String binary) {
             setProperty("binary", binary);
             return this;
         }
@@ -86,7 +86,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
+        default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
             setProperty("cacheScript", cacheScript);
             return this;
         }
@@ -97,7 +97,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder cacheScript(String cacheScript) {
+        default LanguageEndpointBuilder cacheScript(String cacheScript) {
             setProperty("cacheScript", cacheScript);
             return this;
         }
@@ -106,7 +106,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder contentCache(boolean contentCache) {
+        default LanguageEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -115,7 +115,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder contentCache(String contentCache) {
+        default LanguageEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -124,7 +124,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder script(String script) {
+        default LanguageEndpointBuilder script(String script) {
             setProperty("script", script);
             return this;
         }
@@ -134,7 +134,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder transform(boolean transform) {
+        default LanguageEndpointBuilder transform(boolean transform) {
             setProperty("transform", transform);
             return this;
         }
@@ -144,7 +144,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default LanguageEndpointBuilder transform(String transform) {
+        default LanguageEndpointBuilder transform(String transform) {
             setProperty("transform", transform);
             return this;
         }
@@ -156,7 +156,7 @@ public interface LanguageEndpointBuilderFactory {
     public static interface AdvancedLanguageEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LanguageEndpointBuilder basic() {
+        default LanguageEndpointBuilder basic() {
             return (LanguageEndpointBuilder) this;
         }
         /**
@@ -165,7 +165,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLanguageEndpointBuilder basicPropertyBinding(
+        default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -176,7 +176,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLanguageEndpointBuilder basicPropertyBinding(
+        default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -187,8 +187,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLanguageEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -198,8 +197,7 @@ public interface LanguageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLanguageEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -209,7 +207,7 @@ public interface LanguageEndpointBuilderFactory {
      * executes a script by any of the supported Languages in Camel. Creates a
      * builder to build endpoints for the Language component.
      */
-    public default LanguageEndpointBuilder language(String path) {
+    default LanguageEndpointBuilder language(String path) {
         class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder, AdvancedLanguageEndpointBuilder {
             public LanguageEndpointBuilderImpl(String path) {
                 super("language", path);

@@ -37,7 +37,7 @@ public interface LambdaEndpointBuilderFactory {
     public static interface LambdaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLambdaEndpointBuilder advanced() {
+        default AdvancedLambdaEndpointBuilder advanced() {
             return (AdvancedLambdaEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LambdaEndpointBuilder function(String function) {
+        default LambdaEndpointBuilder function(String function) {
             setProperty("function", function);
             return this;
         }
@@ -57,8 +57,7 @@ public interface LambdaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LambdaEndpointBuilder operation(
-                LambdaOperations operation) {
+        default LambdaEndpointBuilder operation(LambdaOperations operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -70,7 +69,7 @@ public interface LambdaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LambdaEndpointBuilder operation(String operation) {
+        default LambdaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -79,7 +78,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default LambdaEndpointBuilder proxyHost(String proxyHost) {
+        default LambdaEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -88,7 +87,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
+        default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -98,7 +97,7 @@ public interface LambdaEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default LambdaEndpointBuilder proxyPort(String proxyPort) {
+        default LambdaEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -107,7 +106,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default LambdaEndpointBuilder accessKey(String accessKey) {
+        default LambdaEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -116,7 +115,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default LambdaEndpointBuilder secretKey(String secretKey) {
+        default LambdaEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -128,7 +127,7 @@ public interface LambdaEndpointBuilderFactory {
     public static interface AdvancedLambdaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LambdaEndpointBuilder basic() {
+        default LambdaEndpointBuilder basic() {
             return (LambdaEndpointBuilder) this;
         }
         /**
@@ -137,7 +136,7 @@ public interface LambdaEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder awsLambdaClient(
+        default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 Object awsLambdaClient) {
             setProperty("awsLambdaClient", awsLambdaClient);
             return this;
@@ -148,7 +147,7 @@ public interface LambdaEndpointBuilderFactory {
          * <code>com.amazonaws.services.lambda.AWSLambda</code> type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder awsLambdaClient(
+        default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 String awsLambdaClient) {
             setProperty("awsLambdaClient", awsLambdaClient);
             return this;
@@ -159,7 +158,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder basicPropertyBinding(
+        default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -170,7 +169,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder basicPropertyBinding(
+        default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -181,8 +180,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLambdaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -192,8 +190,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLambdaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -211,7 +208,7 @@ public interface LambdaEndpointBuilderFactory {
      * Lambda. Creates a builder to build endpoints for the AWS Lambda
      * component.
      */
-    public default LambdaEndpointBuilder lambda(String path) {
+    default LambdaEndpointBuilder lambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {
             public LambdaEndpointBuilderImpl(String path) {
                 super("aws-lambda", path);

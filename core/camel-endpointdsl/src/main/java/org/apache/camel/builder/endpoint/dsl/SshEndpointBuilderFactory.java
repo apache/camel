@@ -45,7 +45,7 @@ public interface SshEndpointBuilderFactory {
     public interface SshEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSshEndpointConsumerBuilder advanced() {
+        default AdvancedSshEndpointConsumerBuilder advanced() {
             return (AdvancedSshEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder host(String host) {
+        default SshEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -62,7 +62,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder port(int port) {
+        default SshEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -71,7 +71,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder port(String port) {
+        default SshEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -81,7 +81,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder failOnUnknownHost(
+        default SshEndpointConsumerBuilder failOnUnknownHost(
                 boolean failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
@@ -92,7 +92,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder failOnUnknownHost(
+        default SshEndpointConsumerBuilder failOnUnknownHost(
                 String failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
@@ -102,7 +102,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder knownHostsResource(
+        default SshEndpointConsumerBuilder knownHostsResource(
                 String knownHostsResource) {
             setProperty("knownHostsResource", knownHostsResource);
             return this;
@@ -113,7 +113,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder timeout(long timeout) {
+        default SshEndpointConsumerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -123,7 +123,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointConsumerBuilder timeout(String timeout) {
+        default SshEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -138,7 +138,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SshEndpointConsumerBuilder bridgeErrorHandler(
+        default SshEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -154,7 +154,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SshEndpointConsumerBuilder bridgeErrorHandler(
+        default SshEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,7 +167,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SshEndpointConsumerBuilder pollCommand(String pollCommand) {
+        default SshEndpointConsumerBuilder pollCommand(String pollCommand) {
             setProperty("pollCommand", pollCommand);
             return this;
         }
@@ -177,7 +177,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -188,7 +188,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -199,7 +199,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffErrorThreshold(
+        default SshEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -210,7 +210,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffErrorThreshold(
+        default SshEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -221,7 +221,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffIdleThreshold(
+        default SshEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -232,7 +232,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffIdleThreshold(
+        default SshEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -247,7 +247,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffMultiplier(
+        default SshEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -262,7 +262,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder backoffMultiplier(
+        default SshEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -274,7 +274,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder delay(long delay) {
+        default SshEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -285,7 +285,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder delay(String delay) {
+        default SshEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -295,7 +295,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder greedy(boolean greedy) {
+        default SshEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -305,7 +305,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder greedy(String greedy) {
+        default SshEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -316,7 +316,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder initialDelay(long initialDelay) {
+        default SshEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -327,8 +327,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default SshEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -338,7 +337,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder runLoggingLevel(
+        default SshEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -350,7 +349,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder runLoggingLevel(
+        default SshEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -363,7 +362,7 @@ public interface SshEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder scheduledExecutorService(
+        default SshEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -376,7 +375,7 @@ public interface SshEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder scheduledExecutorService(
+        default SshEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -389,7 +388,7 @@ public interface SshEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder scheduler(
+        default SshEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -402,7 +401,7 @@ public interface SshEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder scheduler(String scheduler) {
+        default SshEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -413,7 +412,7 @@ public interface SshEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder schedulerProperties(
+        default SshEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -426,7 +425,7 @@ public interface SshEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder schedulerProperties(
+        default SshEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -436,8 +435,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder startScheduler(
-                boolean startScheduler) {
+        default SshEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -446,8 +444,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default SshEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -456,7 +453,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default SshEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -466,7 +463,7 @@ public interface SshEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default SshEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -476,8 +473,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default SshEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -487,8 +483,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SshEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default SshEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -499,8 +494,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder certResource(
-                String certResource) {
+        default SshEndpointConsumerBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
             return this;
         }
@@ -511,7 +505,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder keyPairProvider(
+        default SshEndpointConsumerBuilder keyPairProvider(
                 Object keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
@@ -523,7 +517,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder keyPairProvider(
+        default SshEndpointConsumerBuilder keyPairProvider(
                 String keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
@@ -535,7 +529,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder keyType(String keyType) {
+        default SshEndpointConsumerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
             return this;
         }
@@ -545,7 +539,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder password(String password) {
+        default SshEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -554,7 +548,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointConsumerBuilder username(String username) {
+        default SshEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -566,7 +560,7 @@ public interface SshEndpointBuilderFactory {
     public interface AdvancedSshEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SshEndpointConsumerBuilder basic() {
+        default SshEndpointConsumerBuilder basic() {
             return (SshEndpointConsumerBuilder) this;
         }
         /**
@@ -578,7 +572,7 @@ public interface SshEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSshEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -592,7 +586,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSshEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -602,7 +596,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder exchangePattern(
+        default AdvancedSshEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -613,7 +607,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder exchangePattern(
+        default AdvancedSshEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -627,7 +621,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder pollStrategy(
+        default AdvancedSshEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -641,7 +635,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSshEndpointConsumerBuilder pollStrategy(
+        default AdvancedSshEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -652,7 +646,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -663,7 +657,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -674,7 +668,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder channelType(
+        default AdvancedSshEndpointConsumerBuilder channelType(
                 String channelType) {
             setProperty("channelType", channelType);
             return this;
@@ -685,7 +679,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder shellPrompt(
+        default AdvancedSshEndpointConsumerBuilder shellPrompt(
                 String shellPrompt) {
             setProperty("shellPrompt", shellPrompt);
             return this;
@@ -696,7 +690,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -707,7 +701,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -718,7 +712,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder synchronous(
+        default AdvancedSshEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -729,7 +723,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointConsumerBuilder synchronous(
+        default AdvancedSshEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -742,7 +736,7 @@ public interface SshEndpointBuilderFactory {
     public static interface SshEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSshEndpointProducerBuilder advanced() {
+        default AdvancedSshEndpointProducerBuilder advanced() {
             return (AdvancedSshEndpointProducerBuilder) this;
         }
         /**
@@ -750,7 +744,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder host(String host) {
+        default SshEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -759,7 +753,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder port(int port) {
+        default SshEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -768,7 +762,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder port(String port) {
+        default SshEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -778,7 +772,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder failOnUnknownHost(
+        default SshEndpointProducerBuilder failOnUnknownHost(
                 boolean failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
@@ -789,7 +783,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder failOnUnknownHost(
+        default SshEndpointProducerBuilder failOnUnknownHost(
                 String failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
@@ -799,7 +793,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder knownHostsResource(
+        default SshEndpointProducerBuilder knownHostsResource(
                 String knownHostsResource) {
             setProperty("knownHostsResource", knownHostsResource);
             return this;
@@ -810,7 +804,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder timeout(long timeout) {
+        default SshEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -820,7 +814,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointProducerBuilder timeout(String timeout) {
+        default SshEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -837,7 +831,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SshEndpointProducerBuilder lazyStartProducer(
+        default SshEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -855,7 +849,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SshEndpointProducerBuilder lazyStartProducer(
+        default SshEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -867,8 +861,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder certResource(
-                String certResource) {
+        default SshEndpointProducerBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
             return this;
         }
@@ -879,7 +872,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder keyPairProvider(
+        default SshEndpointProducerBuilder keyPairProvider(
                 Object keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
@@ -891,7 +884,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder keyPairProvider(
+        default SshEndpointProducerBuilder keyPairProvider(
                 String keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
@@ -903,7 +896,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder keyType(String keyType) {
+        default SshEndpointProducerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
             return this;
         }
@@ -913,7 +906,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder password(String password) {
+        default SshEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -922,7 +915,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointProducerBuilder username(String username) {
+        default SshEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -934,7 +927,7 @@ public interface SshEndpointBuilderFactory {
     public interface AdvancedSshEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SshEndpointProducerBuilder basic() {
+        default SshEndpointProducerBuilder basic() {
             return (SshEndpointProducerBuilder) this;
         }
         /**
@@ -943,7 +936,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -954,7 +947,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -965,7 +958,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder channelType(
+        default AdvancedSshEndpointProducerBuilder channelType(
                 String channelType) {
             setProperty("channelType", channelType);
             return this;
@@ -976,7 +969,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder shellPrompt(
+        default AdvancedSshEndpointProducerBuilder shellPrompt(
                 String shellPrompt) {
             setProperty("shellPrompt", shellPrompt);
             return this;
@@ -987,7 +980,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -998,7 +991,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -1009,7 +1002,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder synchronous(
+        default AdvancedSshEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1020,7 +1013,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointProducerBuilder synchronous(
+        default AdvancedSshEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1033,7 +1026,7 @@ public interface SshEndpointBuilderFactory {
     public static interface SshEndpointBuilder
             extends
                 SshEndpointConsumerBuilder, SshEndpointProducerBuilder {
-        public default AdvancedSshEndpointBuilder advanced() {
+        default AdvancedSshEndpointBuilder advanced() {
             return (AdvancedSshEndpointBuilder) this;
         }
         /**
@@ -1041,7 +1034,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointBuilder host(String host) {
+        default SshEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1050,7 +1043,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointBuilder port(int port) {
+        default SshEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1059,7 +1052,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SshEndpointBuilder port(String port) {
+        default SshEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1069,8 +1062,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointBuilder failOnUnknownHost(
-                boolean failOnUnknownHost) {
+        default SshEndpointBuilder failOnUnknownHost(boolean failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
         }
@@ -1080,8 +1072,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SshEndpointBuilder failOnUnknownHost(
-                String failOnUnknownHost) {
+        default SshEndpointBuilder failOnUnknownHost(String failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
             return this;
         }
@@ -1090,8 +1081,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SshEndpointBuilder knownHostsResource(
-                String knownHostsResource) {
+        default SshEndpointBuilder knownHostsResource(String knownHostsResource) {
             setProperty("knownHostsResource", knownHostsResource);
             return this;
         }
@@ -1101,7 +1091,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointBuilder timeout(long timeout) {
+        default SshEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1111,7 +1101,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SshEndpointBuilder timeout(String timeout) {
+        default SshEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1122,7 +1112,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointBuilder certResource(String certResource) {
+        default SshEndpointBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
             return this;
         }
@@ -1133,7 +1123,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointBuilder keyPairProvider(Object keyPairProvider) {
+        default SshEndpointBuilder keyPairProvider(Object keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
         }
@@ -1144,7 +1134,7 @@ public interface SshEndpointBuilderFactory {
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
          * @group security
          */
-        public default SshEndpointBuilder keyPairProvider(String keyPairProvider) {
+        default SshEndpointBuilder keyPairProvider(String keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
             return this;
         }
@@ -1155,7 +1145,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointBuilder keyType(String keyType) {
+        default SshEndpointBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
             return this;
         }
@@ -1165,7 +1155,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointBuilder password(String password) {
+        default SshEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1174,7 +1164,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SshEndpointBuilder username(String username) {
+        default SshEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1186,7 +1176,7 @@ public interface SshEndpointBuilderFactory {
     public static interface AdvancedSshEndpointBuilder
             extends
                 AdvancedSshEndpointConsumerBuilder, AdvancedSshEndpointProducerBuilder {
-        public default SshEndpointBuilder basic() {
+        default SshEndpointBuilder basic() {
             return (SshEndpointBuilder) this;
         }
         /**
@@ -1195,7 +1185,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder basicPropertyBinding(
+        default AdvancedSshEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1206,7 +1196,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder basicPropertyBinding(
+        default AdvancedSshEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1217,7 +1207,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder channelType(String channelType) {
+        default AdvancedSshEndpointBuilder channelType(String channelType) {
             setProperty("channelType", channelType);
             return this;
         }
@@ -1227,7 +1217,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder shellPrompt(String shellPrompt) {
+        default AdvancedSshEndpointBuilder shellPrompt(String shellPrompt) {
             setProperty("shellPrompt", shellPrompt);
             return this;
         }
@@ -1237,7 +1227,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -1248,7 +1238,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder sleepForShellPrompt(
+        default AdvancedSshEndpointBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
             setProperty("sleepForShellPrompt", sleepForShellPrompt);
             return this;
@@ -1259,8 +1249,7 @@ public interface SshEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSshEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1270,7 +1259,7 @@ public interface SshEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSshEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSshEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1280,7 +1269,7 @@ public interface SshEndpointBuilderFactory {
      * SSH command, and process the response. Creates a builder to build
      * endpoints for the SSH component.
      */
-    public default SshEndpointBuilder ssh(String path) {
+    default SshEndpointBuilder ssh(String path) {
         class SshEndpointBuilderImpl extends AbstractEndpointBuilder implements SshEndpointBuilder, AdvancedSshEndpointBuilder {
             public SshEndpointBuilderImpl(String path) {
                 super("ssh", path);

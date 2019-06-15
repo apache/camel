@@ -45,7 +45,7 @@ public interface EtcdEndpointBuilderFactory {
     public interface EtcdEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedEtcdEndpointConsumerBuilder advanced() {
+        default AdvancedEtcdEndpointConsumerBuilder advanced() {
             return (AdvancedEtcdEndpointConsumerBuilder) this;
         }
         /**
@@ -54,8 +54,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder namespace(
-                EtcdNamespace namespace) {
+        default EtcdEndpointConsumerBuilder namespace(EtcdNamespace namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -65,7 +64,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder namespace(String namespace) {
+        default EtcdEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -74,7 +73,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder path(String path) {
+        default EtcdEndpointConsumerBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -83,7 +82,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder recursive(boolean recursive) {
+        default EtcdEndpointConsumerBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -92,7 +91,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder recursive(String recursive) {
+        default EtcdEndpointConsumerBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -101,8 +100,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder servicePath(
-                String servicePath) {
+        default EtcdEndpointConsumerBuilder servicePath(String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
         }
@@ -111,7 +109,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder timeout(Long timeout) {
+        default EtcdEndpointConsumerBuilder timeout(Long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -120,7 +118,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder timeout(String timeout) {
+        default EtcdEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -129,7 +127,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointConsumerBuilder uris(String uris) {
+        default EtcdEndpointConsumerBuilder uris(String uris) {
             setProperty("uris", uris);
             return this;
         }
@@ -144,7 +142,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder bridgeErrorHandler(
+        default EtcdEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -160,7 +158,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder bridgeErrorHandler(
+        default EtcdEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -170,7 +168,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
+        default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
             setProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
             return this;
@@ -180,7 +178,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
+        default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 String sendEmptyExchangeOnTimeout) {
             setProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
             return this;
@@ -191,7 +189,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -202,7 +200,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -213,7 +211,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffErrorThreshold(
+        default EtcdEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -224,7 +222,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffErrorThreshold(
+        default EtcdEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -235,7 +233,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffIdleThreshold(
+        default EtcdEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -246,7 +244,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffIdleThreshold(
+        default EtcdEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -261,7 +259,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffMultiplier(
+        default EtcdEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -276,7 +274,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder backoffMultiplier(
+        default EtcdEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -288,7 +286,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder delay(long delay) {
+        default EtcdEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -299,7 +297,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder delay(String delay) {
+        default EtcdEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -309,7 +307,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder greedy(boolean greedy) {
+        default EtcdEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -319,7 +317,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder greedy(String greedy) {
+        default EtcdEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -330,8 +328,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default EtcdEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -342,8 +339,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default EtcdEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -353,7 +349,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder runLoggingLevel(
+        default EtcdEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -365,7 +361,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder runLoggingLevel(
+        default EtcdEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -378,7 +374,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder scheduledExecutorService(
+        default EtcdEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -391,7 +387,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder scheduledExecutorService(
+        default EtcdEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -404,7 +400,7 @@ public interface EtcdEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder scheduler(
+        default EtcdEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -417,7 +413,7 @@ public interface EtcdEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder scheduler(String scheduler) {
+        default EtcdEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -428,7 +424,7 @@ public interface EtcdEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder schedulerProperties(
+        default EtcdEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -441,7 +437,7 @@ public interface EtcdEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder schedulerProperties(
+        default EtcdEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -451,7 +447,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder startScheduler(
+        default EtcdEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -461,8 +457,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default EtcdEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -471,7 +466,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default EtcdEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -481,7 +476,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default EtcdEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -491,8 +486,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default EtcdEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -502,8 +496,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default EtcdEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default EtcdEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -512,7 +505,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointConsumerBuilder password(String password) {
+        default EtcdEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -522,7 +515,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointConsumerBuilder sslContextParameters(
+        default EtcdEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -533,7 +526,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointConsumerBuilder sslContextParameters(
+        default EtcdEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -543,7 +536,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointConsumerBuilder userName(String userName) {
+        default EtcdEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -555,7 +548,7 @@ public interface EtcdEndpointBuilderFactory {
     public interface AdvancedEtcdEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default EtcdEndpointConsumerBuilder basic() {
+        default EtcdEndpointConsumerBuilder basic() {
             return (EtcdEndpointConsumerBuilder) this;
         }
         /**
@@ -567,7 +560,7 @@ public interface EtcdEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
+        default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -581,7 +574,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
+        default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -591,7 +584,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
+        default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -602,7 +595,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
+        default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -612,8 +605,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder fromIndex(
-                Long fromIndex) {
+        default AdvancedEtcdEndpointConsumerBuilder fromIndex(Long fromIndex) {
             setProperty("fromIndex", fromIndex);
             return this;
         }
@@ -622,8 +614,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder fromIndex(
-                String fromIndex) {
+        default AdvancedEtcdEndpointConsumerBuilder fromIndex(String fromIndex) {
             setProperty("fromIndex", fromIndex);
             return this;
         }
@@ -636,7 +627,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
+        default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -650,7 +641,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
+        default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -661,7 +652,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -672,7 +663,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -683,7 +674,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointConsumerBuilder synchronous(
+        default AdvancedEtcdEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -694,7 +685,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointConsumerBuilder synchronous(
+        default AdvancedEtcdEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -707,7 +698,7 @@ public interface EtcdEndpointBuilderFactory {
     public static interface EtcdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedEtcdEndpointProducerBuilder advanced() {
+        default AdvancedEtcdEndpointProducerBuilder advanced() {
             return (AdvancedEtcdEndpointProducerBuilder) this;
         }
         /**
@@ -716,8 +707,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder namespace(
-                EtcdNamespace namespace) {
+        default EtcdEndpointProducerBuilder namespace(EtcdNamespace namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -727,7 +717,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder namespace(String namespace) {
+        default EtcdEndpointProducerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -736,7 +726,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder path(String path) {
+        default EtcdEndpointProducerBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -745,7 +735,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder recursive(boolean recursive) {
+        default EtcdEndpointProducerBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -754,7 +744,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder recursive(String recursive) {
+        default EtcdEndpointProducerBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -763,8 +753,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder servicePath(
-                String servicePath) {
+        default EtcdEndpointProducerBuilder servicePath(String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
         }
@@ -773,7 +762,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder timeout(Long timeout) {
+        default EtcdEndpointProducerBuilder timeout(Long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -782,7 +771,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder timeout(String timeout) {
+        default EtcdEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -791,7 +780,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointProducerBuilder uris(String uris) {
+        default EtcdEndpointProducerBuilder uris(String uris) {
             setProperty("uris", uris);
             return this;
         }
@@ -808,7 +797,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default EtcdEndpointProducerBuilder lazyStartProducer(
+        default EtcdEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -826,7 +815,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default EtcdEndpointProducerBuilder lazyStartProducer(
+        default EtcdEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -836,7 +825,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default EtcdEndpointProducerBuilder timeToLive(Integer timeToLive) {
+        default EtcdEndpointProducerBuilder timeToLive(Integer timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -846,7 +835,7 @@ public interface EtcdEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default EtcdEndpointProducerBuilder timeToLive(String timeToLive) {
+        default EtcdEndpointProducerBuilder timeToLive(String timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -855,7 +844,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointProducerBuilder password(String password) {
+        default EtcdEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -865,7 +854,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointProducerBuilder sslContextParameters(
+        default EtcdEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -876,7 +865,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointProducerBuilder sslContextParameters(
+        default EtcdEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -886,7 +875,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointProducerBuilder userName(String userName) {
+        default EtcdEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -898,7 +887,7 @@ public interface EtcdEndpointBuilderFactory {
     public interface AdvancedEtcdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default EtcdEndpointProducerBuilder basic() {
+        default EtcdEndpointProducerBuilder basic() {
             return (EtcdEndpointProducerBuilder) this;
         }
         /**
@@ -907,7 +896,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -918,7 +907,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -929,7 +918,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointProducerBuilder synchronous(
+        default AdvancedEtcdEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -940,7 +929,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointProducerBuilder synchronous(
+        default AdvancedEtcdEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -953,7 +942,7 @@ public interface EtcdEndpointBuilderFactory {
     public static interface EtcdEndpointBuilder
             extends
                 EtcdEndpointConsumerBuilder, EtcdEndpointProducerBuilder {
-        public default AdvancedEtcdEndpointBuilder advanced() {
+        default AdvancedEtcdEndpointBuilder advanced() {
             return (AdvancedEtcdEndpointBuilder) this;
         }
         /**
@@ -962,7 +951,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder namespace(EtcdNamespace namespace) {
+        default EtcdEndpointBuilder namespace(EtcdNamespace namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -972,7 +961,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder namespace(String namespace) {
+        default EtcdEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -981,7 +970,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder path(String path) {
+        default EtcdEndpointBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -990,7 +979,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder recursive(boolean recursive) {
+        default EtcdEndpointBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -999,7 +988,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder recursive(String recursive) {
+        default EtcdEndpointBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -1008,7 +997,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder servicePath(String servicePath) {
+        default EtcdEndpointBuilder servicePath(String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
         }
@@ -1017,7 +1006,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder timeout(Long timeout) {
+        default EtcdEndpointBuilder timeout(Long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1026,7 +1015,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder timeout(String timeout) {
+        default EtcdEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1035,7 +1024,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EtcdEndpointBuilder uris(String uris) {
+        default EtcdEndpointBuilder uris(String uris) {
             setProperty("uris", uris);
             return this;
         }
@@ -1044,7 +1033,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointBuilder password(String password) {
+        default EtcdEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1054,7 +1043,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointBuilder sslContextParameters(
+        default EtcdEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1065,7 +1054,7 @@ public interface EtcdEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default EtcdEndpointBuilder sslContextParameters(
+        default EtcdEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1075,7 +1064,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default EtcdEndpointBuilder userName(String userName) {
+        default EtcdEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -1087,7 +1076,7 @@ public interface EtcdEndpointBuilderFactory {
     public static interface AdvancedEtcdEndpointBuilder
             extends
                 AdvancedEtcdEndpointConsumerBuilder, AdvancedEtcdEndpointProducerBuilder {
-        public default EtcdEndpointBuilder basic() {
+        default EtcdEndpointBuilder basic() {
             return (EtcdEndpointBuilder) this;
         }
         /**
@@ -1096,7 +1085,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1107,7 +1096,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointBuilder basicPropertyBinding(
+        default AdvancedEtcdEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1118,8 +1107,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedEtcdEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1129,8 +1117,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEtcdEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedEtcdEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1148,7 +1135,7 @@ public interface EtcdEndpointBuilderFactory {
      * reliable key-value store. Creates a builder to build endpoints for the
      * etcd component.
      */
-    public default EtcdEndpointBuilder etcd(String path) {
+    default EtcdEndpointBuilder etcd(String path) {
         class EtcdEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdEndpointBuilder, AdvancedEtcdEndpointBuilder {
             public EtcdEndpointBuilderImpl(String path) {
                 super("etcd", path);

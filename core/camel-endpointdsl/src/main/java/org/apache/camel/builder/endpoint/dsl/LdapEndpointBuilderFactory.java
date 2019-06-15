@@ -37,7 +37,7 @@ public interface LdapEndpointBuilderFactory {
     public static interface LdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLdapEndpointBuilder advanced() {
+        default AdvancedLdapEndpointBuilder advanced() {
             return (AdvancedLdapEndpointBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LdapEndpointBuilder dirContextName(String dirContextName) {
+        default LdapEndpointBuilder dirContextName(String dirContextName) {
             setProperty("dirContextName", dirContextName);
             return this;
         }
@@ -62,7 +62,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LdapEndpointBuilder base(String base) {
+        default LdapEndpointBuilder base(String base) {
             setProperty("base", base);
             return this;
         }
@@ -75,7 +75,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default LdapEndpointBuilder pageSize(Integer pageSize) {
+        default LdapEndpointBuilder pageSize(Integer pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -89,7 +89,7 @@ public interface LdapEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LdapEndpointBuilder pageSize(String pageSize) {
+        default LdapEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -99,8 +99,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LdapEndpointBuilder returnedAttributes(
-                String returnedAttributes) {
+        default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {
             setProperty("returnedAttributes", returnedAttributes);
             return this;
         }
@@ -110,7 +109,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LdapEndpointBuilder scope(String scope) {
+        default LdapEndpointBuilder scope(String scope) {
             setProperty("scope", scope);
             return this;
         }
@@ -122,7 +121,7 @@ public interface LdapEndpointBuilderFactory {
     public static interface AdvancedLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LdapEndpointBuilder basic() {
+        default LdapEndpointBuilder basic() {
             return (LdapEndpointBuilder) this;
         }
         /**
@@ -131,7 +130,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdapEndpointBuilder basicPropertyBinding(
+        default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,7 +141,7 @@ public interface LdapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdapEndpointBuilder basicPropertyBinding(
+        default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,8 +152,7 @@ public interface LdapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdapEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -164,8 +162,7 @@ public interface LdapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdapEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -175,7 +172,7 @@ public interface LdapEndpointBuilderFactory {
      * filters as the message payload. Creates a builder to build endpoints for
      * the LDAP component.
      */
-    public default LdapEndpointBuilder ldap(String path) {
+    default LdapEndpointBuilder ldap(String path) {
         class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder, AdvancedLdapEndpointBuilder {
             public LdapEndpointBuilderImpl(String path) {
                 super("ldap", path);

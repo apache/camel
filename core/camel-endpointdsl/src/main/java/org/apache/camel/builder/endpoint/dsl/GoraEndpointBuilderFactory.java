@@ -39,7 +39,7 @@ public interface GoraEndpointBuilderFactory {
     public interface GoraEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoraEndpointConsumerBuilder advanced() {
+        default AdvancedGoraEndpointConsumerBuilder advanced() {
             return (AdvancedGoraEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointConsumerBuilder name(String name) {
+        default GoraEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -56,8 +56,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointConsumerBuilder dataStoreClass(
-                String dataStoreClass) {
+        default GoraEndpointConsumerBuilder dataStoreClass(String dataStoreClass) {
             setProperty("dataStoreClass", dataStoreClass);
             return this;
         }
@@ -66,7 +65,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointConsumerBuilder keyClass(String keyClass) {
+        default GoraEndpointConsumerBuilder keyClass(String keyClass) {
             setProperty("keyClass", keyClass);
             return this;
         }
@@ -75,7 +74,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointConsumerBuilder valueClass(String valueClass) {
+        default GoraEndpointConsumerBuilder valueClass(String valueClass) {
             setProperty("valueClass", valueClass);
             return this;
         }
@@ -90,7 +89,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder bridgeErrorHandler(
+        default GoraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -106,7 +105,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder bridgeErrorHandler(
+        default GoraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -116,7 +115,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder concurrentConsumers(
+        default GoraEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -126,7 +125,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder concurrentConsumers(
+        default GoraEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -136,7 +135,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder endKey(Object endKey) {
+        default GoraEndpointConsumerBuilder endKey(Object endKey) {
             setProperty("endKey", endKey);
             return this;
         }
@@ -145,7 +144,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder endKey(String endKey) {
+        default GoraEndpointConsumerBuilder endKey(String endKey) {
             setProperty("endKey", endKey);
             return this;
         }
@@ -154,7 +153,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder endTime(long endTime) {
+        default GoraEndpointConsumerBuilder endTime(long endTime) {
             setProperty("endTime", endTime);
             return this;
         }
@@ -163,7 +162,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder endTime(String endTime) {
+        default GoraEndpointConsumerBuilder endTime(String endTime) {
             setProperty("endTime", endTime);
             return this;
         }
@@ -172,7 +171,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>com.google.common.base.Strings</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder fields(Object fields) {
+        default GoraEndpointConsumerBuilder fields(Object fields) {
             setProperty("fields", fields);
             return this;
         }
@@ -182,7 +181,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>com.google.common.base.Strings</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder fields(String fields) {
+        default GoraEndpointConsumerBuilder fields(String fields) {
             setProperty("fields", fields);
             return this;
         }
@@ -191,8 +190,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder keyRangeFrom(
-                Object keyRangeFrom) {
+        default GoraEndpointConsumerBuilder keyRangeFrom(Object keyRangeFrom) {
             setProperty("keyRangeFrom", keyRangeFrom);
             return this;
         }
@@ -201,8 +199,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder keyRangeFrom(
-                String keyRangeFrom) {
+        default GoraEndpointConsumerBuilder keyRangeFrom(String keyRangeFrom) {
             setProperty("keyRangeFrom", keyRangeFrom);
             return this;
         }
@@ -211,7 +208,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder keyRangeTo(Object keyRangeTo) {
+        default GoraEndpointConsumerBuilder keyRangeTo(Object keyRangeTo) {
             setProperty("keyRangeTo", keyRangeTo);
             return this;
         }
@@ -220,7 +217,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder keyRangeTo(String keyRangeTo) {
+        default GoraEndpointConsumerBuilder keyRangeTo(String keyRangeTo) {
             setProperty("keyRangeTo", keyRangeTo);
             return this;
         }
@@ -229,7 +226,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder limit(long limit) {
+        default GoraEndpointConsumerBuilder limit(long limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -238,7 +235,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder limit(String limit) {
+        default GoraEndpointConsumerBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -247,7 +244,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder startKey(Object startKey) {
+        default GoraEndpointConsumerBuilder startKey(Object startKey) {
             setProperty("startKey", startKey);
             return this;
         }
@@ -256,7 +253,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder startKey(String startKey) {
+        default GoraEndpointConsumerBuilder startKey(String startKey) {
             setProperty("startKey", startKey);
             return this;
         }
@@ -265,7 +262,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder startTime(long startTime) {
+        default GoraEndpointConsumerBuilder startTime(long startTime) {
             setProperty("startTime", startTime);
             return this;
         }
@@ -274,7 +271,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder startTime(String startTime) {
+        default GoraEndpointConsumerBuilder startTime(String startTime) {
             setProperty("startTime", startTime);
             return this;
         }
@@ -283,8 +280,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timeRangeFrom(
-                long timeRangeFrom) {
+        default GoraEndpointConsumerBuilder timeRangeFrom(long timeRangeFrom) {
             setProperty("timeRangeFrom", timeRangeFrom);
             return this;
         }
@@ -293,8 +289,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timeRangeFrom(
-                String timeRangeFrom) {
+        default GoraEndpointConsumerBuilder timeRangeFrom(String timeRangeFrom) {
             setProperty("timeRangeFrom", timeRangeFrom);
             return this;
         }
@@ -303,7 +298,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timeRangeTo(long timeRangeTo) {
+        default GoraEndpointConsumerBuilder timeRangeTo(long timeRangeTo) {
             setProperty("timeRangeTo", timeRangeTo);
             return this;
         }
@@ -312,8 +307,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timeRangeTo(
-                String timeRangeTo) {
+        default GoraEndpointConsumerBuilder timeRangeTo(String timeRangeTo) {
             setProperty("timeRangeTo", timeRangeTo);
             return this;
         }
@@ -322,7 +316,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timestamp(long timestamp) {
+        default GoraEndpointConsumerBuilder timestamp(long timestamp) {
             setProperty("timestamp", timestamp);
             return this;
         }
@@ -331,7 +325,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoraEndpointConsumerBuilder timestamp(String timestamp) {
+        default GoraEndpointConsumerBuilder timestamp(String timestamp) {
             setProperty("timestamp", timestamp);
             return this;
         }
@@ -343,7 +337,7 @@ public interface GoraEndpointBuilderFactory {
     public interface AdvancedGoraEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoraEndpointConsumerBuilder basic() {
+        default GoraEndpointConsumerBuilder basic() {
             return (GoraEndpointConsumerBuilder) this;
         }
         /**
@@ -355,7 +349,7 @@ public interface GoraEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -369,7 +363,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -379,7 +373,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoraEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -390,7 +384,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoraEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -401,7 +395,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -412,7 +406,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -423,7 +417,7 @@ public interface GoraEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -434,7 +428,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointConsumerBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -445,7 +439,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder synchronous(
+        default AdvancedGoraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -456,7 +450,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointConsumerBuilder synchronous(
+        default AdvancedGoraEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -469,7 +463,7 @@ public interface GoraEndpointBuilderFactory {
     public static interface GoraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoraEndpointProducerBuilder advanced() {
+        default AdvancedGoraEndpointProducerBuilder advanced() {
             return (AdvancedGoraEndpointProducerBuilder) this;
         }
         /**
@@ -477,7 +471,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointProducerBuilder name(String name) {
+        default GoraEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -486,8 +480,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointProducerBuilder dataStoreClass(
-                String dataStoreClass) {
+        default GoraEndpointProducerBuilder dataStoreClass(String dataStoreClass) {
             setProperty("dataStoreClass", dataStoreClass);
             return this;
         }
@@ -496,7 +489,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointProducerBuilder keyClass(String keyClass) {
+        default GoraEndpointProducerBuilder keyClass(String keyClass) {
             setProperty("keyClass", keyClass);
             return this;
         }
@@ -505,7 +498,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointProducerBuilder valueClass(String valueClass) {
+        default GoraEndpointProducerBuilder valueClass(String valueClass) {
             setProperty("valueClass", valueClass);
             return this;
         }
@@ -514,7 +507,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoraEndpointProducerBuilder flushOnEveryOperation(
+        default GoraEndpointProducerBuilder flushOnEveryOperation(
                 boolean flushOnEveryOperation) {
             setProperty("flushOnEveryOperation", flushOnEveryOperation);
             return this;
@@ -524,7 +517,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoraEndpointProducerBuilder flushOnEveryOperation(
+        default GoraEndpointProducerBuilder flushOnEveryOperation(
                 String flushOnEveryOperation) {
             setProperty("flushOnEveryOperation", flushOnEveryOperation);
             return this;
@@ -542,7 +535,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoraEndpointProducerBuilder lazyStartProducer(
+        default GoraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -560,7 +553,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoraEndpointProducerBuilder lazyStartProducer(
+        default GoraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -573,7 +566,7 @@ public interface GoraEndpointBuilderFactory {
     public interface AdvancedGoraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoraEndpointProducerBuilder basic() {
+        default GoraEndpointProducerBuilder basic() {
             return (GoraEndpointProducerBuilder) this;
         }
         /**
@@ -582,7 +575,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -593,7 +586,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -604,7 +597,7 @@ public interface GoraEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -615,7 +608,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointProducerBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -626,7 +619,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder synchronous(
+        default AdvancedGoraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -637,7 +630,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointProducerBuilder synchronous(
+        default AdvancedGoraEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -650,7 +643,7 @@ public interface GoraEndpointBuilderFactory {
     public static interface GoraEndpointBuilder
             extends
                 GoraEndpointConsumerBuilder, GoraEndpointProducerBuilder {
-        public default AdvancedGoraEndpointBuilder advanced() {
+        default AdvancedGoraEndpointBuilder advanced() {
             return (AdvancedGoraEndpointBuilder) this;
         }
         /**
@@ -658,7 +651,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointBuilder name(String name) {
+        default GoraEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -667,7 +660,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointBuilder dataStoreClass(String dataStoreClass) {
+        default GoraEndpointBuilder dataStoreClass(String dataStoreClass) {
             setProperty("dataStoreClass", dataStoreClass);
             return this;
         }
@@ -676,7 +669,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointBuilder keyClass(String keyClass) {
+        default GoraEndpointBuilder keyClass(String keyClass) {
             setProperty("keyClass", keyClass);
             return this;
         }
@@ -685,7 +678,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoraEndpointBuilder valueClass(String valueClass) {
+        default GoraEndpointBuilder valueClass(String valueClass) {
             setProperty("valueClass", valueClass);
             return this;
         }
@@ -697,7 +690,7 @@ public interface GoraEndpointBuilderFactory {
     public static interface AdvancedGoraEndpointBuilder
             extends
                 AdvancedGoraEndpointConsumerBuilder, AdvancedGoraEndpointProducerBuilder {
-        public default GoraEndpointBuilder basic() {
+        default GoraEndpointBuilder basic() {
             return (GoraEndpointBuilder) this;
         }
         /**
@@ -706,7 +699,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -717,7 +710,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder basicPropertyBinding(
+        default AdvancedGoraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -728,7 +721,7 @@ public interface GoraEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointBuilder hadoopConfiguration(
                 Object hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -739,7 +732,7 @@ public interface GoraEndpointBuilderFactory {
          * <code>org.apache.hadoop.conf.Configuration</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder hadoopConfiguration(
+        default AdvancedGoraEndpointBuilder hadoopConfiguration(
                 String hadoopConfiguration) {
             setProperty("hadoopConfiguration", hadoopConfiguration);
             return this;
@@ -750,8 +743,7 @@ public interface GoraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGoraEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -761,8 +753,7 @@ public interface GoraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoraEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGoraEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -772,7 +763,7 @@ public interface GoraEndpointBuilderFactory {
      * Apache Gora framework. Creates a builder to build endpoints for the Gora
      * component.
      */
-    public default GoraEndpointBuilder gora(String path) {
+    default GoraEndpointBuilder gora(String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {
             public GoraEndpointBuilderImpl(String path) {
                 super("gora", path);

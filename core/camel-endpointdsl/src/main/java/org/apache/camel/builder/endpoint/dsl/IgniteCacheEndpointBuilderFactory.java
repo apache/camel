@@ -39,7 +39,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public interface IgniteCacheEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedIgniteCacheEndpointConsumerBuilder advanced() {
+        default AdvancedIgniteCacheEndpointConsumerBuilder advanced() {
             return (AdvancedIgniteCacheEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointConsumerBuilder cacheName(
-                String cacheName) {
+        default IgniteCacheEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -58,7 +57,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -69,7 +68,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -80,7 +79,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -91,7 +90,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -101,7 +100,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
+        default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 boolean autoUnsubscribe) {
             setProperty("autoUnsubscribe", autoUnsubscribe);
             return this;
@@ -111,7 +110,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
+        default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 String autoUnsubscribe) {
             setProperty("autoUnsubscribe", autoUnsubscribe);
             return this;
@@ -127,7 +126,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
+        default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -143,7 +142,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
+        default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -154,7 +153,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
+        default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 boolean fireExistingQueryResults) {
             setProperty("fireExistingQueryResults", fireExistingQueryResults);
             return this;
@@ -165,7 +164,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
+        default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 String fireExistingQueryResults) {
             setProperty("fireExistingQueryResults", fireExistingQueryResults);
             return this;
@@ -177,7 +176,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
+        default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 boolean oneExchangePerUpdate) {
             setProperty("oneExchangePerUpdate", oneExchangePerUpdate);
             return this;
@@ -189,7 +188,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
+        default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 String oneExchangePerUpdate) {
             setProperty("oneExchangePerUpdate", oneExchangePerUpdate);
             return this;
@@ -199,7 +198,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder pageSize(int pageSize) {
+        default IgniteCacheEndpointConsumerBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -208,8 +207,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder pageSize(
-                String pageSize) {
+        default IgniteCacheEndpointConsumerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -219,7 +217,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder remoteFilter(
+        default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 Object remoteFilter) {
             setProperty("remoteFilter", remoteFilter);
             return this;
@@ -230,7 +228,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder remoteFilter(
+        default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 String remoteFilter) {
             setProperty("remoteFilter", remoteFilter);
             return this;
@@ -240,7 +238,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder timeInterval(
+        default IgniteCacheEndpointConsumerBuilder timeInterval(
                 long timeInterval) {
             setProperty("timeInterval", timeInterval);
             return this;
@@ -250,7 +248,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointConsumerBuilder timeInterval(
+        default IgniteCacheEndpointConsumerBuilder timeInterval(
                 String timeInterval) {
             setProperty("timeInterval", timeInterval);
             return this;
@@ -263,7 +261,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public interface AdvancedIgniteCacheEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default IgniteCacheEndpointConsumerBuilder basic() {
+        default IgniteCacheEndpointConsumerBuilder basic() {
             return (IgniteCacheEndpointConsumerBuilder) this;
         }
         /**
@@ -275,7 +273,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -289,7 +287,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -299,7 +297,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
+        default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -310,7 +308,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
+        default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -321,7 +319,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -332,7 +330,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -343,7 +341,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
+        default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -354,7 +352,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
+        default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -367,7 +365,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public static interface IgniteCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIgniteCacheEndpointProducerBuilder advanced() {
+        default AdvancedIgniteCacheEndpointProducerBuilder advanced() {
             return (AdvancedIgniteCacheEndpointProducerBuilder) this;
         }
         /**
@@ -375,8 +373,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointProducerBuilder cacheName(
-                String cacheName) {
+        default IgniteCacheEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -386,7 +383,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -397,7 +394,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -408,7 +405,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -419,7 +416,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -431,7 +428,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointProducerBuilder query(Object query) {
+        default IgniteCacheEndpointProducerBuilder query(Object query) {
             setProperty("query", query);
             return this;
         }
@@ -442,7 +439,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
          * @group consumer
          */
-        public default IgniteCacheEndpointProducerBuilder query(String query) {
+        default IgniteCacheEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -453,7 +450,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder cachePeekMode(
+        default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 CachePeekMode cachePeekMode) {
             setProperty("cachePeekMode", cachePeekMode);
             return this;
@@ -465,7 +462,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.ignite.cache.CachePeekMode</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder cachePeekMode(
+        default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 String cachePeekMode) {
             setProperty("cachePeekMode", cachePeekMode);
             return this;
@@ -475,7 +472,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
+        default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 boolean failIfInexistentCache) {
             setProperty("failIfInexistentCache", failIfInexistentCache);
             return this;
@@ -485,7 +482,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
+        default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 String failIfInexistentCache) {
             setProperty("failIfInexistentCache", failIfInexistentCache);
             return this;
@@ -503,7 +500,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder lazyStartProducer(
+        default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -521,7 +518,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder lazyStartProducer(
+        default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -533,7 +530,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder operation(
+        default IgniteCacheEndpointProducerBuilder operation(
                 IgniteCacheOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -545,8 +542,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
          * @group producer
          */
-        public default IgniteCacheEndpointProducerBuilder operation(
-                String operation) {
+        default IgniteCacheEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -558,7 +554,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public interface AdvancedIgniteCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default IgniteCacheEndpointProducerBuilder basic() {
+        default IgniteCacheEndpointProducerBuilder basic() {
             return (IgniteCacheEndpointProducerBuilder) this;
         }
         /**
@@ -567,7 +563,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -578,7 +574,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -589,7 +585,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
+        default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -600,7 +596,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
+        default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -613,7 +609,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public static interface IgniteCacheEndpointBuilder
             extends
                 IgniteCacheEndpointConsumerBuilder, IgniteCacheEndpointProducerBuilder {
-        public default AdvancedIgniteCacheEndpointBuilder advanced() {
+        default AdvancedIgniteCacheEndpointBuilder advanced() {
             return (AdvancedIgniteCacheEndpointBuilder) this;
         }
         /**
@@ -621,7 +617,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointBuilder cacheName(String cacheName) {
+        default IgniteCacheEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -631,7 +627,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -642,7 +638,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -653,7 +649,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -664,7 +660,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -677,7 +673,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     public static interface AdvancedIgniteCacheEndpointBuilder
             extends
                 AdvancedIgniteCacheEndpointConsumerBuilder, AdvancedIgniteCacheEndpointProducerBuilder {
-        public default IgniteCacheEndpointBuilder basic() {
+        default IgniteCacheEndpointBuilder basic() {
             return (IgniteCacheEndpointBuilder) this;
         }
         /**
@@ -686,7 +682,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -697,7 +693,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -708,7 +704,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointBuilder synchronous(
+        default AdvancedIgniteCacheEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -719,7 +715,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteCacheEndpointBuilder synchronous(
+        default AdvancedIgniteCacheEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -746,7 +742,7 @@ public interface IgniteCacheEndpointBuilderFactory {
      * you to interact with an Ignite Cache. Creates a builder to build
      * endpoints for the Ignite Cache component.
      */
-    public default IgniteCacheEndpointBuilder igniteCache(String path) {
+    default IgniteCacheEndpointBuilder igniteCache(String path) {
         class IgniteCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteCacheEndpointBuilder, AdvancedIgniteCacheEndpointBuilder {
             public IgniteCacheEndpointBuilderImpl(String path) {
                 super("ignite-cache", path);

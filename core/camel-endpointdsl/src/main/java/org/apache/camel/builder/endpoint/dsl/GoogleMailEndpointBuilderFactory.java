@@ -38,7 +38,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public interface GoogleMailEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleMailEndpointConsumerBuilder advanced() {
+        default AdvancedGoogleMailEndpointConsumerBuilder advanced() {
             return (AdvancedGoogleMailEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder apiName(
+        default GoogleMailEndpointConsumerBuilder apiName(
                 GoogleMailApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -58,7 +58,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder apiName(String apiName) {
+        default GoogleMailEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -67,8 +67,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder methodName(
-                String methodName) {
+        default GoogleMailEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -78,8 +77,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder accessToken(
-                String accessToken) {
+        default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -88,7 +86,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder applicationName(
+        default GoogleMailEndpointConsumerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -98,8 +96,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder clientId(
-                String clientId) {
+        default GoogleMailEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -108,7 +105,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder clientSecret(
+        default GoogleMailEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -118,7 +115,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
+        default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -129,7 +126,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointConsumerBuilder refreshToken(
+        default GoogleMailEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -145,7 +142,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -161,7 +158,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -174,7 +171,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public interface AdvancedGoogleMailEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleMailEndpointConsumerBuilder basic() {
+        default GoogleMailEndpointConsumerBuilder basic() {
             return (GoogleMailEndpointConsumerBuilder) this;
         }
         /**
@@ -186,7 +183,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -200,7 +197,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -210,7 +207,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -221,7 +218,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -232,7 +229,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -243,7 +240,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -254,7 +251,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -265,7 +262,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -278,7 +275,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public static interface GoogleMailEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoogleMailEndpointProducerBuilder advanced() {
+        default AdvancedGoogleMailEndpointProducerBuilder advanced() {
             return (AdvancedGoogleMailEndpointProducerBuilder) this;
         }
         /**
@@ -287,7 +284,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder apiName(
+        default GoogleMailEndpointProducerBuilder apiName(
                 GoogleMailApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -298,7 +295,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder apiName(String apiName) {
+        default GoogleMailEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -307,8 +304,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder methodName(
-                String methodName) {
+        default GoogleMailEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -318,8 +314,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder accessToken(
-                String accessToken) {
+        default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -328,7 +323,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder applicationName(
+        default GoogleMailEndpointProducerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -338,8 +333,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder clientId(
-                String clientId) {
+        default GoogleMailEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -348,7 +342,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder clientSecret(
+        default GoogleMailEndpointProducerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -358,7 +352,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder inBody(String inBody) {
+        default GoogleMailEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -369,7 +363,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointProducerBuilder refreshToken(
+        default GoogleMailEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -387,7 +381,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleMailEndpointProducerBuilder lazyStartProducer(
+        default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -405,7 +399,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleMailEndpointProducerBuilder lazyStartProducer(
+        default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -418,7 +412,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public interface AdvancedGoogleMailEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoogleMailEndpointProducerBuilder basic() {
+        default GoogleMailEndpointProducerBuilder basic() {
             return (GoogleMailEndpointProducerBuilder) this;
         }
         /**
@@ -427,7 +421,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -438,7 +432,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -449,7 +443,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointProducerBuilder synchronous(
+        default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -460,7 +454,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointProducerBuilder synchronous(
+        default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +467,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public static interface GoogleMailEndpointBuilder
             extends
                 GoogleMailEndpointConsumerBuilder, GoogleMailEndpointProducerBuilder {
-        public default AdvancedGoogleMailEndpointBuilder advanced() {
+        default AdvancedGoogleMailEndpointBuilder advanced() {
             return (AdvancedGoogleMailEndpointBuilder) this;
         }
         /**
@@ -482,8 +476,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder apiName(
-                GoogleMailApiName apiName) {
+        default GoogleMailEndpointBuilder apiName(GoogleMailApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -493,7 +486,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder apiName(String apiName) {
+        default GoogleMailEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -502,7 +495,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder methodName(String methodName) {
+        default GoogleMailEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -512,7 +505,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder accessToken(String accessToken) {
+        default GoogleMailEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -521,8 +514,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder applicationName(
-                String applicationName) {
+        default GoogleMailEndpointBuilder applicationName(String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
         }
@@ -531,7 +523,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder clientId(String clientId) {
+        default GoogleMailEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -540,8 +532,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder clientSecret(
-                String clientSecret) {
+        default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -550,7 +541,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder inBody(String inBody) {
+        default GoogleMailEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -561,8 +552,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleMailEndpointBuilder refreshToken(
-                String refreshToken) {
+        default GoogleMailEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
         }
@@ -574,7 +564,7 @@ public interface GoogleMailEndpointBuilderFactory {
     public static interface AdvancedGoogleMailEndpointBuilder
             extends
                 AdvancedGoogleMailEndpointConsumerBuilder, AdvancedGoogleMailEndpointProducerBuilder {
-        public default GoogleMailEndpointBuilder basic() {
+        default GoogleMailEndpointBuilder basic() {
             return (GoogleMailEndpointBuilder) this;
         }
         /**
@@ -583,7 +573,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -594,7 +584,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -605,7 +595,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointBuilder synchronous(
+        default AdvancedGoogleMailEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -616,8 +606,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGoogleMailEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -634,7 +623,7 @@ public interface GoogleMailEndpointBuilderFactory {
      * The google-mail component provides access to Google Mail. Creates a
      * builder to build endpoints for the Google Mail component.
      */
-    public default GoogleMailEndpointBuilder googleMail(String path) {
+    default GoogleMailEndpointBuilder googleMail(String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {
             public GoogleMailEndpointBuilderImpl(String path) {
                 super("google-mail", path);

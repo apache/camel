@@ -40,7 +40,7 @@ public interface ConsulEndpointBuilderFactory {
     public interface ConsulEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedConsulEndpointConsumerBuilder advanced() {
+        default AdvancedConsulEndpointConsumerBuilder advanced() {
             return (AdvancedConsulEndpointConsumerBuilder) this;
         }
         /**
@@ -48,8 +48,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ConsulEndpointConsumerBuilder apiEndpoint(
-                String apiEndpoint) {
+        default ConsulEndpointConsumerBuilder apiEndpoint(String apiEndpoint) {
             setProperty("apiEndpoint", apiEndpoint);
             return this;
         }
@@ -64,7 +63,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ConsulEndpointConsumerBuilder bridgeErrorHandler(
+        default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -80,7 +79,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ConsulEndpointConsumerBuilder bridgeErrorHandler(
+        default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -93,7 +92,7 @@ public interface ConsulEndpointBuilderFactory {
     public interface AdvancedConsulEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ConsulEndpointConsumerBuilder basic() {
+        default ConsulEndpointConsumerBuilder basic() {
             return (ConsulEndpointConsumerBuilder) this;
         }
         /**
@@ -105,7 +104,7 @@ public interface ConsulEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
+        default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -119,7 +118,7 @@ public interface ConsulEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
+        default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -129,7 +128,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedConsulEndpointConsumerBuilder exchangePattern(
+        default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -140,7 +139,7 @@ public interface ConsulEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedConsulEndpointConsumerBuilder exchangePattern(
+        default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -151,7 +150,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -162,7 +161,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -173,7 +172,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointConsumerBuilder synchronous(
+        default AdvancedConsulEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -184,7 +183,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointConsumerBuilder synchronous(
+        default AdvancedConsulEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -197,7 +196,7 @@ public interface ConsulEndpointBuilderFactory {
     public static interface ConsulEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedConsulEndpointProducerBuilder advanced() {
+        default AdvancedConsulEndpointProducerBuilder advanced() {
             return (AdvancedConsulEndpointProducerBuilder) this;
         }
         /**
@@ -205,8 +204,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ConsulEndpointProducerBuilder apiEndpoint(
-                String apiEndpoint) {
+        default ConsulEndpointProducerBuilder apiEndpoint(String apiEndpoint) {
             setProperty("apiEndpoint", apiEndpoint);
             return this;
         }
@@ -223,7 +221,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ConsulEndpointProducerBuilder lazyStartProducer(
+        default ConsulEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -241,7 +239,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ConsulEndpointProducerBuilder lazyStartProducer(
+        default ConsulEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -254,7 +252,7 @@ public interface ConsulEndpointBuilderFactory {
     public interface AdvancedConsulEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ConsulEndpointProducerBuilder basic() {
+        default ConsulEndpointProducerBuilder basic() {
             return (ConsulEndpointProducerBuilder) this;
         }
         /**
@@ -263,7 +261,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -274,7 +272,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +283,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointProducerBuilder synchronous(
+        default AdvancedConsulEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -296,7 +294,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointProducerBuilder synchronous(
+        default AdvancedConsulEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -309,7 +307,7 @@ public interface ConsulEndpointBuilderFactory {
     public static interface ConsulEndpointBuilder
             extends
                 ConsulEndpointConsumerBuilder, ConsulEndpointProducerBuilder {
-        public default AdvancedConsulEndpointBuilder advanced() {
+        default AdvancedConsulEndpointBuilder advanced() {
             return (AdvancedConsulEndpointBuilder) this;
         }
         /**
@@ -317,7 +315,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ConsulEndpointBuilder apiEndpoint(String apiEndpoint) {
+        default ConsulEndpointBuilder apiEndpoint(String apiEndpoint) {
             setProperty("apiEndpoint", apiEndpoint);
             return this;
         }
@@ -329,7 +327,7 @@ public interface ConsulEndpointBuilderFactory {
     public static interface AdvancedConsulEndpointBuilder
             extends
                 AdvancedConsulEndpointConsumerBuilder, AdvancedConsulEndpointProducerBuilder {
-        public default ConsulEndpointBuilder basic() {
+        default ConsulEndpointBuilder basic() {
             return (ConsulEndpointBuilder) this;
         }
         /**
@@ -338,7 +336,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -349,7 +347,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointBuilder basicPropertyBinding(
+        default AdvancedConsulEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -360,8 +358,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedConsulEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -371,8 +368,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedConsulEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedConsulEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -382,7 +378,7 @@ public interface ConsulEndpointBuilderFactory {
      * highly available, datacenter-aware, service discovery and configuration
      * system. Creates a builder to build endpoints for the Consul component.
      */
-    public default ConsulEndpointBuilder consul(String path) {
+    default ConsulEndpointBuilder consul(String path) {
         class ConsulEndpointBuilderImpl extends AbstractEndpointBuilder implements ConsulEndpointBuilder, AdvancedConsulEndpointBuilder {
             public ConsulEndpointBuilderImpl(String path) {
                 super("consul", path);

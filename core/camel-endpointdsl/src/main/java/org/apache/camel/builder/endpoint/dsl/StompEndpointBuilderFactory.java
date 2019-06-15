@@ -40,7 +40,7 @@ public interface StompEndpointBuilderFactory {
     public interface StompEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedStompEndpointConsumerBuilder advanced() {
+        default AdvancedStompEndpointConsumerBuilder advanced() {
             return (AdvancedStompEndpointConsumerBuilder) this;
         }
         /**
@@ -48,8 +48,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointConsumerBuilder destination(
-                String destination) {
+        default StompEndpointConsumerBuilder destination(String destination) {
             setProperty("destination", destination);
             return this;
         }
@@ -58,7 +57,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
+        default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
             setProperty("brokerURL", brokerURL);
             return this;
         }
@@ -67,7 +66,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointConsumerBuilder host(String host) {
+        default StompEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -82,7 +81,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StompEndpointConsumerBuilder bridgeErrorHandler(
+        default StompEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -98,7 +97,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StompEndpointConsumerBuilder bridgeErrorHandler(
+        default StompEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,7 +107,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointConsumerBuilder login(String login) {
+        default StompEndpointConsumerBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -117,7 +116,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointConsumerBuilder passcode(String passcode) {
+        default StompEndpointConsumerBuilder passcode(String passcode) {
             setProperty("passcode", passcode);
             return this;
         }
@@ -127,7 +126,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointConsumerBuilder sslContextParameters(
+        default StompEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -138,7 +137,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointConsumerBuilder sslContextParameters(
+        default StompEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -151,7 +150,7 @@ public interface StompEndpointBuilderFactory {
     public interface AdvancedStompEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default StompEndpointConsumerBuilder basic() {
+        default StompEndpointConsumerBuilder basic() {
             return (StompEndpointConsumerBuilder) this;
         }
         /**
@@ -163,7 +162,7 @@ public interface StompEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedStompEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -177,7 +176,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStompEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -187,7 +186,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStompEndpointConsumerBuilder exchangePattern(
+        default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -198,7 +197,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStompEndpointConsumerBuilder exchangePattern(
+        default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -209,7 +208,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -220,7 +219,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -232,7 +231,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -244,7 +243,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -255,7 +254,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder synchronous(
+        default AdvancedStompEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -266,7 +265,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointConsumerBuilder synchronous(
+        default AdvancedStompEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -279,7 +278,7 @@ public interface StompEndpointBuilderFactory {
     public static interface StompEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedStompEndpointProducerBuilder advanced() {
+        default AdvancedStompEndpointProducerBuilder advanced() {
             return (AdvancedStompEndpointProducerBuilder) this;
         }
         /**
@@ -287,8 +286,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointProducerBuilder destination(
-                String destination) {
+        default StompEndpointProducerBuilder destination(String destination) {
             setProperty("destination", destination);
             return this;
         }
@@ -297,7 +295,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointProducerBuilder brokerURL(String brokerURL) {
+        default StompEndpointProducerBuilder brokerURL(String brokerURL) {
             setProperty("brokerURL", brokerURL);
             return this;
         }
@@ -306,7 +304,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointProducerBuilder host(String host) {
+        default StompEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -323,7 +321,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StompEndpointProducerBuilder lazyStartProducer(
+        default StompEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -341,7 +339,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StompEndpointProducerBuilder lazyStartProducer(
+        default StompEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -351,7 +349,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointProducerBuilder login(String login) {
+        default StompEndpointProducerBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -360,7 +358,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointProducerBuilder passcode(String passcode) {
+        default StompEndpointProducerBuilder passcode(String passcode) {
             setProperty("passcode", passcode);
             return this;
         }
@@ -370,7 +368,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointProducerBuilder sslContextParameters(
+        default StompEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -381,7 +379,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointProducerBuilder sslContextParameters(
+        default StompEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -394,7 +392,7 @@ public interface StompEndpointBuilderFactory {
     public interface AdvancedStompEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default StompEndpointProducerBuilder basic() {
+        default StompEndpointProducerBuilder basic() {
             return (StompEndpointProducerBuilder) this;
         }
         /**
@@ -403,7 +401,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -414,7 +412,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -426,7 +424,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -438,7 +436,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -449,7 +447,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder synchronous(
+        default AdvancedStompEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -460,7 +458,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointProducerBuilder synchronous(
+        default AdvancedStompEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +471,7 @@ public interface StompEndpointBuilderFactory {
     public static interface StompEndpointBuilder
             extends
                 StompEndpointConsumerBuilder, StompEndpointProducerBuilder {
-        public default AdvancedStompEndpointBuilder advanced() {
+        default AdvancedStompEndpointBuilder advanced() {
             return (AdvancedStompEndpointBuilder) this;
         }
         /**
@@ -481,7 +479,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointBuilder destination(String destination) {
+        default StompEndpointBuilder destination(String destination) {
             setProperty("destination", destination);
             return this;
         }
@@ -490,7 +488,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointBuilder brokerURL(String brokerURL) {
+        default StompEndpointBuilder brokerURL(String brokerURL) {
             setProperty("brokerURL", brokerURL);
             return this;
         }
@@ -499,7 +497,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StompEndpointBuilder host(String host) {
+        default StompEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -508,7 +506,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointBuilder login(String login) {
+        default StompEndpointBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -517,7 +515,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default StompEndpointBuilder passcode(String passcode) {
+        default StompEndpointBuilder passcode(String passcode) {
             setProperty("passcode", passcode);
             return this;
         }
@@ -527,7 +525,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointBuilder sslContextParameters(
+        default StompEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -538,7 +536,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default StompEndpointBuilder sslContextParameters(
+        default StompEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -551,7 +549,7 @@ public interface StompEndpointBuilderFactory {
     public static interface AdvancedStompEndpointBuilder
             extends
                 AdvancedStompEndpointConsumerBuilder, AdvancedStompEndpointProducerBuilder {
-        public default StompEndpointBuilder basic() {
+        default StompEndpointBuilder basic() {
             return (StompEndpointBuilder) this;
         }
         /**
@@ -560,7 +558,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder basicPropertyBinding(
+        default AdvancedStompEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -571,7 +569,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder basicPropertyBinding(
+        default AdvancedStompEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -583,7 +581,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder headerFilterStrategy(
+        default AdvancedStompEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -595,7 +593,7 @@ public interface StompEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder headerFilterStrategy(
+        default AdvancedStompEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -606,8 +604,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedStompEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -617,8 +614,7 @@ public interface StompEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStompEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedStompEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -628,7 +624,7 @@ public interface StompEndpointBuilderFactory {
      * message brokers. Creates a builder to build endpoints for the Stomp
      * component.
      */
-    public default StompEndpointBuilder stomp(String path) {
+    default StompEndpointBuilder stomp(String path) {
         class StompEndpointBuilderImpl extends AbstractEndpointBuilder implements StompEndpointBuilder, AdvancedStompEndpointBuilder {
             public StompEndpointBuilderImpl(String path) {
                 super("stomp", path);

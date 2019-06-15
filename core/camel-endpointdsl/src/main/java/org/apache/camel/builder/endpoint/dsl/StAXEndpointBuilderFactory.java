@@ -37,7 +37,7 @@ public interface StAXEndpointBuilderFactory {
     public static interface StAXEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedStAXEndpointBuilder advanced() {
+        default AdvancedStAXEndpointBuilder advanced() {
             return (AdvancedStAXEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface StAXEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default StAXEndpointBuilder contentHandlerClass(
+        default StAXEndpointBuilder contentHandlerClass(
                 String contentHandlerClass) {
             setProperty("contentHandlerClass", contentHandlerClass);
             return this;
@@ -58,7 +58,7 @@ public interface StAXEndpointBuilderFactory {
     public static interface AdvancedStAXEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default StAXEndpointBuilder basic() {
+        default StAXEndpointBuilder basic() {
             return (StAXEndpointBuilder) this;
         }
         /**
@@ -67,7 +67,7 @@ public interface StAXEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStAXEndpointBuilder basicPropertyBinding(
+        default AdvancedStAXEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -78,7 +78,7 @@ public interface StAXEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStAXEndpointBuilder basicPropertyBinding(
+        default AdvancedStAXEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -89,8 +89,7 @@ public interface StAXEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStAXEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedStAXEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -100,8 +99,7 @@ public interface StAXEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStAXEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedStAXEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -111,7 +109,7 @@ public interface StAXEndpointBuilderFactory {
      * ContentHandler. Creates a builder to build endpoints for the StAX
      * component.
      */
-    public default StAXEndpointBuilder stAX(String path) {
+    default StAXEndpointBuilder stAX(String path) {
         class StAXEndpointBuilderImpl extends AbstractEndpointBuilder implements StAXEndpointBuilder, AdvancedStAXEndpointBuilder {
             public StAXEndpointBuilderImpl(String path) {
                 super("stax", path);

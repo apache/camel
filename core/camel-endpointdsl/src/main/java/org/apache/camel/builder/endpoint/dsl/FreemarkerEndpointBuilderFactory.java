@@ -36,7 +36,7 @@ public interface FreemarkerEndpointBuilderFactory {
     public static interface FreemarkerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFreemarkerEndpointBuilder advanced() {
+        default AdvancedFreemarkerEndpointBuilder advanced() {
             return (AdvancedFreemarkerEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder resourceUri(String resourceUri) {
+        default FreemarkerEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -58,8 +58,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>freemarker.template.Configuration</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder configuration(
-                Object configuration) {
+        default FreemarkerEndpointBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -69,8 +68,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * <code>freemarker.template.Configuration</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder configuration(
-                String configuration) {
+        default FreemarkerEndpointBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
             return this;
         }
@@ -79,8 +77,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder contentCache(
-                boolean contentCache) {
+        default FreemarkerEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -89,8 +86,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder contentCache(
-                String contentCache) {
+        default FreemarkerEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -99,7 +95,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder encoding(String encoding) {
+        default FreemarkerEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -109,7 +105,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder templateUpdateDelay(
+        default FreemarkerEndpointBuilder templateUpdateDelay(
                 int templateUpdateDelay) {
             setProperty("templateUpdateDelay", templateUpdateDelay);
             return this;
@@ -120,7 +116,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default FreemarkerEndpointBuilder templateUpdateDelay(
+        default FreemarkerEndpointBuilder templateUpdateDelay(
                 String templateUpdateDelay) {
             setProperty("templateUpdateDelay", templateUpdateDelay);
             return this;
@@ -133,7 +129,7 @@ public interface FreemarkerEndpointBuilderFactory {
     public static interface AdvancedFreemarkerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default FreemarkerEndpointBuilder basic() {
+        default FreemarkerEndpointBuilder basic() {
             return (FreemarkerEndpointBuilder) this;
         }
         /**
@@ -142,7 +138,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
+        default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,7 +149,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
+        default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -164,7 +160,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFreemarkerEndpointBuilder synchronous(
+        default AdvancedFreemarkerEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -175,8 +171,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFreemarkerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedFreemarkerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -185,7 +180,7 @@ public interface FreemarkerEndpointBuilderFactory {
      * Transforms the message using a FreeMarker template. Creates a builder to
      * build endpoints for the Freemarker component.
      */
-    public default FreemarkerEndpointBuilder freemarker(String path) {
+    default FreemarkerEndpointBuilder freemarker(String path) {
         class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {
             public FreemarkerEndpointBuilderImpl(String path) {
                 super("freemarker", path);

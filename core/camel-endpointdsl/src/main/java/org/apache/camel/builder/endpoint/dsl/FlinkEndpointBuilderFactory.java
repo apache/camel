@@ -36,7 +36,7 @@ public interface FlinkEndpointBuilderFactory {
     public static interface FlinkEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFlinkEndpointBuilder advanced() {
+        default AdvancedFlinkEndpointBuilder advanced() {
             return (AdvancedFlinkEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.EndpointType</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder endpointType(
-                EndpointType endpointType) {
+        default FlinkEndpointBuilder endpointType(EndpointType endpointType) {
             setProperty("endpointType", endpointType);
             return this;
         }
@@ -56,7 +55,7 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.EndpointType</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder endpointType(String endpointType) {
+        default FlinkEndpointBuilder endpointType(String endpointType) {
             setProperty("endpointType", endpointType);
             return this;
         }
@@ -65,7 +64,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder collect(boolean collect) {
+        default FlinkEndpointBuilder collect(boolean collect) {
             setProperty("collect", collect);
             return this;
         }
@@ -74,7 +73,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder collect(String collect) {
+        default FlinkEndpointBuilder collect(String collect) {
             setProperty("collect", collect);
             return this;
         }
@@ -83,7 +82,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a <code>org.apache.flink.api.java.DataSet</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataSet(Object dataSet) {
+        default FlinkEndpointBuilder dataSet(Object dataSet) {
             setProperty("dataSet", dataSet);
             return this;
         }
@@ -93,7 +92,7 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.flink.api.java.DataSet</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataSet(String dataSet) {
+        default FlinkEndpointBuilder dataSet(String dataSet) {
             setProperty("dataSet", dataSet);
             return this;
         }
@@ -103,8 +102,7 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataSetCallback(
-                Object dataSetCallback) {
+        default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
             setProperty("dataSetCallback", dataSetCallback);
             return this;
         }
@@ -114,8 +112,7 @@ public interface FlinkEndpointBuilderFactory {
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataSetCallback(
-                String dataSetCallback) {
+        default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
             setProperty("dataSetCallback", dataSetCallback);
             return this;
         }
@@ -126,7 +123,7 @@ public interface FlinkEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataStream(Object dataStream) {
+        default FlinkEndpointBuilder dataStream(Object dataStream) {
             setProperty("dataStream", dataStream);
             return this;
         }
@@ -137,7 +134,7 @@ public interface FlinkEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataStream(String dataStream) {
+        default FlinkEndpointBuilder dataStream(String dataStream) {
             setProperty("dataStream", dataStream);
             return this;
         }
@@ -148,7 +145,7 @@ public interface FlinkEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataStreamCallback(
+        default FlinkEndpointBuilder dataStreamCallback(
                 Object dataStreamCallback) {
             setProperty("dataStreamCallback", dataStreamCallback);
             return this;
@@ -160,7 +157,7 @@ public interface FlinkEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default FlinkEndpointBuilder dataStreamCallback(
+        default FlinkEndpointBuilder dataStreamCallback(
                 String dataStreamCallback) {
             setProperty("dataStreamCallback", dataStreamCallback);
             return this;
@@ -173,7 +170,7 @@ public interface FlinkEndpointBuilderFactory {
     public static interface AdvancedFlinkEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default FlinkEndpointBuilder basic() {
+        default FlinkEndpointBuilder basic() {
             return (FlinkEndpointBuilder) this;
         }
         /**
@@ -182,7 +179,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlinkEndpointBuilder basicPropertyBinding(
+        default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -193,7 +190,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlinkEndpointBuilder basicPropertyBinding(
+        default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -204,8 +201,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlinkEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -215,8 +211,7 @@ public interface FlinkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFlinkEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -234,7 +229,7 @@ public interface FlinkEndpointBuilderFactory {
      * cluster. Creates a builder to build endpoints for the Apache Flink
      * component.
      */
-    public default FlinkEndpointBuilder flink(String path) {
+    default FlinkEndpointBuilder flink(String path) {
         class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {
             public FlinkEndpointBuilderImpl(String path) {
                 super("flink", path);

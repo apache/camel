@@ -40,7 +40,7 @@ public interface DirectVmEndpointBuilderFactory {
     public interface DirectVmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDirectVmEndpointConsumerBuilder advanced() {
+        default AdvancedDirectVmEndpointConsumerBuilder advanced() {
             return (AdvancedDirectVmEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectVmEndpointConsumerBuilder name(String name) {
+        default DirectVmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -63,7 +63,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
+        default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -79,7 +79,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
+        default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -92,7 +92,7 @@ public interface DirectVmEndpointBuilderFactory {
     public interface AdvancedDirectVmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DirectVmEndpointConsumerBuilder basic() {
+        default DirectVmEndpointConsumerBuilder basic() {
             return (DirectVmEndpointConsumerBuilder) this;
         }
         /**
@@ -104,7 +104,7 @@ public interface DirectVmEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -118,7 +118,7 @@ public interface DirectVmEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -128,7 +128,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -139,7 +139,7 @@ public interface DirectVmEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -150,7 +150,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -161,7 +161,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -172,7 +172,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
+        default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 boolean propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -183,7 +183,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
+        default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 String propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -194,7 +194,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder synchronous(
+        default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -205,7 +205,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointConsumerBuilder synchronous(
+        default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -218,7 +218,7 @@ public interface DirectVmEndpointBuilderFactory {
     public static interface DirectVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDirectVmEndpointProducerBuilder advanced() {
+        default AdvancedDirectVmEndpointProducerBuilder advanced() {
             return (AdvancedDirectVmEndpointProducerBuilder) this;
         }
         /**
@@ -226,7 +226,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectVmEndpointProducerBuilder name(String name) {
+        default DirectVmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -237,7 +237,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder block(boolean block) {
+        default DirectVmEndpointProducerBuilder block(boolean block) {
             setProperty("block", block);
             return this;
         }
@@ -248,7 +248,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder block(String block) {
+        default DirectVmEndpointProducerBuilder block(String block) {
             setProperty("block", block);
             return this;
         }
@@ -258,7 +258,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder failIfNoConsumers(
+        default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -269,7 +269,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder failIfNoConsumers(
+        default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -287,7 +287,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder lazyStartProducer(
+        default DirectVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -305,7 +305,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder lazyStartProducer(
+        default DirectVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -315,7 +315,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder timeout(long timeout) {
+        default DirectVmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -324,7 +324,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DirectVmEndpointProducerBuilder timeout(String timeout) {
+        default DirectVmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -336,7 +336,7 @@ public interface DirectVmEndpointBuilderFactory {
     public interface AdvancedDirectVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DirectVmEndpointProducerBuilder basic() {
+        default DirectVmEndpointProducerBuilder basic() {
             return (DirectVmEndpointProducerBuilder) this;
         }
         /**
@@ -347,7 +347,7 @@ public interface DirectVmEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -360,7 +360,7 @@ public interface DirectVmEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -371,7 +371,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -382,7 +382,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -393,7 +393,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
+        default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 boolean propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -404,7 +404,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
+        default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 String propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -415,7 +415,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder synchronous(
+        default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -426,7 +426,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointProducerBuilder synchronous(
+        default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -439,7 +439,7 @@ public interface DirectVmEndpointBuilderFactory {
     public static interface DirectVmEndpointBuilder
             extends
                 DirectVmEndpointConsumerBuilder, DirectVmEndpointProducerBuilder {
-        public default AdvancedDirectVmEndpointBuilder advanced() {
+        default AdvancedDirectVmEndpointBuilder advanced() {
             return (AdvancedDirectVmEndpointBuilder) this;
         }
         /**
@@ -447,7 +447,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DirectVmEndpointBuilder name(String name) {
+        default DirectVmEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -459,7 +459,7 @@ public interface DirectVmEndpointBuilderFactory {
     public static interface AdvancedDirectVmEndpointBuilder
             extends
                 AdvancedDirectVmEndpointConsumerBuilder, AdvancedDirectVmEndpointProducerBuilder {
-        public default DirectVmEndpointBuilder basic() {
+        default DirectVmEndpointBuilder basic() {
             return (DirectVmEndpointBuilder) this;
         }
         /**
@@ -468,7 +468,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -479,7 +479,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
+        default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -490,7 +490,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder propagateProperties(
+        default AdvancedDirectVmEndpointBuilder propagateProperties(
                 boolean propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -501,7 +501,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder propagateProperties(
+        default AdvancedDirectVmEndpointBuilder propagateProperties(
                 String propagateProperties) {
             setProperty("propagateProperties", propagateProperties);
             return this;
@@ -512,8 +512,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDirectVmEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -523,8 +522,7 @@ public interface DirectVmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDirectVmEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDirectVmEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -534,7 +532,7 @@ public interface DirectVmEndpointBuilderFactory {
      * endpoint from any CamelContext in the same JVM. Creates a builder to
      * build endpoints for the Direct VM component.
      */
-    public default DirectVmEndpointBuilder directVm(String path) {
+    default DirectVmEndpointBuilder directVm(String path) {
         class DirectVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectVmEndpointBuilder, AdvancedDirectVmEndpointBuilder {
             public DirectVmEndpointBuilderImpl(String path) {
                 super("direct-vm", path);

@@ -41,7 +41,7 @@ public interface JCacheEndpointBuilderFactory {
     public interface JCacheEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJCacheEndpointConsumerBuilder advanced() {
+        default AdvancedJCacheEndpointConsumerBuilder advanced() {
             return (AdvancedJCacheEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cacheName(String cacheName) {
+        default JCacheEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -59,7 +59,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cacheConfiguration(
+        default JCacheEndpointConsumerBuilder cacheConfiguration(
                 Object cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -70,7 +70,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Configuration</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cacheConfiguration(
+        default JCacheEndpointConsumerBuilder cacheConfiguration(
                 String cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -81,7 +81,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
+        default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
                 Properties cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -93,7 +93,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
+        default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -104,7 +104,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder cachingProvider(
+        default JCacheEndpointConsumerBuilder cachingProvider(
                 String cachingProvider) {
             setProperty("cachingProvider", cachingProvider);
             return this;
@@ -114,7 +114,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder configurationUri(
+        default JCacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -124,7 +124,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder managementEnabled(
+        default JCacheEndpointConsumerBuilder managementEnabled(
                 boolean managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
@@ -134,7 +134,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder managementEnabled(
+        default JCacheEndpointConsumerBuilder managementEnabled(
                 String managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
@@ -144,8 +144,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder readThrough(
-                boolean readThrough) {
+        default JCacheEndpointConsumerBuilder readThrough(boolean readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -154,8 +153,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder readThrough(
-                String readThrough) {
+        default JCacheEndpointConsumerBuilder readThrough(String readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -164,7 +162,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder statisticsEnabled(
+        default JCacheEndpointConsumerBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
@@ -174,7 +172,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder statisticsEnabled(
+        default JCacheEndpointConsumerBuilder statisticsEnabled(
                 String statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
@@ -184,8 +182,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder storeByValue(
-                boolean storeByValue) {
+        default JCacheEndpointConsumerBuilder storeByValue(boolean storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -194,8 +191,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder storeByValue(
-                String storeByValue) {
+        default JCacheEndpointConsumerBuilder storeByValue(String storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -204,8 +200,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder writeThrough(
-                boolean writeThrough) {
+        default JCacheEndpointConsumerBuilder writeThrough(boolean writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -214,8 +209,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointConsumerBuilder writeThrough(
-                String writeThrough) {
+        default JCacheEndpointConsumerBuilder writeThrough(String writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -230,7 +224,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder bridgeErrorHandler(
+        default JCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -246,7 +240,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder bridgeErrorHandler(
+        default JCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -258,7 +252,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder filteredEvents(
+        default JCacheEndpointConsumerBuilder filteredEvents(
                 List<EventType> filteredEvents) {
             setProperty("filteredEvents", filteredEvents);
             return this;
@@ -270,7 +264,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder filteredEvents(
+        default JCacheEndpointConsumerBuilder filteredEvents(
                 String filteredEvents) {
             setProperty("filteredEvents", filteredEvents);
             return this;
@@ -280,7 +274,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder oldValueRequired(
+        default JCacheEndpointConsumerBuilder oldValueRequired(
                 boolean oldValueRequired) {
             setProperty("oldValueRequired", oldValueRequired);
             return this;
@@ -290,7 +284,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder oldValueRequired(
+        default JCacheEndpointConsumerBuilder oldValueRequired(
                 String oldValueRequired) {
             setProperty("oldValueRequired", oldValueRequired);
             return this;
@@ -300,8 +294,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder synchronous(
-                boolean synchronous) {
+        default JCacheEndpointConsumerBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -310,8 +303,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JCacheEndpointConsumerBuilder synchronous(
-                String synchronous) {
+        default JCacheEndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -323,7 +315,7 @@ public interface JCacheEndpointBuilderFactory {
     public interface AdvancedJCacheEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JCacheEndpointConsumerBuilder basic() {
+        default JCacheEndpointConsumerBuilder basic() {
             return (JCacheEndpointConsumerBuilder) this;
         }
         /**
@@ -333,7 +325,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder eventFilters(
+        default AdvancedJCacheEndpointConsumerBuilder eventFilters(
                 List<Object> eventFilters) {
             setProperty("eventFilters", eventFilters);
             return this;
@@ -345,7 +337,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>java.util.List&lt;javax.cache.event.CacheEntryEventFilter&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder eventFilters(
+        default AdvancedJCacheEndpointConsumerBuilder eventFilters(
                 String eventFilters) {
             setProperty("eventFilters", eventFilters);
             return this;
@@ -359,7 +351,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -373,7 +365,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -383,7 +375,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
+        default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -394,7 +386,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
+        default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -405,7 +397,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -416,7 +408,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -427,7 +419,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -438,7 +430,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -449,7 +441,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -460,7 +452,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -471,7 +463,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -482,7 +474,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -493,7 +485,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -504,7 +496,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -515,7 +507,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
+        default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
                 boolean lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -526,7 +518,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
+        default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
                 String lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -539,7 +531,7 @@ public interface JCacheEndpointBuilderFactory {
     public static interface JCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJCacheEndpointProducerBuilder advanced() {
+        default AdvancedJCacheEndpointProducerBuilder advanced() {
             return (AdvancedJCacheEndpointProducerBuilder) this;
         }
         /**
@@ -547,7 +539,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cacheName(String cacheName) {
+        default JCacheEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -557,7 +549,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cacheConfiguration(
+        default JCacheEndpointProducerBuilder cacheConfiguration(
                 Object cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -568,7 +560,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Configuration</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cacheConfiguration(
+        default JCacheEndpointProducerBuilder cacheConfiguration(
                 String cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -579,7 +571,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cacheConfigurationProperties(
+        default JCacheEndpointProducerBuilder cacheConfigurationProperties(
                 Properties cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -591,7 +583,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cacheConfigurationProperties(
+        default JCacheEndpointProducerBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -602,7 +594,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder cachingProvider(
+        default JCacheEndpointProducerBuilder cachingProvider(
                 String cachingProvider) {
             setProperty("cachingProvider", cachingProvider);
             return this;
@@ -612,7 +604,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder configurationUri(
+        default JCacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -622,7 +614,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder managementEnabled(
+        default JCacheEndpointProducerBuilder managementEnabled(
                 boolean managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
@@ -632,7 +624,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder managementEnabled(
+        default JCacheEndpointProducerBuilder managementEnabled(
                 String managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
@@ -642,8 +634,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder readThrough(
-                boolean readThrough) {
+        default JCacheEndpointProducerBuilder readThrough(boolean readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -652,8 +643,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder readThrough(
-                String readThrough) {
+        default JCacheEndpointProducerBuilder readThrough(String readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -662,7 +652,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder statisticsEnabled(
+        default JCacheEndpointProducerBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
@@ -672,7 +662,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder statisticsEnabled(
+        default JCacheEndpointProducerBuilder statisticsEnabled(
                 String statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
@@ -682,8 +672,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder storeByValue(
-                boolean storeByValue) {
+        default JCacheEndpointProducerBuilder storeByValue(boolean storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -692,8 +681,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder storeByValue(
-                String storeByValue) {
+        default JCacheEndpointProducerBuilder storeByValue(String storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -702,8 +690,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder writeThrough(
-                boolean writeThrough) {
+        default JCacheEndpointProducerBuilder writeThrough(boolean writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -712,8 +699,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointProducerBuilder writeThrough(
-                String writeThrough) {
+        default JCacheEndpointProducerBuilder writeThrough(String writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -724,7 +710,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JCacheEndpointProducerBuilder action(String action) {
+        default JCacheEndpointProducerBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -741,7 +727,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JCacheEndpointProducerBuilder lazyStartProducer(
+        default JCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -759,7 +745,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JCacheEndpointProducerBuilder lazyStartProducer(
+        default JCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -772,7 +758,7 @@ public interface JCacheEndpointBuilderFactory {
     public interface AdvancedJCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JCacheEndpointProducerBuilder basic() {
+        default JCacheEndpointProducerBuilder basic() {
             return (JCacheEndpointProducerBuilder) this;
         }
         /**
@@ -781,7 +767,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -792,7 +778,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -803,7 +789,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -814,7 +800,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -825,7 +811,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -836,7 +822,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -847,7 +833,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -858,7 +844,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -869,7 +855,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -880,7 +866,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -891,7 +877,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder lookupProviders(
+        default AdvancedJCacheEndpointProducerBuilder lookupProviders(
                 boolean lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -902,7 +888,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointProducerBuilder lookupProviders(
+        default AdvancedJCacheEndpointProducerBuilder lookupProviders(
                 String lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -915,7 +901,7 @@ public interface JCacheEndpointBuilderFactory {
     public static interface JCacheEndpointBuilder
             extends
                 JCacheEndpointConsumerBuilder, JCacheEndpointProducerBuilder {
-        public default AdvancedJCacheEndpointBuilder advanced() {
+        default AdvancedJCacheEndpointBuilder advanced() {
             return (AdvancedJCacheEndpointBuilder) this;
         }
         /**
@@ -923,7 +909,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder cacheName(String cacheName) {
+        default JCacheEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -933,7 +919,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointBuilder cacheConfiguration(
+        default JCacheEndpointBuilder cacheConfiguration(
                 Object cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -944,7 +930,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Configuration</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder cacheConfiguration(
+        default JCacheEndpointBuilder cacheConfiguration(
                 String cacheConfiguration) {
             setProperty("cacheConfiguration", cacheConfiguration);
             return this;
@@ -955,7 +941,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder cacheConfigurationProperties(
+        default JCacheEndpointBuilder cacheConfigurationProperties(
                 Properties cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -967,7 +953,7 @@ public interface JCacheEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JCacheEndpointBuilder cacheConfigurationProperties(
+        default JCacheEndpointBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
             setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
@@ -978,8 +964,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder cachingProvider(
-                String cachingProvider) {
+        default JCacheEndpointBuilder cachingProvider(String cachingProvider) {
             setProperty("cachingProvider", cachingProvider);
             return this;
         }
@@ -988,8 +973,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder configurationUri(
-                String configurationUri) {
+        default JCacheEndpointBuilder configurationUri(String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
         }
@@ -998,7 +982,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder managementEnabled(
+        default JCacheEndpointBuilder managementEnabled(
                 boolean managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
@@ -1008,8 +992,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder managementEnabled(
-                String managementEnabled) {
+        default JCacheEndpointBuilder managementEnabled(String managementEnabled) {
             setProperty("managementEnabled", managementEnabled);
             return this;
         }
@@ -1018,7 +1001,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder readThrough(boolean readThrough) {
+        default JCacheEndpointBuilder readThrough(boolean readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -1027,7 +1010,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder readThrough(String readThrough) {
+        default JCacheEndpointBuilder readThrough(String readThrough) {
             setProperty("readThrough", readThrough);
             return this;
         }
@@ -1036,7 +1019,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder statisticsEnabled(
+        default JCacheEndpointBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
@@ -1046,8 +1029,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder statisticsEnabled(
-                String statisticsEnabled) {
+        default JCacheEndpointBuilder statisticsEnabled(String statisticsEnabled) {
             setProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
@@ -1056,7 +1038,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder storeByValue(boolean storeByValue) {
+        default JCacheEndpointBuilder storeByValue(boolean storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -1065,7 +1047,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder storeByValue(String storeByValue) {
+        default JCacheEndpointBuilder storeByValue(String storeByValue) {
             setProperty("storeByValue", storeByValue);
             return this;
         }
@@ -1074,7 +1056,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder writeThrough(boolean writeThrough) {
+        default JCacheEndpointBuilder writeThrough(boolean writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -1083,7 +1065,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JCacheEndpointBuilder writeThrough(String writeThrough) {
+        default JCacheEndpointBuilder writeThrough(String writeThrough) {
             setProperty("writeThrough", writeThrough);
             return this;
         }
@@ -1095,7 +1077,7 @@ public interface JCacheEndpointBuilderFactory {
     public static interface AdvancedJCacheEndpointBuilder
             extends
                 AdvancedJCacheEndpointConsumerBuilder, AdvancedJCacheEndpointProducerBuilder {
-        public default JCacheEndpointBuilder basic() {
+        default JCacheEndpointBuilder basic() {
             return (JCacheEndpointBuilder) this;
         }
         /**
@@ -1104,7 +1086,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1115,7 +1097,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder basicPropertyBinding(
+        default AdvancedJCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1126,7 +1108,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -1137,7 +1119,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheLoader&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
+        default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
             setProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
@@ -1148,7 +1130,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -1159,7 +1141,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.integration.CacheWriter&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder cacheWriterFactory(
+        default AdvancedJCacheEndpointBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
             setProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
@@ -1170,7 +1152,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -1181,7 +1163,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
+        default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
             setProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
@@ -1192,7 +1174,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -1203,7 +1185,7 @@ public interface JCacheEndpointBuilderFactory {
          * <code>javax.cache.configuration.Factory&lt;javax.cache.expiry.ExpiryPolicy&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
+        default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
             setProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
@@ -1214,7 +1196,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder lookupProviders(
+        default AdvancedJCacheEndpointBuilder lookupProviders(
                 boolean lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -1225,7 +1207,7 @@ public interface JCacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJCacheEndpointBuilder lookupProviders(
+        default AdvancedJCacheEndpointBuilder lookupProviders(
                 String lookupProviders) {
             setProperty("lookupProviders", lookupProviders);
             return this;
@@ -1243,7 +1225,7 @@ public interface JCacheEndpointBuilderFactory {
      * JSR107/JCache as cache implementation. Creates a builder to build
      * endpoints for the JCache component.
      */
-    public default JCacheEndpointBuilder jCache(String path) {
+    default JCacheEndpointBuilder jCache(String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {
             public JCacheEndpointBuilderImpl(String path) {
                 super("jcache", path);

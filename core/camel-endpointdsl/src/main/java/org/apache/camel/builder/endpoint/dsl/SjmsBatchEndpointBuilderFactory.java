@@ -41,7 +41,7 @@ public interface SjmsBatchEndpointBuilderFactory {
     public static interface SjmsBatchEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSjmsBatchEndpointBuilder advanced() {
+        default AdvancedSjmsBatchEndpointBuilder advanced() {
             return (AdvancedSjmsBatchEndpointBuilder) this;
         }
         /**
@@ -50,8 +50,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder destinationName(
-                String destinationName) {
+        default SjmsBatchEndpointBuilder destinationName(String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
         }
@@ -62,7 +61,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder aggregationStrategy(
+        default SjmsBatchEndpointBuilder aggregationStrategy(
                 AggregationStrategy aggregationStrategy) {
             setProperty("aggregationStrategy", aggregationStrategy);
             return this;
@@ -74,7 +73,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.AggregationStrategy</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder aggregationStrategy(
+        default SjmsBatchEndpointBuilder aggregationStrategy(
                 String aggregationStrategy) {
             setProperty("aggregationStrategy", aggregationStrategy);
             return this;
@@ -85,8 +84,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder allowNullBody(
-                boolean allowNullBody) {
+        default SjmsBatchEndpointBuilder allowNullBody(boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
         }
@@ -96,8 +94,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder allowNullBody(
-                String allowNullBody) {
+        default SjmsBatchEndpointBuilder allowNullBody(String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
         }
@@ -110,7 +107,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionInterval(
+        default SjmsBatchEndpointBuilder completionInterval(
                 int completionInterval) {
             setProperty("completionInterval", completionInterval);
             return this;
@@ -124,7 +121,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionInterval(
+        default SjmsBatchEndpointBuilder completionInterval(
                 String completionInterval) {
             setProperty("completionInterval", completionInterval);
             return this;
@@ -139,7 +136,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Predicate</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionPredicate(
+        default SjmsBatchEndpointBuilder completionPredicate(
                 Predicate completionPredicate) {
             setProperty("completionPredicate", completionPredicate);
             return this;
@@ -155,7 +152,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.Predicate</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionPredicate(
+        default SjmsBatchEndpointBuilder completionPredicate(
                 String completionPredicate) {
             setProperty("completionPredicate", completionPredicate);
             return this;
@@ -165,8 +162,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionSize(
-                int completionSize) {
+        default SjmsBatchEndpointBuilder completionSize(int completionSize) {
             setProperty("completionSize", completionSize);
             return this;
         }
@@ -175,8 +171,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionSize(
-                String completionSize) {
+        default SjmsBatchEndpointBuilder completionSize(String completionSize) {
             setProperty("completionSize", completionSize);
             return this;
         }
@@ -189,8 +184,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionTimeout(
-                int completionTimeout) {
+        default SjmsBatchEndpointBuilder completionTimeout(int completionTimeout) {
             setProperty("completionTimeout", completionTimeout);
             return this;
         }
@@ -203,7 +197,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder completionTimeout(
+        default SjmsBatchEndpointBuilder completionTimeout(
                 String completionTimeout) {
             setProperty("completionTimeout", completionTimeout);
             return this;
@@ -213,7 +207,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder consumerCount(int consumerCount) {
+        default SjmsBatchEndpointBuilder consumerCount(int consumerCount) {
             setProperty("consumerCount", consumerCount);
             return this;
         }
@@ -222,8 +216,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder consumerCount(
-                String consumerCount) {
+        default SjmsBatchEndpointBuilder consumerCount(String consumerCount) {
             setProperty("consumerCount", consumerCount);
             return this;
         }
@@ -235,7 +228,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder eagerCheckCompletion(
+        default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 boolean eagerCheckCompletion) {
             setProperty("eagerCheckCompletion", eagerCheckCompletion);
             return this;
@@ -248,7 +241,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder eagerCheckCompletion(
+        default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 String eagerCheckCompletion) {
             setProperty("eagerCheckCompletion", eagerCheckCompletion);
             return this;
@@ -261,7 +254,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder includeAllJMSXProperties(
+        default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -274,7 +267,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder includeAllJMSXProperties(
+        default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -286,8 +279,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder mapJmsMessage(
-                boolean mapJmsMessage) {
+        default SjmsBatchEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -298,8 +290,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder mapJmsMessage(
-                String mapJmsMessage) {
+        default SjmsBatchEndpointBuilder mapJmsMessage(String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -310,7 +301,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder pollDuration(int pollDuration) {
+        default SjmsBatchEndpointBuilder pollDuration(int pollDuration) {
             setProperty("pollDuration", pollDuration);
             return this;
         }
@@ -321,7 +312,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder pollDuration(String pollDuration) {
+        default SjmsBatchEndpointBuilder pollDuration(String pollDuration) {
             setProperty("pollDuration", pollDuration);
             return this;
         }
@@ -333,7 +324,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
+        default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -346,7 +337,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
+        default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -359,7 +350,7 @@ public interface SjmsBatchEndpointBuilderFactory {
     public static interface AdvancedSjmsBatchEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SjmsBatchEndpointBuilder basic() {
+        default SjmsBatchEndpointBuilder basic() {
             return (SjmsBatchEndpointBuilder) this;
         }
         /**
@@ -376,7 +367,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
+        default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -395,7 +386,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
+        default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -406,7 +397,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
+        default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -417,7 +408,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
+        default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -429,7 +420,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
+        default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -441,7 +432,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
+        default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -461,7 +452,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -481,7 +472,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -498,7 +489,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
+        default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 int keepAliveDelay) {
             setProperty("keepAliveDelay", keepAliveDelay);
             return this;
@@ -515,7 +506,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
+        default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 String keepAliveDelay) {
             setProperty("keepAliveDelay", keepAliveDelay);
             return this;
@@ -528,7 +519,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
+        default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -541,7 +532,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
+        default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -553,7 +544,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
+        default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 int recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -565,7 +556,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
+        default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -576,8 +567,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSjmsBatchEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -587,8 +577,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSjmsBatchEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -601,7 +590,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
+        default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 ScheduledExecutorService timeoutCheckerExecutorService) {
             setProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
             return this;
@@ -615,7 +604,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group advanced
          */
-        public default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
+        default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 String timeoutCheckerExecutorService) {
             setProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
             return this;
@@ -626,7 +615,7 @@ public interface SjmsBatchEndpointBuilderFactory {
      * transactional batch consumption from a JMS queue. Creates a builder to
      * build endpoints for the Simple JMS Batch component.
      */
-    public default SjmsBatchEndpointBuilder sjmsBatch(String path) {
+    default SjmsBatchEndpointBuilder sjmsBatch(String path) {
         class SjmsBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsBatchEndpointBuilder, AdvancedSjmsBatchEndpointBuilder {
             public SjmsBatchEndpointBuilderImpl(String path) {
                 super("sjms-batch", path);

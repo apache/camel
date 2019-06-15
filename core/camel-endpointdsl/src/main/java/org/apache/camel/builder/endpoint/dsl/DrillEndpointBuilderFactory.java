@@ -37,7 +37,7 @@ public interface DrillEndpointBuilderFactory {
     public static interface DrillEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDrillEndpointBuilder advanced() {
+        default AdvancedDrillEndpointBuilder advanced() {
             return (AdvancedDrillEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DrillEndpointBuilder host(String host) {
+        default DrillEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -56,7 +56,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DrillEndpointBuilder clusterId(String clusterId) {
+        default DrillEndpointBuilder clusterId(String clusterId) {
             setProperty("clusterId", clusterId);
             return this;
         }
@@ -65,7 +65,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DrillEndpointBuilder directory(String directory) {
+        default DrillEndpointBuilder directory(String directory) {
             setProperty("directory", directory);
             return this;
         }
@@ -77,7 +77,7 @@ public interface DrillEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DrillEndpointBuilder mode(DrillConnectionMode mode) {
+        default DrillEndpointBuilder mode(DrillConnectionMode mode) {
             setProperty("mode", mode);
             return this;
         }
@@ -89,7 +89,7 @@ public interface DrillEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DrillEndpointBuilder mode(String mode) {
+        default DrillEndpointBuilder mode(String mode) {
             setProperty("mode", mode);
             return this;
         }
@@ -98,7 +98,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default DrillEndpointBuilder port(Integer port) {
+        default DrillEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -108,7 +108,7 @@ public interface DrillEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DrillEndpointBuilder port(String port) {
+        default DrillEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -120,7 +120,7 @@ public interface DrillEndpointBuilderFactory {
     public static interface AdvancedDrillEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DrillEndpointBuilder basic() {
+        default DrillEndpointBuilder basic() {
             return (DrillEndpointBuilder) this;
         }
         /**
@@ -129,7 +129,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDrillEndpointBuilder basicPropertyBinding(
+        default AdvancedDrillEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -140,7 +140,7 @@ public interface DrillEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDrillEndpointBuilder basicPropertyBinding(
+        default AdvancedDrillEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,8 +151,7 @@ public interface DrillEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDrillEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDrillEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -162,8 +161,7 @@ public interface DrillEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDrillEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDrillEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -180,7 +178,7 @@ public interface DrillEndpointBuilderFactory {
      * The drill component gives you the ability to quering into apache drill
      * cluster. Creates a builder to build endpoints for the Drill component.
      */
-    public default DrillEndpointBuilder drill(String path) {
+    default DrillEndpointBuilder drill(String path) {
         class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {
             public DrillEndpointBuilderImpl(String path) {
                 super("drill", path);

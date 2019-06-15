@@ -36,7 +36,7 @@ public interface ExecEndpointBuilderFactory {
     public static interface ExecEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedExecEndpointBuilder advanced() {
+        default AdvancedExecEndpointBuilder advanced() {
             return (AdvancedExecEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder executable(String executable) {
+        default ExecEndpointBuilder executable(String executable) {
             setProperty("executable", executable);
             return this;
         }
@@ -54,7 +54,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder args(String args) {
+        default ExecEndpointBuilder args(String args) {
             setProperty("args", args);
             return this;
         }
@@ -64,7 +64,7 @@ public interface ExecEndpointBuilderFactory {
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder binding(Object binding) {
+        default ExecEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -74,7 +74,7 @@ public interface ExecEndpointBuilderFactory {
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder binding(String binding) {
+        default ExecEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -88,8 +88,7 @@ public interface ExecEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ExecEndpointBuilder commandExecutor(
-                Object commandExecutor) {
+        default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
             setProperty("commandExecutor", commandExecutor);
             return this;
         }
@@ -103,8 +102,7 @@ public interface ExecEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ExecEndpointBuilder commandExecutor(
-                String commandExecutor) {
+        default ExecEndpointBuilder commandExecutor(String commandExecutor) {
             setProperty("commandExecutor", commandExecutor);
             return this;
         }
@@ -115,7 +113,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder outFile(String outFile) {
+        default ExecEndpointBuilder outFile(String outFile) {
             setProperty("outFile", outFile);
             return this;
         }
@@ -126,7 +124,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder timeout(long timeout) {
+        default ExecEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -137,7 +135,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder timeout(String timeout) {
+        default ExecEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -148,7 +146,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder useStderrOnEmptyStdout(
+        default ExecEndpointBuilder useStderrOnEmptyStdout(
                 boolean useStderrOnEmptyStdout) {
             setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
@@ -160,7 +158,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder useStderrOnEmptyStdout(
+        default ExecEndpointBuilder useStderrOnEmptyStdout(
                 String useStderrOnEmptyStdout) {
             setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
@@ -171,7 +169,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ExecEndpointBuilder workingDir(String workingDir) {
+        default ExecEndpointBuilder workingDir(String workingDir) {
             setProperty("workingDir", workingDir);
             return this;
         }
@@ -183,7 +181,7 @@ public interface ExecEndpointBuilderFactory {
     public static interface AdvancedExecEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ExecEndpointBuilder basic() {
+        default ExecEndpointBuilder basic() {
             return (ExecEndpointBuilder) this;
         }
         /**
@@ -192,7 +190,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedExecEndpointBuilder basicPropertyBinding(
+        default AdvancedExecEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -203,7 +201,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedExecEndpointBuilder basicPropertyBinding(
+        default AdvancedExecEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -214,8 +212,7 @@ public interface ExecEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedExecEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -225,8 +222,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedExecEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedExecEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -235,7 +231,7 @@ public interface ExecEndpointBuilderFactory {
      * The exec component can be used to execute OS system commands. Creates a
      * builder to build endpoints for the Exec component.
      */
-    public default ExecEndpointBuilder exec(String path) {
+    default ExecEndpointBuilder exec(String path) {
         class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder, AdvancedExecEndpointBuilder {
             public ExecEndpointBuilderImpl(String path) {
                 super("exec", path);

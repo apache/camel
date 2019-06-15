@@ -45,7 +45,7 @@ public interface KinesisEndpointBuilderFactory {
     public interface KinesisEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKinesisEndpointConsumerBuilder advanced() {
+        default AdvancedKinesisEndpointConsumerBuilder advanced() {
             return (AdvancedKinesisEndpointConsumerBuilder) this;
         }
         /**
@@ -53,8 +53,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder streamName(
-                String streamName) {
+        default KinesisEndpointConsumerBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
             return this;
         }
@@ -64,7 +63,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder amazonKinesisClient(
+        default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -75,7 +74,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder amazonKinesisClient(
+        default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -85,7 +84,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder proxyHost(String proxyHost) {
+        default KinesisEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -94,8 +93,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder proxyPort(
-                Integer proxyPort) {
+        default KinesisEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -105,7 +103,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
+        default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -114,7 +112,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointConsumerBuilder region(String region) {
+        default KinesisEndpointConsumerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -129,7 +127,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder bridgeErrorHandler(
+        default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -145,7 +143,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder bridgeErrorHandler(
+        default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -157,7 +155,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder iteratorType(
+        default KinesisEndpointConsumerBuilder iteratorType(
                 ShardIteratorType iteratorType) {
             setProperty("iteratorType", iteratorType);
             return this;
@@ -169,8 +167,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder iteratorType(
-                String iteratorType) {
+        default KinesisEndpointConsumerBuilder iteratorType(String iteratorType) {
             setProperty("iteratorType", iteratorType);
             return this;
         }
@@ -179,7 +176,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder maxResultsPerRequest(
+        default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
             setProperty("maxResultsPerRequest", maxResultsPerRequest);
             return this;
@@ -189,7 +186,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder maxResultsPerRequest(
+        default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
             setProperty("maxResultsPerRequest", maxResultsPerRequest);
             return this;
@@ -200,7 +197,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -211,7 +208,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -222,7 +219,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder sequenceNumber(
+        default KinesisEndpointConsumerBuilder sequenceNumber(
                 String sequenceNumber) {
             setProperty("sequenceNumber", sequenceNumber);
             return this;
@@ -238,7 +235,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder shardClosed(
+        default KinesisEndpointConsumerBuilder shardClosed(
                 KinesisShardClosedStrategyEnum shardClosed) {
             setProperty("shardClosed", shardClosed);
             return this;
@@ -254,8 +251,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder shardClosed(
-                String shardClosed) {
+        default KinesisEndpointConsumerBuilder shardClosed(String shardClosed) {
             setProperty("shardClosed", shardClosed);
             return this;
         }
@@ -264,7 +260,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KinesisEndpointConsumerBuilder shardId(String shardId) {
+        default KinesisEndpointConsumerBuilder shardId(String shardId) {
             setProperty("shardId", shardId);
             return this;
         }
@@ -274,7 +270,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffErrorThreshold(
+        default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -285,7 +281,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffErrorThreshold(
+        default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -296,7 +292,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffIdleThreshold(
+        default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -307,7 +303,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffIdleThreshold(
+        default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -322,7 +318,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffMultiplier(
+        default KinesisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -337,7 +333,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder backoffMultiplier(
+        default KinesisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -349,7 +345,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder delay(long delay) {
+        default KinesisEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -360,7 +356,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder delay(String delay) {
+        default KinesisEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -370,7 +366,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder greedy(boolean greedy) {
+        default KinesisEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -380,7 +376,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder greedy(String greedy) {
+        default KinesisEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -391,8 +387,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default KinesisEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -403,8 +398,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default KinesisEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -414,7 +408,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder runLoggingLevel(
+        default KinesisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -426,7 +420,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder runLoggingLevel(
+        default KinesisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -439,7 +433,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder scheduledExecutorService(
+        default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -452,7 +446,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder scheduledExecutorService(
+        default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -465,7 +459,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder scheduler(
+        default KinesisEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -478,7 +472,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder scheduler(String scheduler) {
+        default KinesisEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -489,7 +483,7 @@ public interface KinesisEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder schedulerProperties(
+        default KinesisEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -502,7 +496,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder schedulerProperties(
+        default KinesisEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -512,7 +506,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder startScheduler(
+        default KinesisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -522,7 +516,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder startScheduler(
+        default KinesisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -532,7 +526,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default KinesisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -542,7 +536,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -552,7 +546,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder useFixedDelay(
+        default KinesisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -563,7 +557,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default KinesisEndpointConsumerBuilder useFixedDelay(
+        default KinesisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -573,7 +567,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointConsumerBuilder accessKey(String accessKey) {
+        default KinesisEndpointConsumerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -582,7 +576,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointConsumerBuilder secretKey(String secretKey) {
+        default KinesisEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -594,7 +588,7 @@ public interface KinesisEndpointBuilderFactory {
     public interface AdvancedKinesisEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KinesisEndpointConsumerBuilder basic() {
+        default KinesisEndpointConsumerBuilder basic() {
             return (KinesisEndpointConsumerBuilder) this;
         }
         /**
@@ -606,7 +600,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -620,7 +614,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -630,7 +624,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
+        default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -641,7 +635,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
+        default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -655,7 +649,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
+        default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -669,7 +663,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
+        default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -680,7 +674,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -691,7 +685,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -702,7 +696,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointConsumerBuilder synchronous(
+        default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -713,7 +707,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointConsumerBuilder synchronous(
+        default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -726,7 +720,7 @@ public interface KinesisEndpointBuilderFactory {
     public static interface KinesisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKinesisEndpointProducerBuilder advanced() {
+        default AdvancedKinesisEndpointProducerBuilder advanced() {
             return (AdvancedKinesisEndpointProducerBuilder) this;
         }
         /**
@@ -734,8 +728,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder streamName(
-                String streamName) {
+        default KinesisEndpointProducerBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
             return this;
         }
@@ -745,7 +738,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder amazonKinesisClient(
+        default KinesisEndpointProducerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -756,7 +749,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder amazonKinesisClient(
+        default KinesisEndpointProducerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -766,7 +759,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder proxyHost(String proxyHost) {
+        default KinesisEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -775,8 +768,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder proxyPort(
-                Integer proxyPort) {
+        default KinesisEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -786,7 +778,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
+        default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -795,7 +787,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointProducerBuilder region(String region) {
+        default KinesisEndpointProducerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -812,7 +804,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KinesisEndpointProducerBuilder lazyStartProducer(
+        default KinesisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -830,7 +822,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KinesisEndpointProducerBuilder lazyStartProducer(
+        default KinesisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -840,7 +832,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointProducerBuilder accessKey(String accessKey) {
+        default KinesisEndpointProducerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -849,7 +841,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointProducerBuilder secretKey(String secretKey) {
+        default KinesisEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -861,7 +853,7 @@ public interface KinesisEndpointBuilderFactory {
     public interface AdvancedKinesisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KinesisEndpointProducerBuilder basic() {
+        default KinesisEndpointProducerBuilder basic() {
             return (KinesisEndpointProducerBuilder) this;
         }
         /**
@@ -870,7 +862,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -881,7 +873,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -892,7 +884,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointProducerBuilder synchronous(
+        default AdvancedKinesisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -903,7 +895,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointProducerBuilder synchronous(
+        default AdvancedKinesisEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -916,7 +908,7 @@ public interface KinesisEndpointBuilderFactory {
     public static interface KinesisEndpointBuilder
             extends
                 KinesisEndpointConsumerBuilder, KinesisEndpointProducerBuilder {
-        public default AdvancedKinesisEndpointBuilder advanced() {
+        default AdvancedKinesisEndpointBuilder advanced() {
             return (AdvancedKinesisEndpointBuilder) this;
         }
         /**
@@ -924,7 +916,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder streamName(String streamName) {
+        default KinesisEndpointBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
             return this;
         }
@@ -934,7 +926,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder amazonKinesisClient(
+        default KinesisEndpointBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -945,7 +937,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder amazonKinesisClient(
+        default KinesisEndpointBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
             setProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
@@ -955,7 +947,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder proxyHost(String proxyHost) {
+        default KinesisEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -964,7 +956,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder proxyPort(Integer proxyPort) {
+        default KinesisEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -974,7 +966,7 @@ public interface KinesisEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KinesisEndpointBuilder proxyPort(String proxyPort) {
+        default KinesisEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -983,7 +975,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KinesisEndpointBuilder region(String region) {
+        default KinesisEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -992,7 +984,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointBuilder accessKey(String accessKey) {
+        default KinesisEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -1001,7 +993,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisEndpointBuilder secretKey(String secretKey) {
+        default KinesisEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -1013,7 +1005,7 @@ public interface KinesisEndpointBuilderFactory {
     public static interface AdvancedKinesisEndpointBuilder
             extends
                 AdvancedKinesisEndpointConsumerBuilder, AdvancedKinesisEndpointProducerBuilder {
-        public default KinesisEndpointBuilder basic() {
+        default KinesisEndpointBuilder basic() {
             return (KinesisEndpointBuilder) this;
         }
         /**
@@ -1022,7 +1014,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1033,7 +1025,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointBuilder basicPropertyBinding(
+        default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1044,8 +1036,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedKinesisEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1055,8 +1046,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedKinesisEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1082,7 +1072,7 @@ public interface KinesisEndpointBuilderFactory {
      * Amazon Kinesis Streams. Creates a builder to build endpoints for the AWS
      * Kinesis component.
      */
-    public default KinesisEndpointBuilder kinesis(String path) {
+    default KinesisEndpointBuilder kinesis(String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {
             public KinesisEndpointBuilderImpl(String path) {
                 super("aws-kinesis", path);

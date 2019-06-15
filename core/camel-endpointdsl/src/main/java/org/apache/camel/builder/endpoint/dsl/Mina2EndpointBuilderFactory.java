@@ -40,7 +40,7 @@ public interface Mina2EndpointBuilderFactory {
     public interface Mina2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMina2EndpointConsumerBuilder advanced() {
+        default AdvancedMina2EndpointConsumerBuilder advanced() {
             return (AdvancedMina2EndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder protocol(String protocol) {
+        default Mina2EndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -59,7 +59,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder host(String host) {
+        default Mina2EndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -68,7 +68,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder port(int port) {
+        default Mina2EndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -77,7 +77,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder port(String port) {
+        default Mina2EndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -87,8 +87,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder disconnect(
-                boolean disconnect) {
+        default Mina2EndpointConsumerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -98,7 +97,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder disconnect(String disconnect) {
+        default Mina2EndpointConsumerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -108,8 +107,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder minaLogger(
-                boolean minaLogger) {
+        default Mina2EndpointConsumerBuilder minaLogger(boolean minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -119,7 +117,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder minaLogger(String minaLogger) {
+        default Mina2EndpointConsumerBuilder minaLogger(String minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -128,7 +126,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder sync(boolean sync) {
+        default Mina2EndpointConsumerBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -137,7 +135,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder sync(String sync) {
+        default Mina2EndpointConsumerBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -148,7 +146,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder timeout(long timeout) {
+        default Mina2EndpointConsumerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -159,7 +157,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder timeout(String timeout) {
+        default Mina2EndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -169,8 +167,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder writeTimeout(
-                long writeTimeout) {
+        default Mina2EndpointConsumerBuilder writeTimeout(long writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -180,8 +177,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointConsumerBuilder writeTimeout(
-                String writeTimeout) {
+        default Mina2EndpointConsumerBuilder writeTimeout(String writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -196,7 +192,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Mina2EndpointConsumerBuilder bridgeErrorHandler(
+        default Mina2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -212,7 +208,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Mina2EndpointConsumerBuilder bridgeErrorHandler(
+        default Mina2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -223,8 +219,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Mina2EndpointConsumerBuilder clientMode(
-                boolean clientMode) {
+        default Mina2EndpointConsumerBuilder clientMode(boolean clientMode) {
             setProperty("clientMode", clientMode);
             return this;
         }
@@ -234,7 +229,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Mina2EndpointConsumerBuilder clientMode(String clientMode) {
+        default Mina2EndpointConsumerBuilder clientMode(String clientMode) {
             setProperty("clientMode", clientMode);
             return this;
         }
@@ -248,7 +243,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder allowDefaultCodec(
+        default Mina2EndpointConsumerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -263,7 +258,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder allowDefaultCodec(
+        default Mina2EndpointConsumerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -274,7 +269,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder codec(Object codec) {
+        default Mina2EndpointConsumerBuilder codec(Object codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -284,7 +279,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder codec(String codec) {
+        default Mina2EndpointConsumerBuilder codec(String codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -294,7 +289,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder decoderMaxLineLength(
+        default Mina2EndpointConsumerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -305,7 +300,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder decoderMaxLineLength(
+        default Mina2EndpointConsumerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -316,7 +311,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder encoderMaxLineLength(
+        default Mina2EndpointConsumerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -327,7 +322,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder encoderMaxLineLength(
+        default Mina2EndpointConsumerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -339,7 +334,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder encoding(String encoding) {
+        default Mina2EndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -349,7 +344,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder filters(List<Object> filters) {
+        default Mina2EndpointConsumerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -359,7 +354,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder filters(String filters) {
+        default Mina2EndpointConsumerBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -370,7 +365,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder textline(boolean textline) {
+        default Mina2EndpointConsumerBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -381,7 +376,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder textline(String textline) {
+        default Mina2EndpointConsumerBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -394,7 +389,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder textlineDelimiter(
+        default Mina2EndpointConsumerBuilder textlineDelimiter(
                 Mina2TextLineDelimiter textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
@@ -408,7 +403,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointConsumerBuilder textlineDelimiter(
+        default Mina2EndpointConsumerBuilder textlineDelimiter(
                 String textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
@@ -418,8 +413,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointConsumerBuilder autoStartTls(
-                boolean autoStartTls) {
+        default Mina2EndpointConsumerBuilder autoStartTls(boolean autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -428,8 +422,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointConsumerBuilder autoStartTls(
-                String autoStartTls) {
+        default Mina2EndpointConsumerBuilder autoStartTls(String autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -439,7 +432,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointConsumerBuilder sslContextParameters(
+        default Mina2EndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -450,7 +443,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointConsumerBuilder sslContextParameters(
+        default Mina2EndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -463,7 +456,7 @@ public interface Mina2EndpointBuilderFactory {
     public interface AdvancedMina2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default Mina2EndpointConsumerBuilder basic() {
+        default Mina2EndpointConsumerBuilder basic() {
             return (Mina2EndpointConsumerBuilder) this;
         }
         /**
@@ -472,7 +465,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder disconnectOnNoReply(
+        default AdvancedMina2EndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
             setProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
@@ -483,7 +476,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder disconnectOnNoReply(
+        default AdvancedMina2EndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
             setProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
@@ -497,7 +490,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedMina2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -511,7 +504,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedMina2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -521,7 +514,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder exchangePattern(
+        default AdvancedMina2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -532,7 +525,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder exchangePattern(
+        default AdvancedMina2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -543,7 +536,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder noReplyLogLevel(
+        default AdvancedMina2EndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
             setProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
@@ -555,7 +548,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMina2EndpointConsumerBuilder noReplyLogLevel(
+        default AdvancedMina2EndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
             setProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
@@ -566,7 +559,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -577,7 +570,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -587,7 +580,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder maximumPoolSize(
+        default AdvancedMina2EndpointConsumerBuilder maximumPoolSize(
                 int maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
@@ -597,7 +590,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder maximumPoolSize(
+        default AdvancedMina2EndpointConsumerBuilder maximumPoolSize(
                 String maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
@@ -608,7 +601,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointConsumerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -619,7 +612,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointConsumerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -630,7 +623,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder synchronous(
+        default AdvancedMina2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -641,7 +634,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder synchronous(
+        default AdvancedMina2EndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -656,7 +649,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder transferExchange(
+        default AdvancedMina2EndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -671,7 +664,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointConsumerBuilder transferExchange(
+        default AdvancedMina2EndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -684,7 +677,7 @@ public interface Mina2EndpointBuilderFactory {
     public static interface Mina2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMina2EndpointProducerBuilder advanced() {
+        default AdvancedMina2EndpointProducerBuilder advanced() {
             return (AdvancedMina2EndpointProducerBuilder) this;
         }
         /**
@@ -692,7 +685,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder protocol(String protocol) {
+        default Mina2EndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -703,7 +696,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder host(String host) {
+        default Mina2EndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -712,7 +705,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder port(int port) {
+        default Mina2EndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -721,7 +714,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder port(String port) {
+        default Mina2EndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -731,8 +724,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder disconnect(
-                boolean disconnect) {
+        default Mina2EndpointProducerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -742,7 +734,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder disconnect(String disconnect) {
+        default Mina2EndpointProducerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -752,8 +744,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder minaLogger(
-                boolean minaLogger) {
+        default Mina2EndpointProducerBuilder minaLogger(boolean minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -763,7 +754,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder minaLogger(String minaLogger) {
+        default Mina2EndpointProducerBuilder minaLogger(String minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -772,7 +763,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder sync(boolean sync) {
+        default Mina2EndpointProducerBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -781,7 +772,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder sync(String sync) {
+        default Mina2EndpointProducerBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -792,7 +783,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder timeout(long timeout) {
+        default Mina2EndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -803,7 +794,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder timeout(String timeout) {
+        default Mina2EndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -813,8 +804,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder writeTimeout(
-                long writeTimeout) {
+        default Mina2EndpointProducerBuilder writeTimeout(long writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -824,8 +814,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointProducerBuilder writeTimeout(
-                String writeTimeout) {
+        default Mina2EndpointProducerBuilder writeTimeout(String writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -842,7 +831,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default Mina2EndpointProducerBuilder lazyStartProducer(
+        default Mina2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -860,7 +849,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default Mina2EndpointProducerBuilder lazyStartProducer(
+        default Mina2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -875,7 +864,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder allowDefaultCodec(
+        default Mina2EndpointProducerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -890,7 +879,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder allowDefaultCodec(
+        default Mina2EndpointProducerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -901,7 +890,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder codec(Object codec) {
+        default Mina2EndpointProducerBuilder codec(Object codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -911,7 +900,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder codec(String codec) {
+        default Mina2EndpointProducerBuilder codec(String codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -921,7 +910,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder decoderMaxLineLength(
+        default Mina2EndpointProducerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -932,7 +921,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder decoderMaxLineLength(
+        default Mina2EndpointProducerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -943,7 +932,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder encoderMaxLineLength(
+        default Mina2EndpointProducerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -954,7 +943,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder encoderMaxLineLength(
+        default Mina2EndpointProducerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -966,7 +955,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder encoding(String encoding) {
+        default Mina2EndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -976,7 +965,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder filters(List<Object> filters) {
+        default Mina2EndpointProducerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -986,7 +975,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder filters(String filters) {
+        default Mina2EndpointProducerBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -997,7 +986,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder textline(boolean textline) {
+        default Mina2EndpointProducerBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1008,7 +997,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder textline(String textline) {
+        default Mina2EndpointProducerBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1021,7 +1010,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder textlineDelimiter(
+        default Mina2EndpointProducerBuilder textlineDelimiter(
                 Mina2TextLineDelimiter textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
@@ -1035,7 +1024,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointProducerBuilder textlineDelimiter(
+        default Mina2EndpointProducerBuilder textlineDelimiter(
                 String textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
@@ -1045,8 +1034,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointProducerBuilder autoStartTls(
-                boolean autoStartTls) {
+        default Mina2EndpointProducerBuilder autoStartTls(boolean autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -1055,8 +1043,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointProducerBuilder autoStartTls(
-                String autoStartTls) {
+        default Mina2EndpointProducerBuilder autoStartTls(String autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -1066,7 +1053,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointProducerBuilder sslContextParameters(
+        default Mina2EndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1077,7 +1064,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointProducerBuilder sslContextParameters(
+        default Mina2EndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1090,7 +1077,7 @@ public interface Mina2EndpointBuilderFactory {
     public interface AdvancedMina2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default Mina2EndpointProducerBuilder basic() {
+        default Mina2EndpointProducerBuilder basic() {
             return (Mina2EndpointProducerBuilder) this;
         }
         /**
@@ -1099,7 +1086,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMina2EndpointProducerBuilder cachedAddress(
+        default AdvancedMina2EndpointProducerBuilder cachedAddress(
                 boolean cachedAddress) {
             setProperty("cachedAddress", cachedAddress);
             return this;
@@ -1110,7 +1097,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMina2EndpointProducerBuilder cachedAddress(
+        default AdvancedMina2EndpointProducerBuilder cachedAddress(
                 String cachedAddress) {
             setProperty("cachedAddress", cachedAddress);
             return this;
@@ -1121,7 +1108,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMina2EndpointProducerBuilder lazySessionCreation(
+        default AdvancedMina2EndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -1132,7 +1119,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMina2EndpointProducerBuilder lazySessionCreation(
+        default AdvancedMina2EndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -1143,7 +1130,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1154,7 +1141,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1164,7 +1151,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder maximumPoolSize(
+        default AdvancedMina2EndpointProducerBuilder maximumPoolSize(
                 int maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
@@ -1174,7 +1161,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder maximumPoolSize(
+        default AdvancedMina2EndpointProducerBuilder maximumPoolSize(
                 String maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
@@ -1185,7 +1172,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointProducerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -1196,7 +1183,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointProducerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -1207,7 +1194,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder synchronous(
+        default AdvancedMina2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1218,7 +1205,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder synchronous(
+        default AdvancedMina2EndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1233,7 +1220,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder transferExchange(
+        default AdvancedMina2EndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1248,7 +1235,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointProducerBuilder transferExchange(
+        default AdvancedMina2EndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1261,7 +1248,7 @@ public interface Mina2EndpointBuilderFactory {
     public static interface Mina2EndpointBuilder
             extends
                 Mina2EndpointConsumerBuilder, Mina2EndpointProducerBuilder {
-        public default AdvancedMina2EndpointBuilder advanced() {
+        default AdvancedMina2EndpointBuilder advanced() {
             return (AdvancedMina2EndpointBuilder) this;
         }
         /**
@@ -1269,7 +1256,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder protocol(String protocol) {
+        default Mina2EndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -1280,7 +1267,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder host(String host) {
+        default Mina2EndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1289,7 +1276,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder port(int port) {
+        default Mina2EndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1298,7 +1285,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder port(String port) {
+        default Mina2EndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1308,7 +1295,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder disconnect(boolean disconnect) {
+        default Mina2EndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -1318,7 +1305,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder disconnect(String disconnect) {
+        default Mina2EndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -1328,7 +1315,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder minaLogger(boolean minaLogger) {
+        default Mina2EndpointBuilder minaLogger(boolean minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -1338,7 +1325,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder minaLogger(String minaLogger) {
+        default Mina2EndpointBuilder minaLogger(String minaLogger) {
             setProperty("minaLogger", minaLogger);
             return this;
         }
@@ -1347,7 +1334,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder sync(boolean sync) {
+        default Mina2EndpointBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -1356,7 +1343,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder sync(String sync) {
+        default Mina2EndpointBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -1367,7 +1354,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder timeout(long timeout) {
+        default Mina2EndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1378,7 +1365,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder timeout(String timeout) {
+        default Mina2EndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -1388,7 +1375,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder writeTimeout(long writeTimeout) {
+        default Mina2EndpointBuilder writeTimeout(long writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -1398,7 +1385,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default Mina2EndpointBuilder writeTimeout(String writeTimeout) {
+        default Mina2EndpointBuilder writeTimeout(String writeTimeout) {
             setProperty("writeTimeout", writeTimeout);
             return this;
         }
@@ -1412,8 +1399,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder allowDefaultCodec(
-                boolean allowDefaultCodec) {
+        default Mina2EndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
@@ -1427,8 +1413,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder allowDefaultCodec(
-                String allowDefaultCodec) {
+        default Mina2EndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
@@ -1438,7 +1423,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder codec(Object codec) {
+        default Mina2EndpointBuilder codec(Object codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -1448,7 +1433,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder codec(String codec) {
+        default Mina2EndpointBuilder codec(String codec) {
             setProperty("codec", codec);
             return this;
         }
@@ -1458,7 +1443,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder decoderMaxLineLength(
+        default Mina2EndpointBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -1469,7 +1454,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder decoderMaxLineLength(
+        default Mina2EndpointBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -1480,7 +1465,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder encoderMaxLineLength(
+        default Mina2EndpointBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -1491,7 +1476,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder encoderMaxLineLength(
+        default Mina2EndpointBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
             setProperty("encoderMaxLineLength", encoderMaxLineLength);
             return this;
@@ -1503,7 +1488,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder encoding(String encoding) {
+        default Mina2EndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -1513,7 +1498,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder filters(List<Object> filters) {
+        default Mina2EndpointBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -1523,7 +1508,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder filters(String filters) {
+        default Mina2EndpointBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -1534,7 +1519,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder textline(boolean textline) {
+        default Mina2EndpointBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1545,7 +1530,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default Mina2EndpointBuilder textline(String textline) {
+        default Mina2EndpointBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1558,7 +1543,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointBuilder textlineDelimiter(
+        default Mina2EndpointBuilder textlineDelimiter(
                 Mina2TextLineDelimiter textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
@@ -1572,8 +1557,7 @@ public interface Mina2EndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default Mina2EndpointBuilder textlineDelimiter(
-                String textlineDelimiter) {
+        default Mina2EndpointBuilder textlineDelimiter(String textlineDelimiter) {
             setProperty("textlineDelimiter", textlineDelimiter);
             return this;
         }
@@ -1582,7 +1566,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointBuilder autoStartTls(boolean autoStartTls) {
+        default Mina2EndpointBuilder autoStartTls(boolean autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -1591,7 +1575,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default Mina2EndpointBuilder autoStartTls(String autoStartTls) {
+        default Mina2EndpointBuilder autoStartTls(String autoStartTls) {
             setProperty("autoStartTls", autoStartTls);
             return this;
         }
@@ -1601,7 +1585,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointBuilder sslContextParameters(
+        default Mina2EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1612,7 +1596,7 @@ public interface Mina2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default Mina2EndpointBuilder sslContextParameters(
+        default Mina2EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1625,7 +1609,7 @@ public interface Mina2EndpointBuilderFactory {
     public static interface AdvancedMina2EndpointBuilder
             extends
                 AdvancedMina2EndpointConsumerBuilder, AdvancedMina2EndpointProducerBuilder {
-        public default Mina2EndpointBuilder basic() {
+        default Mina2EndpointBuilder basic() {
             return (Mina2EndpointBuilder) this;
         }
         /**
@@ -1634,7 +1618,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1645,7 +1629,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder basicPropertyBinding(
+        default AdvancedMina2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1655,8 +1639,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder maximumPoolSize(
-                int maximumPoolSize) {
+        default AdvancedMina2EndpointBuilder maximumPoolSize(int maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
         }
@@ -1665,7 +1648,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder maximumPoolSize(
+        default AdvancedMina2EndpointBuilder maximumPoolSize(
                 String maximumPoolSize) {
             setProperty("maximumPoolSize", maximumPoolSize);
             return this;
@@ -1676,7 +1659,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -1687,7 +1670,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder orderedThreadPoolExecutor(
+        default AdvancedMina2EndpointBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
             setProperty("orderedThreadPoolExecutor", orderedThreadPoolExecutor);
             return this;
@@ -1698,8 +1681,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMina2EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1709,8 +1691,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMina2EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1724,7 +1705,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder transferExchange(
+        default AdvancedMina2EndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1739,7 +1720,7 @@ public interface Mina2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMina2EndpointBuilder transferExchange(
+        default AdvancedMina2EndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1758,7 +1739,7 @@ public interface Mina2EndpointBuilderFactory {
      * Socket level networking using TCP or UDP with the Apache Mina 2.x
      * library. Creates a builder to build endpoints for the Mina2 component.
      */
-    public default Mina2EndpointBuilder mina2(String path) {
+    default Mina2EndpointBuilder mina2(String path) {
         class Mina2EndpointBuilderImpl extends AbstractEndpointBuilder implements Mina2EndpointBuilder, AdvancedMina2EndpointBuilder {
             public Mina2EndpointBuilderImpl(String path) {
                 super("mina", path);

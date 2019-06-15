@@ -37,7 +37,7 @@ public interface DataSetTestEndpointBuilderFactory {
     public static interface DataSetTestEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDataSetTestEndpointBuilder advanced() {
+        default AdvancedDataSetTestEndpointBuilder advanced() {
             return (AdvancedDataSetTestEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder name(String name) {
+        default DataSetTestEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -56,7 +56,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder anyOrder(boolean anyOrder) {
+        default DataSetTestEndpointBuilder anyOrder(boolean anyOrder) {
             setProperty("anyOrder", anyOrder);
             return this;
         }
@@ -66,7 +66,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder anyOrder(String anyOrder) {
+        default DataSetTestEndpointBuilder anyOrder(String anyOrder) {
             setProperty("anyOrder", anyOrder);
             return this;
         }
@@ -77,7 +77,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder delimiter(String delimiter) {
+        default DataSetTestEndpointBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -89,7 +89,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder split(boolean split) {
+        default DataSetTestEndpointBuilder split(boolean split) {
             setProperty("split", split);
             return this;
         }
@@ -101,7 +101,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder split(String split) {
+        default DataSetTestEndpointBuilder split(String split) {
             setProperty("split", split);
             return this;
         }
@@ -110,7 +110,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder timeout(long timeout) {
+        default DataSetTestEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -119,7 +119,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DataSetTestEndpointBuilder timeout(String timeout) {
+        default DataSetTestEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -131,7 +131,7 @@ public interface DataSetTestEndpointBuilderFactory {
     public static interface AdvancedDataSetTestEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DataSetTestEndpointBuilder basic() {
+        default DataSetTestEndpointBuilder basic() {
             return (DataSetTestEndpointBuilder) this;
         }
         /**
@@ -140,7 +140,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
+        default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,7 +151,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
+        default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -162,7 +162,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetTestEndpointBuilder synchronous(
+        default AdvancedDataSetTestEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -173,7 +173,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataSetTestEndpointBuilder synchronous(
+        default AdvancedDataSetTestEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -184,7 +184,7 @@ public interface DataSetTestEndpointBuilderFactory {
      * pull messages from another endpoint to set the expected message bodies.
      * Creates a builder to build endpoints for the DataSet Test component.
      */
-    public default DataSetTestEndpointBuilder dataSetTest(String path) {
+    default DataSetTestEndpointBuilder dataSetTest(String path) {
         class DataSetTestEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetTestEndpointBuilder, AdvancedDataSetTestEndpointBuilder {
             public DataSetTestEndpointBuilderImpl(String path) {
                 super("dataset-test", path);

@@ -42,7 +42,7 @@ public interface UndertowEndpointBuilderFactory {
     public interface UndertowEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedUndertowEndpointConsumerBuilder advanced() {
+        default AdvancedUndertowEndpointConsumerBuilder advanced() {
             return (AdvancedUndertowEndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointConsumerBuilder httpURI(URI httpURI) {
+        default UndertowEndpointConsumerBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -59,7 +59,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointConsumerBuilder httpURI(String httpURI) {
+        default UndertowEndpointConsumerBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -68,8 +68,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder accessLog(
-                Boolean accessLog) {
+        default UndertowEndpointConsumerBuilder accessLog(Boolean accessLog) {
             setProperty("accessLog", accessLog);
             return this;
         }
@@ -79,8 +78,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder accessLog(
-                String accessLog) {
+        default UndertowEndpointConsumerBuilder accessLog(String accessLog) {
             setProperty("accessLog", accessLog);
             return this;
         }
@@ -95,7 +93,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder bridgeErrorHandler(
+        default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,7 +109,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder bridgeErrorHandler(
+        default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -123,7 +121,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder httpMethodRestrict(
+        default UndertowEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
             setProperty("httpMethodRestrict", httpMethodRestrict);
             return this;
@@ -134,7 +132,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder matchOnUriPrefix(
+        default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 Boolean matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -146,7 +144,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder matchOnUriPrefix(
+        default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -157,7 +155,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder optionsEnabled(
+        default UndertowEndpointConsumerBuilder optionsEnabled(
                 boolean optionsEnabled) {
             setProperty("optionsEnabled", optionsEnabled);
             return this;
@@ -168,7 +166,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default UndertowEndpointConsumerBuilder optionsEnabled(
+        default UndertowEndpointConsumerBuilder optionsEnabled(
                 String optionsEnabled) {
             setProperty("optionsEnabled", optionsEnabled);
             return this;
@@ -180,7 +178,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group websocket
          */
-        public default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
+        default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 boolean fireWebSocketChannelEvents) {
             setProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
             return this;
@@ -192,7 +190,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group websocket
          */
-        public default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
+        default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 String fireWebSocketChannelEvents) {
             setProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
             return this;
@@ -205,7 +203,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group websocket
          */
-        public default UndertowEndpointConsumerBuilder useStreaming(
+        default UndertowEndpointConsumerBuilder useStreaming(
                 boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -218,8 +216,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group websocket
          */
-        public default UndertowEndpointConsumerBuilder useStreaming(
-                String useStreaming) {
+        default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
         }
@@ -229,7 +226,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointConsumerBuilder sslContextParameters(
+        default UndertowEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -240,7 +237,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointConsumerBuilder sslContextParameters(
+        default UndertowEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -253,7 +250,7 @@ public interface UndertowEndpointBuilderFactory {
     public interface AdvancedUndertowEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default UndertowEndpointConsumerBuilder basic() {
+        default UndertowEndpointConsumerBuilder basic() {
             return (UndertowEndpointConsumerBuilder) this;
         }
         /**
@@ -265,7 +262,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
+        default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -279,7 +276,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
+        default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -289,7 +286,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
+        default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -300,7 +297,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
+        default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -313,7 +310,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -326,7 +323,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 String accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -337,7 +334,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -348,7 +345,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -360,7 +357,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -372,7 +369,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -383,7 +380,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder synchronous(
+        default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -394,7 +391,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder synchronous(
+        default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -407,7 +404,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -420,7 +417,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -433,7 +430,7 @@ public interface UndertowEndpointBuilderFactory {
     public static interface UndertowEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedUndertowEndpointProducerBuilder advanced() {
+        default AdvancedUndertowEndpointProducerBuilder advanced() {
             return (AdvancedUndertowEndpointProducerBuilder) this;
         }
         /**
@@ -441,7 +438,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointProducerBuilder httpURI(URI httpURI) {
+        default UndertowEndpointProducerBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -450,7 +447,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointProducerBuilder httpURI(String httpURI) {
+        default UndertowEndpointProducerBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -460,7 +457,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder cookieHandler(
+        default UndertowEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
@@ -471,7 +468,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder cookieHandler(
+        default UndertowEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
@@ -481,8 +478,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder keepAlive(
-                Boolean keepAlive) {
+        default UndertowEndpointProducerBuilder keepAlive(Boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -492,8 +488,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder keepAlive(
-                String keepAlive) {
+        default UndertowEndpointProducerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -510,7 +505,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder lazyStartProducer(
+        default UndertowEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -528,7 +523,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder lazyStartProducer(
+        default UndertowEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -542,7 +537,7 @@ public interface UndertowEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder options(
+        default UndertowEndpointProducerBuilder options(
                 Map<String, Object> options) {
             setProperty("options", options);
             return this;
@@ -557,7 +552,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder options(String options) {
+        default UndertowEndpointProducerBuilder options(String options) {
             setProperty("options", options);
             return this;
         }
@@ -566,7 +561,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder reuseAddresses(
+        default UndertowEndpointProducerBuilder reuseAddresses(
                 Boolean reuseAddresses) {
             setProperty("reuseAddresses", reuseAddresses);
             return this;
@@ -577,7 +572,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder reuseAddresses(
+        default UndertowEndpointProducerBuilder reuseAddresses(
                 String reuseAddresses) {
             setProperty("reuseAddresses", reuseAddresses);
             return this;
@@ -587,8 +582,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder tcpNoDelay(
-                Boolean tcpNoDelay) {
+        default UndertowEndpointProducerBuilder tcpNoDelay(Boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -598,8 +592,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder tcpNoDelay(
-                String tcpNoDelay) {
+        default UndertowEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -610,7 +603,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder throwExceptionOnFailure(
+        default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 Boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -623,7 +616,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder throwExceptionOnFailure(
+        default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -640,7 +633,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder transferException(
+        default UndertowEndpointProducerBuilder transferException(
                 Boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -658,7 +651,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default UndertowEndpointProducerBuilder transferException(
+        default UndertowEndpointProducerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -669,8 +662,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group websocket
          */
-        public default UndertowEndpointProducerBuilder sendTimeout(
-                Integer sendTimeout) {
+        default UndertowEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
             return this;
         }
@@ -681,8 +673,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group websocket
          */
-        public default UndertowEndpointProducerBuilder sendTimeout(
-                String sendTimeout) {
+        default UndertowEndpointProducerBuilder sendTimeout(String sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
             return this;
         }
@@ -693,8 +684,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group websocket
          */
-        public default UndertowEndpointProducerBuilder sendToAll(
-                Boolean sendToAll) {
+        default UndertowEndpointProducerBuilder sendToAll(Boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -706,8 +696,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group websocket
          */
-        public default UndertowEndpointProducerBuilder sendToAll(
-                String sendToAll) {
+        default UndertowEndpointProducerBuilder sendToAll(String sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -717,7 +706,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointProducerBuilder sslContextParameters(
+        default UndertowEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -728,7 +717,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointProducerBuilder sslContextParameters(
+        default UndertowEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -741,7 +730,7 @@ public interface UndertowEndpointBuilderFactory {
     public interface AdvancedUndertowEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default UndertowEndpointProducerBuilder basic() {
+        default UndertowEndpointProducerBuilder basic() {
             return (UndertowEndpointProducerBuilder) this;
         }
         /**
@@ -752,7 +741,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -765,7 +754,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 String accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -776,7 +765,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -787,7 +776,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -799,7 +788,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -811,7 +800,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -822,7 +811,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder synchronous(
+        default AdvancedUndertowEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -833,7 +822,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder synchronous(
+        default AdvancedUndertowEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -846,7 +835,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -859,7 +848,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -872,7 +861,7 @@ public interface UndertowEndpointBuilderFactory {
     public static interface UndertowEndpointBuilder
             extends
                 UndertowEndpointConsumerBuilder, UndertowEndpointProducerBuilder {
-        public default AdvancedUndertowEndpointBuilder advanced() {
+        default AdvancedUndertowEndpointBuilder advanced() {
             return (AdvancedUndertowEndpointBuilder) this;
         }
         /**
@@ -880,7 +869,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointBuilder httpURI(URI httpURI) {
+        default UndertowEndpointBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -889,7 +878,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default UndertowEndpointBuilder httpURI(String httpURI) {
+        default UndertowEndpointBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
             return this;
         }
@@ -899,7 +888,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointBuilder sslContextParameters(
+        default UndertowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -910,7 +899,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default UndertowEndpointBuilder sslContextParameters(
+        default UndertowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -923,7 +912,7 @@ public interface UndertowEndpointBuilderFactory {
     public static interface AdvancedUndertowEndpointBuilder
             extends
                 AdvancedUndertowEndpointConsumerBuilder, AdvancedUndertowEndpointProducerBuilder {
-        public default UndertowEndpointBuilder basic() {
+        default UndertowEndpointBuilder basic() {
             return (UndertowEndpointBuilder) this;
         }
         /**
@@ -934,7 +923,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 Object accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -947,7 +936,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder accessLogReceiver(
+        default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 String accessLogReceiver) {
             setProperty("accessLogReceiver", accessLogReceiver);
             return this;
@@ -958,7 +947,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -969,7 +958,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder basicPropertyBinding(
+        default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -981,7 +970,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -993,7 +982,7 @@ public interface UndertowEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder headerFilterStrategy(
+        default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1004,8 +993,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedUndertowEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1015,8 +1003,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedUndertowEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1028,7 +1015,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -1041,7 +1028,7 @@ public interface UndertowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedUndertowEndpointBuilder undertowHttpBinding(
+        default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
             setProperty("undertowHttpBinding", undertowHttpBinding);
             return this;
@@ -1052,7 +1039,7 @@ public interface UndertowEndpointBuilderFactory {
      * consuming and producing HTTP/WebSocket requests. Creates a builder to
      * build endpoints for the Undertow component.
      */
-    public default UndertowEndpointBuilder undertow(String path) {
+    default UndertowEndpointBuilder undertow(String path) {
         class UndertowEndpointBuilderImpl extends AbstractEndpointBuilder implements UndertowEndpointBuilder, AdvancedUndertowEndpointBuilder {
             public UndertowEndpointBuilderImpl(String path) {
                 super("undertow", path);

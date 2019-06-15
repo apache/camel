@@ -36,7 +36,7 @@ public interface IAMEndpointBuilderFactory {
     public static interface IAMEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIAMEndpointBuilder advanced() {
+        default AdvancedIAMEndpointBuilder advanced() {
             return (AdvancedIAMEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default IAMEndpointBuilder label(String label) {
+        default IAMEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -53,7 +53,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default IAMEndpointBuilder region(String region) {
+        default IAMEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -65,7 +65,7 @@ public interface IAMEndpointBuilderFactory {
     public static interface AdvancedIAMEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default IAMEndpointBuilder basic() {
+        default IAMEndpointBuilder basic() {
             return (IAMEndpointBuilder) this;
         }
         /**
@@ -74,7 +74,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIAMEndpointBuilder basicPropertyBinding(
+        default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -85,7 +85,7 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIAMEndpointBuilder basicPropertyBinding(
+        default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,8 +96,7 @@ public interface IAMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIAMEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedIAMEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -107,7 +106,7 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIAMEndpointBuilder synchronous(String synchronous) {
+        default AdvancedIAMEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -124,7 +123,7 @@ public interface IAMEndpointBuilderFactory {
      * The aws-iam is used for managing Amazon IAM Creates a builder to build
      * endpoints for the AWS IAM component.
      */
-    public default IAMEndpointBuilder iAM(String path) {
+    default IAMEndpointBuilder iAM(String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {
                 super("aws-iam", path);

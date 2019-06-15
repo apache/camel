@@ -40,7 +40,7 @@ public interface SalesforceEndpointBuilderFactory {
     public interface SalesforceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSalesforceEndpointConsumerBuilder advanced() {
+        default AdvancedSalesforceEndpointConsumerBuilder advanced() {
             return (AdvancedSalesforceEndpointConsumerBuilder) this;
         }
         /**
@@ -48,8 +48,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SalesforceEndpointConsumerBuilder topicName(
-                String topicName) {
+        default SalesforceEndpointConsumerBuilder topicName(String topicName) {
             setProperty("topicName", topicName);
             return this;
         }
@@ -58,8 +57,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder apexMethod(
-                String apexMethod) {
+        default SalesforceEndpointConsumerBuilder apexMethod(String apexMethod) {
             setProperty("apexMethod", apexMethod);
             return this;
         }
@@ -69,7 +67,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder apexQueryParams(
+        default SalesforceEndpointConsumerBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
@@ -81,7 +79,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder apexQueryParams(
+        default SalesforceEndpointConsumerBuilder apexQueryParams(
                 String apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
@@ -91,7 +89,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder apexUrl(String apexUrl) {
+        default SalesforceEndpointConsumerBuilder apexUrl(String apexUrl) {
             setProperty("apexUrl", apexUrl);
             return this;
         }
@@ -101,8 +99,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder apiVersion(
-                String apiVersion) {
+        default SalesforceEndpointConsumerBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -112,7 +109,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder backoffIncrement(
+        default SalesforceEndpointConsumerBuilder backoffIncrement(
                 long backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
@@ -123,7 +120,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder backoffIncrement(
+        default SalesforceEndpointConsumerBuilder backoffIncrement(
                 String backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
@@ -133,7 +130,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder batchId(String batchId) {
+        default SalesforceEndpointConsumerBuilder batchId(String batchId) {
             setProperty("batchId", batchId);
             return this;
         }
@@ -143,7 +140,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder contentType(
+        default SalesforceEndpointConsumerBuilder contentType(
                 ContentType contentType) {
             setProperty("contentType", contentType);
             return this;
@@ -154,8 +151,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder contentType(
-                String contentType) {
+        default SalesforceEndpointConsumerBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -164,7 +160,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder defaultReplayId(
+        default SalesforceEndpointConsumerBuilder defaultReplayId(
                 Long defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
@@ -174,7 +170,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder defaultReplayId(
+        default SalesforceEndpointConsumerBuilder defaultReplayId(
                 String defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
@@ -186,8 +182,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder format(
-                PayloadFormat format) {
+        default SalesforceEndpointConsumerBuilder format(PayloadFormat format) {
             setProperty("format", format);
             return this;
         }
@@ -198,7 +193,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder format(String format) {
+        default SalesforceEndpointConsumerBuilder format(String format) {
             setProperty("format", format);
             return this;
         }
@@ -208,8 +203,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder httpClient(
-                Object httpClient) {
+        default SalesforceEndpointConsumerBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -219,8 +213,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder httpClient(
-                String httpClient) {
+        default SalesforceEndpointConsumerBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -229,7 +222,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder includeDetails(
+        default SalesforceEndpointConsumerBuilder includeDetails(
                 Boolean includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
@@ -240,7 +233,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder includeDetails(
+        default SalesforceEndpointConsumerBuilder includeDetails(
                 String includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
@@ -251,7 +244,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Long&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder initialReplayIdMap(
+        default SalesforceEndpointConsumerBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -263,7 +256,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder initialReplayIdMap(
+        default SalesforceEndpointConsumerBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -273,8 +266,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder instanceId(
-                String instanceId) {
+        default SalesforceEndpointConsumerBuilder instanceId(String instanceId) {
             setProperty("instanceId", instanceId);
             return this;
         }
@@ -283,7 +275,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder jobId(String jobId) {
+        default SalesforceEndpointConsumerBuilder jobId(String jobId) {
             setProperty("jobId", jobId);
             return this;
         }
@@ -293,7 +285,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder limit(Integer limit) {
+        default SalesforceEndpointConsumerBuilder limit(Integer limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -304,7 +296,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder limit(String limit) {
+        default SalesforceEndpointConsumerBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -314,8 +306,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder maxBackoff(
-                long maxBackoff) {
+        default SalesforceEndpointConsumerBuilder maxBackoff(long maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -325,8 +316,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder maxBackoff(
-                String maxBackoff) {
+        default SalesforceEndpointConsumerBuilder maxBackoff(String maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -340,7 +330,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notFoundBehaviour(
+        default SalesforceEndpointConsumerBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -355,7 +345,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notFoundBehaviour(
+        default SalesforceEndpointConsumerBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -366,7 +356,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForFields(
+        default SalesforceEndpointConsumerBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
@@ -377,7 +367,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForFields(
+        default SalesforceEndpointConsumerBuilder notifyForFields(
                 String notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
@@ -387,7 +377,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
+        default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -398,7 +388,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
+        default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -408,7 +398,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
+        default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -419,7 +409,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
+        default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -431,7 +421,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperations(
+        default SalesforceEndpointConsumerBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -443,7 +433,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperations(
+        default SalesforceEndpointConsumerBuilder notifyForOperations(
                 String notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -454,7 +444,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
+        default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -466,7 +456,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
+        default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -476,7 +466,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
+        default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -487,7 +477,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
+        default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -499,7 +489,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder objectMapper(
+        default SalesforceEndpointConsumerBuilder objectMapper(
                 Object objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
@@ -511,7 +501,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder objectMapper(
+        default SalesforceEndpointConsumerBuilder objectMapper(
                 String objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
@@ -522,8 +512,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder rawPayload(
-                boolean rawPayload) {
+        default SalesforceEndpointConsumerBuilder rawPayload(boolean rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -533,8 +522,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder rawPayload(
-                String rawPayload) {
+        default SalesforceEndpointConsumerBuilder rawPayload(String rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -543,8 +531,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder reportId(
-                String reportId) {
+        default SalesforceEndpointConsumerBuilder reportId(String reportId) {
             setProperty("reportId", reportId);
             return this;
         }
@@ -554,7 +541,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder reportMetadata(
+        default SalesforceEndpointConsumerBuilder reportMetadata(
                 Object reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
@@ -565,7 +552,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder reportMetadata(
+        default SalesforceEndpointConsumerBuilder reportMetadata(
                 String reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
@@ -575,8 +562,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder resultId(
-                String resultId) {
+        default SalesforceEndpointConsumerBuilder resultId(String resultId) {
             setProperty("resultId", resultId);
             return this;
         }
@@ -586,7 +572,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder serializeNulls(
+        default SalesforceEndpointConsumerBuilder serializeNulls(
                 boolean serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
@@ -597,7 +583,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder serializeNulls(
+        default SalesforceEndpointConsumerBuilder serializeNulls(
                 String serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
@@ -607,7 +593,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectBlobFieldName(
+        default SalesforceEndpointConsumerBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
             setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
@@ -618,7 +604,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectClass(
+        default SalesforceEndpointConsumerBuilder sObjectClass(
                 String sObjectClass) {
             setProperty("sObjectClass", sObjectClass);
             return this;
@@ -628,7 +614,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectFields(
+        default SalesforceEndpointConsumerBuilder sObjectFields(
                 String sObjectFields) {
             setProperty("sObjectFields", sObjectFields);
             return this;
@@ -638,8 +624,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectId(
-                String sObjectId) {
+        default SalesforceEndpointConsumerBuilder sObjectId(String sObjectId) {
             setProperty("sObjectId", sObjectId);
             return this;
         }
@@ -648,7 +633,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectIdName(
+        default SalesforceEndpointConsumerBuilder sObjectIdName(
                 String sObjectIdName) {
             setProperty("sObjectIdName", sObjectIdName);
             return this;
@@ -658,7 +643,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectIdValue(
+        default SalesforceEndpointConsumerBuilder sObjectIdValue(
                 String sObjectIdValue) {
             setProperty("sObjectIdValue", sObjectIdValue);
             return this;
@@ -668,8 +653,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectName(
-                String sObjectName) {
+        default SalesforceEndpointConsumerBuilder sObjectName(String sObjectName) {
             setProperty("sObjectName", sObjectName);
             return this;
         }
@@ -678,7 +662,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectQuery(
+        default SalesforceEndpointConsumerBuilder sObjectQuery(
                 String sObjectQuery) {
             setProperty("sObjectQuery", sObjectQuery);
             return this;
@@ -688,7 +672,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder sObjectSearch(
+        default SalesforceEndpointConsumerBuilder sObjectSearch(
                 String sObjectSearch) {
             setProperty("sObjectSearch", sObjectSearch);
             return this;
@@ -699,7 +683,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder updateTopic(
+        default SalesforceEndpointConsumerBuilder updateTopic(
                 boolean updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
@@ -710,8 +694,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointConsumerBuilder updateTopic(
-                String updateTopic) {
+        default SalesforceEndpointConsumerBuilder updateTopic(String updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
         }
@@ -726,7 +709,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
+        default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -742,7 +725,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
+        default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -752,7 +735,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default SalesforceEndpointConsumerBuilder replayId(Long replayId) {
+        default SalesforceEndpointConsumerBuilder replayId(Long replayId) {
             setProperty("replayId", replayId);
             return this;
         }
@@ -761,8 +744,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default SalesforceEndpointConsumerBuilder replayId(
-                String replayId) {
+        default SalesforceEndpointConsumerBuilder replayId(String replayId) {
             setProperty("replayId", replayId);
             return this;
         }
@@ -774,7 +756,7 @@ public interface SalesforceEndpointBuilderFactory {
     public interface AdvancedSalesforceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SalesforceEndpointConsumerBuilder basic() {
+        default SalesforceEndpointConsumerBuilder basic() {
             return (SalesforceEndpointConsumerBuilder) this;
         }
         /**
@@ -786,7 +768,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -800,7 +782,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -810,7 +792,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
+        default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -821,7 +803,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
+        default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -832,7 +814,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -843,7 +825,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -854,7 +836,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder synchronous(
+        default AdvancedSalesforceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -865,7 +847,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointConsumerBuilder synchronous(
+        default AdvancedSalesforceEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -878,7 +860,7 @@ public interface SalesforceEndpointBuilderFactory {
     public static interface SalesforceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSalesforceEndpointProducerBuilder advanced() {
+        default AdvancedSalesforceEndpointProducerBuilder advanced() {
             return (AdvancedSalesforceEndpointProducerBuilder) this;
         }
         /**
@@ -887,7 +869,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.OperationName</code> type.
          * @group producer
          */
-        public default SalesforceEndpointProducerBuilder operationName(
+        default SalesforceEndpointProducerBuilder operationName(
                 OperationName operationName) {
             setProperty("operationName", operationName);
             return this;
@@ -898,7 +880,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.OperationName</code> type.
          * @group producer
          */
-        public default SalesforceEndpointProducerBuilder operationName(
+        default SalesforceEndpointProducerBuilder operationName(
                 String operationName) {
             setProperty("operationName", operationName);
             return this;
@@ -908,8 +890,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder apexMethod(
-                String apexMethod) {
+        default SalesforceEndpointProducerBuilder apexMethod(String apexMethod) {
             setProperty("apexMethod", apexMethod);
             return this;
         }
@@ -919,7 +900,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder apexQueryParams(
+        default SalesforceEndpointProducerBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
@@ -931,7 +912,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder apexQueryParams(
+        default SalesforceEndpointProducerBuilder apexQueryParams(
                 String apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
@@ -941,7 +922,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder apexUrl(String apexUrl) {
+        default SalesforceEndpointProducerBuilder apexUrl(String apexUrl) {
             setProperty("apexUrl", apexUrl);
             return this;
         }
@@ -951,8 +932,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder apiVersion(
-                String apiVersion) {
+        default SalesforceEndpointProducerBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -962,7 +942,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder backoffIncrement(
+        default SalesforceEndpointProducerBuilder backoffIncrement(
                 long backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
@@ -973,7 +953,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder backoffIncrement(
+        default SalesforceEndpointProducerBuilder backoffIncrement(
                 String backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
@@ -983,7 +963,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder batchId(String batchId) {
+        default SalesforceEndpointProducerBuilder batchId(String batchId) {
             setProperty("batchId", batchId);
             return this;
         }
@@ -993,7 +973,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder contentType(
+        default SalesforceEndpointProducerBuilder contentType(
                 ContentType contentType) {
             setProperty("contentType", contentType);
             return this;
@@ -1004,8 +984,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder contentType(
-                String contentType) {
+        default SalesforceEndpointProducerBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -1014,7 +993,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder defaultReplayId(
+        default SalesforceEndpointProducerBuilder defaultReplayId(
                 Long defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
@@ -1024,7 +1003,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder defaultReplayId(
+        default SalesforceEndpointProducerBuilder defaultReplayId(
                 String defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
@@ -1036,8 +1015,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder format(
-                PayloadFormat format) {
+        default SalesforceEndpointProducerBuilder format(PayloadFormat format) {
             setProperty("format", format);
             return this;
         }
@@ -1048,7 +1026,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder format(String format) {
+        default SalesforceEndpointProducerBuilder format(String format) {
             setProperty("format", format);
             return this;
         }
@@ -1058,8 +1036,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder httpClient(
-                Object httpClient) {
+        default SalesforceEndpointProducerBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -1069,8 +1046,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder httpClient(
-                String httpClient) {
+        default SalesforceEndpointProducerBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -1079,7 +1055,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder includeDetails(
+        default SalesforceEndpointProducerBuilder includeDetails(
                 Boolean includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
@@ -1090,7 +1066,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder includeDetails(
+        default SalesforceEndpointProducerBuilder includeDetails(
                 String includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
@@ -1101,7 +1077,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Long&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder initialReplayIdMap(
+        default SalesforceEndpointProducerBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -1113,7 +1089,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder initialReplayIdMap(
+        default SalesforceEndpointProducerBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -1123,8 +1099,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder instanceId(
-                String instanceId) {
+        default SalesforceEndpointProducerBuilder instanceId(String instanceId) {
             setProperty("instanceId", instanceId);
             return this;
         }
@@ -1133,7 +1108,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder jobId(String jobId) {
+        default SalesforceEndpointProducerBuilder jobId(String jobId) {
             setProperty("jobId", jobId);
             return this;
         }
@@ -1143,7 +1118,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder limit(Integer limit) {
+        default SalesforceEndpointProducerBuilder limit(Integer limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -1154,7 +1129,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder limit(String limit) {
+        default SalesforceEndpointProducerBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -1164,8 +1139,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder maxBackoff(
-                long maxBackoff) {
+        default SalesforceEndpointProducerBuilder maxBackoff(long maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -1175,8 +1149,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder maxBackoff(
-                String maxBackoff) {
+        default SalesforceEndpointProducerBuilder maxBackoff(String maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -1190,7 +1163,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notFoundBehaviour(
+        default SalesforceEndpointProducerBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -1205,7 +1178,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notFoundBehaviour(
+        default SalesforceEndpointProducerBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -1216,7 +1189,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForFields(
+        default SalesforceEndpointProducerBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
@@ -1227,7 +1200,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForFields(
+        default SalesforceEndpointProducerBuilder notifyForFields(
                 String notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
@@ -1237,7 +1210,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationCreate(
+        default SalesforceEndpointProducerBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -1248,7 +1221,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationCreate(
+        default SalesforceEndpointProducerBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -1258,7 +1231,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationDelete(
+        default SalesforceEndpointProducerBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -1269,7 +1242,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationDelete(
+        default SalesforceEndpointProducerBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -1281,7 +1254,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperations(
+        default SalesforceEndpointProducerBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -1293,7 +1266,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperations(
+        default SalesforceEndpointProducerBuilder notifyForOperations(
                 String notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -1304,7 +1277,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
+        default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -1316,7 +1289,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
+        default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -1326,7 +1299,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
+        default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -1337,7 +1310,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
+        default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -1349,7 +1322,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder objectMapper(
+        default SalesforceEndpointProducerBuilder objectMapper(
                 Object objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
@@ -1361,7 +1334,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder objectMapper(
+        default SalesforceEndpointProducerBuilder objectMapper(
                 String objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
@@ -1372,8 +1345,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder rawPayload(
-                boolean rawPayload) {
+        default SalesforceEndpointProducerBuilder rawPayload(boolean rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -1383,8 +1355,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder rawPayload(
-                String rawPayload) {
+        default SalesforceEndpointProducerBuilder rawPayload(String rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -1393,8 +1364,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder reportId(
-                String reportId) {
+        default SalesforceEndpointProducerBuilder reportId(String reportId) {
             setProperty("reportId", reportId);
             return this;
         }
@@ -1404,7 +1374,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder reportMetadata(
+        default SalesforceEndpointProducerBuilder reportMetadata(
                 Object reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
@@ -1415,7 +1385,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder reportMetadata(
+        default SalesforceEndpointProducerBuilder reportMetadata(
                 String reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
@@ -1425,8 +1395,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder resultId(
-                String resultId) {
+        default SalesforceEndpointProducerBuilder resultId(String resultId) {
             setProperty("resultId", resultId);
             return this;
         }
@@ -1436,7 +1405,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder serializeNulls(
+        default SalesforceEndpointProducerBuilder serializeNulls(
                 boolean serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
@@ -1447,7 +1416,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder serializeNulls(
+        default SalesforceEndpointProducerBuilder serializeNulls(
                 String serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
@@ -1457,7 +1426,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectBlobFieldName(
+        default SalesforceEndpointProducerBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
             setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
@@ -1468,7 +1437,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectClass(
+        default SalesforceEndpointProducerBuilder sObjectClass(
                 String sObjectClass) {
             setProperty("sObjectClass", sObjectClass);
             return this;
@@ -1478,7 +1447,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectFields(
+        default SalesforceEndpointProducerBuilder sObjectFields(
                 String sObjectFields) {
             setProperty("sObjectFields", sObjectFields);
             return this;
@@ -1488,8 +1457,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectId(
-                String sObjectId) {
+        default SalesforceEndpointProducerBuilder sObjectId(String sObjectId) {
             setProperty("sObjectId", sObjectId);
             return this;
         }
@@ -1498,7 +1466,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectIdName(
+        default SalesforceEndpointProducerBuilder sObjectIdName(
                 String sObjectIdName) {
             setProperty("sObjectIdName", sObjectIdName);
             return this;
@@ -1508,7 +1476,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectIdValue(
+        default SalesforceEndpointProducerBuilder sObjectIdValue(
                 String sObjectIdValue) {
             setProperty("sObjectIdValue", sObjectIdValue);
             return this;
@@ -1518,8 +1486,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectName(
-                String sObjectName) {
+        default SalesforceEndpointProducerBuilder sObjectName(String sObjectName) {
             setProperty("sObjectName", sObjectName);
             return this;
         }
@@ -1528,7 +1495,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectQuery(
+        default SalesforceEndpointProducerBuilder sObjectQuery(
                 String sObjectQuery) {
             setProperty("sObjectQuery", sObjectQuery);
             return this;
@@ -1538,7 +1505,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder sObjectSearch(
+        default SalesforceEndpointProducerBuilder sObjectSearch(
                 String sObjectSearch) {
             setProperty("sObjectSearch", sObjectSearch);
             return this;
@@ -1549,7 +1516,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder updateTopic(
+        default SalesforceEndpointProducerBuilder updateTopic(
                 boolean updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
@@ -1560,8 +1527,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointProducerBuilder updateTopic(
-                String updateTopic) {
+        default SalesforceEndpointProducerBuilder updateTopic(String updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
         }
@@ -1578,7 +1544,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SalesforceEndpointProducerBuilder lazyStartProducer(
+        default SalesforceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1596,7 +1562,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SalesforceEndpointProducerBuilder lazyStartProducer(
+        default SalesforceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1609,7 +1575,7 @@ public interface SalesforceEndpointBuilderFactory {
     public interface AdvancedSalesforceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SalesforceEndpointProducerBuilder basic() {
+        default SalesforceEndpointProducerBuilder basic() {
             return (SalesforceEndpointProducerBuilder) this;
         }
         /**
@@ -1618,7 +1584,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1629,7 +1595,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1640,7 +1606,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointProducerBuilder synchronous(
+        default AdvancedSalesforceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1651,7 +1617,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointProducerBuilder synchronous(
+        default AdvancedSalesforceEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1664,7 +1630,7 @@ public interface SalesforceEndpointBuilderFactory {
     public static interface SalesforceEndpointBuilder
             extends
                 SalesforceEndpointConsumerBuilder, SalesforceEndpointProducerBuilder {
-        public default AdvancedSalesforceEndpointBuilder advanced() {
+        default AdvancedSalesforceEndpointBuilder advanced() {
             return (AdvancedSalesforceEndpointBuilder) this;
         }
         /**
@@ -1672,7 +1638,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder apexMethod(String apexMethod) {
+        default SalesforceEndpointBuilder apexMethod(String apexMethod) {
             setProperty("apexMethod", apexMethod);
             return this;
         }
@@ -1682,7 +1648,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder apexQueryParams(
+        default SalesforceEndpointBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
@@ -1694,8 +1660,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder apexQueryParams(
-                String apexQueryParams) {
+        default SalesforceEndpointBuilder apexQueryParams(String apexQueryParams) {
             setProperty("apexQueryParams", apexQueryParams);
             return this;
         }
@@ -1704,7 +1669,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder apexUrl(String apexUrl) {
+        default SalesforceEndpointBuilder apexUrl(String apexUrl) {
             setProperty("apexUrl", apexUrl);
             return this;
         }
@@ -1714,7 +1679,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder apiVersion(String apiVersion) {
+        default SalesforceEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -1724,8 +1689,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder backoffIncrement(
-                long backoffIncrement) {
+        default SalesforceEndpointBuilder backoffIncrement(long backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
         }
@@ -1735,7 +1699,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder backoffIncrement(
+        default SalesforceEndpointBuilder backoffIncrement(
                 String backoffIncrement) {
             setProperty("backoffIncrement", backoffIncrement);
             return this;
@@ -1745,7 +1709,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder batchId(String batchId) {
+        default SalesforceEndpointBuilder batchId(String batchId) {
             setProperty("batchId", batchId);
             return this;
         }
@@ -1755,8 +1719,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder contentType(
-                ContentType contentType) {
+        default SalesforceEndpointBuilder contentType(ContentType contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -1766,7 +1729,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder contentType(String contentType) {
+        default SalesforceEndpointBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -1775,8 +1738,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder defaultReplayId(
-                Long defaultReplayId) {
+        default SalesforceEndpointBuilder defaultReplayId(Long defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
         }
@@ -1785,8 +1747,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder defaultReplayId(
-                String defaultReplayId) {
+        default SalesforceEndpointBuilder defaultReplayId(String defaultReplayId) {
             setProperty("defaultReplayId", defaultReplayId);
             return this;
         }
@@ -1797,7 +1758,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder format(PayloadFormat format) {
+        default SalesforceEndpointBuilder format(PayloadFormat format) {
             setProperty("format", format);
             return this;
         }
@@ -1808,7 +1769,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder format(String format) {
+        default SalesforceEndpointBuilder format(String format) {
             setProperty("format", format);
             return this;
         }
@@ -1818,7 +1779,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder httpClient(Object httpClient) {
+        default SalesforceEndpointBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -1828,7 +1789,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder httpClient(String httpClient) {
+        default SalesforceEndpointBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -1837,8 +1798,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder includeDetails(
-                Boolean includeDetails) {
+        default SalesforceEndpointBuilder includeDetails(Boolean includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
         }
@@ -1848,8 +1808,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder includeDetails(
-                String includeDetails) {
+        default SalesforceEndpointBuilder includeDetails(String includeDetails) {
             setProperty("includeDetails", includeDetails);
             return this;
         }
@@ -1859,7 +1818,7 @@ public interface SalesforceEndpointBuilderFactory {
          * java.lang.Long&gt;</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder initialReplayIdMap(
+        default SalesforceEndpointBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -1871,7 +1830,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder initialReplayIdMap(
+        default SalesforceEndpointBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
             setProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
@@ -1881,7 +1840,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder instanceId(String instanceId) {
+        default SalesforceEndpointBuilder instanceId(String instanceId) {
             setProperty("instanceId", instanceId);
             return this;
         }
@@ -1890,7 +1849,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder jobId(String jobId) {
+        default SalesforceEndpointBuilder jobId(String jobId) {
             setProperty("jobId", jobId);
             return this;
         }
@@ -1900,7 +1859,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder limit(Integer limit) {
+        default SalesforceEndpointBuilder limit(Integer limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -1911,7 +1870,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder limit(String limit) {
+        default SalesforceEndpointBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -1921,7 +1880,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder maxBackoff(long maxBackoff) {
+        default SalesforceEndpointBuilder maxBackoff(long maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -1931,7 +1890,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder maxBackoff(String maxBackoff) {
+        default SalesforceEndpointBuilder maxBackoff(String maxBackoff) {
             setProperty("maxBackoff", maxBackoff);
             return this;
         }
@@ -1945,7 +1904,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notFoundBehaviour(
+        default SalesforceEndpointBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -1960,7 +1919,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notFoundBehaviour(
+        default SalesforceEndpointBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
             setProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
@@ -1971,7 +1930,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForFields(
+        default SalesforceEndpointBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
@@ -1982,8 +1941,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForFields(
-                String notifyForFields) {
+        default SalesforceEndpointBuilder notifyForFields(String notifyForFields) {
             setProperty("notifyForFields", notifyForFields);
             return this;
         }
@@ -1992,7 +1950,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationCreate(
+        default SalesforceEndpointBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -2003,7 +1961,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationCreate(
+        default SalesforceEndpointBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
             setProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
@@ -2013,7 +1971,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationDelete(
+        default SalesforceEndpointBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -2024,7 +1982,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationDelete(
+        default SalesforceEndpointBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
             setProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
@@ -2036,7 +1994,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperations(
+        default SalesforceEndpointBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -2048,7 +2006,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperations(
+        default SalesforceEndpointBuilder notifyForOperations(
                 String notifyForOperations) {
             setProperty("notifyForOperations", notifyForOperations);
             return this;
@@ -2059,7 +2017,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationUndelete(
+        default SalesforceEndpointBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -2071,7 +2029,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationUndelete(
+        default SalesforceEndpointBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
             setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
@@ -2081,7 +2039,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationUpdate(
+        default SalesforceEndpointBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -2092,7 +2050,7 @@ public interface SalesforceEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SalesforceEndpointBuilder notifyForOperationUpdate(
+        default SalesforceEndpointBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
             setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
@@ -2104,8 +2062,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder objectMapper(
-                Object objectMapper) {
+        default SalesforceEndpointBuilder objectMapper(Object objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
         }
@@ -2116,8 +2073,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder objectMapper(
-                String objectMapper) {
+        default SalesforceEndpointBuilder objectMapper(String objectMapper) {
             setProperty("objectMapper", objectMapper);
             return this;
         }
@@ -2127,7 +2083,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder rawPayload(boolean rawPayload) {
+        default SalesforceEndpointBuilder rawPayload(boolean rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -2137,7 +2093,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder rawPayload(String rawPayload) {
+        default SalesforceEndpointBuilder rawPayload(String rawPayload) {
             setProperty("rawPayload", rawPayload);
             return this;
         }
@@ -2146,7 +2102,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder reportId(String reportId) {
+        default SalesforceEndpointBuilder reportId(String reportId) {
             setProperty("reportId", reportId);
             return this;
         }
@@ -2156,8 +2112,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder reportMetadata(
-                Object reportMetadata) {
+        default SalesforceEndpointBuilder reportMetadata(Object reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
         }
@@ -2167,8 +2122,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder reportMetadata(
-                String reportMetadata) {
+        default SalesforceEndpointBuilder reportMetadata(String reportMetadata) {
             setProperty("reportMetadata", reportMetadata);
             return this;
         }
@@ -2177,7 +2131,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder resultId(String resultId) {
+        default SalesforceEndpointBuilder resultId(String resultId) {
             setProperty("resultId", resultId);
             return this;
         }
@@ -2187,8 +2141,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder serializeNulls(
-                boolean serializeNulls) {
+        default SalesforceEndpointBuilder serializeNulls(boolean serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
         }
@@ -2198,8 +2151,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder serializeNulls(
-                String serializeNulls) {
+        default SalesforceEndpointBuilder serializeNulls(String serializeNulls) {
             setProperty("serializeNulls", serializeNulls);
             return this;
         }
@@ -2208,7 +2160,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectBlobFieldName(
+        default SalesforceEndpointBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
             setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
@@ -2219,8 +2171,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectClass(
-                String sObjectClass) {
+        default SalesforceEndpointBuilder sObjectClass(String sObjectClass) {
             setProperty("sObjectClass", sObjectClass);
             return this;
         }
@@ -2229,8 +2180,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectFields(
-                String sObjectFields) {
+        default SalesforceEndpointBuilder sObjectFields(String sObjectFields) {
             setProperty("sObjectFields", sObjectFields);
             return this;
         }
@@ -2239,7 +2189,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectId(String sObjectId) {
+        default SalesforceEndpointBuilder sObjectId(String sObjectId) {
             setProperty("sObjectId", sObjectId);
             return this;
         }
@@ -2248,8 +2198,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectIdName(
-                String sObjectIdName) {
+        default SalesforceEndpointBuilder sObjectIdName(String sObjectIdName) {
             setProperty("sObjectIdName", sObjectIdName);
             return this;
         }
@@ -2258,8 +2207,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectIdValue(
-                String sObjectIdValue) {
+        default SalesforceEndpointBuilder sObjectIdValue(String sObjectIdValue) {
             setProperty("sObjectIdValue", sObjectIdValue);
             return this;
         }
@@ -2268,7 +2216,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectName(String sObjectName) {
+        default SalesforceEndpointBuilder sObjectName(String sObjectName) {
             setProperty("sObjectName", sObjectName);
             return this;
         }
@@ -2277,8 +2225,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectQuery(
-                String sObjectQuery) {
+        default SalesforceEndpointBuilder sObjectQuery(String sObjectQuery) {
             setProperty("sObjectQuery", sObjectQuery);
             return this;
         }
@@ -2287,8 +2234,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder sObjectSearch(
-                String sObjectSearch) {
+        default SalesforceEndpointBuilder sObjectSearch(String sObjectSearch) {
             setProperty("sObjectSearch", sObjectSearch);
             return this;
         }
@@ -2298,7 +2244,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder updateTopic(boolean updateTopic) {
+        default SalesforceEndpointBuilder updateTopic(boolean updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
         }
@@ -2308,7 +2254,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SalesforceEndpointBuilder updateTopic(String updateTopic) {
+        default SalesforceEndpointBuilder updateTopic(String updateTopic) {
             setProperty("updateTopic", updateTopic);
             return this;
         }
@@ -2320,7 +2266,7 @@ public interface SalesforceEndpointBuilderFactory {
     public static interface AdvancedSalesforceEndpointBuilder
             extends
                 AdvancedSalesforceEndpointConsumerBuilder, AdvancedSalesforceEndpointProducerBuilder {
-        public default SalesforceEndpointBuilder basic() {
+        default SalesforceEndpointBuilder basic() {
             return (SalesforceEndpointBuilder) this;
         }
         /**
@@ -2329,7 +2275,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2340,7 +2286,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
+        default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2351,7 +2297,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointBuilder synchronous(
+        default AdvancedSalesforceEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2362,8 +2308,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSalesforceEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSalesforceEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2424,7 +2369,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Salesforce API. Creates a builder to build endpoints for the Salesforce
      * component.
      */
-    public default SalesforceEndpointBuilder salesforce(String path) {
+    default SalesforceEndpointBuilder salesforce(String path) {
         class SalesforceEndpointBuilderImpl extends AbstractEndpointBuilder implements SalesforceEndpointBuilder, AdvancedSalesforceEndpointBuilder {
             public SalesforceEndpointBuilderImpl(String path) {
                 super("salesforce", path);

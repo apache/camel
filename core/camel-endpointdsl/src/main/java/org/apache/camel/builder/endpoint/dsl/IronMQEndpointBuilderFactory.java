@@ -45,7 +45,7 @@ public interface IronMQEndpointBuilderFactory {
     public interface IronMQEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedIronMQEndpointConsumerBuilder advanced() {
+        default AdvancedIronMQEndpointConsumerBuilder advanced() {
             return (AdvancedIronMQEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder queueName(String queueName) {
+        default IronMQEndpointConsumerBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
             return this;
         }
@@ -62,7 +62,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>io.iron.ironmq.Client</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder client(Object client) {
+        default IronMQEndpointConsumerBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -72,7 +72,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder client(String client) {
+        default IronMQEndpointConsumerBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -83,8 +83,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder ironMQCloud(
-                String ironMQCloud) {
+        default IronMQEndpointConsumerBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
             return this;
         }
@@ -96,7 +95,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder preserveHeaders(
+        default IronMQEndpointConsumerBuilder preserveHeaders(
                 boolean preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
@@ -109,7 +108,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder preserveHeaders(
+        default IronMQEndpointConsumerBuilder preserveHeaders(
                 String preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
@@ -119,7 +118,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder projectId(String projectId) {
+        default IronMQEndpointConsumerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -128,7 +127,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointConsumerBuilder token(String token) {
+        default IronMQEndpointConsumerBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -140,8 +139,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder batchDelete(
-                boolean batchDelete) {
+        default IronMQEndpointConsumerBuilder batchDelete(boolean batchDelete) {
             setProperty("batchDelete", batchDelete);
             return this;
         }
@@ -153,8 +151,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder batchDelete(
-                String batchDelete) {
+        default IronMQEndpointConsumerBuilder batchDelete(String batchDelete) {
             setProperty("batchDelete", batchDelete);
             return this;
         }
@@ -169,7 +166,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder bridgeErrorHandler(
+        default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -185,7 +182,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder bridgeErrorHandler(
+        default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -195,7 +192,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder concurrentConsumers(
+        default IronMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -205,7 +202,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder concurrentConsumers(
+        default IronMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -215,7 +212,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
+        default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -225,7 +222,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
+        default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -236,7 +233,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -247,7 +244,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -257,7 +254,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder timeout(int timeout) {
+        default IronMQEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -266,7 +263,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder timeout(String timeout) {
+        default IronMQEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -276,7 +273,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder wait(int wait) {
+        default IronMQEndpointConsumerBuilder wait(int wait) {
             setProperty("wait", wait);
             return this;
         }
@@ -286,7 +283,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default IronMQEndpointConsumerBuilder wait(String wait) {
+        default IronMQEndpointConsumerBuilder wait(String wait) {
             setProperty("wait", wait);
             return this;
         }
@@ -296,7 +293,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffErrorThreshold(
+        default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -307,7 +304,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffErrorThreshold(
+        default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -318,7 +315,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffIdleThreshold(
+        default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -329,7 +326,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffIdleThreshold(
+        default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -344,7 +341,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffMultiplier(
+        default IronMQEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -359,7 +356,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder backoffMultiplier(
+        default IronMQEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -371,7 +368,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder delay(long delay) {
+        default IronMQEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -382,7 +379,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder delay(String delay) {
+        default IronMQEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -392,7 +389,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
+        default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -402,7 +399,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder greedy(String greedy) {
+        default IronMQEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -413,8 +410,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default IronMQEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -425,8 +421,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default IronMQEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -436,7 +431,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder runLoggingLevel(
+        default IronMQEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -448,7 +443,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder runLoggingLevel(
+        default IronMQEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -461,7 +456,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder scheduledExecutorService(
+        default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -474,7 +469,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder scheduledExecutorService(
+        default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -487,7 +482,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder scheduler(
+        default IronMQEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -500,7 +495,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
+        default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -511,7 +506,7 @@ public interface IronMQEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder schedulerProperties(
+        default IronMQEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -524,7 +519,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder schedulerProperties(
+        default IronMQEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -534,7 +529,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder startScheduler(
+        default IronMQEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -544,7 +539,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder startScheduler(
+        default IronMQEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -554,7 +549,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -564,7 +559,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default IronMQEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -574,7 +569,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder useFixedDelay(
+        default IronMQEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -585,8 +580,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default IronMQEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default IronMQEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -598,7 +592,7 @@ public interface IronMQEndpointBuilderFactory {
     public interface AdvancedIronMQEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default IronMQEndpointConsumerBuilder basic() {
+        default IronMQEndpointConsumerBuilder basic() {
             return (IronMQEndpointConsumerBuilder) this;
         }
         /**
@@ -610,7 +604,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -624,7 +618,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -634,7 +628,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
+        default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -645,7 +639,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
+        default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -659,7 +653,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
+        default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -673,7 +667,7 @@ public interface IronMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
+        default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -684,7 +678,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -695,7 +689,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -706,7 +700,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointConsumerBuilder synchronous(
+        default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -717,7 +711,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointConsumerBuilder synchronous(
+        default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -730,7 +724,7 @@ public interface IronMQEndpointBuilderFactory {
     public static interface IronMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIronMQEndpointProducerBuilder advanced() {
+        default AdvancedIronMQEndpointProducerBuilder advanced() {
             return (AdvancedIronMQEndpointProducerBuilder) this;
         }
         /**
@@ -738,7 +732,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder queueName(String queueName) {
+        default IronMQEndpointProducerBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
             return this;
         }
@@ -747,7 +741,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>io.iron.ironmq.Client</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder client(Object client) {
+        default IronMQEndpointProducerBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -757,7 +751,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder client(String client) {
+        default IronMQEndpointProducerBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -768,8 +762,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder ironMQCloud(
-                String ironMQCloud) {
+        default IronMQEndpointProducerBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
             return this;
         }
@@ -781,7 +774,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder preserveHeaders(
+        default IronMQEndpointProducerBuilder preserveHeaders(
                 boolean preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
@@ -794,7 +787,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder preserveHeaders(
+        default IronMQEndpointProducerBuilder preserveHeaders(
                 String preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
@@ -804,7 +797,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder projectId(String projectId) {
+        default IronMQEndpointProducerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -813,7 +806,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointProducerBuilder token(String token) {
+        default IronMQEndpointProducerBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -830,7 +823,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IronMQEndpointProducerBuilder lazyStartProducer(
+        default IronMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -848,7 +841,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IronMQEndpointProducerBuilder lazyStartProducer(
+        default IronMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -859,7 +852,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default IronMQEndpointProducerBuilder visibilityDelay(
+        default IronMQEndpointProducerBuilder visibilityDelay(
                 int visibilityDelay) {
             setProperty("visibilityDelay", visibilityDelay);
             return this;
@@ -870,7 +863,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default IronMQEndpointProducerBuilder visibilityDelay(
+        default IronMQEndpointProducerBuilder visibilityDelay(
                 String visibilityDelay) {
             setProperty("visibilityDelay", visibilityDelay);
             return this;
@@ -883,7 +876,7 @@ public interface IronMQEndpointBuilderFactory {
     public interface AdvancedIronMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default IronMQEndpointProducerBuilder basic() {
+        default IronMQEndpointProducerBuilder basic() {
             return (IronMQEndpointProducerBuilder) this;
         }
         /**
@@ -892,7 +885,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -903,7 +896,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -914,7 +907,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointProducerBuilder synchronous(
+        default AdvancedIronMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -925,7 +918,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointProducerBuilder synchronous(
+        default AdvancedIronMQEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -938,7 +931,7 @@ public interface IronMQEndpointBuilderFactory {
     public static interface IronMQEndpointBuilder
             extends
                 IronMQEndpointConsumerBuilder, IronMQEndpointProducerBuilder {
-        public default AdvancedIronMQEndpointBuilder advanced() {
+        default AdvancedIronMQEndpointBuilder advanced() {
             return (AdvancedIronMQEndpointBuilder) this;
         }
         /**
@@ -946,7 +939,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder queueName(String queueName) {
+        default IronMQEndpointBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
             return this;
         }
@@ -955,7 +948,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>io.iron.ironmq.Client</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder client(Object client) {
+        default IronMQEndpointBuilder client(Object client) {
             setProperty("client", client);
             return this;
         }
@@ -965,7 +958,7 @@ public interface IronMQEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IronMQEndpointBuilder client(String client) {
+        default IronMQEndpointBuilder client(String client) {
             setProperty("client", client);
             return this;
         }
@@ -976,7 +969,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
+        default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
             return this;
         }
@@ -988,8 +981,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder preserveHeaders(
-                boolean preserveHeaders) {
+        default IronMQEndpointBuilder preserveHeaders(boolean preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
         }
@@ -1001,8 +993,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder preserveHeaders(
-                String preserveHeaders) {
+        default IronMQEndpointBuilder preserveHeaders(String preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
             return this;
         }
@@ -1011,7 +1002,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder projectId(String projectId) {
+        default IronMQEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -1020,7 +1011,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IronMQEndpointBuilder token(String token) {
+        default IronMQEndpointBuilder token(String token) {
             setProperty("token", token);
             return this;
         }
@@ -1032,7 +1023,7 @@ public interface IronMQEndpointBuilderFactory {
     public static interface AdvancedIronMQEndpointBuilder
             extends
                 AdvancedIronMQEndpointConsumerBuilder, AdvancedIronMQEndpointProducerBuilder {
-        public default IronMQEndpointBuilder basic() {
+        default IronMQEndpointBuilder basic() {
             return (IronMQEndpointBuilder) this;
         }
         /**
@@ -1041,7 +1032,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1052,7 +1043,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointBuilder basicPropertyBinding(
+        default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1063,8 +1054,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedIronMQEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1074,8 +1064,7 @@ public interface IronMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIronMQEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedIronMQEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1085,7 +1074,7 @@ public interface IronMQEndpointBuilderFactory {
      * message queue as a service. Creates a builder to build endpoints for the
      * IronMQ component.
      */
-    public default IronMQEndpointBuilder ironMQ(String path) {
+    default IronMQEndpointBuilder ironMQ(String path) {
         class IronMQEndpointBuilderImpl extends AbstractEndpointBuilder implements IronMQEndpointBuilder, AdvancedIronMQEndpointBuilder {
             public IronMQEndpointBuilderImpl(String path) {
                 super("ironmq", path);

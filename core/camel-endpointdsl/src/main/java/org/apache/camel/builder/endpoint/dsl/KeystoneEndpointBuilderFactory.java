@@ -37,7 +37,7 @@ public interface KeystoneEndpointBuilderFactory {
     public static interface KeystoneEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKeystoneEndpointBuilder advanced() {
+        default AdvancedKeystoneEndpointBuilder advanced() {
             return (AdvancedKeystoneEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder host(String host) {
+        default KeystoneEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -55,7 +55,7 @@ public interface KeystoneEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder config(Object config) {
+        default KeystoneEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -65,7 +65,7 @@ public interface KeystoneEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder config(String config) {
+        default KeystoneEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder domain(String domain) {
+        default KeystoneEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -83,7 +83,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder operation(String operation) {
+        default KeystoneEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -92,7 +92,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder password(String password) {
+        default KeystoneEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -101,7 +101,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder project(String project) {
+        default KeystoneEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -110,7 +110,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder subsystem(String subsystem) {
+        default KeystoneEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
             return this;
         }
@@ -119,7 +119,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KeystoneEndpointBuilder username(String username) {
+        default KeystoneEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -131,7 +131,7 @@ public interface KeystoneEndpointBuilderFactory {
     public static interface AdvancedKeystoneEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default KeystoneEndpointBuilder basic() {
+        default KeystoneEndpointBuilder basic() {
             return (KeystoneEndpointBuilder) this;
         }
         /**
@@ -140,7 +140,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
+        default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,7 +151,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
+        default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -162,8 +162,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKeystoneEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedKeystoneEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -173,8 +172,7 @@ public interface KeystoneEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKeystoneEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedKeystoneEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -184,7 +182,7 @@ public interface KeystoneEndpointBuilderFactory {
      * OpenStack identity services. Creates a builder to build endpoints for the
      * OpenStack Keystone component.
      */
-    public default KeystoneEndpointBuilder keystone(String path) {
+    default KeystoneEndpointBuilder keystone(String path) {
         class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder, AdvancedKeystoneEndpointBuilder {
             public KeystoneEndpointBuilderImpl(String path) {
                 super("openstack-keystone", path);

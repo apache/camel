@@ -37,7 +37,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     public static interface ElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedElasticsearchEndpointBuilder advanced() {
+        default AdvancedElasticsearchEndpointBuilder advanced() {
             return (AdvancedElasticsearchEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder clusterName(
-                String clusterName) {
+        default ElasticsearchEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
         }
@@ -55,7 +54,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder connectionTimeout(
+        default ElasticsearchEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -65,7 +64,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder connectionTimeout(
+        default ElasticsearchEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -75,8 +74,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder disconnect(
-                boolean disconnect) {
+        default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -85,7 +83,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder disconnect(String disconnect) {
+        default ElasticsearchEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -94,7 +92,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
+        default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
             setProperty("enableSSL", enableSSL);
             return this;
         }
@@ -103,7 +101,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
+        default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
             setProperty("enableSSL", enableSSL);
             return this;
         }
@@ -113,8 +111,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder hostAddresses(
-                String hostAddresses) {
+        default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
             setProperty("hostAddresses", hostAddresses);
             return this;
         }
@@ -123,7 +120,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder indexName(String indexName) {
+        default ElasticsearchEndpointBuilder indexName(String indexName) {
             setProperty("indexName", indexName);
             return this;
         }
@@ -132,7 +129,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder indexType(String indexType) {
+        default ElasticsearchEndpointBuilder indexType(String indexType) {
             setProperty("indexType", indexType);
             return this;
         }
@@ -141,8 +138,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder maxRetryTimeout(
-                int maxRetryTimeout) {
+        default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
             setProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
@@ -151,7 +147,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder maxRetryTimeout(
+        default ElasticsearchEndpointBuilder maxRetryTimeout(
                 String maxRetryTimeout) {
             setProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
@@ -162,7 +158,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder operation(
+        default ElasticsearchEndpointBuilder operation(
                 ElasticsearchOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -173,7 +169,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder operation(String operation) {
+        default ElasticsearchEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -182,7 +178,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder scrollKeepAliveMs(
+        default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 int scrollKeepAliveMs) {
             setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
             return this;
@@ -192,7 +188,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder scrollKeepAliveMs(
+        default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
             setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
             return this;
@@ -202,8 +198,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder socketTimeout(
-                int socketTimeout) {
+        default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -212,8 +207,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder socketTimeout(
-                String socketTimeout) {
+        default ElasticsearchEndpointBuilder socketTimeout(String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -222,7 +216,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
+        default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
             setProperty("useScroll", useScroll);
             return this;
         }
@@ -231,7 +225,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder useScroll(String useScroll) {
+        default ElasticsearchEndpointBuilder useScroll(String useScroll) {
             setProperty("useScroll", useScroll);
             return this;
         }
@@ -241,7 +235,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder waitForActiveShards(
+        default ElasticsearchEndpointBuilder waitForActiveShards(
                 int waitForActiveShards) {
             setProperty("waitForActiveShards", waitForActiveShards);
             return this;
@@ -252,7 +246,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ElasticsearchEndpointBuilder waitForActiveShards(
+        default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
             setProperty("waitForActiveShards", waitForActiveShards);
             return this;
@@ -265,7 +259,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     public static interface AdvancedElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ElasticsearchEndpointBuilder basic() {
+        default ElasticsearchEndpointBuilder basic() {
             return (ElasticsearchEndpointBuilder) this;
         }
         /**
@@ -274,7 +268,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
+        default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +279,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
+        default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -296,7 +290,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElasticsearchEndpointBuilder synchronous(
+        default AdvancedElasticsearchEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -307,7 +301,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElasticsearchEndpointBuilder synchronous(
+        default AdvancedElasticsearchEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -326,7 +320,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * server using REST API. Creates a builder to build endpoints for the
      * Elastichsearch Rest component.
      */
-    public default ElasticsearchEndpointBuilder elasticsearch(String path) {
+    default ElasticsearchEndpointBuilder elasticsearch(String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super("elasticsearch-rest", path);

@@ -39,7 +39,7 @@ public interface TimerEndpointBuilderFactory {
     public static interface TimerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTimerEndpointBuilder advanced() {
+        default AdvancedTimerEndpointBuilder advanced() {
             return (AdvancedTimerEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder timerName(String timerName) {
+        default TimerEndpointBuilder timerName(String timerName) {
             setProperty("timerName", timerName);
             return this;
         }
@@ -60,7 +60,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder delay(long delay) {
+        default TimerEndpointBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -73,7 +73,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder delay(String delay) {
+        default TimerEndpointBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -83,7 +83,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder fixedRate(boolean fixedRate) {
+        default TimerEndpointBuilder fixedRate(boolean fixedRate) {
             setProperty("fixedRate", fixedRate);
             return this;
         }
@@ -93,7 +93,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder fixedRate(String fixedRate) {
+        default TimerEndpointBuilder fixedRate(String fixedRate) {
             setProperty("fixedRate", fixedRate);
             return this;
         }
@@ -105,7 +105,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder period(long period) {
+        default TimerEndpointBuilder period(long period) {
             setProperty("period", period);
             return this;
         }
@@ -117,7 +117,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder period(String period) {
+        default TimerEndpointBuilder period(String period) {
             setProperty("period", period);
             return this;
         }
@@ -128,7 +128,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder repeatCount(long repeatCount) {
+        default TimerEndpointBuilder repeatCount(long repeatCount) {
             setProperty("repeatCount", repeatCount);
             return this;
         }
@@ -139,7 +139,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default TimerEndpointBuilder repeatCount(String repeatCount) {
+        default TimerEndpointBuilder repeatCount(String repeatCount) {
             setProperty("repeatCount", repeatCount);
             return this;
         }
@@ -151,7 +151,7 @@ public interface TimerEndpointBuilderFactory {
     public static interface AdvancedTimerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TimerEndpointBuilder basic() {
+        default TimerEndpointBuilder basic() {
             return (TimerEndpointBuilder) this;
         }
         /**
@@ -160,7 +160,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder basicPropertyBinding(
+        default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,7 +171,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder basicPropertyBinding(
+        default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -182,7 +182,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
+        default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
             setProperty("daemon", daemon);
             return this;
         }
@@ -192,7 +192,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder daemon(String daemon) {
+        default AdvancedTimerEndpointBuilder daemon(String daemon) {
             setProperty("daemon", daemon);
             return this;
         }
@@ -202,7 +202,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder pattern(String pattern) {
+        default AdvancedTimerEndpointBuilder pattern(String pattern) {
             setProperty("pattern", pattern);
             return this;
         }
@@ -212,8 +212,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -223,8 +222,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedTimerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -235,7 +233,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>java.util.Date</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder time(Date time) {
+        default AdvancedTimerEndpointBuilder time(Date time) {
             setProperty("time", time);
             return this;
         }
@@ -246,7 +244,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Date</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder time(String time) {
+        default AdvancedTimerEndpointBuilder time(String time) {
             setProperty("time", time);
             return this;
         }
@@ -255,7 +253,7 @@ public interface TimerEndpointBuilderFactory {
          * The option is a <code>java.util.Timer</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder timer(Timer timer) {
+        default AdvancedTimerEndpointBuilder timer(Timer timer) {
             setProperty("timer", timer);
             return this;
         }
@@ -264,7 +262,7 @@ public interface TimerEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Timer</code> type.
          * @group advanced
          */
-        public default AdvancedTimerEndpointBuilder timer(String timer) {
+        default AdvancedTimerEndpointBuilder timer(String timer) {
             setProperty("timer", timer);
             return this;
         }
@@ -273,7 +271,7 @@ public interface TimerEndpointBuilderFactory {
      * The timer component is used for generating message exchanges when a timer
      * fires. Creates a builder to build endpoints for the Timer component.
      */
-    public default TimerEndpointBuilder timer(String path) {
+    default TimerEndpointBuilder timer(String path) {
         class TimerEndpointBuilderImpl extends AbstractEndpointBuilder implements TimerEndpointBuilder, AdvancedTimerEndpointBuilder {
             public TimerEndpointBuilderImpl(String path) {
                 super("timer", path);

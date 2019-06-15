@@ -43,7 +43,7 @@ public interface FacebookEndpointBuilderFactory {
     public interface FacebookEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedFacebookEndpointConsumerBuilder advanced() {
+        default AdvancedFacebookEndpointConsumerBuilder advanced() {
             return (AdvancedFacebookEndpointConsumerBuilder) this;
         }
         /**
@@ -51,8 +51,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder methodName(
-                String methodName) {
+        default FacebookEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -61,7 +60,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder achievementURL(
+        default FacebookEndpointConsumerBuilder achievementURL(
                 URL achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
@@ -71,7 +70,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder achievementURL(
+        default FacebookEndpointConsumerBuilder achievementURL(
                 String achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
@@ -81,7 +80,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder albumId(String albumId) {
+        default FacebookEndpointConsumerBuilder albumId(String albumId) {
             setProperty("albumId", albumId);
             return this;
         }
@@ -90,8 +89,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.AlbumUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder albumUpdate(
-                Object albumUpdate) {
+        default FacebookEndpointConsumerBuilder albumUpdate(Object albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -101,8 +99,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder albumUpdate(
-                String albumUpdate) {
+        default FacebookEndpointConsumerBuilder albumUpdate(String albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -111,7 +108,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder appId(String appId) {
+        default FacebookEndpointConsumerBuilder appId(String appId) {
             setProperty("appId", appId);
             return this;
         }
@@ -120,7 +117,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.GeoLocation</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder center(Object center) {
+        default FacebookEndpointConsumerBuilder center(Object center) {
             setProperty("center", center);
             return this;
         }
@@ -130,7 +127,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder center(String center) {
+        default FacebookEndpointConsumerBuilder center(String center) {
             setProperty("center", center);
             return this;
         }
@@ -139,8 +136,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder checkinId(
-                String checkinId) {
+        default FacebookEndpointConsumerBuilder checkinId(String checkinId) {
             setProperty("checkinId", checkinId);
             return this;
         }
@@ -151,7 +147,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointConsumerBuilder checkinUpdate(
+        default FacebookEndpointConsumerBuilder checkinUpdate(
                 Object checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
@@ -164,7 +160,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointConsumerBuilder checkinUpdate(
+        default FacebookEndpointConsumerBuilder checkinUpdate(
                 String checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
@@ -174,8 +170,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder clientURL(
-                String clientURL) {
+        default FacebookEndpointConsumerBuilder clientURL(String clientURL) {
             setProperty("clientURL", clientURL);
             return this;
         }
@@ -184,7 +179,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder clientVersion(
+        default FacebookEndpointConsumerBuilder clientVersion(
                 String clientVersion) {
             setProperty("clientVersion", clientVersion);
             return this;
@@ -194,8 +189,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder commentId(
-                String commentId) {
+        default FacebookEndpointConsumerBuilder commentId(String commentId) {
             setProperty("commentId", commentId);
             return this;
         }
@@ -204,7 +198,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder commentUpdate(
+        default FacebookEndpointConsumerBuilder commentUpdate(
                 Object commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
@@ -215,7 +209,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder commentUpdate(
+        default FacebookEndpointConsumerBuilder commentUpdate(
                 String commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
@@ -225,7 +219,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder debugEnabled(
+        default FacebookEndpointConsumerBuilder debugEnabled(
                 Boolean debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
@@ -236,8 +230,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder debugEnabled(
-                String debugEnabled) {
+        default FacebookEndpointConsumerBuilder debugEnabled(String debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
         }
@@ -246,8 +239,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder description(
-                String description) {
+        default FacebookEndpointConsumerBuilder description(String description) {
             setProperty("description", description);
             return this;
         }
@@ -256,7 +248,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder distance(Integer distance) {
+        default FacebookEndpointConsumerBuilder distance(Integer distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -266,7 +258,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder distance(String distance) {
+        default FacebookEndpointConsumerBuilder distance(String distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -275,7 +267,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder domainId(String domainId) {
+        default FacebookEndpointConsumerBuilder domainId(String domainId) {
             setProperty("domainId", domainId);
             return this;
         }
@@ -284,8 +276,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder domainName(
-                String domainName) {
+        default FacebookEndpointConsumerBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -295,7 +286,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder domainNames(
+        default FacebookEndpointConsumerBuilder domainNames(
                 List<String> domainNames) {
             setProperty("domainNames", domainNames);
             return this;
@@ -306,8 +297,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder domainNames(
-                String domainNames) {
+        default FacebookEndpointConsumerBuilder domainNames(String domainNames) {
             setProperty("domainNames", domainNames);
             return this;
         }
@@ -316,7 +306,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder eventId(String eventId) {
+        default FacebookEndpointConsumerBuilder eventId(String eventId) {
             setProperty("eventId", eventId);
             return this;
         }
@@ -325,8 +315,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.EventUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder eventUpdate(
-                Object eventUpdate) {
+        default FacebookEndpointConsumerBuilder eventUpdate(Object eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -336,8 +325,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder eventUpdate(
-                String eventUpdate) {
+        default FacebookEndpointConsumerBuilder eventUpdate(String eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -346,7 +334,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder friendId(String friendId) {
+        default FacebookEndpointConsumerBuilder friendId(String friendId) {
             setProperty("friendId", friendId);
             return this;
         }
@@ -355,8 +343,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder friendlistId(
-                String friendlistId) {
+        default FacebookEndpointConsumerBuilder friendlistId(String friendlistId) {
             setProperty("friendlistId", friendlistId);
             return this;
         }
@@ -365,7 +352,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder friendlistName(
+        default FacebookEndpointConsumerBuilder friendlistName(
                 String friendlistName) {
             setProperty("friendlistName", friendlistName);
             return this;
@@ -375,8 +362,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder friendUserId(
-                String friendUserId) {
+        default FacebookEndpointConsumerBuilder friendUserId(String friendUserId) {
             setProperty("friendUserId", friendUserId);
             return this;
         }
@@ -385,7 +371,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder groupId(String groupId) {
+        default FacebookEndpointConsumerBuilder groupId(String groupId) {
             setProperty("groupId", groupId);
             return this;
         }
@@ -394,8 +380,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder gzipEnabled(
-                Boolean gzipEnabled) {
+        default FacebookEndpointConsumerBuilder gzipEnabled(Boolean gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -405,8 +390,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder gzipEnabled(
-                String gzipEnabled) {
+        default FacebookEndpointConsumerBuilder gzipEnabled(String gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -415,7 +399,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpConnectionTimeout(
+        default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -426,7 +410,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpConnectionTimeout(
+        default FacebookEndpointConsumerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -436,7 +420,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -447,7 +431,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -457,7 +441,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
+        default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -468,7 +452,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
+        default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -478,7 +462,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpReadTimeout(
+        default FacebookEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -489,7 +473,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpReadTimeout(
+        default FacebookEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -499,7 +483,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpRetryCount(
+        default FacebookEndpointConsumerBuilder httpRetryCount(
                 Integer httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
@@ -510,7 +494,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpRetryCount(
+        default FacebookEndpointConsumerBuilder httpRetryCount(
                 String httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
@@ -520,7 +504,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -531,7 +515,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -541,7 +525,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
+        default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -552,7 +536,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
+        default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -563,7 +547,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder ids(List<String> ids) {
+        default FacebookEndpointConsumerBuilder ids(List<String> ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -573,7 +557,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder ids(String ids) {
+        default FacebookEndpointConsumerBuilder ids(String ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -582,7 +566,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder inBody(String inBody) {
+        default FacebookEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -592,8 +576,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder includeRead(
-                Boolean includeRead) {
+        default FacebookEndpointConsumerBuilder includeRead(Boolean includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -604,8 +587,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder includeRead(
-                String includeRead) {
+        default FacebookEndpointConsumerBuilder includeRead(String includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -614,7 +596,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder isHidden(Boolean isHidden) {
+        default FacebookEndpointConsumerBuilder isHidden(Boolean isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -624,7 +606,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder isHidden(String isHidden) {
+        default FacebookEndpointConsumerBuilder isHidden(String isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -633,7 +615,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder jsonStoreEnabled(
+        default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
@@ -644,7 +626,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder jsonStoreEnabled(
+        default FacebookEndpointConsumerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
@@ -654,7 +636,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder link(URL link) {
+        default FacebookEndpointConsumerBuilder link(URL link) {
             setProperty("link", link);
             return this;
         }
@@ -663,7 +645,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder link(String link) {
+        default FacebookEndpointConsumerBuilder link(String link) {
             setProperty("link", link);
             return this;
         }
@@ -672,7 +654,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder linkId(String linkId) {
+        default FacebookEndpointConsumerBuilder linkId(String linkId) {
             setProperty("linkId", linkId);
             return this;
         }
@@ -681,7 +663,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder locale(Locale locale) {
+        default FacebookEndpointConsumerBuilder locale(Locale locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -690,7 +672,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder locale(String locale) {
+        default FacebookEndpointConsumerBuilder locale(String locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -699,7 +681,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder mbeanEnabled(
+        default FacebookEndpointConsumerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
@@ -710,8 +692,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder mbeanEnabled(
-                String mbeanEnabled) {
+        default FacebookEndpointConsumerBuilder mbeanEnabled(String mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
@@ -720,7 +701,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder message(String message) {
+        default FacebookEndpointConsumerBuilder message(String message) {
             setProperty("message", message);
             return this;
         }
@@ -729,8 +710,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder messageId(
-                String messageId) {
+        default FacebookEndpointConsumerBuilder messageId(String messageId) {
             setProperty("messageId", messageId);
             return this;
         }
@@ -739,7 +719,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder metric(String metric) {
+        default FacebookEndpointConsumerBuilder metric(String metric) {
             setProperty("metric", metric);
             return this;
         }
@@ -748,8 +728,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder milestoneId(
-                String milestoneId) {
+        default FacebookEndpointConsumerBuilder milestoneId(String milestoneId) {
             setProperty("milestoneId", milestoneId);
             return this;
         }
@@ -758,7 +737,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder name(String name) {
+        default FacebookEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -767,7 +746,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder noteId(String noteId) {
+        default FacebookEndpointConsumerBuilder noteId(String noteId) {
             setProperty("noteId", noteId);
             return this;
         }
@@ -776,7 +755,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder notificationId(
+        default FacebookEndpointConsumerBuilder notificationId(
                 String notificationId) {
             setProperty("notificationId", notificationId);
             return this;
@@ -786,7 +765,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder objectId(String objectId) {
+        default FacebookEndpointConsumerBuilder objectId(String objectId) {
             setProperty("objectId", objectId);
             return this;
         }
@@ -795,7 +774,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder offerId(String offerId) {
+        default FacebookEndpointConsumerBuilder offerId(String offerId) {
             setProperty("offerId", offerId);
             return this;
         }
@@ -804,7 +783,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder optionDescription(
+        default FacebookEndpointConsumerBuilder optionDescription(
                 String optionDescription) {
             setProperty("optionDescription", optionDescription);
             return this;
@@ -814,7 +793,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pageId(String pageId) {
+        default FacebookEndpointConsumerBuilder pageId(String pageId) {
             setProperty("pageId", pageId);
             return this;
         }
@@ -823,7 +802,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder permissionName(
+        default FacebookEndpointConsumerBuilder permissionName(
                 String permissionName) {
             setProperty("permissionName", permissionName);
             return this;
@@ -833,8 +812,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder permissions(
-                String permissions) {
+        default FacebookEndpointConsumerBuilder permissions(String permissions) {
             setProperty("permissions", permissions);
             return this;
         }
@@ -843,7 +821,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder photoId(String photoId) {
+        default FacebookEndpointConsumerBuilder photoId(String photoId) {
             setProperty("photoId", photoId);
             return this;
         }
@@ -852,8 +830,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureId(
-                Integer pictureId) {
+        default FacebookEndpointConsumerBuilder pictureId(Integer pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -863,8 +840,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureId(
-                String pictureId) {
+        default FacebookEndpointConsumerBuilder pictureId(String pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -873,8 +849,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureId2(
-                Integer pictureId2) {
+        default FacebookEndpointConsumerBuilder pictureId2(Integer pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -884,8 +859,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureId2(
-                String pictureId2) {
+        default FacebookEndpointConsumerBuilder pictureId2(String pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -894,7 +868,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureSize(
+        default FacebookEndpointConsumerBuilder pictureSize(
                 PictureSize pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
@@ -905,8 +879,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder pictureSize(
-                String pictureSize) {
+        default FacebookEndpointConsumerBuilder pictureSize(String pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
         }
@@ -915,7 +888,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder placeId(String placeId) {
+        default FacebookEndpointConsumerBuilder placeId(String placeId) {
             setProperty("placeId", placeId);
             return this;
         }
@@ -924,7 +897,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder postId(String postId) {
+        default FacebookEndpointConsumerBuilder postId(String postId) {
             setProperty("postId", postId);
             return this;
         }
@@ -933,8 +906,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PostUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder postUpdate(
-                Object postUpdate) {
+        default FacebookEndpointConsumerBuilder postUpdate(Object postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -944,8 +916,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder postUpdate(
-                String postUpdate) {
+        default FacebookEndpointConsumerBuilder postUpdate(String postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -954,7 +925,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder prettyDebugEnabled(
+        default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -965,7 +936,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder prettyDebugEnabled(
+        default FacebookEndpointConsumerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -976,7 +947,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder queries(
+        default FacebookEndpointConsumerBuilder queries(
                 Map<String, String> queries) {
             setProperty("queries", queries);
             return this;
@@ -988,7 +959,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder queries(String queries) {
+        default FacebookEndpointConsumerBuilder queries(String queries) {
             setProperty("queries", queries);
             return this;
         }
@@ -997,7 +968,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder query(String query) {
+        default FacebookEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -1006,8 +977,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder questionId(
-                String questionId) {
+        default FacebookEndpointConsumerBuilder questionId(String questionId) {
             setProperty("questionId", questionId);
             return this;
         }
@@ -1016,7 +986,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Reading</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder reading(Object reading) {
+        default FacebookEndpointConsumerBuilder reading(Object reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -1026,7 +996,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder reading(String reading) {
+        default FacebookEndpointConsumerBuilder reading(String reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -1036,7 +1006,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder readingOptions(
+        default FacebookEndpointConsumerBuilder readingOptions(
                 Map<String, Object> readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
@@ -1048,7 +1018,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder readingOptions(
+        default FacebookEndpointConsumerBuilder readingOptions(
                 String readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
@@ -1058,8 +1028,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder restBaseURL(
-                String restBaseURL) {
+        default FacebookEndpointConsumerBuilder restBaseURL(String restBaseURL) {
             setProperty("restBaseURL", restBaseURL);
             return this;
         }
@@ -1068,8 +1037,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder scoreValue(
-                Integer scoreValue) {
+        default FacebookEndpointConsumerBuilder scoreValue(Integer scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -1079,8 +1047,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder scoreValue(
-                String scoreValue) {
+        default FacebookEndpointConsumerBuilder scoreValue(String scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -1089,7 +1056,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder size(PictureSize size) {
+        default FacebookEndpointConsumerBuilder size(PictureSize size) {
             setProperty("size", size);
             return this;
         }
@@ -1099,7 +1066,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder size(String size) {
+        default FacebookEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -1108,7 +1075,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder source(Object source) {
+        default FacebookEndpointConsumerBuilder source(Object source) {
             setProperty("source", source);
             return this;
         }
@@ -1117,7 +1084,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder source(String source) {
+        default FacebookEndpointConsumerBuilder source(String source) {
             setProperty("source", source);
             return this;
         }
@@ -1126,7 +1093,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder subject(String subject) {
+        default FacebookEndpointConsumerBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -1135,7 +1102,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder tabId(String tabId) {
+        default FacebookEndpointConsumerBuilder tabId(String tabId) {
             setProperty("tabId", tabId);
             return this;
         }
@@ -1144,8 +1111,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TagUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder tagUpdate(
-                Object tagUpdate) {
+        default FacebookEndpointConsumerBuilder tagUpdate(Object tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -1155,8 +1121,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder tagUpdate(
-                String tagUpdate) {
+        default FacebookEndpointConsumerBuilder tagUpdate(String tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -1165,8 +1130,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder testUser1(
-                Object testUser1) {
+        default FacebookEndpointConsumerBuilder testUser1(Object testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -1176,8 +1140,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder testUser1(
-                String testUser1) {
+        default FacebookEndpointConsumerBuilder testUser1(String testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -1186,8 +1149,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder testUser2(
-                Object testUser2) {
+        default FacebookEndpointConsumerBuilder testUser2(Object testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -1197,8 +1159,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder testUser2(
-                String testUser2) {
+        default FacebookEndpointConsumerBuilder testUser2(String testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -1207,8 +1168,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder testUserId(
-                String testUserId) {
+        default FacebookEndpointConsumerBuilder testUserId(String testUserId) {
             setProperty("testUserId", testUserId);
             return this;
         }
@@ -1217,7 +1177,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder title(String title) {
+        default FacebookEndpointConsumerBuilder title(String title) {
             setProperty("title", title);
             return this;
         }
@@ -1226,7 +1186,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder toUserId(String toUserId) {
+        default FacebookEndpointConsumerBuilder toUserId(String toUserId) {
             setProperty("toUserId", toUserId);
             return this;
         }
@@ -1236,8 +1196,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder toUserIds(
-                List<String> toUserIds) {
+        default FacebookEndpointConsumerBuilder toUserIds(List<String> toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -1247,8 +1206,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder toUserIds(
-                String toUserIds) {
+        default FacebookEndpointConsumerBuilder toUserIds(String toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -1257,7 +1215,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userId(String userId) {
+        default FacebookEndpointConsumerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -1266,7 +1224,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userId1(String userId1) {
+        default FacebookEndpointConsumerBuilder userId1(String userId1) {
             setProperty("userId1", userId1);
             return this;
         }
@@ -1275,7 +1233,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userId2(String userId2) {
+        default FacebookEndpointConsumerBuilder userId2(String userId2) {
             setProperty("userId2", userId2);
             return this;
         }
@@ -1285,8 +1243,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userIds(
-                List<String> userIds) {
+        default FacebookEndpointConsumerBuilder userIds(List<String> userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -1296,7 +1253,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userIds(String userIds) {
+        default FacebookEndpointConsumerBuilder userIds(String userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -1305,8 +1262,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder userLocale(
-                String userLocale) {
+        default FacebookEndpointConsumerBuilder userLocale(String userLocale) {
             setProperty("userLocale", userLocale);
             return this;
         }
@@ -1315,7 +1271,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder useSSL(Boolean useSSL) {
+        default FacebookEndpointConsumerBuilder useSSL(Boolean useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -1325,7 +1281,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder useSSL(String useSSL) {
+        default FacebookEndpointConsumerBuilder useSSL(String useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -1334,8 +1290,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder videoBaseURL(
-                String videoBaseURL) {
+        default FacebookEndpointConsumerBuilder videoBaseURL(String videoBaseURL) {
             setProperty("videoBaseURL", videoBaseURL);
             return this;
         }
@@ -1344,7 +1299,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointConsumerBuilder videoId(String videoId) {
+        default FacebookEndpointConsumerBuilder videoId(String videoId) {
             setProperty("videoId", videoId);
             return this;
         }
@@ -1359,7 +1314,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FacebookEndpointConsumerBuilder bridgeErrorHandler(
+        default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -1375,7 +1330,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FacebookEndpointConsumerBuilder bridgeErrorHandler(
+        default FacebookEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -1385,7 +1340,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointConsumerBuilder httpProxyHost(
+        default FacebookEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1395,7 +1350,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointConsumerBuilder httpProxyPassword(
+        default FacebookEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1405,7 +1360,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default FacebookEndpointConsumerBuilder httpProxyPort(
+        default FacebookEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1416,7 +1371,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default FacebookEndpointConsumerBuilder httpProxyPort(
+        default FacebookEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1426,7 +1381,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointConsumerBuilder httpProxyUser(
+        default FacebookEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1436,7 +1391,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthAccessToken(
+        default FacebookEndpointConsumerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
             setProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
@@ -1446,7 +1401,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthAccessTokenURL(
+        default FacebookEndpointConsumerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
             setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
@@ -1456,8 +1411,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthAppId(
-                String oAuthAppId) {
+        default FacebookEndpointConsumerBuilder oAuthAppId(String oAuthAppId) {
             setProperty("oAuthAppId", oAuthAppId);
             return this;
         }
@@ -1466,7 +1420,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthAppSecret(
+        default FacebookEndpointConsumerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
             setProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
@@ -1476,7 +1430,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthAuthorizationURL(
+        default FacebookEndpointConsumerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
             setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
@@ -1488,7 +1442,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointConsumerBuilder oAuthPermissions(
+        default FacebookEndpointConsumerBuilder oAuthPermissions(
                 String oAuthPermissions) {
             setProperty("oAuthPermissions", oAuthPermissions);
             return this;
@@ -1501,7 +1455,7 @@ public interface FacebookEndpointBuilderFactory {
     public interface AdvancedFacebookEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default FacebookEndpointConsumerBuilder basic() {
+        default FacebookEndpointConsumerBuilder basic() {
             return (FacebookEndpointConsumerBuilder) this;
         }
         /**
@@ -1513,7 +1467,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1527,7 +1481,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFacebookEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1537,7 +1491,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
+        default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1548,7 +1502,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
+        default AdvancedFacebookEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1559,7 +1513,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1570,7 +1524,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1581,7 +1535,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointConsumerBuilder synchronous(
+        default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1592,7 +1546,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointConsumerBuilder synchronous(
+        default AdvancedFacebookEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1605,7 +1559,7 @@ public interface FacebookEndpointBuilderFactory {
     public static interface FacebookEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFacebookEndpointProducerBuilder advanced() {
+        default AdvancedFacebookEndpointProducerBuilder advanced() {
             return (AdvancedFacebookEndpointProducerBuilder) this;
         }
         /**
@@ -1613,8 +1567,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder methodName(
-                String methodName) {
+        default FacebookEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -1623,7 +1576,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder achievementURL(
+        default FacebookEndpointProducerBuilder achievementURL(
                 URL achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
@@ -1633,7 +1586,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder achievementURL(
+        default FacebookEndpointProducerBuilder achievementURL(
                 String achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
@@ -1643,7 +1596,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder albumId(String albumId) {
+        default FacebookEndpointProducerBuilder albumId(String albumId) {
             setProperty("albumId", albumId);
             return this;
         }
@@ -1652,8 +1605,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.AlbumUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder albumUpdate(
-                Object albumUpdate) {
+        default FacebookEndpointProducerBuilder albumUpdate(Object albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -1663,8 +1615,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder albumUpdate(
-                String albumUpdate) {
+        default FacebookEndpointProducerBuilder albumUpdate(String albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -1673,7 +1624,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder appId(String appId) {
+        default FacebookEndpointProducerBuilder appId(String appId) {
             setProperty("appId", appId);
             return this;
         }
@@ -1682,7 +1633,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.GeoLocation</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder center(Object center) {
+        default FacebookEndpointProducerBuilder center(Object center) {
             setProperty("center", center);
             return this;
         }
@@ -1692,7 +1643,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder center(String center) {
+        default FacebookEndpointProducerBuilder center(String center) {
             setProperty("center", center);
             return this;
         }
@@ -1701,8 +1652,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder checkinId(
-                String checkinId) {
+        default FacebookEndpointProducerBuilder checkinId(String checkinId) {
             setProperty("checkinId", checkinId);
             return this;
         }
@@ -1713,7 +1663,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointProducerBuilder checkinUpdate(
+        default FacebookEndpointProducerBuilder checkinUpdate(
                 Object checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
@@ -1726,7 +1676,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointProducerBuilder checkinUpdate(
+        default FacebookEndpointProducerBuilder checkinUpdate(
                 String checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
@@ -1736,8 +1686,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder clientURL(
-                String clientURL) {
+        default FacebookEndpointProducerBuilder clientURL(String clientURL) {
             setProperty("clientURL", clientURL);
             return this;
         }
@@ -1746,7 +1695,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder clientVersion(
+        default FacebookEndpointProducerBuilder clientVersion(
                 String clientVersion) {
             setProperty("clientVersion", clientVersion);
             return this;
@@ -1756,8 +1705,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder commentId(
-                String commentId) {
+        default FacebookEndpointProducerBuilder commentId(String commentId) {
             setProperty("commentId", commentId);
             return this;
         }
@@ -1766,7 +1714,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder commentUpdate(
+        default FacebookEndpointProducerBuilder commentUpdate(
                 Object commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
@@ -1777,7 +1725,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder commentUpdate(
+        default FacebookEndpointProducerBuilder commentUpdate(
                 String commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
@@ -1787,7 +1735,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder debugEnabled(
+        default FacebookEndpointProducerBuilder debugEnabled(
                 Boolean debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
@@ -1798,8 +1746,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder debugEnabled(
-                String debugEnabled) {
+        default FacebookEndpointProducerBuilder debugEnabled(String debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
         }
@@ -1808,8 +1755,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder description(
-                String description) {
+        default FacebookEndpointProducerBuilder description(String description) {
             setProperty("description", description);
             return this;
         }
@@ -1818,7 +1764,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder distance(Integer distance) {
+        default FacebookEndpointProducerBuilder distance(Integer distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -1828,7 +1774,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder distance(String distance) {
+        default FacebookEndpointProducerBuilder distance(String distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -1837,7 +1783,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder domainId(String domainId) {
+        default FacebookEndpointProducerBuilder domainId(String domainId) {
             setProperty("domainId", domainId);
             return this;
         }
@@ -1846,8 +1792,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder domainName(
-                String domainName) {
+        default FacebookEndpointProducerBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -1857,7 +1802,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder domainNames(
+        default FacebookEndpointProducerBuilder domainNames(
                 List<String> domainNames) {
             setProperty("domainNames", domainNames);
             return this;
@@ -1868,8 +1813,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder domainNames(
-                String domainNames) {
+        default FacebookEndpointProducerBuilder domainNames(String domainNames) {
             setProperty("domainNames", domainNames);
             return this;
         }
@@ -1878,7 +1822,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder eventId(String eventId) {
+        default FacebookEndpointProducerBuilder eventId(String eventId) {
             setProperty("eventId", eventId);
             return this;
         }
@@ -1887,8 +1831,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.EventUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder eventUpdate(
-                Object eventUpdate) {
+        default FacebookEndpointProducerBuilder eventUpdate(Object eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -1898,8 +1841,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder eventUpdate(
-                String eventUpdate) {
+        default FacebookEndpointProducerBuilder eventUpdate(String eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -1908,7 +1850,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder friendId(String friendId) {
+        default FacebookEndpointProducerBuilder friendId(String friendId) {
             setProperty("friendId", friendId);
             return this;
         }
@@ -1917,8 +1859,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder friendlistId(
-                String friendlistId) {
+        default FacebookEndpointProducerBuilder friendlistId(String friendlistId) {
             setProperty("friendlistId", friendlistId);
             return this;
         }
@@ -1927,7 +1868,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder friendlistName(
+        default FacebookEndpointProducerBuilder friendlistName(
                 String friendlistName) {
             setProperty("friendlistName", friendlistName);
             return this;
@@ -1937,8 +1878,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder friendUserId(
-                String friendUserId) {
+        default FacebookEndpointProducerBuilder friendUserId(String friendUserId) {
             setProperty("friendUserId", friendUserId);
             return this;
         }
@@ -1947,7 +1887,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder groupId(String groupId) {
+        default FacebookEndpointProducerBuilder groupId(String groupId) {
             setProperty("groupId", groupId);
             return this;
         }
@@ -1956,8 +1896,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder gzipEnabled(
-                Boolean gzipEnabled) {
+        default FacebookEndpointProducerBuilder gzipEnabled(Boolean gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -1967,8 +1906,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder gzipEnabled(
-                String gzipEnabled) {
+        default FacebookEndpointProducerBuilder gzipEnabled(String gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -1977,7 +1915,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpConnectionTimeout(
+        default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -1988,7 +1926,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpConnectionTimeout(
+        default FacebookEndpointProducerBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -1998,7 +1936,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -2009,7 +1947,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -2019,7 +1957,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpMaxTotalConnections(
+        default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -2030,7 +1968,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpMaxTotalConnections(
+        default FacebookEndpointProducerBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -2040,7 +1978,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpReadTimeout(
+        default FacebookEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -2051,7 +1989,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpReadTimeout(
+        default FacebookEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -2061,7 +1999,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpRetryCount(
+        default FacebookEndpointProducerBuilder httpRetryCount(
                 Integer httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
@@ -2072,7 +2010,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpRetryCount(
+        default FacebookEndpointProducerBuilder httpRetryCount(
                 String httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
@@ -2082,7 +2020,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -2093,7 +2031,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -2103,7 +2041,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
+        default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -2114,7 +2052,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
+        default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -2125,7 +2063,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder ids(List<String> ids) {
+        default FacebookEndpointProducerBuilder ids(List<String> ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -2135,7 +2073,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder ids(String ids) {
+        default FacebookEndpointProducerBuilder ids(String ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -2144,7 +2082,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder inBody(String inBody) {
+        default FacebookEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -2154,8 +2092,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder includeRead(
-                Boolean includeRead) {
+        default FacebookEndpointProducerBuilder includeRead(Boolean includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -2166,8 +2103,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder includeRead(
-                String includeRead) {
+        default FacebookEndpointProducerBuilder includeRead(String includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -2176,7 +2112,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder isHidden(Boolean isHidden) {
+        default FacebookEndpointProducerBuilder isHidden(Boolean isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -2186,7 +2122,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder isHidden(String isHidden) {
+        default FacebookEndpointProducerBuilder isHidden(String isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -2195,7 +2131,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder jsonStoreEnabled(
+        default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
@@ -2206,7 +2142,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder jsonStoreEnabled(
+        default FacebookEndpointProducerBuilder jsonStoreEnabled(
                 String jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
@@ -2216,7 +2152,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder link(URL link) {
+        default FacebookEndpointProducerBuilder link(URL link) {
             setProperty("link", link);
             return this;
         }
@@ -2225,7 +2161,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder link(String link) {
+        default FacebookEndpointProducerBuilder link(String link) {
             setProperty("link", link);
             return this;
         }
@@ -2234,7 +2170,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder linkId(String linkId) {
+        default FacebookEndpointProducerBuilder linkId(String linkId) {
             setProperty("linkId", linkId);
             return this;
         }
@@ -2243,7 +2179,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder locale(Locale locale) {
+        default FacebookEndpointProducerBuilder locale(Locale locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -2252,7 +2188,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder locale(String locale) {
+        default FacebookEndpointProducerBuilder locale(String locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -2261,7 +2197,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder mbeanEnabled(
+        default FacebookEndpointProducerBuilder mbeanEnabled(
                 Boolean mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
@@ -2272,8 +2208,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder mbeanEnabled(
-                String mbeanEnabled) {
+        default FacebookEndpointProducerBuilder mbeanEnabled(String mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
@@ -2282,7 +2217,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder message(String message) {
+        default FacebookEndpointProducerBuilder message(String message) {
             setProperty("message", message);
             return this;
         }
@@ -2291,8 +2226,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder messageId(
-                String messageId) {
+        default FacebookEndpointProducerBuilder messageId(String messageId) {
             setProperty("messageId", messageId);
             return this;
         }
@@ -2301,7 +2235,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder metric(String metric) {
+        default FacebookEndpointProducerBuilder metric(String metric) {
             setProperty("metric", metric);
             return this;
         }
@@ -2310,8 +2244,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder milestoneId(
-                String milestoneId) {
+        default FacebookEndpointProducerBuilder milestoneId(String milestoneId) {
             setProperty("milestoneId", milestoneId);
             return this;
         }
@@ -2320,7 +2253,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder name(String name) {
+        default FacebookEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -2329,7 +2262,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder noteId(String noteId) {
+        default FacebookEndpointProducerBuilder noteId(String noteId) {
             setProperty("noteId", noteId);
             return this;
         }
@@ -2338,7 +2271,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder notificationId(
+        default FacebookEndpointProducerBuilder notificationId(
                 String notificationId) {
             setProperty("notificationId", notificationId);
             return this;
@@ -2348,7 +2281,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder objectId(String objectId) {
+        default FacebookEndpointProducerBuilder objectId(String objectId) {
             setProperty("objectId", objectId);
             return this;
         }
@@ -2357,7 +2290,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder offerId(String offerId) {
+        default FacebookEndpointProducerBuilder offerId(String offerId) {
             setProperty("offerId", offerId);
             return this;
         }
@@ -2366,7 +2299,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder optionDescription(
+        default FacebookEndpointProducerBuilder optionDescription(
                 String optionDescription) {
             setProperty("optionDescription", optionDescription);
             return this;
@@ -2376,7 +2309,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pageId(String pageId) {
+        default FacebookEndpointProducerBuilder pageId(String pageId) {
             setProperty("pageId", pageId);
             return this;
         }
@@ -2385,7 +2318,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder permissionName(
+        default FacebookEndpointProducerBuilder permissionName(
                 String permissionName) {
             setProperty("permissionName", permissionName);
             return this;
@@ -2395,8 +2328,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder permissions(
-                String permissions) {
+        default FacebookEndpointProducerBuilder permissions(String permissions) {
             setProperty("permissions", permissions);
             return this;
         }
@@ -2405,7 +2337,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder photoId(String photoId) {
+        default FacebookEndpointProducerBuilder photoId(String photoId) {
             setProperty("photoId", photoId);
             return this;
         }
@@ -2414,8 +2346,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureId(
-                Integer pictureId) {
+        default FacebookEndpointProducerBuilder pictureId(Integer pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -2425,8 +2356,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureId(
-                String pictureId) {
+        default FacebookEndpointProducerBuilder pictureId(String pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -2435,8 +2365,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureId2(
-                Integer pictureId2) {
+        default FacebookEndpointProducerBuilder pictureId2(Integer pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -2446,8 +2375,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureId2(
-                String pictureId2) {
+        default FacebookEndpointProducerBuilder pictureId2(String pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -2456,7 +2384,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureSize(
+        default FacebookEndpointProducerBuilder pictureSize(
                 PictureSize pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
@@ -2467,8 +2395,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder pictureSize(
-                String pictureSize) {
+        default FacebookEndpointProducerBuilder pictureSize(String pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
         }
@@ -2477,7 +2404,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder placeId(String placeId) {
+        default FacebookEndpointProducerBuilder placeId(String placeId) {
             setProperty("placeId", placeId);
             return this;
         }
@@ -2486,7 +2413,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder postId(String postId) {
+        default FacebookEndpointProducerBuilder postId(String postId) {
             setProperty("postId", postId);
             return this;
         }
@@ -2495,8 +2422,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PostUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder postUpdate(
-                Object postUpdate) {
+        default FacebookEndpointProducerBuilder postUpdate(Object postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -2506,8 +2432,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder postUpdate(
-                String postUpdate) {
+        default FacebookEndpointProducerBuilder postUpdate(String postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -2516,7 +2441,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder prettyDebugEnabled(
+        default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -2527,7 +2452,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder prettyDebugEnabled(
+        default FacebookEndpointProducerBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -2538,7 +2463,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder queries(
+        default FacebookEndpointProducerBuilder queries(
                 Map<String, String> queries) {
             setProperty("queries", queries);
             return this;
@@ -2550,7 +2475,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder queries(String queries) {
+        default FacebookEndpointProducerBuilder queries(String queries) {
             setProperty("queries", queries);
             return this;
         }
@@ -2559,7 +2484,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder query(String query) {
+        default FacebookEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -2568,8 +2493,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder questionId(
-                String questionId) {
+        default FacebookEndpointProducerBuilder questionId(String questionId) {
             setProperty("questionId", questionId);
             return this;
         }
@@ -2578,7 +2502,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Reading</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder reading(Object reading) {
+        default FacebookEndpointProducerBuilder reading(Object reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -2588,7 +2512,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder reading(String reading) {
+        default FacebookEndpointProducerBuilder reading(String reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -2598,7 +2522,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder readingOptions(
+        default FacebookEndpointProducerBuilder readingOptions(
                 Map<String, Object> readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
@@ -2610,7 +2534,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder readingOptions(
+        default FacebookEndpointProducerBuilder readingOptions(
                 String readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
@@ -2620,8 +2544,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder restBaseURL(
-                String restBaseURL) {
+        default FacebookEndpointProducerBuilder restBaseURL(String restBaseURL) {
             setProperty("restBaseURL", restBaseURL);
             return this;
         }
@@ -2630,8 +2553,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder scoreValue(
-                Integer scoreValue) {
+        default FacebookEndpointProducerBuilder scoreValue(Integer scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -2641,8 +2563,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder scoreValue(
-                String scoreValue) {
+        default FacebookEndpointProducerBuilder scoreValue(String scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -2651,7 +2572,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder size(PictureSize size) {
+        default FacebookEndpointProducerBuilder size(PictureSize size) {
             setProperty("size", size);
             return this;
         }
@@ -2661,7 +2582,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder size(String size) {
+        default FacebookEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -2670,7 +2591,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder source(Object source) {
+        default FacebookEndpointProducerBuilder source(Object source) {
             setProperty("source", source);
             return this;
         }
@@ -2679,7 +2600,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder source(String source) {
+        default FacebookEndpointProducerBuilder source(String source) {
             setProperty("source", source);
             return this;
         }
@@ -2688,7 +2609,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder subject(String subject) {
+        default FacebookEndpointProducerBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -2697,7 +2618,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder tabId(String tabId) {
+        default FacebookEndpointProducerBuilder tabId(String tabId) {
             setProperty("tabId", tabId);
             return this;
         }
@@ -2706,8 +2627,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TagUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder tagUpdate(
-                Object tagUpdate) {
+        default FacebookEndpointProducerBuilder tagUpdate(Object tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -2717,8 +2637,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder tagUpdate(
-                String tagUpdate) {
+        default FacebookEndpointProducerBuilder tagUpdate(String tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -2727,8 +2646,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder testUser1(
-                Object testUser1) {
+        default FacebookEndpointProducerBuilder testUser1(Object testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -2738,8 +2656,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder testUser1(
-                String testUser1) {
+        default FacebookEndpointProducerBuilder testUser1(String testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -2748,8 +2665,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder testUser2(
-                Object testUser2) {
+        default FacebookEndpointProducerBuilder testUser2(Object testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -2759,8 +2675,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder testUser2(
-                String testUser2) {
+        default FacebookEndpointProducerBuilder testUser2(String testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -2769,8 +2684,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder testUserId(
-                String testUserId) {
+        default FacebookEndpointProducerBuilder testUserId(String testUserId) {
             setProperty("testUserId", testUserId);
             return this;
         }
@@ -2779,7 +2693,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder title(String title) {
+        default FacebookEndpointProducerBuilder title(String title) {
             setProperty("title", title);
             return this;
         }
@@ -2788,7 +2702,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder toUserId(String toUserId) {
+        default FacebookEndpointProducerBuilder toUserId(String toUserId) {
             setProperty("toUserId", toUserId);
             return this;
         }
@@ -2798,8 +2712,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder toUserIds(
-                List<String> toUserIds) {
+        default FacebookEndpointProducerBuilder toUserIds(List<String> toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -2809,8 +2722,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder toUserIds(
-                String toUserIds) {
+        default FacebookEndpointProducerBuilder toUserIds(String toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -2819,7 +2731,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userId(String userId) {
+        default FacebookEndpointProducerBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -2828,7 +2740,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userId1(String userId1) {
+        default FacebookEndpointProducerBuilder userId1(String userId1) {
             setProperty("userId1", userId1);
             return this;
         }
@@ -2837,7 +2749,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userId2(String userId2) {
+        default FacebookEndpointProducerBuilder userId2(String userId2) {
             setProperty("userId2", userId2);
             return this;
         }
@@ -2847,8 +2759,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userIds(
-                List<String> userIds) {
+        default FacebookEndpointProducerBuilder userIds(List<String> userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -2858,7 +2769,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userIds(String userIds) {
+        default FacebookEndpointProducerBuilder userIds(String userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -2867,8 +2778,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder userLocale(
-                String userLocale) {
+        default FacebookEndpointProducerBuilder userLocale(String userLocale) {
             setProperty("userLocale", userLocale);
             return this;
         }
@@ -2877,7 +2787,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder useSSL(Boolean useSSL) {
+        default FacebookEndpointProducerBuilder useSSL(Boolean useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -2887,7 +2797,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder useSSL(String useSSL) {
+        default FacebookEndpointProducerBuilder useSSL(String useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -2896,8 +2806,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder videoBaseURL(
-                String videoBaseURL) {
+        default FacebookEndpointProducerBuilder videoBaseURL(String videoBaseURL) {
             setProperty("videoBaseURL", videoBaseURL);
             return this;
         }
@@ -2906,7 +2815,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointProducerBuilder videoId(String videoId) {
+        default FacebookEndpointProducerBuilder videoId(String videoId) {
             setProperty("videoId", videoId);
             return this;
         }
@@ -2923,7 +2832,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FacebookEndpointProducerBuilder lazyStartProducer(
+        default FacebookEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2941,7 +2850,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FacebookEndpointProducerBuilder lazyStartProducer(
+        default FacebookEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2951,7 +2860,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointProducerBuilder httpProxyHost(
+        default FacebookEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -2961,7 +2870,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointProducerBuilder httpProxyPassword(
+        default FacebookEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -2971,7 +2880,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default FacebookEndpointProducerBuilder httpProxyPort(
+        default FacebookEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -2982,7 +2891,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default FacebookEndpointProducerBuilder httpProxyPort(
+        default FacebookEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -2992,7 +2901,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointProducerBuilder httpProxyUser(
+        default FacebookEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -3002,7 +2911,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthAccessToken(
+        default FacebookEndpointProducerBuilder oAuthAccessToken(
                 String oAuthAccessToken) {
             setProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
@@ -3012,7 +2921,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthAccessTokenURL(
+        default FacebookEndpointProducerBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
             setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
@@ -3022,8 +2931,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthAppId(
-                String oAuthAppId) {
+        default FacebookEndpointProducerBuilder oAuthAppId(String oAuthAppId) {
             setProperty("oAuthAppId", oAuthAppId);
             return this;
         }
@@ -3032,7 +2940,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthAppSecret(
+        default FacebookEndpointProducerBuilder oAuthAppSecret(
                 String oAuthAppSecret) {
             setProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
@@ -3042,7 +2950,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthAuthorizationURL(
+        default FacebookEndpointProducerBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
             setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
@@ -3054,7 +2962,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointProducerBuilder oAuthPermissions(
+        default FacebookEndpointProducerBuilder oAuthPermissions(
                 String oAuthPermissions) {
             setProperty("oAuthPermissions", oAuthPermissions);
             return this;
@@ -3067,7 +2975,7 @@ public interface FacebookEndpointBuilderFactory {
     public interface AdvancedFacebookEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default FacebookEndpointProducerBuilder basic() {
+        default FacebookEndpointProducerBuilder basic() {
             return (FacebookEndpointProducerBuilder) this;
         }
         /**
@@ -3076,7 +2984,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3087,7 +2995,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3098,7 +3006,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointProducerBuilder synchronous(
+        default AdvancedFacebookEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3109,7 +3017,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointProducerBuilder synchronous(
+        default AdvancedFacebookEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3122,7 +3030,7 @@ public interface FacebookEndpointBuilderFactory {
     public static interface FacebookEndpointBuilder
             extends
                 FacebookEndpointConsumerBuilder, FacebookEndpointProducerBuilder {
-        public default AdvancedFacebookEndpointBuilder advanced() {
+        default AdvancedFacebookEndpointBuilder advanced() {
             return (AdvancedFacebookEndpointBuilder) this;
         }
         /**
@@ -3130,7 +3038,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder methodName(String methodName) {
+        default FacebookEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -3139,7 +3047,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder achievementURL(URL achievementURL) {
+        default FacebookEndpointBuilder achievementURL(URL achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
         }
@@ -3148,8 +3056,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder achievementURL(
-                String achievementURL) {
+        default FacebookEndpointBuilder achievementURL(String achievementURL) {
             setProperty("achievementURL", achievementURL);
             return this;
         }
@@ -3158,7 +3065,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder albumId(String albumId) {
+        default FacebookEndpointBuilder albumId(String albumId) {
             setProperty("albumId", albumId);
             return this;
         }
@@ -3167,7 +3074,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.AlbumUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder albumUpdate(Object albumUpdate) {
+        default FacebookEndpointBuilder albumUpdate(Object albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -3177,7 +3084,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder albumUpdate(String albumUpdate) {
+        default FacebookEndpointBuilder albumUpdate(String albumUpdate) {
             setProperty("albumUpdate", albumUpdate);
             return this;
         }
@@ -3186,7 +3093,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder appId(String appId) {
+        default FacebookEndpointBuilder appId(String appId) {
             setProperty("appId", appId);
             return this;
         }
@@ -3195,7 +3102,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.GeoLocation</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder center(Object center) {
+        default FacebookEndpointBuilder center(Object center) {
             setProperty("center", center);
             return this;
         }
@@ -3205,7 +3112,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder center(String center) {
+        default FacebookEndpointBuilder center(String center) {
             setProperty("center", center);
             return this;
         }
@@ -3214,7 +3121,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder checkinId(String checkinId) {
+        default FacebookEndpointBuilder checkinId(String checkinId) {
             setProperty("checkinId", checkinId);
             return this;
         }
@@ -3225,8 +3132,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointBuilder checkinUpdate(
-                Object checkinUpdate) {
+        default FacebookEndpointBuilder checkinUpdate(Object checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
         }
@@ -3238,8 +3144,7 @@ public interface FacebookEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default FacebookEndpointBuilder checkinUpdate(
-                String checkinUpdate) {
+        default FacebookEndpointBuilder checkinUpdate(String checkinUpdate) {
             setProperty("checkinUpdate", checkinUpdate);
             return this;
         }
@@ -3248,7 +3153,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder clientURL(String clientURL) {
+        default FacebookEndpointBuilder clientURL(String clientURL) {
             setProperty("clientURL", clientURL);
             return this;
         }
@@ -3257,8 +3162,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder clientVersion(
-                String clientVersion) {
+        default FacebookEndpointBuilder clientVersion(String clientVersion) {
             setProperty("clientVersion", clientVersion);
             return this;
         }
@@ -3267,7 +3171,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder commentId(String commentId) {
+        default FacebookEndpointBuilder commentId(String commentId) {
             setProperty("commentId", commentId);
             return this;
         }
@@ -3276,8 +3180,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder commentUpdate(
-                Object commentUpdate) {
+        default FacebookEndpointBuilder commentUpdate(Object commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
         }
@@ -3287,8 +3190,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>facebook4j.CommentUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder commentUpdate(
-                String commentUpdate) {
+        default FacebookEndpointBuilder commentUpdate(String commentUpdate) {
             setProperty("commentUpdate", commentUpdate);
             return this;
         }
@@ -3297,7 +3199,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder debugEnabled(Boolean debugEnabled) {
+        default FacebookEndpointBuilder debugEnabled(Boolean debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
         }
@@ -3307,7 +3209,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder debugEnabled(String debugEnabled) {
+        default FacebookEndpointBuilder debugEnabled(String debugEnabled) {
             setProperty("debugEnabled", debugEnabled);
             return this;
         }
@@ -3316,7 +3218,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder description(String description) {
+        default FacebookEndpointBuilder description(String description) {
             setProperty("description", description);
             return this;
         }
@@ -3325,7 +3227,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder distance(Integer distance) {
+        default FacebookEndpointBuilder distance(Integer distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -3335,7 +3237,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder distance(String distance) {
+        default FacebookEndpointBuilder distance(String distance) {
             setProperty("distance", distance);
             return this;
         }
@@ -3344,7 +3246,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder domainId(String domainId) {
+        default FacebookEndpointBuilder domainId(String domainId) {
             setProperty("domainId", domainId);
             return this;
         }
@@ -3353,7 +3255,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder domainName(String domainName) {
+        default FacebookEndpointBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -3363,8 +3265,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder domainNames(
-                List<String> domainNames) {
+        default FacebookEndpointBuilder domainNames(List<String> domainNames) {
             setProperty("domainNames", domainNames);
             return this;
         }
@@ -3374,7 +3275,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder domainNames(String domainNames) {
+        default FacebookEndpointBuilder domainNames(String domainNames) {
             setProperty("domainNames", domainNames);
             return this;
         }
@@ -3383,7 +3284,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder eventId(String eventId) {
+        default FacebookEndpointBuilder eventId(String eventId) {
             setProperty("eventId", eventId);
             return this;
         }
@@ -3392,7 +3293,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.EventUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder eventUpdate(Object eventUpdate) {
+        default FacebookEndpointBuilder eventUpdate(Object eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -3402,7 +3303,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder eventUpdate(String eventUpdate) {
+        default FacebookEndpointBuilder eventUpdate(String eventUpdate) {
             setProperty("eventUpdate", eventUpdate);
             return this;
         }
@@ -3411,7 +3312,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder friendId(String friendId) {
+        default FacebookEndpointBuilder friendId(String friendId) {
             setProperty("friendId", friendId);
             return this;
         }
@@ -3420,7 +3321,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder friendlistId(String friendlistId) {
+        default FacebookEndpointBuilder friendlistId(String friendlistId) {
             setProperty("friendlistId", friendlistId);
             return this;
         }
@@ -3429,8 +3330,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder friendlistName(
-                String friendlistName) {
+        default FacebookEndpointBuilder friendlistName(String friendlistName) {
             setProperty("friendlistName", friendlistName);
             return this;
         }
@@ -3439,7 +3339,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder friendUserId(String friendUserId) {
+        default FacebookEndpointBuilder friendUserId(String friendUserId) {
             setProperty("friendUserId", friendUserId);
             return this;
         }
@@ -3448,7 +3348,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder groupId(String groupId) {
+        default FacebookEndpointBuilder groupId(String groupId) {
             setProperty("groupId", groupId);
             return this;
         }
@@ -3457,7 +3357,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder gzipEnabled(Boolean gzipEnabled) {
+        default FacebookEndpointBuilder gzipEnabled(Boolean gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -3467,7 +3367,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder gzipEnabled(String gzipEnabled) {
+        default FacebookEndpointBuilder gzipEnabled(String gzipEnabled) {
             setProperty("gzipEnabled", gzipEnabled);
             return this;
         }
@@ -3476,7 +3376,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpConnectionTimeout(
+        default FacebookEndpointBuilder httpConnectionTimeout(
                 Integer httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -3487,7 +3387,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpConnectionTimeout(
+        default FacebookEndpointBuilder httpConnectionTimeout(
                 String httpConnectionTimeout) {
             setProperty("httpConnectionTimeout", httpConnectionTimeout);
             return this;
@@ -3497,7 +3397,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 Integer httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -3508,7 +3408,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpDefaultMaxPerRoute(
+        default FacebookEndpointBuilder httpDefaultMaxPerRoute(
                 String httpDefaultMaxPerRoute) {
             setProperty("httpDefaultMaxPerRoute", httpDefaultMaxPerRoute);
             return this;
@@ -3518,7 +3418,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpMaxTotalConnections(
+        default FacebookEndpointBuilder httpMaxTotalConnections(
                 Integer httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -3529,7 +3429,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpMaxTotalConnections(
+        default FacebookEndpointBuilder httpMaxTotalConnections(
                 String httpMaxTotalConnections) {
             setProperty("httpMaxTotalConnections", httpMaxTotalConnections);
             return this;
@@ -3539,8 +3439,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpReadTimeout(
-                Integer httpReadTimeout) {
+        default FacebookEndpointBuilder httpReadTimeout(Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
@@ -3550,8 +3449,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpReadTimeout(
-                String httpReadTimeout) {
+        default FacebookEndpointBuilder httpReadTimeout(String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
@@ -3560,8 +3458,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpRetryCount(
-                Integer httpRetryCount) {
+        default FacebookEndpointBuilder httpRetryCount(Integer httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
         }
@@ -3571,8 +3468,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpRetryCount(
-                String httpRetryCount) {
+        default FacebookEndpointBuilder httpRetryCount(String httpRetryCount) {
             setProperty("httpRetryCount", httpRetryCount);
             return this;
         }
@@ -3581,7 +3477,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 Integer httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -3592,7 +3488,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpRetryIntervalSeconds(
+        default FacebookEndpointBuilder httpRetryIntervalSeconds(
                 String httpRetryIntervalSeconds) {
             setProperty("httpRetryIntervalSeconds", httpRetryIntervalSeconds);
             return this;
@@ -3602,7 +3498,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpStreamingReadTimeout(
+        default FacebookEndpointBuilder httpStreamingReadTimeout(
                 Integer httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -3613,7 +3509,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder httpStreamingReadTimeout(
+        default FacebookEndpointBuilder httpStreamingReadTimeout(
                 String httpStreamingReadTimeout) {
             setProperty("httpStreamingReadTimeout", httpStreamingReadTimeout);
             return this;
@@ -3624,7 +3520,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder ids(List<String> ids) {
+        default FacebookEndpointBuilder ids(List<String> ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -3634,7 +3530,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder ids(String ids) {
+        default FacebookEndpointBuilder ids(String ids) {
             setProperty("ids", ids);
             return this;
         }
@@ -3643,7 +3539,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder inBody(String inBody) {
+        default FacebookEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -3653,7 +3549,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder includeRead(Boolean includeRead) {
+        default FacebookEndpointBuilder includeRead(Boolean includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -3664,7 +3560,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder includeRead(String includeRead) {
+        default FacebookEndpointBuilder includeRead(String includeRead) {
             setProperty("includeRead", includeRead);
             return this;
         }
@@ -3673,7 +3569,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder isHidden(Boolean isHidden) {
+        default FacebookEndpointBuilder isHidden(Boolean isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -3683,7 +3579,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder isHidden(String isHidden) {
+        default FacebookEndpointBuilder isHidden(String isHidden) {
             setProperty("isHidden", isHidden);
             return this;
         }
@@ -3692,7 +3588,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder jsonStoreEnabled(
+        default FacebookEndpointBuilder jsonStoreEnabled(
                 Boolean jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
@@ -3703,8 +3599,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder jsonStoreEnabled(
-                String jsonStoreEnabled) {
+        default FacebookEndpointBuilder jsonStoreEnabled(String jsonStoreEnabled) {
             setProperty("jsonStoreEnabled", jsonStoreEnabled);
             return this;
         }
@@ -3713,7 +3608,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder link(URL link) {
+        default FacebookEndpointBuilder link(URL link) {
             setProperty("link", link);
             return this;
         }
@@ -3722,7 +3617,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URL</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder link(String link) {
+        default FacebookEndpointBuilder link(String link) {
             setProperty("link", link);
             return this;
         }
@@ -3731,7 +3626,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder linkId(String linkId) {
+        default FacebookEndpointBuilder linkId(String linkId) {
             setProperty("linkId", linkId);
             return this;
         }
@@ -3740,7 +3635,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder locale(Locale locale) {
+        default FacebookEndpointBuilder locale(Locale locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -3749,7 +3644,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Locale</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder locale(String locale) {
+        default FacebookEndpointBuilder locale(String locale) {
             setProperty("locale", locale);
             return this;
         }
@@ -3758,7 +3653,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder mbeanEnabled(Boolean mbeanEnabled) {
+        default FacebookEndpointBuilder mbeanEnabled(Boolean mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
@@ -3768,7 +3663,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder mbeanEnabled(String mbeanEnabled) {
+        default FacebookEndpointBuilder mbeanEnabled(String mbeanEnabled) {
             setProperty("mbeanEnabled", mbeanEnabled);
             return this;
         }
@@ -3777,7 +3672,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder message(String message) {
+        default FacebookEndpointBuilder message(String message) {
             setProperty("message", message);
             return this;
         }
@@ -3786,7 +3681,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder messageId(String messageId) {
+        default FacebookEndpointBuilder messageId(String messageId) {
             setProperty("messageId", messageId);
             return this;
         }
@@ -3795,7 +3690,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder metric(String metric) {
+        default FacebookEndpointBuilder metric(String metric) {
             setProperty("metric", metric);
             return this;
         }
@@ -3804,7 +3699,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder milestoneId(String milestoneId) {
+        default FacebookEndpointBuilder milestoneId(String milestoneId) {
             setProperty("milestoneId", milestoneId);
             return this;
         }
@@ -3813,7 +3708,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder name(String name) {
+        default FacebookEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -3822,7 +3717,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder noteId(String noteId) {
+        default FacebookEndpointBuilder noteId(String noteId) {
             setProperty("noteId", noteId);
             return this;
         }
@@ -3831,8 +3726,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder notificationId(
-                String notificationId) {
+        default FacebookEndpointBuilder notificationId(String notificationId) {
             setProperty("notificationId", notificationId);
             return this;
         }
@@ -3841,7 +3735,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder objectId(String objectId) {
+        default FacebookEndpointBuilder objectId(String objectId) {
             setProperty("objectId", objectId);
             return this;
         }
@@ -3850,7 +3744,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder offerId(String offerId) {
+        default FacebookEndpointBuilder offerId(String offerId) {
             setProperty("offerId", offerId);
             return this;
         }
@@ -3859,7 +3753,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder optionDescription(
+        default FacebookEndpointBuilder optionDescription(
                 String optionDescription) {
             setProperty("optionDescription", optionDescription);
             return this;
@@ -3869,7 +3763,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder pageId(String pageId) {
+        default FacebookEndpointBuilder pageId(String pageId) {
             setProperty("pageId", pageId);
             return this;
         }
@@ -3878,8 +3772,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder permissionName(
-                String permissionName) {
+        default FacebookEndpointBuilder permissionName(String permissionName) {
             setProperty("permissionName", permissionName);
             return this;
         }
@@ -3888,7 +3781,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder permissions(String permissions) {
+        default FacebookEndpointBuilder permissions(String permissions) {
             setProperty("permissions", permissions);
             return this;
         }
@@ -3897,7 +3790,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder photoId(String photoId) {
+        default FacebookEndpointBuilder photoId(String photoId) {
             setProperty("photoId", photoId);
             return this;
         }
@@ -3906,7 +3799,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureId(Integer pictureId) {
+        default FacebookEndpointBuilder pictureId(Integer pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -3916,7 +3809,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureId(String pictureId) {
+        default FacebookEndpointBuilder pictureId(String pictureId) {
             setProperty("pictureId", pictureId);
             return this;
         }
@@ -3925,7 +3818,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureId2(Integer pictureId2) {
+        default FacebookEndpointBuilder pictureId2(Integer pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -3935,7 +3828,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureId2(String pictureId2) {
+        default FacebookEndpointBuilder pictureId2(String pictureId2) {
             setProperty("pictureId2", pictureId2);
             return this;
         }
@@ -3944,8 +3837,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureSize(
-                PictureSize pictureSize) {
+        default FacebookEndpointBuilder pictureSize(PictureSize pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
         }
@@ -3955,7 +3847,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder pictureSize(String pictureSize) {
+        default FacebookEndpointBuilder pictureSize(String pictureSize) {
             setProperty("pictureSize", pictureSize);
             return this;
         }
@@ -3964,7 +3856,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder placeId(String placeId) {
+        default FacebookEndpointBuilder placeId(String placeId) {
             setProperty("placeId", placeId);
             return this;
         }
@@ -3973,7 +3865,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder postId(String postId) {
+        default FacebookEndpointBuilder postId(String postId) {
             setProperty("postId", postId);
             return this;
         }
@@ -3982,7 +3874,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PostUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder postUpdate(Object postUpdate) {
+        default FacebookEndpointBuilder postUpdate(Object postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -3992,7 +3884,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder postUpdate(String postUpdate) {
+        default FacebookEndpointBuilder postUpdate(String postUpdate) {
             setProperty("postUpdate", postUpdate);
             return this;
         }
@@ -4001,7 +3893,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder prettyDebugEnabled(
+        default FacebookEndpointBuilder prettyDebugEnabled(
                 Boolean prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -4012,7 +3904,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder prettyDebugEnabled(
+        default FacebookEndpointBuilder prettyDebugEnabled(
                 String prettyDebugEnabled) {
             setProperty("prettyDebugEnabled", prettyDebugEnabled);
             return this;
@@ -4023,8 +3915,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder queries(
-                Map<String, String> queries) {
+        default FacebookEndpointBuilder queries(Map<String, String> queries) {
             setProperty("queries", queries);
             return this;
         }
@@ -4035,7 +3926,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder queries(String queries) {
+        default FacebookEndpointBuilder queries(String queries) {
             setProperty("queries", queries);
             return this;
         }
@@ -4044,7 +3935,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder query(String query) {
+        default FacebookEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -4053,7 +3944,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder questionId(String questionId) {
+        default FacebookEndpointBuilder questionId(String questionId) {
             setProperty("questionId", questionId);
             return this;
         }
@@ -4062,7 +3953,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Reading</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder reading(Object reading) {
+        default FacebookEndpointBuilder reading(Object reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -4072,7 +3963,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder reading(String reading) {
+        default FacebookEndpointBuilder reading(String reading) {
             setProperty("reading", reading);
             return this;
         }
@@ -4082,7 +3973,7 @@ public interface FacebookEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder readingOptions(
+        default FacebookEndpointBuilder readingOptions(
                 Map<String, Object> readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
@@ -4094,8 +3985,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder readingOptions(
-                String readingOptions) {
+        default FacebookEndpointBuilder readingOptions(String readingOptions) {
             setProperty("readingOptions", readingOptions);
             return this;
         }
@@ -4104,7 +3994,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder restBaseURL(String restBaseURL) {
+        default FacebookEndpointBuilder restBaseURL(String restBaseURL) {
             setProperty("restBaseURL", restBaseURL);
             return this;
         }
@@ -4113,7 +4003,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder scoreValue(Integer scoreValue) {
+        default FacebookEndpointBuilder scoreValue(Integer scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -4123,7 +4013,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder scoreValue(String scoreValue) {
+        default FacebookEndpointBuilder scoreValue(String scoreValue) {
             setProperty("scoreValue", scoreValue);
             return this;
         }
@@ -4132,7 +4022,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.PictureSize</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder size(PictureSize size) {
+        default FacebookEndpointBuilder size(PictureSize size) {
             setProperty("size", size);
             return this;
         }
@@ -4142,7 +4032,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder size(String size) {
+        default FacebookEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -4151,7 +4041,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder source(Object source) {
+        default FacebookEndpointBuilder source(Object source) {
             setProperty("source", source);
             return this;
         }
@@ -4160,7 +4050,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>facebook4j.Media</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder source(String source) {
+        default FacebookEndpointBuilder source(String source) {
             setProperty("source", source);
             return this;
         }
@@ -4169,7 +4059,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder subject(String subject) {
+        default FacebookEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -4178,7 +4068,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder tabId(String tabId) {
+        default FacebookEndpointBuilder tabId(String tabId) {
             setProperty("tabId", tabId);
             return this;
         }
@@ -4187,7 +4077,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TagUpdate</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder tagUpdate(Object tagUpdate) {
+        default FacebookEndpointBuilder tagUpdate(Object tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -4197,7 +4087,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder tagUpdate(String tagUpdate) {
+        default FacebookEndpointBuilder tagUpdate(String tagUpdate) {
             setProperty("tagUpdate", tagUpdate);
             return this;
         }
@@ -4206,7 +4096,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder testUser1(Object testUser1) {
+        default FacebookEndpointBuilder testUser1(Object testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -4216,7 +4106,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder testUser1(String testUser1) {
+        default FacebookEndpointBuilder testUser1(String testUser1) {
             setProperty("testUser1", testUser1);
             return this;
         }
@@ -4225,7 +4115,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>facebook4j.TestUser</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder testUser2(Object testUser2) {
+        default FacebookEndpointBuilder testUser2(Object testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -4235,7 +4125,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder testUser2(String testUser2) {
+        default FacebookEndpointBuilder testUser2(String testUser2) {
             setProperty("testUser2", testUser2);
             return this;
         }
@@ -4244,7 +4134,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder testUserId(String testUserId) {
+        default FacebookEndpointBuilder testUserId(String testUserId) {
             setProperty("testUserId", testUserId);
             return this;
         }
@@ -4253,7 +4143,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder title(String title) {
+        default FacebookEndpointBuilder title(String title) {
             setProperty("title", title);
             return this;
         }
@@ -4262,7 +4152,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder toUserId(String toUserId) {
+        default FacebookEndpointBuilder toUserId(String toUserId) {
             setProperty("toUserId", toUserId);
             return this;
         }
@@ -4272,7 +4162,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder toUserIds(List<String> toUserIds) {
+        default FacebookEndpointBuilder toUserIds(List<String> toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -4282,7 +4172,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder toUserIds(String toUserIds) {
+        default FacebookEndpointBuilder toUserIds(String toUserIds) {
             setProperty("toUserIds", toUserIds);
             return this;
         }
@@ -4291,7 +4181,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder userId(String userId) {
+        default FacebookEndpointBuilder userId(String userId) {
             setProperty("userId", userId);
             return this;
         }
@@ -4300,7 +4190,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder userId1(String userId1) {
+        default FacebookEndpointBuilder userId1(String userId1) {
             setProperty("userId1", userId1);
             return this;
         }
@@ -4309,7 +4199,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder userId2(String userId2) {
+        default FacebookEndpointBuilder userId2(String userId2) {
             setProperty("userId2", userId2);
             return this;
         }
@@ -4319,7 +4209,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder userIds(List<String> userIds) {
+        default FacebookEndpointBuilder userIds(List<String> userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -4329,7 +4219,7 @@ public interface FacebookEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder userIds(String userIds) {
+        default FacebookEndpointBuilder userIds(String userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -4338,7 +4228,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder userLocale(String userLocale) {
+        default FacebookEndpointBuilder userLocale(String userLocale) {
             setProperty("userLocale", userLocale);
             return this;
         }
@@ -4347,7 +4237,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder useSSL(Boolean useSSL) {
+        default FacebookEndpointBuilder useSSL(Boolean useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -4357,7 +4247,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default FacebookEndpointBuilder useSSL(String useSSL) {
+        default FacebookEndpointBuilder useSSL(String useSSL) {
             setProperty("useSSL", useSSL);
             return this;
         }
@@ -4366,7 +4256,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder videoBaseURL(String videoBaseURL) {
+        default FacebookEndpointBuilder videoBaseURL(String videoBaseURL) {
             setProperty("videoBaseURL", videoBaseURL);
             return this;
         }
@@ -4375,7 +4265,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FacebookEndpointBuilder videoId(String videoId) {
+        default FacebookEndpointBuilder videoId(String videoId) {
             setProperty("videoId", videoId);
             return this;
         }
@@ -4384,8 +4274,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointBuilder httpProxyHost(
-                String httpProxyHost) {
+        default FacebookEndpointBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -4394,7 +4283,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointBuilder httpProxyPassword(
+        default FacebookEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -4404,8 +4293,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default FacebookEndpointBuilder httpProxyPort(
-                Integer httpProxyPort) {
+        default FacebookEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -4415,8 +4303,7 @@ public interface FacebookEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default FacebookEndpointBuilder httpProxyPort(
-                String httpProxyPort) {
+        default FacebookEndpointBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -4425,8 +4312,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default FacebookEndpointBuilder httpProxyUser(
-                String httpProxyUser) {
+        default FacebookEndpointBuilder httpProxyUser(String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
         }
@@ -4435,8 +4321,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthAccessToken(
-                String oAuthAccessToken) {
+        default FacebookEndpointBuilder oAuthAccessToken(String oAuthAccessToken) {
             setProperty("oAuthAccessToken", oAuthAccessToken);
             return this;
         }
@@ -4445,7 +4330,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthAccessTokenURL(
+        default FacebookEndpointBuilder oAuthAccessTokenURL(
                 String oAuthAccessTokenURL) {
             setProperty("oAuthAccessTokenURL", oAuthAccessTokenURL);
             return this;
@@ -4455,7 +4340,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthAppId(String oAuthAppId) {
+        default FacebookEndpointBuilder oAuthAppId(String oAuthAppId) {
             setProperty("oAuthAppId", oAuthAppId);
             return this;
         }
@@ -4464,8 +4349,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthAppSecret(
-                String oAuthAppSecret) {
+        default FacebookEndpointBuilder oAuthAppSecret(String oAuthAppSecret) {
             setProperty("oAuthAppSecret", oAuthAppSecret);
             return this;
         }
@@ -4474,7 +4358,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthAuthorizationURL(
+        default FacebookEndpointBuilder oAuthAuthorizationURL(
                 String oAuthAuthorizationURL) {
             setProperty("oAuthAuthorizationURL", oAuthAuthorizationURL);
             return this;
@@ -4486,8 +4370,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default FacebookEndpointBuilder oAuthPermissions(
-                String oAuthPermissions) {
+        default FacebookEndpointBuilder oAuthPermissions(String oAuthPermissions) {
             setProperty("oAuthPermissions", oAuthPermissions);
             return this;
         }
@@ -4499,7 +4382,7 @@ public interface FacebookEndpointBuilderFactory {
     public static interface AdvancedFacebookEndpointBuilder
             extends
                 AdvancedFacebookEndpointConsumerBuilder, AdvancedFacebookEndpointProducerBuilder {
-        public default FacebookEndpointBuilder basic() {
+        default FacebookEndpointBuilder basic() {
             return (FacebookEndpointBuilder) this;
         }
         /**
@@ -4508,7 +4391,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -4519,7 +4402,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointBuilder basicPropertyBinding(
+        default AdvancedFacebookEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -4530,8 +4413,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedFacebookEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4541,8 +4423,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFacebookEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedFacebookEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4559,7 +4440,7 @@ public interface FacebookEndpointBuilderFactory {
      * accessible using Facebook4J. Creates a builder to build endpoints for the
      * Facebook component.
      */
-    public default FacebookEndpointBuilder facebook(String path) {
+    default FacebookEndpointBuilder facebook(String path) {
         class FacebookEndpointBuilderImpl extends AbstractEndpointBuilder implements FacebookEndpointBuilder, AdvancedFacebookEndpointBuilder {
             public FacebookEndpointBuilderImpl(String path) {
                 super("facebook", path);

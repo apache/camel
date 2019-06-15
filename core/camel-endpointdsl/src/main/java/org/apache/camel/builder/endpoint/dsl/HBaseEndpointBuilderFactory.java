@@ -40,7 +40,7 @@ public interface HBaseEndpointBuilderFactory {
     public interface HBaseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedHBaseEndpointConsumerBuilder advanced() {
+        default AdvancedHBaseEndpointConsumerBuilder advanced() {
             return (AdvancedHBaseEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder tableName(String tableName) {
+        default HBaseEndpointConsumerBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
             return this;
         }
@@ -59,7 +59,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
+        default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -71,7 +71,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
+        default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -82,7 +82,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
+        default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -92,7 +92,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder filters(String filters) {
+        default HBaseEndpointConsumerBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -101,7 +101,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder mappingStrategyClassName(
+        default HBaseEndpointConsumerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
             setProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
@@ -112,7 +112,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder mappingStrategyName(
+        default HBaseEndpointConsumerBuilder mappingStrategyName(
                 String mappingStrategyName) {
             setProperty("mappingStrategyName", mappingStrategyName);
             return this;
@@ -132,7 +132,7 @@ public interface HBaseEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder rowMapping(
+        default HBaseEndpointConsumerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
@@ -153,7 +153,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
+        default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
         }
@@ -164,7 +164,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
+        default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -175,7 +175,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
+        default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -185,7 +185,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder userGroupInformation(
+        default HBaseEndpointConsumerBuilder userGroupInformation(
                 Object userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -196,7 +196,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointConsumerBuilder userGroupInformation(
+        default HBaseEndpointConsumerBuilder userGroupInformation(
                 String userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -212,7 +212,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder bridgeErrorHandler(
+        default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -228,7 +228,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder bridgeErrorHandler(
+        default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -240,7 +240,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
+        default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -252,7 +252,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
+        default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -262,7 +262,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder operation(String operation) {
+        default HBaseEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -272,7 +272,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder remove(boolean remove) {
+        default HBaseEndpointConsumerBuilder remove(boolean remove) {
             setProperty("remove", remove);
             return this;
         }
@@ -282,7 +282,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder remove(String remove) {
+        default HBaseEndpointConsumerBuilder remove(String remove) {
             setProperty("remove", remove);
             return this;
         }
@@ -294,8 +294,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder removeHandler(
-                Object removeHandler) {
+        default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
             setProperty("removeHandler", removeHandler);
             return this;
         }
@@ -307,8 +306,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default HBaseEndpointConsumerBuilder removeHandler(
-                String removeHandler) {
+        default HBaseEndpointConsumerBuilder removeHandler(String removeHandler) {
             setProperty("removeHandler", removeHandler);
             return this;
         }
@@ -320,7 +318,7 @@ public interface HBaseEndpointBuilderFactory {
     public interface AdvancedHBaseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default HBaseEndpointConsumerBuilder basic() {
+        default HBaseEndpointConsumerBuilder basic() {
             return (HBaseEndpointConsumerBuilder) this;
         }
         /**
@@ -332,7 +330,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -346,7 +344,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -356,7 +354,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
+        default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -367,7 +365,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
+        default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -378,7 +376,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -389,7 +387,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -400,7 +398,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointConsumerBuilder synchronous(
+        default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -411,7 +409,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointConsumerBuilder synchronous(
+        default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -424,7 +422,7 @@ public interface HBaseEndpointBuilderFactory {
     public static interface HBaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHBaseEndpointProducerBuilder advanced() {
+        default AdvancedHBaseEndpointProducerBuilder advanced() {
             return (AdvancedHBaseEndpointProducerBuilder) this;
         }
         /**
@@ -432,7 +430,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder tableName(String tableName) {
+        default HBaseEndpointProducerBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
             return this;
         }
@@ -443,7 +441,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
+        default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -455,7 +453,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
+        default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -466,7 +464,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder filters(List<Object> filters) {
+        default HBaseEndpointProducerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -476,7 +474,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder filters(String filters) {
+        default HBaseEndpointProducerBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -485,7 +483,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder mappingStrategyClassName(
+        default HBaseEndpointProducerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
             setProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
@@ -496,7 +494,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder mappingStrategyName(
+        default HBaseEndpointProducerBuilder mappingStrategyName(
                 String mappingStrategyName) {
             setProperty("mappingStrategyName", mappingStrategyName);
             return this;
@@ -516,7 +514,7 @@ public interface HBaseEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder rowMapping(
+        default HBaseEndpointProducerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
@@ -537,7 +535,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
+        default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
         }
@@ -548,7 +546,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
+        default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -559,7 +557,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder rowModel(String rowModel) {
+        default HBaseEndpointProducerBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -569,7 +567,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder userGroupInformation(
+        default HBaseEndpointProducerBuilder userGroupInformation(
                 Object userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -580,7 +578,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointProducerBuilder userGroupInformation(
+        default HBaseEndpointProducerBuilder userGroupInformation(
                 String userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -598,7 +596,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HBaseEndpointProducerBuilder lazyStartProducer(
+        default HBaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -616,7 +614,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HBaseEndpointProducerBuilder lazyStartProducer(
+        default HBaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -626,7 +624,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default HBaseEndpointProducerBuilder maxResults(int maxResults) {
+        default HBaseEndpointProducerBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -635,7 +633,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default HBaseEndpointProducerBuilder maxResults(String maxResults) {
+        default HBaseEndpointProducerBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -647,7 +645,7 @@ public interface HBaseEndpointBuilderFactory {
     public interface AdvancedHBaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default HBaseEndpointProducerBuilder basic() {
+        default HBaseEndpointProducerBuilder basic() {
             return (HBaseEndpointProducerBuilder) this;
         }
         /**
@@ -656,7 +654,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -667,7 +665,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -678,7 +676,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointProducerBuilder synchronous(
+        default AdvancedHBaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -689,7 +687,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointProducerBuilder synchronous(
+        default AdvancedHBaseEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -702,7 +700,7 @@ public interface HBaseEndpointBuilderFactory {
     public static interface HBaseEndpointBuilder
             extends
                 HBaseEndpointConsumerBuilder, HBaseEndpointProducerBuilder {
-        public default AdvancedHBaseEndpointBuilder advanced() {
+        default AdvancedHBaseEndpointBuilder advanced() {
             return (AdvancedHBaseEndpointBuilder) this;
         }
         /**
@@ -710,7 +708,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder tableName(String tableName) {
+        default HBaseEndpointBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
             return this;
         }
@@ -721,7 +719,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder cellMappingStrategyFactory(
+        default HBaseEndpointBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -733,7 +731,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder cellMappingStrategyFactory(
+        default HBaseEndpointBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
             setProperty("cellMappingStrategyFactory", cellMappingStrategyFactory);
             return this;
@@ -744,7 +742,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder filters(List<Object> filters) {
+        default HBaseEndpointBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -754,7 +752,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder filters(String filters) {
+        default HBaseEndpointBuilder filters(String filters) {
             setProperty("filters", filters);
             return this;
         }
@@ -763,7 +761,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder mappingStrategyClassName(
+        default HBaseEndpointBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
             setProperty("mappingStrategyClassName", mappingStrategyClassName);
             return this;
@@ -774,7 +772,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder mappingStrategyName(
+        default HBaseEndpointBuilder mappingStrategyName(
                 String mappingStrategyName) {
             setProperty("mappingStrategyName", mappingStrategyName);
             return this;
@@ -794,8 +792,7 @@ public interface HBaseEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder rowMapping(
-                Map<String, Object> rowMapping) {
+        default HBaseEndpointBuilder rowMapping(Map<String, Object> rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
         }
@@ -815,7 +812,7 @@ public interface HBaseEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HBaseEndpointBuilder rowMapping(String rowMapping) {
+        default HBaseEndpointBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
             return this;
         }
@@ -826,7 +823,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder rowModel(Object rowModel) {
+        default HBaseEndpointBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -837,7 +834,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder rowModel(String rowModel) {
+        default HBaseEndpointBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
             return this;
         }
@@ -847,7 +844,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder userGroupInformation(
+        default HBaseEndpointBuilder userGroupInformation(
                 Object userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -858,7 +855,7 @@ public interface HBaseEndpointBuilderFactory {
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
          * @group common
          */
-        public default HBaseEndpointBuilder userGroupInformation(
+        default HBaseEndpointBuilder userGroupInformation(
                 String userGroupInformation) {
             setProperty("userGroupInformation", userGroupInformation);
             return this;
@@ -871,7 +868,7 @@ public interface HBaseEndpointBuilderFactory {
     public static interface AdvancedHBaseEndpointBuilder
             extends
                 AdvancedHBaseEndpointConsumerBuilder, AdvancedHBaseEndpointProducerBuilder {
-        public default HBaseEndpointBuilder basic() {
+        default HBaseEndpointBuilder basic() {
             return (HBaseEndpointBuilder) this;
         }
         /**
@@ -880,7 +877,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -891,7 +888,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointBuilder basicPropertyBinding(
+        default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -902,8 +899,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedHBaseEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -913,8 +909,7 @@ public interface HBaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHBaseEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -923,7 +918,7 @@ public interface HBaseEndpointBuilderFactory {
      * For reading/writing from/to an HBase store (Hadoop database). Creates a
      * builder to build endpoints for the HBase component.
      */
-    public default HBaseEndpointBuilder hBase(String path) {
+    default HBaseEndpointBuilder hBase(String path) {
         class HBaseEndpointBuilderImpl extends AbstractEndpointBuilder implements HBaseEndpointBuilder, AdvancedHBaseEndpointBuilder {
             public HBaseEndpointBuilderImpl(String path) {
                 super("hbase", path);

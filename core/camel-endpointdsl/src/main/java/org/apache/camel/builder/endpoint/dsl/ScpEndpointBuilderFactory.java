@@ -37,7 +37,7 @@ public interface ScpEndpointBuilderFactory {
     public static interface ScpEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedScpEndpointBuilder advanced() {
+        default AdvancedScpEndpointBuilder advanced() {
             return (AdvancedScpEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder host(String host) {
+        default ScpEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder port(int port) {
+        default ScpEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -63,7 +63,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder port(String port) {
+        default ScpEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -72,7 +72,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder directoryName(String directoryName) {
+        default ScpEndpointBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -84,7 +84,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ScpEndpointBuilder disconnect(boolean disconnect) {
+        default ScpEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -96,7 +96,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ScpEndpointBuilder disconnect(String disconnect) {
+        default ScpEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -105,7 +105,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder chmod(String chmod) {
+        default ScpEndpointBuilder chmod(String chmod) {
             setProperty("chmod", chmod);
             return this;
         }
@@ -129,7 +129,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder fileName(Expression fileName) {
+        default ScpEndpointBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -154,7 +154,7 @@ public interface ScpEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder fileName(String fileName) {
+        default ScpEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -164,7 +164,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ScpEndpointBuilder strictHostKeyChecking(
+        default ScpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
             setProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
@@ -176,7 +176,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
+        default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
             return this;
         }
@@ -185,7 +185,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder password(String password) {
+        default ScpEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -198,7 +198,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder preferredAuthentications(
+        default ScpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
             setProperty("preferredAuthentications", preferredAuthentications);
             return this;
@@ -210,7 +210,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>byte[]</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
+        default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
             setProperty("privateKeyBytes", privateKeyBytes);
             return this;
         }
@@ -221,7 +221,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>byte[]</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
+        default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
             setProperty("privateKeyBytes", privateKeyBytes);
             return this;
         }
@@ -232,7 +232,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
+        default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
             return this;
         }
@@ -242,7 +242,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder privateKeyFilePassphrase(
+        default ScpEndpointBuilder privateKeyFilePassphrase(
                 String privateKeyFilePassphrase) {
             setProperty("privateKeyFilePassphrase", privateKeyFilePassphrase);
             return this;
@@ -252,7 +252,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder username(String username) {
+        default ScpEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -262,7 +262,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder useUserKnownHostsFile(
+        default ScpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -273,7 +273,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default ScpEndpointBuilder useUserKnownHostsFile(
+        default ScpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
             setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
@@ -286,7 +286,7 @@ public interface ScpEndpointBuilderFactory {
     public static interface AdvancedScpEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ScpEndpointBuilder basic() {
+        default ScpEndpointBuilder basic() {
             return (ScpEndpointBuilder) this;
         }
         /**
@@ -295,7 +295,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder basicPropertyBinding(
+        default AdvancedScpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -306,7 +306,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder basicPropertyBinding(
+        default AdvancedScpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -317,8 +317,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder connectTimeout(
-                int connectTimeout) {
+        default AdvancedScpEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -328,8 +327,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder connectTimeout(
-                String connectTimeout) {
+        default AdvancedScpEndpointBuilder connectTimeout(String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -342,7 +340,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
+        default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -355,7 +353,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
+        default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
             return this;
         }
@@ -365,8 +363,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -376,7 +373,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder synchronous(String synchronous) {
+        default AdvancedScpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -385,7 +382,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder timeout(int timeout) {
+        default AdvancedScpEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -394,7 +391,7 @@ public interface ScpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedScpEndpointBuilder timeout(String timeout) {
+        default AdvancedScpEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -406,7 +403,7 @@ public interface ScpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security (advanced)
          */
-        public default AdvancedScpEndpointBuilder ciphers(String ciphers) {
+        default AdvancedScpEndpointBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
             return this;
         }
@@ -415,7 +412,7 @@ public interface ScpEndpointBuilderFactory {
      * To copy files using the secure copy protocol (SCP). Creates a builder to
      * build endpoints for the SCP component.
      */
-    public default ScpEndpointBuilder scp(String path) {
+    default ScpEndpointBuilder scp(String path) {
         class ScpEndpointBuilderImpl extends AbstractEndpointBuilder implements ScpEndpointBuilder, AdvancedScpEndpointBuilder {
             public ScpEndpointBuilderImpl(String path) {
                 super("scp", path);

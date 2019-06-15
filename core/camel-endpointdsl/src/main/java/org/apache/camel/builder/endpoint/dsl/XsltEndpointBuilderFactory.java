@@ -37,7 +37,7 @@ public interface XsltEndpointBuilderFactory {
     public static interface XsltEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedXsltEndpointBuilder advanced() {
+        default AdvancedXsltEndpointBuilder advanced() {
             return (AdvancedXsltEndpointBuilder) this;
         }
         /**
@@ -51,7 +51,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder resourceUri(String resourceUri) {
+        default XsltEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -60,7 +60,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder allowStAX(boolean allowStAX) {
+        default XsltEndpointBuilder allowStAX(boolean allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -69,7 +69,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder allowStAX(String allowStAX) {
+        default XsltEndpointBuilder allowStAX(String allowStAX) {
             setProperty("allowStAX", allowStAX);
             return this;
         }
@@ -82,7 +82,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder contentCache(boolean contentCache) {
+        default XsltEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -95,7 +95,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder contentCache(String contentCache) {
+        default XsltEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -107,8 +107,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder deleteOutputFile(
-                boolean deleteOutputFile) {
+        default XsltEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
             setProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
@@ -120,8 +119,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder deleteOutputFile(
-                String deleteOutputFile) {
+        default XsltEndpointBuilder deleteOutputFile(String deleteOutputFile) {
             setProperty("deleteOutputFile", deleteOutputFile);
             return this;
         }
@@ -130,7 +128,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder failOnNullBody(boolean failOnNullBody) {
+        default XsltEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -139,7 +137,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
+        default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -155,7 +153,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder output(XsltOutput output) {
+        default XsltEndpointBuilder output(XsltOutput output) {
             setProperty("output", output);
             return this;
         }
@@ -171,7 +169,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder output(String output) {
+        default XsltEndpointBuilder output(String output) {
             setProperty("output", output);
             return this;
         }
@@ -182,7 +180,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder saxon(boolean saxon) {
+        default XsltEndpointBuilder saxon(boolean saxon) {
             setProperty("saxon", saxon);
             return this;
         }
@@ -193,7 +191,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder saxon(String saxon) {
+        default XsltEndpointBuilder saxon(String saxon) {
             setProperty("saxon", saxon);
             return this;
         }
@@ -203,7 +201,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder transformerCacheSize(
+        default XsltEndpointBuilder transformerCacheSize(
                 int transformerCacheSize) {
             setProperty("transformerCacheSize", transformerCacheSize);
             return this;
@@ -214,7 +212,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default XsltEndpointBuilder transformerCacheSize(
+        default XsltEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
             setProperty("transformerCacheSize", transformerCacheSize);
             return this;
@@ -227,7 +225,7 @@ public interface XsltEndpointBuilderFactory {
     public static interface AdvancedXsltEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default XsltEndpointBuilder basic() {
+        default XsltEndpointBuilder basic() {
             return (XsltEndpointBuilder) this;
         }
         /**
@@ -236,7 +234,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder basicPropertyBinding(
+        default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -247,7 +245,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder basicPropertyBinding(
+        default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -258,8 +256,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>org.xml.sax.EntityResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder entityResolver(
-                Object entityResolver) {
+        default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
             setProperty("entityResolver", entityResolver);
             return this;
         }
@@ -270,8 +267,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>org.xml.sax.EntityResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder entityResolver(
-                String entityResolver) {
+        default AdvancedXsltEndpointBuilder entityResolver(String entityResolver) {
             setProperty("entityResolver", entityResolver);
             return this;
         }
@@ -284,8 +280,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>javax.xml.transform.ErrorListener</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder errorListener(
-                Object errorListener) {
+        default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
             setProperty("errorListener", errorListener);
             return this;
         }
@@ -299,8 +294,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>javax.xml.transform.ErrorListener</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder errorListener(
-                String errorListener) {
+        default AdvancedXsltEndpointBuilder errorListener(String errorListener) {
             setProperty("errorListener", errorListener);
             return this;
         }
@@ -313,7 +307,7 @@ public interface XsltEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder resultHandlerFactory(
+        default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
             setProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
@@ -327,7 +321,7 @@ public interface XsltEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder resultHandlerFactory(
+        default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
             setProperty("resultHandlerFactory", resultHandlerFactory);
             return this;
@@ -337,7 +331,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder saxonConfiguration(
+        default AdvancedXsltEndpointBuilder saxonConfiguration(
                 Object saxonConfiguration) {
             setProperty("saxonConfiguration", saxonConfiguration);
             return this;
@@ -347,7 +341,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder saxonConfiguration(
+        default AdvancedXsltEndpointBuilder saxonConfiguration(
                 String saxonConfiguration) {
             setProperty("saxonConfiguration", saxonConfiguration);
             return this;
@@ -361,7 +355,7 @@ public interface XsltEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
+        default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 List<Object> saxonExtensionFunctions) {
             setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
@@ -375,7 +369,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
+        default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 String saxonExtensionFunctions) {
             setProperty("saxonExtensionFunctions", saxonExtensionFunctions);
             return this;
@@ -386,8 +380,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedXsltEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -397,8 +390,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedXsltEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -408,7 +400,7 @@ public interface XsltEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder transformerFactory(
+        default AdvancedXsltEndpointBuilder transformerFactory(
                 Object transformerFactory) {
             setProperty("transformerFactory", transformerFactory);
             return this;
@@ -419,7 +411,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>javax.xml.transform.TransformerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder transformerFactory(
+        default AdvancedXsltEndpointBuilder transformerFactory(
                 String transformerFactory) {
             setProperty("transformerFactory", transformerFactory);
             return this;
@@ -430,7 +422,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder transformerFactoryClass(
+        default AdvancedXsltEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
             setProperty("transformerFactoryClass", transformerFactoryClass);
             return this;
@@ -440,8 +432,7 @@ public interface XsltEndpointBuilderFactory {
          * The option is a <code>javax.xml.transform.URIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder uriResolver(
-                Object uriResolver) {
+        default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
             setProperty("uriResolver", uriResolver);
             return this;
         }
@@ -451,8 +442,7 @@ public interface XsltEndpointBuilderFactory {
          * <code>javax.xml.transform.URIResolver</code> type.
          * @group advanced
          */
-        public default AdvancedXsltEndpointBuilder uriResolver(
-                String uriResolver) {
+        default AdvancedXsltEndpointBuilder uriResolver(String uriResolver) {
             setProperty("uriResolver", uriResolver);
             return this;
         }
@@ -469,7 +459,7 @@ public interface XsltEndpointBuilderFactory {
      * Transforms the message using a XSLT template. Creates a builder to build
      * endpoints for the XSLT component.
      */
-    public default XsltEndpointBuilder xslt(String path) {
+    default XsltEndpointBuilder xslt(String path) {
         class XsltEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltEndpointBuilder, AdvancedXsltEndpointBuilder {
             public XsltEndpointBuilderImpl(String path) {
                 super("xslt", path);

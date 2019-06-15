@@ -37,7 +37,7 @@ public interface RssEndpointBuilderFactory {
     public static interface RssEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedRssEndpointBuilder advanced() {
+        default AdvancedRssEndpointBuilder advanced() {
             return (AdvancedRssEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder feedUri(String feedUri) {
+        default RssEndpointBuilder feedUri(String feedUri) {
             setProperty("feedUri", feedUri);
             return this;
         }
@@ -54,7 +54,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder feedHeader(boolean feedHeader) {
+        default RssEndpointBuilder feedHeader(boolean feedHeader) {
             setProperty("feedHeader", feedHeader);
             return this;
         }
@@ -63,7 +63,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder feedHeader(String feedHeader) {
+        default RssEndpointBuilder feedHeader(String feedHeader) {
             setProperty("feedHeader", feedHeader);
             return this;
         }
@@ -72,7 +72,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder filter(boolean filter) {
+        default RssEndpointBuilder filter(boolean filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -81,7 +81,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder filter(String filter) {
+        default RssEndpointBuilder filter(String filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -91,7 +91,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>java.util.Date</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder lastUpdate(Date lastUpdate) {
+        default RssEndpointBuilder lastUpdate(Date lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
             return this;
         }
@@ -101,7 +101,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Date</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder lastUpdate(String lastUpdate) {
+        default RssEndpointBuilder lastUpdate(String lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
             return this;
         }
@@ -111,7 +111,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder password(String password) {
+        default RssEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -121,7 +121,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder sortEntries(boolean sortEntries) {
+        default RssEndpointBuilder sortEntries(boolean sortEntries) {
             setProperty("sortEntries", sortEntries);
             return this;
         }
@@ -131,7 +131,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder sortEntries(String sortEntries) {
+        default RssEndpointBuilder sortEntries(String sortEntries) {
             setProperty("sortEntries", sortEntries);
             return this;
         }
@@ -141,7 +141,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder splitEntries(boolean splitEntries) {
+        default RssEndpointBuilder splitEntries(boolean splitEntries) {
             setProperty("splitEntries", splitEntries);
             return this;
         }
@@ -151,7 +151,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder splitEntries(String splitEntries) {
+        default RssEndpointBuilder splitEntries(String splitEntries) {
             setProperty("splitEntries", splitEntries);
             return this;
         }
@@ -162,8 +162,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder throttleEntries(
-                boolean throttleEntries) {
+        default RssEndpointBuilder throttleEntries(boolean throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
             return this;
         }
@@ -174,7 +173,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder throttleEntries(String throttleEntries) {
+        default RssEndpointBuilder throttleEntries(String throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
             return this;
         }
@@ -184,7 +183,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RssEndpointBuilder username(String username) {
+        default RssEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -196,7 +195,7 @@ public interface RssEndpointBuilderFactory {
     public static interface AdvancedRssEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default RssEndpointBuilder basic() {
+        default RssEndpointBuilder basic() {
             return (RssEndpointBuilder) this;
         }
         /**
@@ -205,7 +204,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRssEndpointBuilder basicPropertyBinding(
+        default AdvancedRssEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -216,7 +215,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRssEndpointBuilder basicPropertyBinding(
+        default AdvancedRssEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -227,8 +226,7 @@ public interface RssEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRssEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedRssEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -238,7 +236,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRssEndpointBuilder synchronous(String synchronous) {
+        default AdvancedRssEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -247,7 +245,7 @@ public interface RssEndpointBuilderFactory {
      * The rss component is used for consuming RSS feeds. Creates a builder to
      * build endpoints for the RSS component.
      */
-    public default RssEndpointBuilder rss(String path) {
+    default RssEndpointBuilder rss(String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {
             public RssEndpointBuilderImpl(String path) {
                 super("rss", path);

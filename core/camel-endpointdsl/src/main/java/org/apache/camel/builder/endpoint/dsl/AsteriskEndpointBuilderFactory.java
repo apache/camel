@@ -38,7 +38,7 @@ public interface AsteriskEndpointBuilderFactory {
     public interface AsteriskEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAsteriskEndpointConsumerBuilder advanced() {
+        default AdvancedAsteriskEndpointConsumerBuilder advanced() {
             return (AdvancedAsteriskEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointConsumerBuilder name(String name) {
+        default AsteriskEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -55,7 +55,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointConsumerBuilder hostname(String hostname) {
+        default AsteriskEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -64,7 +64,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointConsumerBuilder password(String password) {
+        default AsteriskEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -73,7 +73,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointConsumerBuilder username(String username) {
+        default AsteriskEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -88,7 +88,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
+        default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -104,7 +104,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
+        default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -117,7 +117,7 @@ public interface AsteriskEndpointBuilderFactory {
     public interface AdvancedAsteriskEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AsteriskEndpointConsumerBuilder basic() {
+        default AsteriskEndpointConsumerBuilder basic() {
             return (AsteriskEndpointConsumerBuilder) this;
         }
         /**
@@ -129,7 +129,7 @@ public interface AsteriskEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -143,7 +143,7 @@ public interface AsteriskEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -153,7 +153,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
+        default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -164,7 +164,7 @@ public interface AsteriskEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
+        default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -175,7 +175,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -186,7 +186,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -197,7 +197,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder synchronous(
+        default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -208,7 +208,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointConsumerBuilder synchronous(
+        default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -221,7 +221,7 @@ public interface AsteriskEndpointBuilderFactory {
     public static interface AsteriskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAsteriskEndpointProducerBuilder advanced() {
+        default AdvancedAsteriskEndpointProducerBuilder advanced() {
             return (AdvancedAsteriskEndpointProducerBuilder) this;
         }
         /**
@@ -229,7 +229,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointProducerBuilder name(String name) {
+        default AsteriskEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -238,7 +238,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointProducerBuilder hostname(String hostname) {
+        default AsteriskEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -247,7 +247,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointProducerBuilder password(String password) {
+        default AsteriskEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -256,7 +256,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointProducerBuilder username(String username) {
+        default AsteriskEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -267,8 +267,7 @@ public interface AsteriskEndpointBuilderFactory {
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
          * @group producer
          */
-        public default AsteriskEndpointProducerBuilder action(
-                AsteriskAction action) {
+        default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
             setProperty("action", action);
             return this;
         }
@@ -279,7 +278,7 @@ public interface AsteriskEndpointBuilderFactory {
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
          * @group producer
          */
-        public default AsteriskEndpointProducerBuilder action(String action) {
+        default AsteriskEndpointProducerBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -296,7 +295,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AsteriskEndpointProducerBuilder lazyStartProducer(
+        default AsteriskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -314,7 +313,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AsteriskEndpointProducerBuilder lazyStartProducer(
+        default AsteriskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -327,7 +326,7 @@ public interface AsteriskEndpointBuilderFactory {
     public interface AdvancedAsteriskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AsteriskEndpointProducerBuilder basic() {
+        default AsteriskEndpointProducerBuilder basic() {
             return (AsteriskEndpointProducerBuilder) this;
         }
         /**
@@ -336,7 +335,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -347,7 +346,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -358,7 +357,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointProducerBuilder synchronous(
+        default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -369,7 +368,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointProducerBuilder synchronous(
+        default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -382,7 +381,7 @@ public interface AsteriskEndpointBuilderFactory {
     public static interface AsteriskEndpointBuilder
             extends
                 AsteriskEndpointConsumerBuilder, AsteriskEndpointProducerBuilder {
-        public default AdvancedAsteriskEndpointBuilder advanced() {
+        default AdvancedAsteriskEndpointBuilder advanced() {
             return (AdvancedAsteriskEndpointBuilder) this;
         }
         /**
@@ -390,7 +389,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointBuilder name(String name) {
+        default AsteriskEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -399,7 +398,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointBuilder hostname(String hostname) {
+        default AsteriskEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -408,7 +407,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointBuilder password(String password) {
+        default AsteriskEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -417,7 +416,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AsteriskEndpointBuilder username(String username) {
+        default AsteriskEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -429,7 +428,7 @@ public interface AsteriskEndpointBuilderFactory {
     public static interface AdvancedAsteriskEndpointBuilder
             extends
                 AdvancedAsteriskEndpointConsumerBuilder, AdvancedAsteriskEndpointProducerBuilder {
-        public default AsteriskEndpointBuilder basic() {
+        default AsteriskEndpointBuilder basic() {
             return (AsteriskEndpointBuilder) this;
         }
         /**
@@ -438,7 +437,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -449,7 +448,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
+        default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -460,8 +459,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAsteriskEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -471,8 +469,7 @@ public interface AsteriskEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAsteriskEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedAsteriskEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -489,7 +486,7 @@ public interface AsteriskEndpointBuilderFactory {
      * The asterisk component is used to interact with Asterisk PBX Server.
      * Creates a builder to build endpoints for the Asterisk component.
      */
-    public default AsteriskEndpointBuilder asterisk(String path) {
+    default AsteriskEndpointBuilder asterisk(String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {
             public AsteriskEndpointBuilderImpl(String path) {
                 super("asterisk", path);

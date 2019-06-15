@@ -36,7 +36,7 @@ public interface MustacheEndpointBuilderFactory {
     public static interface MustacheEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMustacheEndpointBuilder advanced() {
+        default AdvancedMustacheEndpointBuilder advanced() {
             return (AdvancedMustacheEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder resourceUri(String resourceUri) {
+        default MustacheEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -58,7 +58,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder contentCache(boolean contentCache) {
+        default MustacheEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -67,7 +67,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder contentCache(String contentCache) {
+        default MustacheEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -76,7 +76,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder encoding(String encoding) {
+        default MustacheEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -85,7 +85,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder endDelimiter(String endDelimiter) {
+        default MustacheEndpointBuilder endDelimiter(String endDelimiter) {
             setProperty("endDelimiter", endDelimiter);
             return this;
         }
@@ -94,8 +94,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MustacheEndpointBuilder startDelimiter(
-                String startDelimiter) {
+        default MustacheEndpointBuilder startDelimiter(String startDelimiter) {
             setProperty("startDelimiter", startDelimiter);
             return this;
         }
@@ -107,7 +106,7 @@ public interface MustacheEndpointBuilderFactory {
     public static interface AdvancedMustacheEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MustacheEndpointBuilder basic() {
+        default MustacheEndpointBuilder basic() {
             return (MustacheEndpointBuilder) this;
         }
         /**
@@ -116,7 +115,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMustacheEndpointBuilder basicPropertyBinding(
+        default AdvancedMustacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -127,7 +126,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMustacheEndpointBuilder basicPropertyBinding(
+        default AdvancedMustacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -138,8 +137,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMustacheEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMustacheEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -149,8 +147,7 @@ public interface MustacheEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMustacheEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMustacheEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -159,7 +156,7 @@ public interface MustacheEndpointBuilderFactory {
      * Transforms the message using a Mustache template. Creates a builder to
      * build endpoints for the Mustache component.
      */
-    public default MustacheEndpointBuilder mustache(String path) {
+    default MustacheEndpointBuilder mustache(String path) {
         class MustacheEndpointBuilderImpl extends AbstractEndpointBuilder implements MustacheEndpointBuilder, AdvancedMustacheEndpointBuilder {
             public MustacheEndpointBuilderImpl(String path) {
                 super("mustache", path);

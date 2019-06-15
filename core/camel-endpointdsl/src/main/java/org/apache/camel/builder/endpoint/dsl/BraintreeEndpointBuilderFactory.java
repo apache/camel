@@ -40,7 +40,7 @@ public interface BraintreeEndpointBuilderFactory {
     public interface BraintreeEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedBraintreeEndpointConsumerBuilder advanced() {
+        default AdvancedBraintreeEndpointConsumerBuilder advanced() {
             return (AdvancedBraintreeEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder apiName(
+        default BraintreeEndpointConsumerBuilder apiName(
                 BraintreeApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -60,7 +60,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder apiName(String apiName) {
+        default BraintreeEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -69,8 +69,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder methodName(
-                String methodName) {
+        default BraintreeEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -79,8 +78,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder environment(
-                String environment) {
+        default BraintreeEndpointConsumerBuilder environment(String environment) {
             setProperty("environment", environment);
             return this;
         }
@@ -89,7 +87,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder inBody(String inBody) {
+        default BraintreeEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -98,8 +96,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder merchantId(
-                String merchantId) {
+        default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
             return this;
         }
@@ -108,8 +105,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder privateKey(
-                String privateKey) {
+        default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -118,8 +114,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointConsumerBuilder publicKey(
-                String publicKey) {
+        default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -134,7 +129,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
+        default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -150,7 +145,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
+        default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -160,8 +155,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointConsumerBuilder proxyHost(
-                String proxyHost) {
+        default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -170,8 +164,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointConsumerBuilder proxyPort(
-                Integer proxyPort) {
+        default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -181,8 +174,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default BraintreeEndpointConsumerBuilder proxyPort(
-                String proxyPort) {
+        default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -194,7 +186,7 @@ public interface BraintreeEndpointBuilderFactory {
     public interface AdvancedBraintreeEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default BraintreeEndpointConsumerBuilder basic() {
+        default BraintreeEndpointConsumerBuilder basic() {
             return (BraintreeEndpointConsumerBuilder) this;
         }
         /**
@@ -206,7 +198,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -220,7 +212,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -230,7 +222,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
+        default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -241,7 +233,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
+        default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -253,7 +245,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder accessToken(
+        default AdvancedBraintreeEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -264,7 +256,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -275,7 +267,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +277,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -296,7 +288,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -307,7 +299,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder synchronous(
+        default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -318,7 +310,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder synchronous(
+        default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -328,7 +320,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
+        default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 Level httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
@@ -339,7 +331,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
+        default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 String httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
@@ -352,7 +344,7 @@ public interface BraintreeEndpointBuilderFactory {
     public static interface BraintreeEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBraintreeEndpointProducerBuilder advanced() {
+        default AdvancedBraintreeEndpointProducerBuilder advanced() {
             return (AdvancedBraintreeEndpointProducerBuilder) this;
         }
         /**
@@ -361,7 +353,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder apiName(
+        default BraintreeEndpointProducerBuilder apiName(
                 BraintreeApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -372,7 +364,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder apiName(String apiName) {
+        default BraintreeEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -381,8 +373,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder methodName(
-                String methodName) {
+        default BraintreeEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -391,8 +382,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder environment(
-                String environment) {
+        default BraintreeEndpointProducerBuilder environment(String environment) {
             setProperty("environment", environment);
             return this;
         }
@@ -401,7 +391,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder inBody(String inBody) {
+        default BraintreeEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -410,8 +400,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder merchantId(
-                String merchantId) {
+        default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
             return this;
         }
@@ -420,8 +409,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder privateKey(
-                String privateKey) {
+        default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -430,8 +418,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointProducerBuilder publicKey(
-                String publicKey) {
+        default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -448,7 +435,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BraintreeEndpointProducerBuilder lazyStartProducer(
+        default BraintreeEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -466,7 +453,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BraintreeEndpointProducerBuilder lazyStartProducer(
+        default BraintreeEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -476,8 +463,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointProducerBuilder proxyHost(
-                String proxyHost) {
+        default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -486,8 +472,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointProducerBuilder proxyPort(
-                Integer proxyPort) {
+        default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -497,8 +482,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default BraintreeEndpointProducerBuilder proxyPort(
-                String proxyPort) {
+        default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -510,7 +494,7 @@ public interface BraintreeEndpointBuilderFactory {
     public interface AdvancedBraintreeEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default BraintreeEndpointProducerBuilder basic() {
+        default BraintreeEndpointProducerBuilder basic() {
             return (BraintreeEndpointProducerBuilder) this;
         }
         /**
@@ -520,7 +504,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder accessToken(
+        default AdvancedBraintreeEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -531,7 +515,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -542,7 +526,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -552,7 +536,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -563,7 +547,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -574,7 +558,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder synchronous(
+        default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -585,7 +569,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointProducerBuilder synchronous(
+        default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -595,7 +579,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
+        default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 Level httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
@@ -606,7 +590,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
+        default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 String httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
@@ -619,7 +603,7 @@ public interface BraintreeEndpointBuilderFactory {
     public static interface BraintreeEndpointBuilder
             extends
                 BraintreeEndpointConsumerBuilder, BraintreeEndpointProducerBuilder {
-        public default AdvancedBraintreeEndpointBuilder advanced() {
+        default AdvancedBraintreeEndpointBuilder advanced() {
             return (AdvancedBraintreeEndpointBuilder) this;
         }
         /**
@@ -628,7 +612,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder apiName(BraintreeApiName apiName) {
+        default BraintreeEndpointBuilder apiName(BraintreeApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -638,7 +622,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder apiName(String apiName) {
+        default BraintreeEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -647,7 +631,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder methodName(String methodName) {
+        default BraintreeEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -656,7 +640,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder environment(String environment) {
+        default BraintreeEndpointBuilder environment(String environment) {
             setProperty("environment", environment);
             return this;
         }
@@ -665,7 +649,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder inBody(String inBody) {
+        default BraintreeEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -674,7 +658,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder merchantId(String merchantId) {
+        default BraintreeEndpointBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
             return this;
         }
@@ -683,7 +667,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder privateKey(String privateKey) {
+        default BraintreeEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -692,7 +676,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BraintreeEndpointBuilder publicKey(String publicKey) {
+        default BraintreeEndpointBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -701,7 +685,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointBuilder proxyHost(String proxyHost) {
+        default BraintreeEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -710,7 +694,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
+        default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -720,7 +704,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default BraintreeEndpointBuilder proxyPort(String proxyPort) {
+        default BraintreeEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -732,7 +716,7 @@ public interface BraintreeEndpointBuilderFactory {
     public static interface AdvancedBraintreeEndpointBuilder
             extends
                 AdvancedBraintreeEndpointConsumerBuilder, AdvancedBraintreeEndpointProducerBuilder {
-        public default BraintreeEndpointBuilder basic() {
+        default BraintreeEndpointBuilder basic() {
             return (BraintreeEndpointBuilder) this;
         }
         /**
@@ -742,8 +726,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder accessToken(
-                String accessToken) {
+        default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -753,7 +736,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -764,7 +747,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
+        default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -774,7 +757,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -785,7 +768,7 @@ public interface BraintreeEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder httpReadTimeout(
+        default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
             setProperty("httpReadTimeout", httpReadTimeout);
             return this;
@@ -796,8 +779,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -807,8 +789,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBraintreeEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -817,8 +798,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option is a <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointBuilder httpLogLevel(
-                Level httpLogLevel) {
+        default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
         }
@@ -828,7 +808,7 @@ public interface BraintreeEndpointBuilderFactory {
          * <code>java.util.logging.Level</code> type.
          * @group logging
          */
-        public default AdvancedBraintreeEndpointBuilder httpLogLevel(
+        default AdvancedBraintreeEndpointBuilder httpLogLevel(
                 String httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
@@ -847,7 +827,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Payment System. Creates a builder to build endpoints for the Braintree
      * component.
      */
-    public default BraintreeEndpointBuilder braintree(String path) {
+    default BraintreeEndpointBuilder braintree(String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {
             public BraintreeEndpointBuilderImpl(String path) {
                 super("braintree", path);

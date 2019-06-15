@@ -44,7 +44,7 @@ public interface SqlEndpointBuilderFactory {
     public interface SqlEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSqlEndpointConsumerBuilder advanced() {
+        default AdvancedSqlEndpointConsumerBuilder advanced() {
             return (AdvancedSqlEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder query(String query) {
+        default SqlEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -62,7 +62,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder allowNamedParameters(
+        default SqlEndpointConsumerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -72,7 +72,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder allowNamedParameters(
+        default SqlEndpointConsumerBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -82,7 +82,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
+        default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -92,7 +92,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder dataSource(String dataSource) {
+        default SqlEndpointConsumerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -103,8 +103,7 @@ public interface SqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default SqlEndpointConsumerBuilder dataSourceRef(
-                String dataSourceRef) {
+        default SqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -114,7 +113,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder outputClass(String outputClass) {
+        default SqlEndpointConsumerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -127,8 +126,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder outputHeader(
-                String outputHeader) {
+        default SqlEndpointConsumerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -147,8 +145,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder outputType(
-                SqlOutputType outputType) {
+        default SqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -167,7 +164,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder outputType(String outputType) {
+        default SqlEndpointConsumerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -179,7 +176,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder separator(char separator) {
+        default SqlEndpointConsumerBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -191,7 +188,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointConsumerBuilder separator(String separator) {
+        default SqlEndpointConsumerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -200,7 +197,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
+        default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 boolean breakBatchOnConsumeFail) {
             setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
@@ -210,7 +207,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
+        default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 String breakBatchOnConsumeFail) {
             setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
@@ -226,7 +223,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder bridgeErrorHandler(
+        default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -242,7 +239,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder bridgeErrorHandler(
+        default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -252,7 +249,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder expectedUpdateCount(
+        default SqlEndpointConsumerBuilder expectedUpdateCount(
                 int expectedUpdateCount) {
             setProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
@@ -262,7 +259,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder expectedUpdateCount(
+        default SqlEndpointConsumerBuilder expectedUpdateCount(
                 String expectedUpdateCount) {
             setProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
@@ -272,7 +269,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder maxMessagesPerPoll(
+        default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -282,7 +279,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder maxMessagesPerPoll(
+        default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -294,7 +291,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder onConsume(String onConsume) {
+        default SqlEndpointConsumerBuilder onConsume(String onConsume) {
             setProperty("onConsume", onConsume);
             return this;
         }
@@ -304,7 +301,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder onConsumeBatchComplete(
+        default SqlEndpointConsumerBuilder onConsumeBatchComplete(
                 String onConsumeBatchComplete) {
             setProperty("onConsumeBatchComplete", onConsumeBatchComplete);
             return this;
@@ -316,7 +313,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder onConsumeFailed(
+        default SqlEndpointConsumerBuilder onConsumeFailed(
                 String onConsumeFailed) {
             setProperty("onConsumeFailed", onConsumeFailed);
             return this;
@@ -327,7 +324,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder routeEmptyResultSet(
+        default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -338,7 +335,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder routeEmptyResultSet(
+        default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -349,7 +346,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -360,7 +357,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -372,7 +369,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder transacted(boolean transacted) {
+        default SqlEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -383,7 +380,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder transacted(String transacted) {
+        default SqlEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -393,8 +390,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder useIterator(
-                boolean useIterator) {
+        default SqlEndpointConsumerBuilder useIterator(boolean useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -404,7 +400,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SqlEndpointConsumerBuilder useIterator(String useIterator) {
+        default SqlEndpointConsumerBuilder useIterator(String useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -414,7 +410,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffErrorThreshold(
+        default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -425,7 +421,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffErrorThreshold(
+        default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -436,7 +432,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffIdleThreshold(
+        default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -447,7 +443,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffIdleThreshold(
+        default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -462,7 +458,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffMultiplier(
+        default SqlEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -477,7 +473,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder backoffMultiplier(
+        default SqlEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -489,7 +485,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder delay(long delay) {
+        default SqlEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -500,7 +496,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder delay(String delay) {
+        default SqlEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -510,7 +506,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder greedy(boolean greedy) {
+        default SqlEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -520,7 +516,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder greedy(String greedy) {
+        default SqlEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -531,7 +527,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder initialDelay(long initialDelay) {
+        default SqlEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -542,8 +538,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default SqlEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -553,7 +548,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder runLoggingLevel(
+        default SqlEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -565,7 +560,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder runLoggingLevel(
+        default SqlEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -578,7 +573,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder scheduledExecutorService(
+        default SqlEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -591,7 +586,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder scheduledExecutorService(
+        default SqlEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -604,7 +599,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder scheduler(
+        default SqlEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -617,7 +612,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder scheduler(String scheduler) {
+        default SqlEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -628,7 +623,7 @@ public interface SqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder schedulerProperties(
+        default SqlEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -641,7 +636,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder schedulerProperties(
+        default SqlEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -651,8 +646,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder startScheduler(
-                boolean startScheduler) {
+        default SqlEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -661,8 +655,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default SqlEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -671,7 +664,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default SqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -681,7 +674,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -691,8 +684,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default SqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -702,8 +694,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SqlEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default SqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -715,7 +706,7 @@ public interface SqlEndpointBuilderFactory {
     public interface AdvancedSqlEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SqlEndpointConsumerBuilder basic() {
+        default SqlEndpointConsumerBuilder basic() {
             return (SqlEndpointConsumerBuilder) this;
         }
         /**
@@ -727,7 +718,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -741,7 +732,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -751,7 +742,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder exchangePattern(
+        default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -762,7 +753,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder exchangePattern(
+        default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -776,7 +767,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder pollStrategy(
+        default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -790,7 +781,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder pollStrategy(
+        default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -804,7 +795,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder processingStrategy(
+        default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -818,7 +809,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSqlEndpointConsumerBuilder processingStrategy(
+        default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -833,7 +824,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -848,7 +839,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -859,7 +850,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -870,7 +861,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -883,7 +874,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder parametersCount(
+        default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -896,7 +887,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder parametersCount(
+        default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -908,7 +899,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder placeholder(
+        default AdvancedSqlEndpointConsumerBuilder placeholder(
                 String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
@@ -921,7 +912,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -934,7 +925,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -945,7 +936,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder synchronous(
+        default AdvancedSqlEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -956,7 +947,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder synchronous(
+        default AdvancedSqlEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -967,7 +958,7 @@ public interface SqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder templateOptions(
+        default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -979,7 +970,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder templateOptions(
+        default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -990,7 +981,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
+        default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1001,7 +992,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
+        default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1014,7 +1005,7 @@ public interface SqlEndpointBuilderFactory {
     public static interface SqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSqlEndpointProducerBuilder advanced() {
+        default AdvancedSqlEndpointProducerBuilder advanced() {
             return (AdvancedSqlEndpointProducerBuilder) this;
         }
         /**
@@ -1023,7 +1014,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder query(String query) {
+        default SqlEndpointProducerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -1032,7 +1023,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder allowNamedParameters(
+        default SqlEndpointProducerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1042,7 +1033,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder allowNamedParameters(
+        default SqlEndpointProducerBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1052,7 +1043,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder dataSource(Object dataSource) {
+        default SqlEndpointProducerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1062,7 +1053,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder dataSource(String dataSource) {
+        default SqlEndpointProducerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1073,8 +1064,7 @@ public interface SqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default SqlEndpointProducerBuilder dataSourceRef(
-                String dataSourceRef) {
+        default SqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -1084,7 +1074,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder outputClass(String outputClass) {
+        default SqlEndpointProducerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -1097,8 +1087,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder outputHeader(
-                String outputHeader) {
+        default SqlEndpointProducerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -1117,8 +1106,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder outputType(
-                SqlOutputType outputType) {
+        default SqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1137,7 +1125,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder outputType(String outputType) {
+        default SqlEndpointProducerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1149,7 +1137,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder separator(char separator) {
+        default SqlEndpointProducerBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1161,7 +1149,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointProducerBuilder separator(String separator) {
+        default SqlEndpointProducerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1170,7 +1158,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder batch(boolean batch) {
+        default SqlEndpointProducerBuilder batch(boolean batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -1179,7 +1167,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder batch(String batch) {
+        default SqlEndpointProducerBuilder batch(String batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -1196,7 +1184,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder lazyStartProducer(
+        default SqlEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1214,7 +1202,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder lazyStartProducer(
+        default SqlEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1225,7 +1213,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder noop(boolean noop) {
+        default SqlEndpointProducerBuilder noop(boolean noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -1235,7 +1223,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder noop(String noop) {
+        default SqlEndpointProducerBuilder noop(String noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -1246,7 +1234,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder useMessageBodyForSql(
+        default SqlEndpointProducerBuilder useMessageBodyForSql(
                 boolean useMessageBodyForSql) {
             setProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
@@ -1258,7 +1246,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlEndpointProducerBuilder useMessageBodyForSql(
+        default SqlEndpointProducerBuilder useMessageBodyForSql(
                 String useMessageBodyForSql) {
             setProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
@@ -1271,7 +1259,7 @@ public interface SqlEndpointBuilderFactory {
     public interface AdvancedSqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SqlEndpointProducerBuilder basic() {
+        default SqlEndpointProducerBuilder basic() {
             return (SqlEndpointProducerBuilder) this;
         }
         /**
@@ -1284,7 +1272,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1299,7 +1287,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1310,7 +1298,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1321,7 +1309,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1334,7 +1322,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder parametersCount(
+        default AdvancedSqlEndpointProducerBuilder parametersCount(
                 int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1347,7 +1335,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder parametersCount(
+        default AdvancedSqlEndpointProducerBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1359,7 +1347,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder placeholder(
+        default AdvancedSqlEndpointProducerBuilder placeholder(
                 String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
@@ -1372,7 +1360,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1385,7 +1373,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1396,7 +1384,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder synchronous(
+        default AdvancedSqlEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1407,7 +1395,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder synchronous(
+        default AdvancedSqlEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1418,7 +1406,7 @@ public interface SqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder templateOptions(
+        default AdvancedSqlEndpointProducerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1430,7 +1418,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder templateOptions(
+        default AdvancedSqlEndpointProducerBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1441,7 +1429,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder usePlaceholder(
+        default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1452,7 +1440,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointProducerBuilder usePlaceholder(
+        default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1465,7 +1453,7 @@ public interface SqlEndpointBuilderFactory {
     public static interface SqlEndpointBuilder
             extends
                 SqlEndpointConsumerBuilder, SqlEndpointProducerBuilder {
-        public default AdvancedSqlEndpointBuilder advanced() {
+        default AdvancedSqlEndpointBuilder advanced() {
             return (AdvancedSqlEndpointBuilder) this;
         }
         /**
@@ -1474,7 +1462,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder query(String query) {
+        default SqlEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -1483,7 +1471,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder allowNamedParameters(
+        default SqlEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1493,7 +1481,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder allowNamedParameters(
+        default SqlEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1503,7 +1491,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder dataSource(Object dataSource) {
+        default SqlEndpointBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1513,7 +1501,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SqlEndpointBuilder dataSource(String dataSource) {
+        default SqlEndpointBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1524,7 +1512,7 @@ public interface SqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default SqlEndpointBuilder dataSourceRef(String dataSourceRef) {
+        default SqlEndpointBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -1534,7 +1522,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder outputClass(String outputClass) {
+        default SqlEndpointBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -1547,7 +1535,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder outputHeader(String outputHeader) {
+        default SqlEndpointBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -1566,7 +1554,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder outputType(SqlOutputType outputType) {
+        default SqlEndpointBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1585,7 +1573,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder outputType(String outputType) {
+        default SqlEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1597,7 +1585,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder separator(char separator) {
+        default SqlEndpointBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1609,7 +1597,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default SqlEndpointBuilder separator(String separator) {
+        default SqlEndpointBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1621,7 +1609,7 @@ public interface SqlEndpointBuilderFactory {
     public static interface AdvancedSqlEndpointBuilder
             extends
                 AdvancedSqlEndpointConsumerBuilder, AdvancedSqlEndpointProducerBuilder {
-        public default SqlEndpointBuilder basic() {
+        default SqlEndpointBuilder basic() {
             return (SqlEndpointBuilder) this;
         }
         /**
@@ -1634,7 +1622,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1649,7 +1637,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
+        default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1660,7 +1648,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1671,7 +1659,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder basicPropertyBinding(
+        default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1684,8 +1672,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder parametersCount(
-                int parametersCount) {
+        default AdvancedSqlEndpointBuilder parametersCount(int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
         }
@@ -1697,7 +1684,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder parametersCount(
+        default AdvancedSqlEndpointBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1709,7 +1696,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder placeholder(String placeholder) {
+        default AdvancedSqlEndpointBuilder placeholder(String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
         }
@@ -1721,7 +1708,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1734,7 +1721,7 @@ public interface SqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder prepareStatementStrategy(
+        default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1745,8 +1732,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSqlEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1756,7 +1742,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSqlEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1766,7 +1752,7 @@ public interface SqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder templateOptions(
+        default AdvancedSqlEndpointBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1778,7 +1764,7 @@ public interface SqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder templateOptions(
+        default AdvancedSqlEndpointBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1789,8 +1775,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder usePlaceholder(
-                boolean usePlaceholder) {
+        default AdvancedSqlEndpointBuilder usePlaceholder(boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
         }
@@ -1800,8 +1785,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlEndpointBuilder usePlaceholder(
-                String usePlaceholder) {
+        default AdvancedSqlEndpointBuilder usePlaceholder(String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
         }
@@ -1818,7 +1802,7 @@ public interface SqlEndpointBuilderFactory {
      * The sql component allows you to work with databases using JDBC SQL
      * queries. Creates a builder to build endpoints for the SQL component.
      */
-    public default SqlEndpointBuilder sql(String path) {
+    default SqlEndpointBuilder sql(String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {
             public SqlEndpointBuilderImpl(String path) {
                 super("sql", path);

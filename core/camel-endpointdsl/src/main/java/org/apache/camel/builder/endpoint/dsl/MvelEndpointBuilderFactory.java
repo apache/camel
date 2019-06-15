@@ -36,7 +36,7 @@ public interface MvelEndpointBuilderFactory {
     public static interface MvelEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMvelEndpointBuilder advanced() {
+        default AdvancedMvelEndpointBuilder advanced() {
             return (AdvancedMvelEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface MvelEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MvelEndpointBuilder resourceUri(String resourceUri) {
+        default MvelEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -58,7 +58,7 @@ public interface MvelEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MvelEndpointBuilder contentCache(boolean contentCache) {
+        default MvelEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -67,7 +67,7 @@ public interface MvelEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MvelEndpointBuilder contentCache(String contentCache) {
+        default MvelEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -76,7 +76,7 @@ public interface MvelEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MvelEndpointBuilder encoding(String encoding) {
+        default MvelEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -88,7 +88,7 @@ public interface MvelEndpointBuilderFactory {
     public static interface AdvancedMvelEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MvelEndpointBuilder basic() {
+        default MvelEndpointBuilder basic() {
             return (MvelEndpointBuilder) this;
         }
         /**
@@ -97,7 +97,7 @@ public interface MvelEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMvelEndpointBuilder basicPropertyBinding(
+        default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,7 +108,7 @@ public interface MvelEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMvelEndpointBuilder basicPropertyBinding(
+        default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -119,8 +119,7 @@ public interface MvelEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMvelEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMvelEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -130,8 +129,7 @@ public interface MvelEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMvelEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMvelEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -140,7 +138,7 @@ public interface MvelEndpointBuilderFactory {
      * Transforms the message using a MVEL template. Creates a builder to build
      * endpoints for the MVEL component.
      */
-    public default MvelEndpointBuilder mvel(String path) {
+    default MvelEndpointBuilder mvel(String path) {
         class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {
             public MvelEndpointBuilderImpl(String path) {
                 super("mvel", path);

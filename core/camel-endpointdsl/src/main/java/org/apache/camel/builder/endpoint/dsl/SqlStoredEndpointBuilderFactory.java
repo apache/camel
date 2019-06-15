@@ -37,7 +37,7 @@ public interface SqlStoredEndpointBuilderFactory {
     public static interface SqlStoredEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSqlStoredEndpointBuilder advanced() {
+        default AdvancedSqlStoredEndpointBuilder advanced() {
             return (AdvancedSqlStoredEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder template(String template) {
+        default SqlStoredEndpointBuilder template(String template) {
             setProperty("template", template);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder batch(boolean batch) {
+        default SqlStoredEndpointBuilder batch(boolean batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -63,7 +63,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder batch(String batch) {
+        default SqlStoredEndpointBuilder batch(String batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -72,7 +72,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder dataSource(Object dataSource) {
+        default SqlStoredEndpointBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -82,7 +82,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder dataSource(String dataSource) {
+        default SqlStoredEndpointBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -91,7 +91,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder function(boolean function) {
+        default SqlStoredEndpointBuilder function(boolean function) {
             setProperty("function", function);
             return this;
         }
@@ -100,7 +100,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder function(String function) {
+        default SqlStoredEndpointBuilder function(String function) {
             setProperty("function", function);
             return this;
         }
@@ -110,7 +110,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder noop(boolean noop) {
+        default SqlStoredEndpointBuilder noop(boolean noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -120,7 +120,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder noop(String noop) {
+        default SqlStoredEndpointBuilder noop(String noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -134,7 +134,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder outputHeader(String outputHeader) {
+        default SqlStoredEndpointBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -145,7 +145,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder useMessageBodyForTemplate(
+        default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 boolean useMessageBodyForTemplate) {
             setProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
             return this;
@@ -157,7 +157,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SqlStoredEndpointBuilder useMessageBodyForTemplate(
+        default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 String useMessageBodyForTemplate) {
             setProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
             return this;
@@ -170,7 +170,7 @@ public interface SqlStoredEndpointBuilderFactory {
     public static interface AdvancedSqlStoredEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SqlStoredEndpointBuilder basic() {
+        default SqlStoredEndpointBuilder basic() {
             return (SqlStoredEndpointBuilder) this;
         }
         /**
@@ -179,7 +179,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
+        default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -190,7 +190,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
+        default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -201,8 +201,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlStoredEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -212,8 +211,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSqlStoredEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -223,7 +221,7 @@ public interface SqlStoredEndpointBuilderFactory {
      * Procedure queries. Creates a builder to build endpoints for the SQL
      * Stored Procedure component.
      */
-    public default SqlStoredEndpointBuilder sqlStored(String path) {
+    default SqlStoredEndpointBuilder sqlStored(String path) {
         class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {
             public SqlStoredEndpointBuilderImpl(String path) {
                 super("sql-stored", path);

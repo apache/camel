@@ -37,7 +37,7 @@ public interface MetricsEndpointBuilderFactory {
     public static interface MetricsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMetricsEndpointBuilder advanced() {
+        default AdvancedMetricsEndpointBuilder advanced() {
             return (AdvancedMetricsEndpointBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface MetricsEndpointBuilderFactory {
          * <code>org.apache.camel.component.metrics.MetricsType</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder metricsType(
-                MetricsType metricsType) {
+        default MetricsEndpointBuilder metricsType(MetricsType metricsType) {
             setProperty("metricsType", metricsType);
             return this;
         }
@@ -57,7 +56,7 @@ public interface MetricsEndpointBuilderFactory {
          * <code>org.apache.camel.component.metrics.MetricsType</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder metricsType(String metricsType) {
+        default MetricsEndpointBuilder metricsType(String metricsType) {
             setProperty("metricsType", metricsType);
             return this;
         }
@@ -66,7 +65,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder metricsName(String metricsName) {
+        default MetricsEndpointBuilder metricsName(String metricsName) {
             setProperty("metricsName", metricsName);
             return this;
         }
@@ -77,7 +76,7 @@ public interface MetricsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default MetricsEndpointBuilder action(MetricsTimerAction action) {
+        default MetricsEndpointBuilder action(MetricsTimerAction action) {
             setProperty("action", action);
             return this;
         }
@@ -88,7 +87,7 @@ public interface MetricsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default MetricsEndpointBuilder action(String action) {
+        default MetricsEndpointBuilder action(String action) {
             setProperty("action", action);
             return this;
         }
@@ -97,7 +96,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder decrement(Long decrement) {
+        default MetricsEndpointBuilder decrement(Long decrement) {
             setProperty("decrement", decrement);
             return this;
         }
@@ -106,7 +105,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder decrement(String decrement) {
+        default MetricsEndpointBuilder decrement(String decrement) {
             setProperty("decrement", decrement);
             return this;
         }
@@ -115,7 +114,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder increment(Long increment) {
+        default MetricsEndpointBuilder increment(Long increment) {
             setProperty("increment", increment);
             return this;
         }
@@ -124,7 +123,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder increment(String increment) {
+        default MetricsEndpointBuilder increment(String increment) {
             setProperty("increment", increment);
             return this;
         }
@@ -133,7 +132,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder mark(Long mark) {
+        default MetricsEndpointBuilder mark(Long mark) {
             setProperty("mark", mark);
             return this;
         }
@@ -142,7 +141,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder mark(String mark) {
+        default MetricsEndpointBuilder mark(String mark) {
             setProperty("mark", mark);
             return this;
         }
@@ -151,7 +150,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder subject(Object subject) {
+        default MetricsEndpointBuilder subject(Object subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -160,7 +159,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder subject(String subject) {
+        default MetricsEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
             return this;
         }
@@ -169,7 +168,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder value(Long value) {
+        default MetricsEndpointBuilder value(Long value) {
             setProperty("value", value);
             return this;
         }
@@ -178,7 +177,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default MetricsEndpointBuilder value(String value) {
+        default MetricsEndpointBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -190,7 +189,7 @@ public interface MetricsEndpointBuilderFactory {
     public static interface AdvancedMetricsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MetricsEndpointBuilder basic() {
+        default MetricsEndpointBuilder basic() {
             return (MetricsEndpointBuilder) this;
         }
         /**
@@ -199,7 +198,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMetricsEndpointBuilder basicPropertyBinding(
+        default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -210,7 +209,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMetricsEndpointBuilder basicPropertyBinding(
+        default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -221,8 +220,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMetricsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -232,8 +230,7 @@ public interface MetricsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMetricsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -259,7 +256,7 @@ public interface MetricsEndpointBuilderFactory {
      * DropWizard metrics library. Creates a builder to build endpoints for the
      * Metrics component.
      */
-    public default MetricsEndpointBuilder metrics(String path) {
+    default MetricsEndpointBuilder metrics(String path) {
         class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder, AdvancedMetricsEndpointBuilder {
             public MetricsEndpointBuilderImpl(String path) {
                 super("metrics", path);

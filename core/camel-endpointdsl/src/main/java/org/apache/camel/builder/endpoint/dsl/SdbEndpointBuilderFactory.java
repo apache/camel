@@ -37,7 +37,7 @@ public interface SdbEndpointBuilderFactory {
     public static interface SdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSdbEndpointBuilder advanced() {
+        default AdvancedSdbEndpointBuilder advanced() {
             return (AdvancedSdbEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder domainName(String domainName) {
+        default SdbEndpointBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder accessKey(String accessKey) {
+        default SdbEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -64,7 +64,7 @@ public interface SdbEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
+        default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
             setProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
@@ -74,7 +74,7 @@ public interface SdbEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
+        default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
             setProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
@@ -84,7 +84,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder consistentRead(boolean consistentRead) {
+        default SdbEndpointBuilder consistentRead(boolean consistentRead) {
             setProperty("consistentRead", consistentRead);
             return this;
         }
@@ -94,7 +94,7 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder consistentRead(String consistentRead) {
+        default SdbEndpointBuilder consistentRead(String consistentRead) {
             setProperty("consistentRead", consistentRead);
             return this;
         }
@@ -104,8 +104,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder maxNumberOfDomains(
-                Integer maxNumberOfDomains) {
+        default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
             setProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
@@ -116,8 +115,7 @@ public interface SdbEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SdbEndpointBuilder maxNumberOfDomains(
-                String maxNumberOfDomains) {
+        default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
             setProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
@@ -127,7 +125,7 @@ public interface SdbEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder operation(SdbOperations operation) {
+        default SdbEndpointBuilder operation(SdbOperations operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -137,7 +135,7 @@ public interface SdbEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder operation(String operation) {
+        default SdbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -146,7 +144,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder proxyHost(String proxyHost) {
+        default SdbEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -155,7 +153,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder proxyPort(Integer proxyPort) {
+        default SdbEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -165,7 +163,7 @@ public interface SdbEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SdbEndpointBuilder proxyPort(String proxyPort) {
+        default SdbEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -174,7 +172,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder region(String region) {
+        default SdbEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -183,7 +181,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SdbEndpointBuilder secretKey(String secretKey) {
+        default SdbEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -195,7 +193,7 @@ public interface SdbEndpointBuilderFactory {
     public static interface AdvancedSdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SdbEndpointBuilder basic() {
+        default SdbEndpointBuilder basic() {
             return (SdbEndpointBuilder) this;
         }
         /**
@@ -204,7 +202,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSdbEndpointBuilder basicPropertyBinding(
+        default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -215,7 +213,7 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSdbEndpointBuilder basicPropertyBinding(
+        default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -226,8 +224,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSdbEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -237,7 +234,7 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -255,7 +252,7 @@ public interface SdbEndpointBuilderFactory {
      * SDB service. Creates a builder to build endpoints for the AWS SimpleDB
      * component.
      */
-    public default SdbEndpointBuilder sdb(String path) {
+    default SdbEndpointBuilder sdb(String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {
                 super("aws-sdb", path);

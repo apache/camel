@@ -37,7 +37,7 @@ public interface NeutronEndpointBuilderFactory {
     public static interface NeutronEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNeutronEndpointBuilder advanced() {
+        default AdvancedNeutronEndpointBuilder advanced() {
             return (AdvancedNeutronEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder host(String host) {
+        default NeutronEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder apiVersion(String apiVersion) {
+        default NeutronEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -64,7 +64,7 @@ public interface NeutronEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default NeutronEndpointBuilder config(Object config) {
+        default NeutronEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface NeutronEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder config(String config) {
+        default NeutronEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -83,7 +83,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder domain(String domain) {
+        default NeutronEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -92,7 +92,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder operation(String operation) {
+        default NeutronEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -101,7 +101,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder password(String password) {
+        default NeutronEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -110,7 +110,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder project(String project) {
+        default NeutronEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -119,7 +119,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder subsystem(String subsystem) {
+        default NeutronEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
             return this;
         }
@@ -128,7 +128,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NeutronEndpointBuilder username(String username) {
+        default NeutronEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -140,7 +140,7 @@ public interface NeutronEndpointBuilderFactory {
     public static interface AdvancedNeutronEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default NeutronEndpointBuilder basic() {
+        default NeutronEndpointBuilder basic() {
             return (NeutronEndpointBuilder) this;
         }
         /**
@@ -149,7 +149,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNeutronEndpointBuilder basicPropertyBinding(
+        default AdvancedNeutronEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNeutronEndpointBuilder basicPropertyBinding(
+        default AdvancedNeutronEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,8 +171,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNeutronEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNeutronEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -182,8 +181,7 @@ public interface NeutronEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNeutronEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNeutronEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -193,7 +191,7 @@ public interface NeutronEndpointBuilderFactory {
      * OpenStack network services. Creates a builder to build endpoints for the
      * OpenStack Neutron component.
      */
-    public default NeutronEndpointBuilder neutron(String path) {
+    default NeutronEndpointBuilder neutron(String path) {
         class NeutronEndpointBuilderImpl extends AbstractEndpointBuilder implements NeutronEndpointBuilder, AdvancedNeutronEndpointBuilder {
             public NeutronEndpointBuilderImpl(String path) {
                 super("openstack-neutron", path);

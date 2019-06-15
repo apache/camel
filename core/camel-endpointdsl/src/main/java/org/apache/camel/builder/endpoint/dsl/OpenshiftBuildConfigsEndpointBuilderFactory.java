@@ -37,7 +37,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
     public static interface OpenshiftBuildConfigsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder advanced() {
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder advanced() {
             return (AdvancedOpenshiftBuildConfigsEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder masterUrl(
-                String masterUrl) {
+        default OpenshiftBuildConfigsEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -55,7 +54,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder apiVersion(
+        default OpenshiftBuildConfigsEndpointBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -65,8 +64,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder dnsDomain(
-                String dnsDomain) {
+        default OpenshiftBuildConfigsEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -76,7 +74,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
+        default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -87,7 +85,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
+        default OpenshiftBuildConfigsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -97,8 +95,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder portName(
-                String portName) {
+        default OpenshiftBuildConfigsEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -107,7 +104,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default OpenshiftBuildConfigsEndpointBuilder portProtocol(
+        default OpenshiftBuildConfigsEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -117,7 +114,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder caCertData(
+        default OpenshiftBuildConfigsEndpointBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -127,7 +124,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder caCertFile(
+        default OpenshiftBuildConfigsEndpointBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -137,7 +134,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientCertData(
+        default OpenshiftBuildConfigsEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -147,7 +144,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientCertFile(
+        default OpenshiftBuildConfigsEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -157,7 +154,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientKeyAlgo(
+        default OpenshiftBuildConfigsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -167,7 +164,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientKeyData(
+        default OpenshiftBuildConfigsEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -177,7 +174,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientKeyFile(
+        default OpenshiftBuildConfigsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -187,7 +184,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder clientKeyPassphrase(
+        default OpenshiftBuildConfigsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -197,7 +194,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder oauthToken(
+        default OpenshiftBuildConfigsEndpointBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -207,8 +204,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder password(
-                String password) {
+        default OpenshiftBuildConfigsEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -217,7 +213,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder trustCerts(
+        default OpenshiftBuildConfigsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -228,7 +224,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder trustCerts(
+        default OpenshiftBuildConfigsEndpointBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -238,8 +234,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default OpenshiftBuildConfigsEndpointBuilder username(
-                String username) {
+        default OpenshiftBuildConfigsEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -251,7 +246,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
     public static interface AdvancedOpenshiftBuildConfigsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default OpenshiftBuildConfigsEndpointBuilder basic() {
+        default OpenshiftBuildConfigsEndpointBuilder basic() {
             return (OpenshiftBuildConfigsEndpointBuilder) this;
         }
         /**
@@ -260,7 +255,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -271,7 +266,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -282,7 +277,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -294,7 +289,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -305,7 +300,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -316,7 +311,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
+        default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -327,7 +322,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
      * kubernetes build config operations. Creates a builder to build endpoints
      * for the Openshift Build Config component.
      */
-    public default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
+    default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {
         class OpenshiftBuildConfigsEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenshiftBuildConfigsEndpointBuilder, AdvancedOpenshiftBuildConfigsEndpointBuilder {
             public OpenshiftBuildConfigsEndpointBuilderImpl(String path) {

@@ -41,7 +41,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public interface AtomixQueueEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAtomixQueueEndpointConsumerBuilder advanced() {
+        default AdvancedAtomixQueueEndpointConsumerBuilder advanced() {
             return (AdvancedAtomixQueueEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder resourceName(
+        default AtomixQueueEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -59,7 +59,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder atomix(Object atomix) {
+        default AtomixQueueEndpointConsumerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -69,7 +69,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder atomix(String atomix) {
+        default AtomixQueueEndpointConsumerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -78,7 +78,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder configurationUri(
+        default AtomixQueueEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -89,7 +89,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder defaultAction(
+        default AtomixQueueEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -100,7 +100,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder defaultAction(
+        default AtomixQueueEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -111,8 +111,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder nodes(
-                List<Object> nodes) {
+        default AtomixQueueEndpointConsumerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -122,7 +121,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder nodes(String nodes) {
+        default AtomixQueueEndpointConsumerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -131,7 +130,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder resultHeader(
+        default AtomixQueueEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -142,7 +141,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder transport(
+        default AtomixQueueEndpointConsumerBuilder transport(
                 Class<Object> transport) {
             setProperty("transport", transport);
             return this;
@@ -153,8 +152,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointConsumerBuilder transport(
-                String transport) {
+        default AtomixQueueEndpointConsumerBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -169,7 +167,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
+        default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -185,7 +183,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
+        default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -198,7 +196,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public interface AdvancedAtomixQueueEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AtomixQueueEndpointConsumerBuilder basic() {
+        default AtomixQueueEndpointConsumerBuilder basic() {
             return (AtomixQueueEndpointConsumerBuilder) this;
         }
         /**
@@ -210,7 +208,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -224,7 +222,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -234,7 +232,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -245,7 +243,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -256,7 +254,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -267,7 +265,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -277,7 +275,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -288,7 +286,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -298,7 +296,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -309,7 +307,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -321,7 +319,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
+        default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -333,7 +331,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
+        default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -343,7 +341,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -354,7 +352,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -365,7 +363,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -377,7 +375,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -388,7 +386,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -400,7 +398,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -411,7 +409,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
+        default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -422,7 +420,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
+        default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -435,7 +433,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public static interface AtomixQueueEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAtomixQueueEndpointProducerBuilder advanced() {
+        default AdvancedAtomixQueueEndpointProducerBuilder advanced() {
             return (AdvancedAtomixQueueEndpointProducerBuilder) this;
         }
         /**
@@ -443,7 +441,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder resourceName(
+        default AtomixQueueEndpointProducerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -453,7 +451,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder atomix(Object atomix) {
+        default AtomixQueueEndpointProducerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -463,7 +461,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder atomix(String atomix) {
+        default AtomixQueueEndpointProducerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -472,7 +470,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder configurationUri(
+        default AtomixQueueEndpointProducerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -483,7 +481,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder defaultAction(
+        default AtomixQueueEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -494,7 +492,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder defaultAction(
+        default AtomixQueueEndpointProducerBuilder defaultAction(
                 String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -505,8 +503,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder nodes(
-                List<Object> nodes) {
+        default AtomixQueueEndpointProducerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -516,7 +513,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder nodes(String nodes) {
+        default AtomixQueueEndpointProducerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -525,7 +522,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder resultHeader(
+        default AtomixQueueEndpointProducerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -536,7 +533,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder transport(
+        default AtomixQueueEndpointProducerBuilder transport(
                 Class<Object> transport) {
             setProperty("transport", transport);
             return this;
@@ -547,8 +544,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointProducerBuilder transport(
-                String transport) {
+        default AtomixQueueEndpointProducerBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -565,7 +561,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AtomixQueueEndpointProducerBuilder lazyStartProducer(
+        default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -583,7 +579,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AtomixQueueEndpointProducerBuilder lazyStartProducer(
+        default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -596,7 +592,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public interface AdvancedAtomixQueueEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AtomixQueueEndpointProducerBuilder basic() {
+        default AtomixQueueEndpointProducerBuilder basic() {
             return (AtomixQueueEndpointProducerBuilder) this;
         }
         /**
@@ -605,7 +601,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -616,7 +612,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -626,7 +622,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -637,7 +633,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -647,7 +643,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -658,7 +654,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -670,7 +666,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
+        default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -682,7 +678,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
+        default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -692,7 +688,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -703,7 +699,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -714,7 +710,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -726,7 +722,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -737,7 +733,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -749,7 +745,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -760,7 +756,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
+        default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -771,7 +767,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
+        default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -784,7 +780,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public static interface AtomixQueueEndpointBuilder
             extends
                 AtomixQueueEndpointConsumerBuilder, AtomixQueueEndpointProducerBuilder {
-        public default AdvancedAtomixQueueEndpointBuilder advanced() {
+        default AdvancedAtomixQueueEndpointBuilder advanced() {
             return (AdvancedAtomixQueueEndpointBuilder) this;
         }
         /**
@@ -792,8 +788,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder resourceName(
-                String resourceName) {
+        default AtomixQueueEndpointBuilder resourceName(String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
         }
@@ -802,7 +797,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder atomix(Object atomix) {
+        default AtomixQueueEndpointBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -812,7 +807,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder atomix(String atomix) {
+        default AtomixQueueEndpointBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -821,7 +816,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder configurationUri(
+        default AtomixQueueEndpointBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -832,8 +827,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder defaultAction(
-                Action defaultAction) {
+        default AtomixQueueEndpointBuilder defaultAction(Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
         }
@@ -843,8 +837,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder defaultAction(
-                String defaultAction) {
+        default AtomixQueueEndpointBuilder defaultAction(String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
         }
@@ -854,7 +847,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder nodes(List<Object> nodes) {
+        default AtomixQueueEndpointBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -864,7 +857,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder nodes(String nodes) {
+        default AtomixQueueEndpointBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -873,8 +866,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder resultHeader(
-                String resultHeader) {
+        default AtomixQueueEndpointBuilder resultHeader(String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
         }
@@ -884,8 +876,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder transport(
-                Class<Object> transport) {
+        default AtomixQueueEndpointBuilder transport(Class<Object> transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -895,7 +886,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixQueueEndpointBuilder transport(String transport) {
+        default AtomixQueueEndpointBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -907,7 +898,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     public static interface AdvancedAtomixQueueEndpointBuilder
             extends
                 AdvancedAtomixQueueEndpointConsumerBuilder, AdvancedAtomixQueueEndpointProducerBuilder {
-        public default AtomixQueueEndpointBuilder basic() {
+        default AtomixQueueEndpointBuilder basic() {
             return (AtomixQueueEndpointBuilder) this;
         }
         /**
@@ -916,7 +907,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -927,7 +918,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -937,7 +928,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -948,7 +939,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
+        default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -958,7 +949,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -969,7 +960,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
+        default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -981,8 +972,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder ephemeral(
-                boolean ephemeral) {
+        default AdvancedAtomixQueueEndpointBuilder ephemeral(boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
         }
@@ -993,8 +983,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder ephemeral(
-                String ephemeral) {
+        default AdvancedAtomixQueueEndpointBuilder ephemeral(String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
         }
@@ -1003,7 +992,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -1014,7 +1003,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder readConsistency(
+        default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -1025,7 +1014,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -1037,7 +1026,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
+        default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -1048,7 +1037,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -1060,7 +1049,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder resourceOptions(
+        default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -1071,7 +1060,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder synchronous(
+        default AdvancedAtomixQueueEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1082,7 +1071,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixQueueEndpointBuilder synchronous(
+        default AdvancedAtomixQueueEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1107,7 +1096,7 @@ public interface AtomixQueueEndpointBuilderFactory {
      * The atomix-queue component is used to access Atomix's distributed queue.
      * Creates a builder to build endpoints for the Atomix Queue component.
      */
-    public default AtomixQueueEndpointBuilder atomixQueue(String path) {
+    default AtomixQueueEndpointBuilder atomixQueue(String path) {
         class AtomixQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixQueueEndpointBuilder, AdvancedAtomixQueueEndpointBuilder {
             public AtomixQueueEndpointBuilderImpl(String path) {
                 super("atomix-queue", path);

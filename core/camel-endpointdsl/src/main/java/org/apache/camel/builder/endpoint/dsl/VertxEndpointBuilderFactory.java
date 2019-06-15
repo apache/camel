@@ -39,7 +39,7 @@ public interface VertxEndpointBuilderFactory {
     public interface VertxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedVertxEndpointConsumerBuilder advanced() {
+        default AdvancedVertxEndpointConsumerBuilder advanced() {
             return (AdvancedVertxEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VertxEndpointConsumerBuilder address(String address) {
+        default VertxEndpointConsumerBuilder address(String address) {
             setProperty("address", address);
             return this;
         }
@@ -57,7 +57,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default VertxEndpointConsumerBuilder pubSub(Boolean pubSub) {
+        default VertxEndpointConsumerBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -68,7 +68,7 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default VertxEndpointConsumerBuilder pubSub(String pubSub) {
+        default VertxEndpointConsumerBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -83,7 +83,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default VertxEndpointConsumerBuilder bridgeErrorHandler(
+        default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -99,7 +99,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default VertxEndpointConsumerBuilder bridgeErrorHandler(
+        default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -112,7 +112,7 @@ public interface VertxEndpointBuilderFactory {
     public interface AdvancedVertxEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default VertxEndpointConsumerBuilder basic() {
+        default VertxEndpointConsumerBuilder basic() {
             return (VertxEndpointConsumerBuilder) this;
         }
         /**
@@ -124,7 +124,7 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -138,7 +138,7 @@ public interface VertxEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
+        default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -148,7 +148,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVertxEndpointConsumerBuilder exchangePattern(
+        default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -159,7 +159,7 @@ public interface VertxEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVertxEndpointConsumerBuilder exchangePattern(
+        default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -170,7 +170,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -181,7 +181,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -192,7 +192,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointConsumerBuilder synchronous(
+        default AdvancedVertxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -203,7 +203,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointConsumerBuilder synchronous(
+        default AdvancedVertxEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -216,7 +216,7 @@ public interface VertxEndpointBuilderFactory {
     public static interface VertxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedVertxEndpointProducerBuilder advanced() {
+        default AdvancedVertxEndpointProducerBuilder advanced() {
             return (AdvancedVertxEndpointProducerBuilder) this;
         }
         /**
@@ -224,7 +224,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VertxEndpointProducerBuilder address(String address) {
+        default VertxEndpointProducerBuilder address(String address) {
             setProperty("address", address);
             return this;
         }
@@ -234,7 +234,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default VertxEndpointProducerBuilder pubSub(Boolean pubSub) {
+        default VertxEndpointProducerBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -245,7 +245,7 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default VertxEndpointProducerBuilder pubSub(String pubSub) {
+        default VertxEndpointProducerBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -262,7 +262,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VertxEndpointProducerBuilder lazyStartProducer(
+        default VertxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -280,7 +280,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VertxEndpointProducerBuilder lazyStartProducer(
+        default VertxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -293,7 +293,7 @@ public interface VertxEndpointBuilderFactory {
     public interface AdvancedVertxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default VertxEndpointProducerBuilder basic() {
+        default VertxEndpointProducerBuilder basic() {
             return (VertxEndpointProducerBuilder) this;
         }
         /**
@@ -302,7 +302,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -313,7 +313,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -324,7 +324,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointProducerBuilder synchronous(
+        default AdvancedVertxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -335,7 +335,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointProducerBuilder synchronous(
+        default AdvancedVertxEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -348,7 +348,7 @@ public interface VertxEndpointBuilderFactory {
     public static interface VertxEndpointBuilder
             extends
                 VertxEndpointConsumerBuilder, VertxEndpointProducerBuilder {
-        public default AdvancedVertxEndpointBuilder advanced() {
+        default AdvancedVertxEndpointBuilder advanced() {
             return (AdvancedVertxEndpointBuilder) this;
         }
         /**
@@ -356,7 +356,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VertxEndpointBuilder address(String address) {
+        default VertxEndpointBuilder address(String address) {
             setProperty("address", address);
             return this;
         }
@@ -366,7 +366,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default VertxEndpointBuilder pubSub(Boolean pubSub) {
+        default VertxEndpointBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -377,7 +377,7 @@ public interface VertxEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default VertxEndpointBuilder pubSub(String pubSub) {
+        default VertxEndpointBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
             return this;
         }
@@ -389,7 +389,7 @@ public interface VertxEndpointBuilderFactory {
     public static interface AdvancedVertxEndpointBuilder
             extends
                 AdvancedVertxEndpointConsumerBuilder, AdvancedVertxEndpointProducerBuilder {
-        public default VertxEndpointBuilder basic() {
+        default VertxEndpointBuilder basic() {
             return (VertxEndpointBuilder) this;
         }
         /**
@@ -398,7 +398,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -409,7 +409,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointBuilder basicPropertyBinding(
+        default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -420,8 +420,7 @@ public interface VertxEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedVertxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -431,8 +430,7 @@ public interface VertxEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVertxEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedVertxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -441,7 +439,7 @@ public interface VertxEndpointBuilderFactory {
      * The vertx component is used for sending and receive messages from a vertx
      * event bus. Creates a builder to build endpoints for the Vert.x component.
      */
-    public default VertxEndpointBuilder vertx(String path) {
+    default VertxEndpointBuilder vertx(String path) {
         class VertxEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxEndpointBuilder, AdvancedVertxEndpointBuilder {
             public VertxEndpointBuilderImpl(String path) {
                 super("vertx", path);

@@ -37,7 +37,7 @@ public interface DigitalOceanEndpointBuilderFactory {
     public static interface DigitalOceanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDigitalOceanEndpointBuilder advanced() {
+        default AdvancedDigitalOceanEndpointBuilder advanced() {
             return (AdvancedDigitalOceanEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder operation(
+        default DigitalOceanEndpointBuilder operation(
                 DigitalOceanOperations operation) {
             setProperty("operation", operation);
             return this;
@@ -57,7 +57,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder operation(String operation) {
+        default DigitalOceanEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -66,7 +66,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder page(Integer page) {
+        default DigitalOceanEndpointBuilder page(Integer page) {
             setProperty("page", page);
             return this;
         }
@@ -76,7 +76,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder page(String page) {
+        default DigitalOceanEndpointBuilder page(String page) {
             setProperty("page", page);
             return this;
         }
@@ -86,7 +86,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder perPage(Integer perPage) {
+        default DigitalOceanEndpointBuilder perPage(Integer perPage) {
             setProperty("perPage", perPage);
             return this;
         }
@@ -97,7 +97,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder perPage(String perPage) {
+        default DigitalOceanEndpointBuilder perPage(String perPage) {
             setProperty("perPage", perPage);
             return this;
         }
@@ -107,7 +107,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder resource(
+        default DigitalOceanEndpointBuilder resource(
                 DigitalOceanResources resource) {
             setProperty("resource", resource);
             return this;
@@ -118,7 +118,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
          * @group producer
          */
-        public default DigitalOceanEndpointBuilder resource(String resource) {
+        default DigitalOceanEndpointBuilder resource(String resource) {
             setProperty("resource", resource);
             return this;
         }
@@ -127,8 +127,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default DigitalOceanEndpointBuilder httpProxyHost(
-                String httpProxyHost) {
+        default DigitalOceanEndpointBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -137,7 +136,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default DigitalOceanEndpointBuilder httpProxyPassword(
+        default DigitalOceanEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -147,8 +146,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default DigitalOceanEndpointBuilder httpProxyPort(
-                Integer httpProxyPort) {
+        default DigitalOceanEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -158,8 +156,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default DigitalOceanEndpointBuilder httpProxyPort(
-                String httpProxyPort) {
+        default DigitalOceanEndpointBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -168,8 +165,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default DigitalOceanEndpointBuilder httpProxyUser(
-                String httpProxyUser) {
+        default DigitalOceanEndpointBuilder httpProxyUser(String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
         }
@@ -178,7 +174,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
+        default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
             setProperty("oAuthToken", oAuthToken);
             return this;
         }
@@ -190,7 +186,7 @@ public interface DigitalOceanEndpointBuilderFactory {
     public static interface AdvancedDigitalOceanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DigitalOceanEndpointBuilder basic() {
+        default DigitalOceanEndpointBuilder basic() {
             return (DigitalOceanEndpointBuilder) this;
         }
         /**
@@ -199,7 +195,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
+        default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -210,7 +206,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
+        default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -221,7 +217,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
+        default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 Object digitalOceanClient) {
             setProperty("digitalOceanClient", digitalOceanClient);
             return this;
@@ -232,7 +228,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
+        default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 String digitalOceanClient) {
             setProperty("digitalOceanClient", digitalOceanClient);
             return this;
@@ -243,7 +239,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder synchronous(
+        default AdvancedDigitalOceanEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -254,7 +250,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalOceanEndpointBuilder synchronous(
+        default AdvancedDigitalOceanEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -281,7 +277,7 @@ public interface DigitalOceanEndpointBuilderFactory {
      * within the DigitalOcean cloud. Creates a builder to build endpoints for
      * the DigitalOcean component.
      */
-    public default DigitalOceanEndpointBuilder digitalOcean(String path) {
+    default DigitalOceanEndpointBuilder digitalOcean(String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {
             public DigitalOceanEndpointBuilderImpl(String path) {
                 super("digitalocean", path);

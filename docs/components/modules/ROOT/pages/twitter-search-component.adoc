@@ -31,6 +31,15 @@ The Twitter Search component supports 10 options, which are listed below.
 
 ### Endpoint Options
 
+The search keywords query should be specified accordingly to https://developer.twitter.com/en/docs/tweets/search/guides/standard-operators[twitter search operators].
+
+Examples of a search query:
+
+* `foo OR bar`
+* `(orange juice) AND price`
+* `camel -saara`
+
+
 // endpoint options: START
 The Twitter Search endpoint is configured using URI syntax:
 
@@ -46,7 +55,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *keywords* | *Required* The search keywords. Multiple values can be separated with comma. |  | String
+| *keywords* | *Required* The search query, use the keywords AND, OR, - and () to narrow the search results. |  | String
 |===
 
 

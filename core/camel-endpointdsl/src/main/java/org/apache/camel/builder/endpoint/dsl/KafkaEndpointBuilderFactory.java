@@ -42,7 +42,7 @@ public interface KafkaEndpointBuilderFactory {
     public interface KafkaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKafkaEndpointConsumerBuilder advanced() {
+        default AdvancedKafkaEndpointConsumerBuilder advanced() {
             return (AdvancedKafkaEndpointConsumerBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder topic(String topic) {
+        default KafkaEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -64,7 +64,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder brokers(String brokers) {
+        default KafkaEndpointConsumerBuilder brokers(String brokers) {
             setProperty("brokers", brokers);
             return this;
         }
@@ -75,7 +75,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder clientId(String clientId) {
+        default KafkaEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -86,7 +86,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder headerFilterStrategy(
+        default KafkaEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -98,7 +98,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder headerFilterStrategy(
+        default KafkaEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -112,7 +112,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -127,7 +127,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -140,7 +140,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder allowManualCommit(
+        default KafkaEndpointConsumerBuilder allowManualCommit(
                 boolean allowManualCommit) {
             setProperty("allowManualCommit", allowManualCommit);
             return this;
@@ -153,7 +153,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder allowManualCommit(
+        default KafkaEndpointConsumerBuilder allowManualCommit(
                 String allowManualCommit) {
             setProperty("allowManualCommit", allowManualCommit);
             return this;
@@ -166,7 +166,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoCommitEnable(
+        default KafkaEndpointConsumerBuilder autoCommitEnable(
                 Boolean autoCommitEnable) {
             setProperty("autoCommitEnable", autoCommitEnable);
             return this;
@@ -180,7 +180,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoCommitEnable(
+        default KafkaEndpointConsumerBuilder autoCommitEnable(
                 String autoCommitEnable) {
             setProperty("autoCommitEnable", autoCommitEnable);
             return this;
@@ -191,7 +191,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
+        default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
                 Integer autoCommitIntervalMs) {
             setProperty("autoCommitIntervalMs", autoCommitIntervalMs);
             return this;
@@ -203,7 +203,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
+        default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
                 String autoCommitIntervalMs) {
             setProperty("autoCommitIntervalMs", autoCommitIntervalMs);
             return this;
@@ -216,7 +216,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoCommitOnStop(
+        default KafkaEndpointConsumerBuilder autoCommitOnStop(
                 String autoCommitOnStop) {
             setProperty("autoCommitOnStop", autoCommitOnStop);
             return this;
@@ -229,7 +229,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder autoOffsetReset(
+        default KafkaEndpointConsumerBuilder autoOffsetReset(
                 String autoOffsetReset) {
             setProperty("autoOffsetReset", autoOffsetReset);
             return this;
@@ -247,7 +247,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder breakOnFirstError(
+        default KafkaEndpointConsumerBuilder breakOnFirstError(
                 boolean breakOnFirstError) {
             setProperty("breakOnFirstError", breakOnFirstError);
             return this;
@@ -265,7 +265,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder breakOnFirstError(
+        default KafkaEndpointConsumerBuilder breakOnFirstError(
                 String breakOnFirstError) {
             setProperty("breakOnFirstError", breakOnFirstError);
             return this;
@@ -281,7 +281,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder bridgeErrorHandler(
+        default KafkaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -297,7 +297,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder bridgeErrorHandler(
+        default KafkaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -310,7 +310,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder checkCrcs(Boolean checkCrcs) {
+        default KafkaEndpointConsumerBuilder checkCrcs(Boolean checkCrcs) {
             setProperty("checkCrcs", checkCrcs);
             return this;
         }
@@ -323,7 +323,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder checkCrcs(String checkCrcs) {
+        default KafkaEndpointConsumerBuilder checkCrcs(String checkCrcs) {
             setProperty("checkCrcs", checkCrcs);
             return this;
         }
@@ -335,7 +335,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
+        default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
                 Integer consumerRequestTimeoutMs) {
             setProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
             return this;
@@ -349,7 +349,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
+        default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
                 String consumerRequestTimeoutMs) {
             setProperty("consumerRequestTimeoutMs", consumerRequestTimeoutMs);
             return this;
@@ -359,8 +359,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumersCount(
-                int consumersCount) {
+        default KafkaEndpointConsumerBuilder consumersCount(int consumersCount) {
             setProperty("consumersCount", consumersCount);
             return this;
         }
@@ -369,7 +368,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumersCount(
+        default KafkaEndpointConsumerBuilder consumersCount(
                 String consumersCount) {
             setProperty("consumersCount", consumersCount);
             return this;
@@ -379,8 +378,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumerStreams(
-                int consumerStreams) {
+        default KafkaEndpointConsumerBuilder consumerStreams(int consumerStreams) {
             setProperty("consumerStreams", consumerStreams);
             return this;
         }
@@ -389,7 +387,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder consumerStreams(
+        default KafkaEndpointConsumerBuilder consumerStreams(
                 String consumerStreams) {
             setProperty("consumerStreams", consumerStreams);
             return this;
@@ -406,8 +404,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchMaxBytes(
-                Integer fetchMaxBytes) {
+        default KafkaEndpointConsumerBuilder fetchMaxBytes(Integer fetchMaxBytes) {
             setProperty("fetchMaxBytes", fetchMaxBytes);
             return this;
         }
@@ -424,8 +421,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchMaxBytes(
-                String fetchMaxBytes) {
+        default KafkaEndpointConsumerBuilder fetchMaxBytes(String fetchMaxBytes) {
             setProperty("fetchMaxBytes", fetchMaxBytes);
             return this;
         }
@@ -436,8 +432,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchMinBytes(
-                Integer fetchMinBytes) {
+        default KafkaEndpointConsumerBuilder fetchMinBytes(Integer fetchMinBytes) {
             setProperty("fetchMinBytes", fetchMinBytes);
             return this;
         }
@@ -449,8 +444,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchMinBytes(
-                String fetchMinBytes) {
+        default KafkaEndpointConsumerBuilder fetchMinBytes(String fetchMinBytes) {
             setProperty("fetchMinBytes", fetchMinBytes);
             return this;
         }
@@ -461,7 +455,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
+        default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
                 Integer fetchWaitMaxMs) {
             setProperty("fetchWaitMaxMs", fetchWaitMaxMs);
             return this;
@@ -474,7 +468,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
+        default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
                 String fetchWaitMaxMs) {
             setProperty("fetchWaitMaxMs", fetchWaitMaxMs);
             return this;
@@ -487,7 +481,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder groupId(String groupId) {
+        default KafkaEndpointConsumerBuilder groupId(String groupId) {
             setProperty("groupId", groupId);
             return this;
         }
@@ -502,7 +496,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
+        default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
                 Integer heartbeatIntervalMs) {
             setProperty("heartbeatIntervalMs", heartbeatIntervalMs);
             return this;
@@ -519,7 +513,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
+        default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
             setProperty("heartbeatIntervalMs", heartbeatIntervalMs);
             return this;
@@ -531,7 +525,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
+        default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
                 Object kafkaHeaderDeserializer) {
             setProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
@@ -543,7 +537,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
+        default KafkaEndpointConsumerBuilder kafkaHeaderDeserializer(
                 String kafkaHeaderDeserializer) {
             setProperty("kafkaHeaderDeserializer", kafkaHeaderDeserializer);
             return this;
@@ -554,7 +548,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder keyDeserializer(
+        default KafkaEndpointConsumerBuilder keyDeserializer(
                 String keyDeserializer) {
             setProperty("keyDeserializer", keyDeserializer);
             return this;
@@ -570,7 +564,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
+        default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
                 Integer maxPartitionFetchBytes) {
             setProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
             return this;
@@ -587,7 +581,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
+        default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
                 String maxPartitionFetchBytes) {
             setProperty("maxPartitionFetchBytes", maxPartitionFetchBytes);
             return this;
@@ -602,7 +596,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPollIntervalMs(
+        default KafkaEndpointConsumerBuilder maxPollIntervalMs(
                 Long maxPollIntervalMs) {
             setProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
@@ -617,7 +611,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPollIntervalMs(
+        default KafkaEndpointConsumerBuilder maxPollIntervalMs(
                 String maxPollIntervalMs) {
             setProperty("maxPollIntervalMs", maxPollIntervalMs);
             return this;
@@ -627,7 +621,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPollRecords(
+        default KafkaEndpointConsumerBuilder maxPollRecords(
                 Integer maxPollRecords) {
             setProperty("maxPollRecords", maxPollRecords);
             return this;
@@ -638,7 +632,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder maxPollRecords(
+        default KafkaEndpointConsumerBuilder maxPollRecords(
                 String maxPollRecords) {
             setProperty("maxPollRecords", maxPollRecords);
             return this;
@@ -652,7 +646,7 @@ public interface KafkaEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder offsetRepository(
+        default KafkaEndpointConsumerBuilder offsetRepository(
                 StateRepository<String, String> offsetRepository) {
             setProperty("offsetRepository", offsetRepository);
             return this;
@@ -666,7 +660,7 @@ public interface KafkaEndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder offsetRepository(
+        default KafkaEndpointConsumerBuilder offsetRepository(
                 String offsetRepository) {
             setProperty("offsetRepository", offsetRepository);
             return this;
@@ -678,7 +672,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder partitionAssignor(
+        default KafkaEndpointConsumerBuilder partitionAssignor(
                 String partitionAssignor) {
             setProperty("partitionAssignor", partitionAssignor);
             return this;
@@ -688,8 +682,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder pollTimeoutMs(
-                Long pollTimeoutMs) {
+        default KafkaEndpointConsumerBuilder pollTimeoutMs(Long pollTimeoutMs) {
             setProperty("pollTimeoutMs", pollTimeoutMs);
             return this;
         }
@@ -698,8 +691,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder pollTimeoutMs(
-                String pollTimeoutMs) {
+        default KafkaEndpointConsumerBuilder pollTimeoutMs(String pollTimeoutMs) {
             setProperty("pollTimeoutMs", pollTimeoutMs);
             return this;
         }
@@ -710,7 +702,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder seekTo(String seekTo) {
+        default KafkaEndpointConsumerBuilder seekTo(String seekTo) {
             setProperty("seekTo", seekTo);
             return this;
         }
@@ -720,7 +712,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder sessionTimeoutMs(
+        default KafkaEndpointConsumerBuilder sessionTimeoutMs(
                 Integer sessionTimeoutMs) {
             setProperty("sessionTimeoutMs", sessionTimeoutMs);
             return this;
@@ -732,7 +724,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder sessionTimeoutMs(
+        default KafkaEndpointConsumerBuilder sessionTimeoutMs(
                 String sessionTimeoutMs) {
             setProperty("sessionTimeoutMs", sessionTimeoutMs);
             return this;
@@ -745,7 +737,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder specificAvroReader(
+        default KafkaEndpointConsumerBuilder specificAvroReader(
                 boolean specificAvroReader) {
             setProperty("specificAvroReader", specificAvroReader);
             return this;
@@ -758,7 +750,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder specificAvroReader(
+        default KafkaEndpointConsumerBuilder specificAvroReader(
                 String specificAvroReader) {
             setProperty("specificAvroReader", specificAvroReader);
             return this;
@@ -769,7 +761,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder topicIsPattern(
+        default KafkaEndpointConsumerBuilder topicIsPattern(
                 boolean topicIsPattern) {
             setProperty("topicIsPattern", topicIsPattern);
             return this;
@@ -780,7 +772,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder topicIsPattern(
+        default KafkaEndpointConsumerBuilder topicIsPattern(
                 String topicIsPattern) {
             setProperty("topicIsPattern", topicIsPattern);
             return this;
@@ -791,7 +783,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KafkaEndpointConsumerBuilder valueDeserializer(
+        default KafkaEndpointConsumerBuilder valueDeserializer(
                 String valueDeserializer) {
             setProperty("valueDeserializer", valueDeserializer);
             return this;
@@ -807,7 +799,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group monitoring
          */
-        public default KafkaEndpointConsumerBuilder interceptorClasses(
+        default KafkaEndpointConsumerBuilder interceptorClasses(
                 String interceptorClasses) {
             setProperty("interceptorClasses", interceptorClasses);
             return this;
@@ -817,7 +809,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -828,7 +820,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -838,7 +830,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosInitCmd(
+        default KafkaEndpointConsumerBuilder kerberosInitCmd(
                 String kerberosInitCmd) {
             setProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
@@ -855,7 +847,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosPrincipalToLocalRules(
+        default KafkaEndpointConsumerBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
             setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
@@ -865,7 +857,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosRenewJitter(
+        default KafkaEndpointConsumerBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -875,7 +867,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosRenewJitter(
+        default KafkaEndpointConsumerBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -887,7 +879,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -899,7 +891,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -911,7 +903,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder saslJaasConfig(
+        default KafkaEndpointConsumerBuilder saslJaasConfig(
                 String saslJaasConfig) {
             setProperty("saslJaasConfig", saslJaasConfig);
             return this;
@@ -922,7 +914,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder saslKerberosServiceName(
+        default KafkaEndpointConsumerBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
             setProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
@@ -934,8 +926,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder saslMechanism(
-                String saslMechanism) {
+        default KafkaEndpointConsumerBuilder saslMechanism(String saslMechanism) {
             setProperty("saslMechanism", saslMechanism);
             return this;
         }
@@ -945,7 +936,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder securityProtocol(
+        default KafkaEndpointConsumerBuilder securityProtocol(
                 String securityProtocol) {
             setProperty("securityProtocol", securityProtocol);
             return this;
@@ -959,7 +950,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslCipherSuites(
+        default KafkaEndpointConsumerBuilder sslCipherSuites(
                 String sslCipherSuites) {
             setProperty("sslCipherSuites", sslCipherSuites);
             return this;
@@ -971,7 +962,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslContextParameters(
+        default KafkaEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -983,7 +974,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslContextParameters(
+        default KafkaEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -994,7 +985,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslEnabledProtocols(
+        default KafkaEndpointConsumerBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
             setProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
@@ -1005,7 +996,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslEndpointAlgorithm(
+        default KafkaEndpointConsumerBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
             setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
@@ -1017,7 +1008,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslKeymanagerAlgorithm(
+        default KafkaEndpointConsumerBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
             setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
@@ -1028,7 +1019,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslKeystoreType(
+        default KafkaEndpointConsumerBuilder sslKeystoreType(
                 String sslKeystoreType) {
             setProperty("sslKeystoreType", sslKeystoreType);
             return this;
@@ -1042,8 +1033,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslProtocol(
-                String sslProtocol) {
+        default KafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -1053,8 +1043,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslProvider(
-                String sslProvider) {
+        default KafkaEndpointConsumerBuilder sslProvider(String sslProvider) {
             setProperty("sslProvider", sslProvider);
             return this;
         }
@@ -1065,7 +1054,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslTrustmanagerAlgorithm(
+        default KafkaEndpointConsumerBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
             setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
@@ -1075,7 +1064,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointConsumerBuilder sslTruststoreType(
+        default KafkaEndpointConsumerBuilder sslTruststoreType(
                 String sslTruststoreType) {
             setProperty("sslTruststoreType", sslTruststoreType);
             return this;
@@ -1089,7 +1078,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group confluent
          */
-        public default KafkaEndpointConsumerBuilder schemaRegistryURL(
+        default KafkaEndpointConsumerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
             setProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
@@ -1102,7 +1091,7 @@ public interface KafkaEndpointBuilderFactory {
     public interface AdvancedKafkaEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KafkaEndpointConsumerBuilder basic() {
+        default KafkaEndpointConsumerBuilder basic() {
             return (KafkaEndpointConsumerBuilder) this;
         }
         /**
@@ -1114,7 +1103,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1128,7 +1117,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKafkaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1138,7 +1127,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
+        default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1149,7 +1138,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
+        default AdvancedKafkaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1160,7 +1149,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1171,7 +1160,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1182,7 +1171,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointConsumerBuilder synchronous(
+        default AdvancedKafkaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1193,7 +1182,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointConsumerBuilder synchronous(
+        default AdvancedKafkaEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1206,7 +1195,7 @@ public interface KafkaEndpointBuilderFactory {
     public static interface KafkaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKafkaEndpointProducerBuilder advanced() {
+        default AdvancedKafkaEndpointProducerBuilder advanced() {
             return (AdvancedKafkaEndpointProducerBuilder) this;
         }
         /**
@@ -1216,7 +1205,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder topic(String topic) {
+        default KafkaEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -1228,7 +1217,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder brokers(String brokers) {
+        default KafkaEndpointProducerBuilder brokers(String brokers) {
             setProperty("brokers", brokers);
             return this;
         }
@@ -1239,7 +1228,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder clientId(String clientId) {
+        default KafkaEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -1250,7 +1239,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder headerFilterStrategy(
+        default KafkaEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1262,7 +1251,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder headerFilterStrategy(
+        default KafkaEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1276,7 +1265,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -1291,7 +1280,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -1302,7 +1291,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder bridgeEndpoint(
+        default KafkaEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
@@ -1313,7 +1302,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder bridgeEndpoint(
+        default KafkaEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
@@ -1331,7 +1320,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder bufferMemorySize(
+        default KafkaEndpointProducerBuilder bufferMemorySize(
                 Integer bufferMemorySize) {
             setProperty("bufferMemorySize", bufferMemorySize);
             return this;
@@ -1350,7 +1339,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder bufferMemorySize(
+        default KafkaEndpointProducerBuilder bufferMemorySize(
                 String bufferMemorySize) {
             setProperty("bufferMemorySize", bufferMemorySize);
             return this;
@@ -1367,7 +1356,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder circularTopicDetection(
+        default KafkaEndpointProducerBuilder circularTopicDetection(
                 boolean circularTopicDetection) {
             setProperty("circularTopicDetection", circularTopicDetection);
             return this;
@@ -1384,7 +1373,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder circularTopicDetection(
+        default KafkaEndpointProducerBuilder circularTopicDetection(
                 String circularTopicDetection) {
             setProperty("circularTopicDetection", circularTopicDetection);
             return this;
@@ -1396,7 +1385,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder compressionCodec(
+        default KafkaEndpointProducerBuilder compressionCodec(
                 String compressionCodec) {
             setProperty("compressionCodec", compressionCodec);
             return this;
@@ -1407,7 +1396,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder connectionMaxIdleMs(
+        default KafkaEndpointProducerBuilder connectionMaxIdleMs(
                 Integer connectionMaxIdleMs) {
             setProperty("connectionMaxIdleMs", connectionMaxIdleMs);
             return this;
@@ -1419,7 +1408,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder connectionMaxIdleMs(
+        default KafkaEndpointProducerBuilder connectionMaxIdleMs(
                 String connectionMaxIdleMs) {
             setProperty("connectionMaxIdleMs", connectionMaxIdleMs);
             return this;
@@ -1434,7 +1423,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder enableIdempotence(
+        default KafkaEndpointProducerBuilder enableIdempotence(
                 boolean enableIdempotence) {
             setProperty("enableIdempotence", enableIdempotence);
             return this;
@@ -1449,7 +1438,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder enableIdempotence(
+        default KafkaEndpointProducerBuilder enableIdempotence(
                 String enableIdempotence) {
             setProperty("enableIdempotence", enableIdempotence);
             return this;
@@ -1461,7 +1450,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
+        default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
                 Object kafkaHeaderSerializer) {
             setProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
             return this;
@@ -1473,7 +1462,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.component.kafka.serde.KafkaHeaderSerializer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
+        default KafkaEndpointProducerBuilder kafkaHeaderSerializer(
                 String kafkaHeaderSerializer) {
             setProperty("kafkaHeaderSerializer", kafkaHeaderSerializer);
             return this;
@@ -1485,7 +1474,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder key(String key) {
+        default KafkaEndpointProducerBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -1495,7 +1484,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder keySerializerClass(
+        default KafkaEndpointProducerBuilder keySerializerClass(
                 String keySerializerClass) {
             setProperty("keySerializerClass", keySerializerClass);
             return this;
@@ -1513,7 +1502,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder lazyStartProducer(
+        default KafkaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1531,7 +1520,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder lazyStartProducer(
+        default KafkaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1558,7 +1547,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder lingerMs(Integer lingerMs) {
+        default KafkaEndpointProducerBuilder lingerMs(Integer lingerMs) {
             setProperty("lingerMs", lingerMs);
             return this;
         }
@@ -1585,7 +1574,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder lingerMs(String lingerMs) {
+        default KafkaEndpointProducerBuilder lingerMs(String lingerMs) {
             setProperty("lingerMs", lingerMs);
             return this;
         }
@@ -1600,8 +1589,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxBlockMs(
-                Integer maxBlockMs) {
+        default KafkaEndpointProducerBuilder maxBlockMs(Integer maxBlockMs) {
             setProperty("maxBlockMs", maxBlockMs);
             return this;
         }
@@ -1617,7 +1605,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxBlockMs(String maxBlockMs) {
+        default KafkaEndpointProducerBuilder maxBlockMs(String maxBlockMs) {
             setProperty("maxBlockMs", maxBlockMs);
             return this;
         }
@@ -1629,7 +1617,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxInFlightRequest(
+        default KafkaEndpointProducerBuilder maxInFlightRequest(
                 Integer maxInFlightRequest) {
             setProperty("maxInFlightRequest", maxInFlightRequest);
             return this;
@@ -1643,7 +1631,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxInFlightRequest(
+        default KafkaEndpointProducerBuilder maxInFlightRequest(
                 String maxInFlightRequest) {
             setProperty("maxInFlightRequest", maxInFlightRequest);
             return this;
@@ -1657,7 +1645,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxRequestSize(
+        default KafkaEndpointProducerBuilder maxRequestSize(
                 Integer maxRequestSize) {
             setProperty("maxRequestSize", maxRequestSize);
             return this;
@@ -1672,7 +1660,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder maxRequestSize(
+        default KafkaEndpointProducerBuilder maxRequestSize(
                 String maxRequestSize) {
             setProperty("maxRequestSize", maxRequestSize);
             return this;
@@ -1684,7 +1672,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder metadataMaxAgeMs(
+        default KafkaEndpointProducerBuilder metadataMaxAgeMs(
                 Integer metadataMaxAgeMs) {
             setProperty("metadataMaxAgeMs", metadataMaxAgeMs);
             return this;
@@ -1697,7 +1685,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder metadataMaxAgeMs(
+        default KafkaEndpointProducerBuilder metadataMaxAgeMs(
                 String metadataMaxAgeMs) {
             setProperty("metadataMaxAgeMs", metadataMaxAgeMs);
             return this;
@@ -1710,7 +1698,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder metricReporters(
+        default KafkaEndpointProducerBuilder metricReporters(
                 String metricReporters) {
             setProperty("metricReporters", metricReporters);
             return this;
@@ -1720,7 +1708,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder metricsSampleWindowMs(
+        default KafkaEndpointProducerBuilder metricsSampleWindowMs(
                 Integer metricsSampleWindowMs) {
             setProperty("metricsSampleWindowMs", metricsSampleWindowMs);
             return this;
@@ -1731,7 +1719,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder metricsSampleWindowMs(
+        default KafkaEndpointProducerBuilder metricsSampleWindowMs(
                 String metricsSampleWindowMs) {
             setProperty("metricsSampleWindowMs", metricsSampleWindowMs);
             return this;
@@ -1741,7 +1729,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder noOfMetricsSample(
+        default KafkaEndpointProducerBuilder noOfMetricsSample(
                 Integer noOfMetricsSample) {
             setProperty("noOfMetricsSample", noOfMetricsSample);
             return this;
@@ -1752,7 +1740,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder noOfMetricsSample(
+        default KafkaEndpointProducerBuilder noOfMetricsSample(
                 String noOfMetricsSample) {
             setProperty("noOfMetricsSample", noOfMetricsSample);
             return this;
@@ -1763,8 +1751,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder partitioner(
-                String partitioner) {
+        default KafkaEndpointProducerBuilder partitioner(String partitioner) {
             setProperty("partitioner", partitioner);
             return this;
         }
@@ -1775,8 +1762,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder partitionKey(
-                Integer partitionKey) {
+        default KafkaEndpointProducerBuilder partitionKey(Integer partitionKey) {
             setProperty("partitionKey", partitionKey);
             return this;
         }
@@ -1788,8 +1774,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder partitionKey(
-                String partitionKey) {
+        default KafkaEndpointProducerBuilder partitionKey(String partitionKey) {
             setProperty("partitionKey", partitionKey);
             return this;
         }
@@ -1808,7 +1793,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder producerBatchSize(
+        default KafkaEndpointProducerBuilder producerBatchSize(
                 Integer producerBatchSize) {
             setProperty("producerBatchSize", producerBatchSize);
             return this;
@@ -1829,7 +1814,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder producerBatchSize(
+        default KafkaEndpointProducerBuilder producerBatchSize(
                 String producerBatchSize) {
             setProperty("producerBatchSize", producerBatchSize);
             return this;
@@ -1841,7 +1826,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
+        default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
                 Integer queueBufferingMaxMessages) {
             setProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
@@ -1854,7 +1839,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
+        default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
                 String queueBufferingMaxMessages) {
             setProperty("queueBufferingMaxMessages", queueBufferingMaxMessages);
             return this;
@@ -1865,7 +1850,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder receiveBufferBytes(
+        default KafkaEndpointProducerBuilder receiveBufferBytes(
                 Integer receiveBufferBytes) {
             setProperty("receiveBufferBytes", receiveBufferBytes);
             return this;
@@ -1877,7 +1862,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder receiveBufferBytes(
+        default KafkaEndpointProducerBuilder receiveBufferBytes(
                 String receiveBufferBytes) {
             setProperty("receiveBufferBytes", receiveBufferBytes);
             return this;
@@ -1890,7 +1875,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder reconnectBackoffMs(
+        default KafkaEndpointProducerBuilder reconnectBackoffMs(
                 Integer reconnectBackoffMs) {
             setProperty("reconnectBackoffMs", reconnectBackoffMs);
             return this;
@@ -1904,7 +1889,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder reconnectBackoffMs(
+        default KafkaEndpointProducerBuilder reconnectBackoffMs(
                 String reconnectBackoffMs) {
             setProperty("reconnectBackoffMs", reconnectBackoffMs);
             return this;
@@ -1917,7 +1902,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder recordMetadata(
+        default KafkaEndpointProducerBuilder recordMetadata(
                 boolean recordMetadata) {
             setProperty("recordMetadata", recordMetadata);
             return this;
@@ -1930,7 +1915,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder recordMetadata(
+        default KafkaEndpointProducerBuilder recordMetadata(
                 String recordMetadata) {
             setProperty("recordMetadata", recordMetadata);
             return this;
@@ -1957,7 +1942,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder requestRequiredAcks(
+        default KafkaEndpointProducerBuilder requestRequiredAcks(
                 String requestRequiredAcks) {
             setProperty("requestRequiredAcks", requestRequiredAcks);
             return this;
@@ -1969,7 +1954,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder requestTimeoutMs(
+        default KafkaEndpointProducerBuilder requestTimeoutMs(
                 Integer requestTimeoutMs) {
             setProperty("requestTimeoutMs", requestTimeoutMs);
             return this;
@@ -1982,7 +1967,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder requestTimeoutMs(
+        default KafkaEndpointProducerBuilder requestTimeoutMs(
                 String requestTimeoutMs) {
             setProperty("requestTimeoutMs", requestTimeoutMs);
             return this;
@@ -1998,7 +1983,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder retries(Integer retries) {
+        default KafkaEndpointProducerBuilder retries(Integer retries) {
             setProperty("retries", retries);
             return this;
         }
@@ -2014,7 +1999,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder retries(String retries) {
+        default KafkaEndpointProducerBuilder retries(String retries) {
             setProperty("retries", retries);
             return this;
         }
@@ -2026,7 +2011,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder retryBackoffMs(
+        default KafkaEndpointProducerBuilder retryBackoffMs(
                 Integer retryBackoffMs) {
             setProperty("retryBackoffMs", retryBackoffMs);
             return this;
@@ -2040,7 +2025,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder retryBackoffMs(
+        default KafkaEndpointProducerBuilder retryBackoffMs(
                 String retryBackoffMs) {
             setProperty("retryBackoffMs", retryBackoffMs);
             return this;
@@ -2050,7 +2035,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder sendBufferBytes(
+        default KafkaEndpointProducerBuilder sendBufferBytes(
                 Integer sendBufferBytes) {
             setProperty("sendBufferBytes", sendBufferBytes);
             return this;
@@ -2061,7 +2046,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder sendBufferBytes(
+        default KafkaEndpointProducerBuilder sendBufferBytes(
                 String sendBufferBytes) {
             setProperty("sendBufferBytes", sendBufferBytes);
             return this;
@@ -2071,7 +2056,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder serializerClass(
+        default KafkaEndpointProducerBuilder serializerClass(
                 String serializerClass) {
             setProperty("serializerClass", serializerClass);
             return this;
@@ -2084,7 +2069,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPool(
+        default KafkaEndpointProducerBuilder workerPool(
                 ExecutorService workerPool) {
             setProperty("workerPool", workerPool);
             return this;
@@ -2097,7 +2082,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>java.util.concurrent.ExecutorService</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPool(String workerPool) {
+        default KafkaEndpointProducerBuilder workerPool(String workerPool) {
             setProperty("workerPool", workerPool);
             return this;
         }
@@ -2108,7 +2093,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPoolCoreSize(
+        default KafkaEndpointProducerBuilder workerPoolCoreSize(
                 Integer workerPoolCoreSize) {
             setProperty("workerPoolCoreSize", workerPoolCoreSize);
             return this;
@@ -2121,7 +2106,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPoolCoreSize(
+        default KafkaEndpointProducerBuilder workerPoolCoreSize(
                 String workerPoolCoreSize) {
             setProperty("workerPoolCoreSize", workerPoolCoreSize);
             return this;
@@ -2133,7 +2118,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPoolMaxSize(
+        default KafkaEndpointProducerBuilder workerPoolMaxSize(
                 Integer workerPoolMaxSize) {
             setProperty("workerPoolMaxSize", workerPoolMaxSize);
             return this;
@@ -2146,7 +2131,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KafkaEndpointProducerBuilder workerPoolMaxSize(
+        default KafkaEndpointProducerBuilder workerPoolMaxSize(
                 String workerPoolMaxSize) {
             setProperty("workerPoolMaxSize", workerPoolMaxSize);
             return this;
@@ -2162,7 +2147,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group monitoring
          */
-        public default KafkaEndpointProducerBuilder interceptorClasses(
+        default KafkaEndpointProducerBuilder interceptorClasses(
                 String interceptorClasses) {
             setProperty("interceptorClasses", interceptorClasses);
             return this;
@@ -2172,7 +2157,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -2183,7 +2168,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -2193,7 +2178,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosInitCmd(
+        default KafkaEndpointProducerBuilder kerberosInitCmd(
                 String kerberosInitCmd) {
             setProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
@@ -2210,7 +2195,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosPrincipalToLocalRules(
+        default KafkaEndpointProducerBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
             setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
@@ -2220,7 +2205,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosRenewJitter(
+        default KafkaEndpointProducerBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -2230,7 +2215,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosRenewJitter(
+        default KafkaEndpointProducerBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -2242,7 +2227,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -2254,7 +2239,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -2266,7 +2251,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder saslJaasConfig(
+        default KafkaEndpointProducerBuilder saslJaasConfig(
                 String saslJaasConfig) {
             setProperty("saslJaasConfig", saslJaasConfig);
             return this;
@@ -2277,7 +2262,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder saslKerberosServiceName(
+        default KafkaEndpointProducerBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
             setProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
@@ -2289,8 +2274,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder saslMechanism(
-                String saslMechanism) {
+        default KafkaEndpointProducerBuilder saslMechanism(String saslMechanism) {
             setProperty("saslMechanism", saslMechanism);
             return this;
         }
@@ -2300,7 +2284,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder securityProtocol(
+        default KafkaEndpointProducerBuilder securityProtocol(
                 String securityProtocol) {
             setProperty("securityProtocol", securityProtocol);
             return this;
@@ -2314,7 +2298,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslCipherSuites(
+        default KafkaEndpointProducerBuilder sslCipherSuites(
                 String sslCipherSuites) {
             setProperty("sslCipherSuites", sslCipherSuites);
             return this;
@@ -2326,7 +2310,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslContextParameters(
+        default KafkaEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2338,7 +2322,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslContextParameters(
+        default KafkaEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2349,7 +2333,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslEnabledProtocols(
+        default KafkaEndpointProducerBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
             setProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
@@ -2360,7 +2344,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslEndpointAlgorithm(
+        default KafkaEndpointProducerBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
             setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
@@ -2372,7 +2356,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslKeymanagerAlgorithm(
+        default KafkaEndpointProducerBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
             setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
@@ -2383,7 +2367,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslKeyPassword(
+        default KafkaEndpointProducerBuilder sslKeyPassword(
                 String sslKeyPassword) {
             setProperty("sslKeyPassword", sslKeyPassword);
             return this;
@@ -2394,7 +2378,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslKeystoreLocation(
+        default KafkaEndpointProducerBuilder sslKeystoreLocation(
                 String sslKeystoreLocation) {
             setProperty("sslKeystoreLocation", sslKeystoreLocation);
             return this;
@@ -2405,7 +2389,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslKeystorePassword(
+        default KafkaEndpointProducerBuilder sslKeystorePassword(
                 String sslKeystorePassword) {
             setProperty("sslKeystorePassword", sslKeystorePassword);
             return this;
@@ -2416,7 +2400,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslKeystoreType(
+        default KafkaEndpointProducerBuilder sslKeystoreType(
                 String sslKeystoreType) {
             setProperty("sslKeystoreType", sslKeystoreType);
             return this;
@@ -2430,8 +2414,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslProtocol(
-                String sslProtocol) {
+        default KafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -2441,8 +2424,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslProvider(
-                String sslProvider) {
+        default KafkaEndpointProducerBuilder sslProvider(String sslProvider) {
             setProperty("sslProvider", sslProvider);
             return this;
         }
@@ -2453,7 +2435,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslTrustmanagerAlgorithm(
+        default KafkaEndpointProducerBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
             setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
@@ -2463,7 +2445,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslTruststoreType(
+        default KafkaEndpointProducerBuilder sslTruststoreType(
                 String sslTruststoreType) {
             setProperty("sslTruststoreType", sslTruststoreType);
             return this;
@@ -2477,7 +2459,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group confluent
          */
-        public default KafkaEndpointProducerBuilder schemaRegistryURL(
+        default KafkaEndpointProducerBuilder schemaRegistryURL(
                 String schemaRegistryURL) {
             setProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
@@ -2487,7 +2469,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslTruststoreLocation(
+        default KafkaEndpointProducerBuilder sslTruststoreLocation(
                 String sslTruststoreLocation) {
             setProperty("sslTruststoreLocation", sslTruststoreLocation);
             return this;
@@ -2497,7 +2479,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointProducerBuilder sslTruststorePassword(
+        default KafkaEndpointProducerBuilder sslTruststorePassword(
                 String sslTruststorePassword) {
             setProperty("sslTruststorePassword", sslTruststorePassword);
             return this;
@@ -2510,7 +2492,7 @@ public interface KafkaEndpointBuilderFactory {
     public interface AdvancedKafkaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KafkaEndpointProducerBuilder basic() {
+        default KafkaEndpointProducerBuilder basic() {
             return (KafkaEndpointProducerBuilder) this;
         }
         /**
@@ -2519,7 +2501,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2530,7 +2512,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2541,7 +2523,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointProducerBuilder synchronous(
+        default AdvancedKafkaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2552,7 +2534,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointProducerBuilder synchronous(
+        default AdvancedKafkaEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2565,7 +2547,7 @@ public interface KafkaEndpointBuilderFactory {
     public static interface KafkaEndpointBuilder
             extends
                 KafkaEndpointConsumerBuilder, KafkaEndpointProducerBuilder {
-        public default AdvancedKafkaEndpointBuilder advanced() {
+        default AdvancedKafkaEndpointBuilder advanced() {
             return (AdvancedKafkaEndpointBuilder) this;
         }
         /**
@@ -2575,7 +2557,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder topic(String topic) {
+        default KafkaEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -2587,7 +2569,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder brokers(String brokers) {
+        default KafkaEndpointBuilder brokers(String brokers) {
             setProperty("brokers", brokers);
             return this;
         }
@@ -2598,7 +2580,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder clientId(String clientId) {
+        default KafkaEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -2609,7 +2591,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder headerFilterStrategy(
+        default KafkaEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2621,7 +2603,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder headerFilterStrategy(
+        default KafkaEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2635,7 +2617,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default KafkaEndpointBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 Integer reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -2650,7 +2632,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default KafkaEndpointBuilder reconnectBackoffMaxMs(
+        default KafkaEndpointBuilder reconnectBackoffMaxMs(
                 String reconnectBackoffMaxMs) {
             setProperty("reconnectBackoffMaxMs", reconnectBackoffMaxMs);
             return this;
@@ -2666,7 +2648,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group monitoring
          */
-        public default KafkaEndpointBuilder interceptorClasses(
+        default KafkaEndpointBuilder interceptorClasses(
                 String interceptorClasses) {
             setProperty("interceptorClasses", interceptorClasses);
             return this;
@@ -2676,7 +2658,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
                 Integer kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -2687,7 +2669,7 @@ public interface KafkaEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
+        default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
                 String kerberosBeforeReloginMinTime) {
             setProperty("kerberosBeforeReloginMinTime", kerberosBeforeReloginMinTime);
             return this;
@@ -2697,8 +2679,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosInitCmd(
-                String kerberosInitCmd) {
+        default KafkaEndpointBuilder kerberosInitCmd(String kerberosInitCmd) {
             setProperty("kerberosInitCmd", kerberosInitCmd);
             return this;
         }
@@ -2714,7 +2695,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosPrincipalToLocalRules(
+        default KafkaEndpointBuilder kerberosPrincipalToLocalRules(
                 String kerberosPrincipalToLocalRules) {
             setProperty("kerberosPrincipalToLocalRules", kerberosPrincipalToLocalRules);
             return this;
@@ -2724,7 +2705,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosRenewJitter(
+        default KafkaEndpointBuilder kerberosRenewJitter(
                 Double kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -2734,7 +2715,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosRenewJitter(
+        default KafkaEndpointBuilder kerberosRenewJitter(
                 String kerberosRenewJitter) {
             setProperty("kerberosRenewJitter", kerberosRenewJitter);
             return this;
@@ -2746,7 +2727,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointBuilder kerberosRenewWindowFactor(
                 Double kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -2758,7 +2739,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder kerberosRenewWindowFactor(
+        default KafkaEndpointBuilder kerberosRenewWindowFactor(
                 String kerberosRenewWindowFactor) {
             setProperty("kerberosRenewWindowFactor", kerberosRenewWindowFactor);
             return this;
@@ -2770,7 +2751,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder saslJaasConfig(String saslJaasConfig) {
+        default KafkaEndpointBuilder saslJaasConfig(String saslJaasConfig) {
             setProperty("saslJaasConfig", saslJaasConfig);
             return this;
         }
@@ -2780,7 +2761,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder saslKerberosServiceName(
+        default KafkaEndpointBuilder saslKerberosServiceName(
                 String saslKerberosServiceName) {
             setProperty("saslKerberosServiceName", saslKerberosServiceName);
             return this;
@@ -2792,7 +2773,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder saslMechanism(String saslMechanism) {
+        default KafkaEndpointBuilder saslMechanism(String saslMechanism) {
             setProperty("saslMechanism", saslMechanism);
             return this;
         }
@@ -2802,8 +2783,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder securityProtocol(
-                String securityProtocol) {
+        default KafkaEndpointBuilder securityProtocol(String securityProtocol) {
             setProperty("securityProtocol", securityProtocol);
             return this;
         }
@@ -2816,8 +2796,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslCipherSuites(
-                String sslCipherSuites) {
+        default KafkaEndpointBuilder sslCipherSuites(String sslCipherSuites) {
             setProperty("sslCipherSuites", sslCipherSuites);
             return this;
         }
@@ -2828,7 +2807,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslContextParameters(
+        default KafkaEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2840,7 +2819,7 @@ public interface KafkaEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslContextParameters(
+        default KafkaEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2851,7 +2830,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslEnabledProtocols(
+        default KafkaEndpointBuilder sslEnabledProtocols(
                 String sslEnabledProtocols) {
             setProperty("sslEnabledProtocols", sslEnabledProtocols);
             return this;
@@ -2862,7 +2841,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslEndpointAlgorithm(
+        default KafkaEndpointBuilder sslEndpointAlgorithm(
                 String sslEndpointAlgorithm) {
             setProperty("sslEndpointAlgorithm", sslEndpointAlgorithm);
             return this;
@@ -2874,7 +2853,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslKeymanagerAlgorithm(
+        default KafkaEndpointBuilder sslKeymanagerAlgorithm(
                 String sslKeymanagerAlgorithm) {
             setProperty("sslKeymanagerAlgorithm", sslKeymanagerAlgorithm);
             return this;
@@ -2885,8 +2864,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslKeystoreType(
-                String sslKeystoreType) {
+        default KafkaEndpointBuilder sslKeystoreType(String sslKeystoreType) {
             setProperty("sslKeystoreType", sslKeystoreType);
             return this;
         }
@@ -2899,7 +2877,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslProtocol(String sslProtocol) {
+        default KafkaEndpointBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -2909,7 +2887,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslProvider(String sslProvider) {
+        default KafkaEndpointBuilder sslProvider(String sslProvider) {
             setProperty("sslProvider", sslProvider);
             return this;
         }
@@ -2920,7 +2898,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslTrustmanagerAlgorithm(
+        default KafkaEndpointBuilder sslTrustmanagerAlgorithm(
                 String sslTrustmanagerAlgorithm) {
             setProperty("sslTrustmanagerAlgorithm", sslTrustmanagerAlgorithm);
             return this;
@@ -2930,8 +2908,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KafkaEndpointBuilder sslTruststoreType(
-                String sslTruststoreType) {
+        default KafkaEndpointBuilder sslTruststoreType(String sslTruststoreType) {
             setProperty("sslTruststoreType", sslTruststoreType);
             return this;
         }
@@ -2944,8 +2921,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group confluent
          */
-        public default KafkaEndpointBuilder schemaRegistryURL(
-                String schemaRegistryURL) {
+        default KafkaEndpointBuilder schemaRegistryURL(String schemaRegistryURL) {
             setProperty("schemaRegistryURL", schemaRegistryURL);
             return this;
         }
@@ -2957,7 +2933,7 @@ public interface KafkaEndpointBuilderFactory {
     public static interface AdvancedKafkaEndpointBuilder
             extends
                 AdvancedKafkaEndpointConsumerBuilder, AdvancedKafkaEndpointProducerBuilder {
-        public default KafkaEndpointBuilder basic() {
+        default KafkaEndpointBuilder basic() {
             return (KafkaEndpointBuilder) this;
         }
         /**
@@ -2966,7 +2942,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2977,7 +2953,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointBuilder basicPropertyBinding(
+        default AdvancedKafkaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2988,8 +2964,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedKafkaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2999,8 +2974,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKafkaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedKafkaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -3010,7 +2984,7 @@ public interface KafkaEndpointBuilderFactory {
      * Apache Kafka brokers. Creates a builder to build endpoints for the Kafka
      * component.
      */
-    public default KafkaEndpointBuilder kafka(String path) {
+    default KafkaEndpointBuilder kafka(String path) {
         class KafkaEndpointBuilderImpl extends AbstractEndpointBuilder implements KafkaEndpointBuilder, AdvancedKafkaEndpointBuilder {
             public KafkaEndpointBuilderImpl(String path) {
                 super("kafka", path);

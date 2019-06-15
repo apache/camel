@@ -50,7 +50,7 @@ public interface FileEndpointBuilderFactory {
     public interface FileEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedFileEndpointConsumerBuilder advanced() {
+        default AdvancedFileEndpointConsumerBuilder advanced() {
             return (AdvancedFileEndpointConsumerBuilder) this;
         }
         /**
@@ -58,8 +58,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder directoryName(
-                File directoryName) {
+        default FileEndpointConsumerBuilder directoryName(File directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -68,8 +67,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder directoryName(
-                String directoryName) {
+        default FileEndpointConsumerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -86,7 +84,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder charset(String charset) {
+        default FileEndpointConsumerBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -105,8 +103,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder doneFileName(
-                String doneFileName) {
+        default FileEndpointConsumerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -130,7 +127,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder fileName(Expression fileName) {
+        default FileEndpointConsumerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -155,7 +152,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointConsumerBuilder fileName(String fileName) {
+        default FileEndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -170,7 +167,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder bridgeErrorHandler(
+        default FileEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -186,7 +183,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder bridgeErrorHandler(
+        default FileEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -196,7 +193,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder delete(boolean delete) {
+        default FileEndpointConsumerBuilder delete(boolean delete) {
             setProperty("delete", delete);
             return this;
         }
@@ -205,7 +202,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder delete(String delete) {
+        default FileEndpointConsumerBuilder delete(String delete) {
             setProperty("delete", delete);
             return this;
         }
@@ -217,8 +214,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder moveFailed(
-                Expression moveFailed) {
+        default FileEndpointConsumerBuilder moveFailed(Expression moveFailed) {
             setProperty("moveFailed", moveFailed);
             return this;
         }
@@ -231,7 +227,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder moveFailed(String moveFailed) {
+        default FileEndpointConsumerBuilder moveFailed(String moveFailed) {
             setProperty("moveFailed", moveFailed);
             return this;
         }
@@ -243,7 +239,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder noop(boolean noop) {
+        default FileEndpointConsumerBuilder noop(boolean noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -255,7 +251,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder noop(String noop) {
+        default FileEndpointConsumerBuilder noop(String noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -266,7 +262,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder preMove(Expression preMove) {
+        default FileEndpointConsumerBuilder preMove(Expression preMove) {
             setProperty("preMove", preMove);
             return this;
         }
@@ -278,7 +274,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder preMove(String preMove) {
+        default FileEndpointConsumerBuilder preMove(String preMove) {
             setProperty("preMove", preMove);
             return this;
         }
@@ -292,7 +288,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder preSort(boolean preSort) {
+        default FileEndpointConsumerBuilder preSort(boolean preSort) {
             setProperty("preSort", preSort);
             return this;
         }
@@ -306,7 +302,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder preSort(String preSort) {
+        default FileEndpointConsumerBuilder preSort(String preSort) {
             setProperty("preSort", preSort);
             return this;
         }
@@ -316,7 +312,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder recursive(boolean recursive) {
+        default FileEndpointConsumerBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -326,7 +322,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder recursive(String recursive) {
+        default FileEndpointConsumerBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
             return this;
         }
@@ -336,7 +332,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -347,7 +343,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -359,7 +355,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder antExclude(String antExclude) {
+        default FileEndpointConsumerBuilder antExclude(String antExclude) {
             setProperty("antExclude", antExclude);
             return this;
         }
@@ -368,7 +364,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder antFilterCaseSensitive(
+        default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
             setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
@@ -378,7 +374,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder antFilterCaseSensitive(
+        default FileEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
             setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
@@ -389,7 +385,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder antInclude(String antInclude) {
+        default FileEndpointConsumerBuilder antInclude(String antInclude) {
             setProperty("antInclude", antInclude);
             return this;
         }
@@ -403,7 +399,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
+        default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
             setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
@@ -418,7 +414,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
+        default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
             setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
@@ -432,7 +428,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder exclude(String exclude) {
+        default FileEndpointConsumerBuilder exclude(String exclude) {
             setProperty("exclude", exclude);
             return this;
         }
@@ -444,7 +440,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filter(Object filter) {
+        default FileEndpointConsumerBuilder filter(Object filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -456,7 +452,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;java.io.File&gt;</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filter(String filter) {
+        default FileEndpointConsumerBuilder filter(String filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -467,7 +463,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filterDirectory(
+        default FileEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
             setProperty("filterDirectory", filterDirectory);
             return this;
@@ -480,7 +476,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filterDirectory(
+        default FileEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
             setProperty("filterDirectory", filterDirectory);
             return this;
@@ -491,8 +487,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filterFile(
-                Predicate filterFile) {
+        default FileEndpointConsumerBuilder filterFile(Predicate filterFile) {
             setProperty("filterFile", filterFile);
             return this;
         }
@@ -503,7 +498,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Predicate</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder filterFile(String filterFile) {
+        default FileEndpointConsumerBuilder filterFile(String filterFile) {
             setProperty("filterFile", filterFile);
             return this;
         }
@@ -515,7 +510,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotent(Boolean idempotent) {
+        default FileEndpointConsumerBuilder idempotent(Boolean idempotent) {
             setProperty("idempotent", idempotent);
             return this;
         }
@@ -528,7 +523,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotent(String idempotent) {
+        default FileEndpointConsumerBuilder idempotent(String idempotent) {
             setProperty("idempotent", idempotent);
             return this;
         }
@@ -540,7 +535,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotentKey(
+        default FileEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
             setProperty("idempotentKey", idempotentKey);
             return this;
@@ -554,8 +549,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotentKey(
-                String idempotentKey) {
+        default FileEndpointConsumerBuilder idempotentKey(String idempotentKey) {
             setProperty("idempotentKey", idempotentKey);
             return this;
         }
@@ -567,7 +561,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotentRepository(
+        default FileEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
             setProperty("idempotentRepository", idempotentRepository);
             return this;
@@ -580,7 +574,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder idempotentRepository(
+        default FileEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
             setProperty("idempotentRepository", idempotentRepository);
             return this;
@@ -594,7 +588,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder include(String include) {
+        default FileEndpointConsumerBuilder include(String include) {
             setProperty("include", include);
             return this;
         }
@@ -604,7 +598,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder maxDepth(int maxDepth) {
+        default FileEndpointConsumerBuilder maxDepth(int maxDepth) {
             setProperty("maxDepth", maxDepth);
             return this;
         }
@@ -614,7 +608,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder maxDepth(String maxDepth) {
+        default FileEndpointConsumerBuilder maxDepth(String maxDepth) {
             setProperty("maxDepth", maxDepth);
             return this;
         }
@@ -631,7 +625,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder maxMessagesPerPoll(
+        default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -649,7 +643,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder maxMessagesPerPoll(
+        default FileEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -661,7 +655,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder minDepth(int minDepth) {
+        default FileEndpointConsumerBuilder minDepth(int minDepth) {
             setProperty("minDepth", minDepth);
             return this;
         }
@@ -672,7 +666,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder minDepth(String minDepth) {
+        default FileEndpointConsumerBuilder minDepth(String minDepth) {
             setProperty("minDepth", minDepth);
             return this;
         }
@@ -683,7 +677,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder move(Expression move) {
+        default FileEndpointConsumerBuilder move(Expression move) {
             setProperty("move", move);
             return this;
         }
@@ -695,7 +689,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group filter
          */
-        public default FileEndpointConsumerBuilder move(String move) {
+        default FileEndpointConsumerBuilder move(String move) {
             setProperty("move", move);
             return this;
         }
@@ -707,7 +701,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
+        default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
             setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
@@ -720,7 +714,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;java.io.File&gt;</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
+        default FileEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
             setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
@@ -767,7 +761,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLock(String readLock) {
+        default FileEndpointConsumerBuilder readLock(String readLock) {
             setProperty("readLock", readLock);
             return this;
         }
@@ -786,7 +780,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockCheckInterval(
+        default FileEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
             setProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
@@ -806,7 +800,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockCheckInterval(
+        default FileEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
             setProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
@@ -822,7 +816,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
+        default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
             setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
@@ -838,7 +832,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
+        default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
             setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
@@ -850,7 +844,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
             setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
@@ -862,7 +856,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
             setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
@@ -879,7 +873,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
             setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
@@ -896,7 +890,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
             setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
@@ -913,7 +907,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
             setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
@@ -930,7 +924,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
             setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
@@ -942,7 +936,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
             setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
@@ -954,7 +948,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
+        default FileEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
             setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
@@ -968,7 +962,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockLoggingLevel(
+        default FileEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
             setProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
@@ -983,7 +977,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockLoggingLevel(
+        default FileEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
             setProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
@@ -998,7 +992,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMarkerFile(
+        default FileEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
             setProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
@@ -1013,7 +1007,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMarkerFile(
+        default FileEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
             setProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
@@ -1028,8 +1022,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMinAge(
-                long readLockMinAge) {
+        default FileEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
             return this;
         }
@@ -1043,8 +1036,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMinAge(
-                String readLockMinAge) {
+        default FileEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
             return this;
         }
@@ -1056,7 +1048,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMinLength(
+        default FileEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
             setProperty("readLockMinLength", readLockMinLength);
             return this;
@@ -1069,7 +1061,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockMinLength(
+        default FileEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
             setProperty("readLockMinLength", readLockMinLength);
             return this;
@@ -1087,7 +1079,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockRemoveOnCommit(
+        default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
             setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
@@ -1105,7 +1097,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockRemoveOnCommit(
+        default FileEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
             setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
@@ -1119,7 +1111,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockRemoveOnRollback(
+        default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
             setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
@@ -1133,7 +1125,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockRemoveOnRollback(
+        default FileEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
             setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
@@ -1154,8 +1146,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockTimeout(
-                long readLockTimeout) {
+        default FileEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
             setProperty("readLockTimeout", readLockTimeout);
             return this;
         }
@@ -1175,7 +1166,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group lock
          */
-        public default FileEndpointConsumerBuilder readLockTimeout(
+        default FileEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
             setProperty("readLockTimeout", readLockTimeout);
             return this;
@@ -1186,7 +1177,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffErrorThreshold(
+        default FileEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -1197,7 +1188,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffErrorThreshold(
+        default FileEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -1208,7 +1199,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffIdleThreshold(
+        default FileEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -1219,7 +1210,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffIdleThreshold(
+        default FileEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -1234,7 +1225,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffMultiplier(
+        default FileEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -1249,7 +1240,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder backoffMultiplier(
+        default FileEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -1261,7 +1252,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder delay(long delay) {
+        default FileEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -1272,7 +1263,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder delay(String delay) {
+        default FileEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -1282,7 +1273,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder greedy(boolean greedy) {
+        default FileEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -1292,7 +1283,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder greedy(String greedy) {
+        default FileEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -1303,8 +1294,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default FileEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -1315,8 +1305,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default FileEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -1326,7 +1315,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder runLoggingLevel(
+        default FileEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -1338,7 +1327,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder runLoggingLevel(
+        default FileEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -1351,7 +1340,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder scheduledExecutorService(
+        default FileEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -1364,7 +1353,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder scheduledExecutorService(
+        default FileEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -1377,7 +1366,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder scheduler(
+        default FileEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -1390,7 +1379,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder scheduler(String scheduler) {
+        default FileEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -1401,7 +1390,7 @@ public interface FileEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder schedulerProperties(
+        default FileEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -1414,7 +1403,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder schedulerProperties(
+        default FileEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -1424,7 +1413,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder startScheduler(
+        default FileEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -1434,8 +1423,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder startScheduler(
-                String startScheduler) {
+        default FileEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
         }
@@ -1444,7 +1432,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -1454,7 +1442,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default FileEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -1464,8 +1452,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default FileEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -1475,8 +1462,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default FileEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default FileEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -1485,7 +1471,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder shuffle(boolean shuffle) {
+        default FileEndpointConsumerBuilder shuffle(boolean shuffle) {
             setProperty("shuffle", shuffle);
             return this;
         }
@@ -1494,7 +1480,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder shuffle(String shuffle) {
+        default FileEndpointConsumerBuilder shuffle(String shuffle) {
             setProperty("shuffle", shuffle);
             return this;
         }
@@ -1507,8 +1493,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder sortBy(
-                Comparator<Exchange> sortBy) {
+        default FileEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
             setProperty("sortBy", sortBy);
             return this;
         }
@@ -1521,7 +1506,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder sortBy(String sortBy) {
+        default FileEndpointConsumerBuilder sortBy(String sortBy) {
             setProperty("sortBy", sortBy);
             return this;
         }
@@ -1531,8 +1516,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder sorter(
-                Comparator<Object> sorter) {
+        default FileEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
             setProperty("sorter", sorter);
             return this;
         }
@@ -1542,7 +1526,7 @@ public interface FileEndpointBuilderFactory {
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;java.io.File&gt;&gt;</code> type.
          * @group sort
          */
-        public default FileEndpointConsumerBuilder sorter(String sorter) {
+        default FileEndpointConsumerBuilder sorter(String sorter) {
             setProperty("sorter", sorter);
             return this;
         }
@@ -1554,7 +1538,7 @@ public interface FileEndpointBuilderFactory {
     public interface AdvancedFileEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default FileEndpointConsumerBuilder basic() {
+        default FileEndpointConsumerBuilder basic() {
             return (FileEndpointConsumerBuilder) this;
         }
         /**
@@ -1563,7 +1547,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder directoryMustExist(
+        default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 boolean directoryMustExist) {
             setProperty("directoryMustExist", directoryMustExist);
             return this;
@@ -1574,7 +1558,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder directoryMustExist(
+        default AdvancedFileEndpointConsumerBuilder directoryMustExist(
                 String directoryMustExist) {
             setProperty("directoryMustExist", directoryMustExist);
             return this;
@@ -1588,7 +1572,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1602,7 +1586,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder exceptionHandler(
+        default AdvancedFileEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -1612,7 +1596,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder exchangePattern(
+        default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1623,7 +1607,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder exchangePattern(
+        default AdvancedFileEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -1635,7 +1619,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder extendedAttributes(
+        default AdvancedFileEndpointConsumerBuilder extendedAttributes(
                 String extendedAttributes) {
             setProperty("extendedAttributes", extendedAttributes);
             return this;
@@ -1649,7 +1633,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder inProgressRepository(
+        default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
             setProperty("inProgressRepository", inProgressRepository);
             return this;
@@ -1663,7 +1647,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder inProgressRepository(
+        default AdvancedFileEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
             setProperty("inProgressRepository", inProgressRepository);
             return this;
@@ -1676,7 +1660,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder localWorkDirectory(
+        default AdvancedFileEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
             setProperty("localWorkDirectory", localWorkDirectory);
             return this;
@@ -1690,7 +1674,7 @@ public interface FileEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
+        default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
             setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
@@ -1704,7 +1688,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
+        default AdvancedFileEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
             setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
@@ -1718,7 +1702,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder pollStrategy(
+        default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -1732,7 +1716,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder pollStrategy(
+        default AdvancedFileEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -1745,7 +1729,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder probeContentType(
+        default AdvancedFileEndpointConsumerBuilder probeContentType(
                 boolean probeContentType) {
             setProperty("probeContentType", probeContentType);
             return this;
@@ -1758,7 +1742,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder probeContentType(
+        default AdvancedFileEndpointConsumerBuilder probeContentType(
                 String probeContentType) {
             setProperty("probeContentType", probeContentType);
             return this;
@@ -1774,7 +1758,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder processStrategy(
+        default AdvancedFileEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
             setProperty("processStrategy", processStrategy);
             return this;
@@ -1790,7 +1774,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;java.io.File&gt;</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder processStrategy(
+        default AdvancedFileEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
             setProperty("processStrategy", processStrategy);
             return this;
@@ -1804,7 +1788,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
+        default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 boolean startingDirectoryMustExist) {
             setProperty("startingDirectoryMustExist", startingDirectoryMustExist);
             return this;
@@ -1818,7 +1802,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
+        default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
                 String startingDirectoryMustExist) {
             setProperty("startingDirectoryMustExist", startingDirectoryMustExist);
             return this;
@@ -1831,7 +1815,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
+        default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 boolean startingDirectoryMustHaveAccess) {
             setProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
             return this;
@@ -1844,7 +1828,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
+        default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
                 String startingDirectoryMustHaveAccess) {
             setProperty("startingDirectoryMustHaveAccess", startingDirectoryMustHaveAccess);
             return this;
@@ -1857,7 +1841,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder autoCreate(
+        default AdvancedFileEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
@@ -1870,8 +1854,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder autoCreate(
-                String autoCreate) {
+        default AdvancedFileEndpointConsumerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -1881,7 +1864,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1892,7 +1875,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1902,8 +1885,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder bufferSize(
-                int bufferSize) {
+        default AdvancedFileEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -1912,8 +1894,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder bufferSize(
-                String bufferSize) {
+        default AdvancedFileEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -1924,7 +1905,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -1936,7 +1917,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -1951,7 +1932,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
+        default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -1966,7 +1947,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
+        default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
                 String renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -1977,7 +1958,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder synchronous(
+        default AdvancedFileEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1988,7 +1969,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointConsumerBuilder synchronous(
+        default AdvancedFileEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2001,7 +1982,7 @@ public interface FileEndpointBuilderFactory {
     public static interface FileEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFileEndpointProducerBuilder advanced() {
+        default AdvancedFileEndpointProducerBuilder advanced() {
             return (AdvancedFileEndpointProducerBuilder) this;
         }
         /**
@@ -2009,8 +1990,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder directoryName(
-                File directoryName) {
+        default FileEndpointProducerBuilder directoryName(File directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -2019,8 +1999,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder directoryName(
-                String directoryName) {
+        default FileEndpointProducerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -2037,7 +2016,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder charset(String charset) {
+        default FileEndpointProducerBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -2056,8 +2035,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder doneFileName(
-                String doneFileName) {
+        default FileEndpointProducerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -2081,7 +2059,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder fileName(Expression fileName) {
+        default FileEndpointProducerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2106,7 +2084,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointProducerBuilder fileName(String fileName) {
+        default FileEndpointProducerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2130,8 +2108,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder fileExist(
-                GenericFileExist fileExist) {
+        default FileEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
             setProperty("fileExist", fileExist);
             return this;
         }
@@ -2155,7 +2132,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder fileExist(String fileExist) {
+        default FileEndpointProducerBuilder fileExist(String fileExist) {
             setProperty("fileExist", fileExist);
             return this;
         }
@@ -2169,7 +2146,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder flatten(boolean flatten) {
+        default FileEndpointProducerBuilder flatten(boolean flatten) {
             setProperty("flatten", flatten);
             return this;
         }
@@ -2183,7 +2160,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder flatten(String flatten) {
+        default FileEndpointProducerBuilder flatten(String flatten) {
             setProperty("flatten", flatten);
             return this;
         }
@@ -2197,7 +2174,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder jailStartingDirectory(
+        default FileEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
             setProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
@@ -2212,7 +2189,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder jailStartingDirectory(
+        default FileEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
             setProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
@@ -2230,7 +2207,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder lazyStartProducer(
+        default FileEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2248,7 +2225,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder lazyStartProducer(
+        default FileEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2265,8 +2242,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder moveExisting(
-                Expression moveExisting) {
+        default FileEndpointProducerBuilder moveExisting(Expression moveExisting) {
             setProperty("moveExisting", moveExisting);
             return this;
         }
@@ -2283,8 +2259,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder moveExisting(
-                String moveExisting) {
+        default FileEndpointProducerBuilder moveExisting(String moveExisting) {
             setProperty("moveExisting", moveExisting);
             return this;
         }
@@ -2299,8 +2274,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder tempFileName(
-                Expression tempFileName) {
+        default FileEndpointProducerBuilder tempFileName(Expression tempFileName) {
             setProperty("tempFileName", tempFileName);
             return this;
         }
@@ -2316,8 +2290,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder tempFileName(
-                String tempFileName) {
+        default FileEndpointProducerBuilder tempFileName(String tempFileName) {
             setProperty("tempFileName", tempFileName);
             return this;
         }
@@ -2330,7 +2303,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default FileEndpointProducerBuilder tempPrefix(String tempPrefix) {
+        default FileEndpointProducerBuilder tempPrefix(String tempPrefix) {
             setProperty("tempPrefix", tempPrefix);
             return this;
         }
@@ -2342,7 +2315,7 @@ public interface FileEndpointBuilderFactory {
     public interface AdvancedFileEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default FileEndpointProducerBuilder basic() {
+        default FileEndpointProducerBuilder basic() {
             return (FileEndpointProducerBuilder) this;
         }
         /**
@@ -2356,7 +2329,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder allowNullBody(
+        default AdvancedFileEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2372,7 +2345,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder allowNullBody(
+        default AdvancedFileEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2384,7 +2357,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder chmod(String chmod) {
+        default AdvancedFileEndpointProducerBuilder chmod(String chmod) {
             setProperty("chmod", chmod);
             return this;
         }
@@ -2395,7 +2368,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder chmodDirectory(
+        default AdvancedFileEndpointProducerBuilder chmodDirectory(
                 String chmodDirectory) {
             setProperty("chmodDirectory", chmodDirectory);
             return this;
@@ -2417,7 +2390,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
+        default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
             setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
@@ -2439,7 +2412,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
+        default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
             setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
@@ -2452,7 +2425,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder forceWrites(
+        default AdvancedFileEndpointProducerBuilder forceWrites(
                 boolean forceWrites) {
             setProperty("forceWrites", forceWrites);
             return this;
@@ -2465,7 +2438,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder forceWrites(
+        default AdvancedFileEndpointProducerBuilder forceWrites(
                 String forceWrites) {
             setProperty("forceWrites", forceWrites);
             return this;
@@ -2481,7 +2454,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder keepLastModified(
+        default AdvancedFileEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
             setProperty("keepLastModified", keepLastModified);
             return this;
@@ -2497,7 +2470,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder keepLastModified(
+        default AdvancedFileEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
             setProperty("keepLastModified", keepLastModified);
             return this;
@@ -2510,7 +2483,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
+        default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
             setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
@@ -2523,7 +2496,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
+        default AdvancedFileEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
             setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
@@ -2536,7 +2509,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder autoCreate(
+        default AdvancedFileEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
@@ -2549,8 +2522,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder autoCreate(
-                String autoCreate) {
+        default AdvancedFileEndpointProducerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -2560,7 +2532,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2571,7 +2543,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2581,8 +2553,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder bufferSize(
-                int bufferSize) {
+        default AdvancedFileEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2591,8 +2562,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder bufferSize(
-                String bufferSize) {
+        default AdvancedFileEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2603,7 +2573,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -2615,7 +2585,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -2630,7 +2600,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder renameUsingCopy(
+        default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -2645,7 +2615,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder renameUsingCopy(
+        default AdvancedFileEndpointProducerBuilder renameUsingCopy(
                 String renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -2656,7 +2626,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder synchronous(
+        default AdvancedFileEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2667,7 +2637,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointProducerBuilder synchronous(
+        default AdvancedFileEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2680,7 +2650,7 @@ public interface FileEndpointBuilderFactory {
     public static interface FileEndpointBuilder
             extends
                 FileEndpointConsumerBuilder, FileEndpointProducerBuilder {
-        public default AdvancedFileEndpointBuilder advanced() {
+        default AdvancedFileEndpointBuilder advanced() {
             return (AdvancedFileEndpointBuilder) this;
         }
         /**
@@ -2688,7 +2658,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointBuilder directoryName(File directoryName) {
+        default FileEndpointBuilder directoryName(File directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -2697,7 +2667,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group common
          */
-        public default FileEndpointBuilder directoryName(String directoryName) {
+        default FileEndpointBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
             return this;
         }
@@ -2714,7 +2684,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointBuilder charset(String charset) {
+        default FileEndpointBuilder charset(String charset) {
             setProperty("charset", charset);
             return this;
         }
@@ -2733,7 +2703,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default FileEndpointBuilder doneFileName(String doneFileName) {
+        default FileEndpointBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
             return this;
         }
@@ -2757,7 +2727,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointBuilder fileName(Expression fileName) {
+        default FileEndpointBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2782,7 +2752,7 @@ public interface FileEndpointBuilderFactory {
          * <code>org.apache.camel.Expression</code> type.
          * @group common
          */
-        public default FileEndpointBuilder fileName(String fileName) {
+        default FileEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -2794,7 +2764,7 @@ public interface FileEndpointBuilderFactory {
     public static interface AdvancedFileEndpointBuilder
             extends
                 AdvancedFileEndpointConsumerBuilder, AdvancedFileEndpointProducerBuilder {
-        public default FileEndpointBuilder basic() {
+        default FileEndpointBuilder basic() {
             return (FileEndpointBuilder) this;
         }
         /**
@@ -2805,7 +2775,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder autoCreate(boolean autoCreate) {
+        default AdvancedFileEndpointBuilder autoCreate(boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -2817,7 +2787,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder autoCreate(String autoCreate) {
+        default AdvancedFileEndpointBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
             return this;
         }
@@ -2827,7 +2797,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder basicPropertyBinding(
+        default AdvancedFileEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2838,7 +2808,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder basicPropertyBinding(
+        default AdvancedFileEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2848,7 +2818,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder bufferSize(int bufferSize) {
+        default AdvancedFileEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2857,7 +2827,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder bufferSize(String bufferSize) {
+        default AdvancedFileEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -2868,7 +2838,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 boolean copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -2880,7 +2850,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
+        default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
                 String copyAndDeleteOnRenameFail) {
             setProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
@@ -2895,7 +2865,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder renameUsingCopy(
+        default AdvancedFileEndpointBuilder renameUsingCopy(
                 boolean renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -2910,7 +2880,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder renameUsingCopy(
+        default AdvancedFileEndpointBuilder renameUsingCopy(
                 String renameUsingCopy) {
             setProperty("renameUsingCopy", renameUsingCopy);
             return this;
@@ -2921,8 +2891,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedFileEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2932,8 +2901,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFileEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedFileEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2950,7 +2918,7 @@ public interface FileEndpointBuilderFactory {
      * The file component is used for reading or writing files. Creates a
      * builder to build endpoints for the File component.
      */
-    public default FileEndpointBuilder file(String path) {
+    default FileEndpointBuilder file(String path) {
         class FileEndpointBuilderImpl extends AbstractEndpointBuilder implements FileEndpointBuilder, AdvancedFileEndpointBuilder {
             public FileEndpointBuilderImpl(String path) {
                 super("file", path);
