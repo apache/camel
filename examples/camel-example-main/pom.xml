@@ -102,7 +102,7 @@
                 <artifactId>camel-main-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <logClasspath>true</logClasspath>
+                    <logClasspath>false</logClasspath>
                 </configuration>
             </plugin>
 
