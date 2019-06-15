@@ -45,7 +45,7 @@ public interface ElsqlEndpointBuilderFactory {
     public interface ElsqlEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedElsqlEndpointConsumerBuilder advanced() {
+        default AdvancedElsqlEndpointConsumerBuilder advanced() {
             return (AdvancedElsqlEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder elsqlName(String elsqlName) {
+        default ElsqlEndpointConsumerBuilder elsqlName(String elsqlName) {
             setProperty("elsqlName", elsqlName);
             return this;
         }
@@ -66,8 +66,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder resourceUri(
-                String resourceUri) {
+        default ElsqlEndpointConsumerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -76,7 +75,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder allowNamedParameters(
+        default ElsqlEndpointConsumerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -86,7 +85,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder allowNamedParameters(
+        default ElsqlEndpointConsumerBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -98,7 +97,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder databaseVendor(
+        default ElsqlEndpointConsumerBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
@@ -110,7 +109,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder databaseVendor(
+        default ElsqlEndpointConsumerBuilder databaseVendor(
                 String databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
@@ -120,7 +119,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointConsumerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -130,7 +129,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder dataSource(String dataSource) {
+        default ElsqlEndpointConsumerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -141,8 +140,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default ElsqlEndpointConsumerBuilder dataSourceRef(
-                String dataSourceRef) {
+        default ElsqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -152,8 +150,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder outputClass(
-                String outputClass) {
+        default ElsqlEndpointConsumerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -166,8 +163,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder outputHeader(
-                String outputHeader) {
+        default ElsqlEndpointConsumerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -189,8 +185,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder outputType(
-                SqlOutputType outputType) {
+        default ElsqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -212,7 +207,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder outputType(String outputType) {
+        default ElsqlEndpointConsumerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -224,7 +219,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder separator(char separator) {
+        default ElsqlEndpointConsumerBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -236,7 +231,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointConsumerBuilder separator(String separator) {
+        default ElsqlEndpointConsumerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -245,7 +240,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
+        default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 boolean breakBatchOnConsumeFail) {
             setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
@@ -255,7 +250,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
+        default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 String breakBatchOnConsumeFail) {
             setProperty("breakBatchOnConsumeFail", breakBatchOnConsumeFail);
             return this;
@@ -271,7 +266,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
+        default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -287,7 +282,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
+        default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -297,7 +292,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder expectedUpdateCount(
+        default ElsqlEndpointConsumerBuilder expectedUpdateCount(
                 int expectedUpdateCount) {
             setProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
@@ -307,7 +302,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder expectedUpdateCount(
+        default ElsqlEndpointConsumerBuilder expectedUpdateCount(
                 String expectedUpdateCount) {
             setProperty("expectedUpdateCount", expectedUpdateCount);
             return this;
@@ -317,7 +312,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
+        default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -327,7 +322,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
+        default ElsqlEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -339,7 +334,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder onConsume(String onConsume) {
+        default ElsqlEndpointConsumerBuilder onConsume(String onConsume) {
             setProperty("onConsume", onConsume);
             return this;
         }
@@ -349,7 +344,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder onConsumeBatchComplete(
+        default ElsqlEndpointConsumerBuilder onConsumeBatchComplete(
                 String onConsumeBatchComplete) {
             setProperty("onConsumeBatchComplete", onConsumeBatchComplete);
             return this;
@@ -361,7 +356,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder onConsumeFailed(
+        default ElsqlEndpointConsumerBuilder onConsumeFailed(
                 String onConsumeFailed) {
             setProperty("onConsumeFailed", onConsumeFailed);
             return this;
@@ -372,7 +367,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
+        default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -383,7 +378,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
+        default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
             setProperty("routeEmptyResultSet", routeEmptyResultSet);
             return this;
@@ -394,7 +389,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -405,7 +400,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -417,8 +412,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder transacted(
-                boolean transacted) {
+        default ElsqlEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -429,7 +423,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder transacted(String transacted) {
+        default ElsqlEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -439,8 +433,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder useIterator(
-                boolean useIterator) {
+        default ElsqlEndpointConsumerBuilder useIterator(boolean useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -450,8 +443,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ElsqlEndpointConsumerBuilder useIterator(
-                String useIterator) {
+        default ElsqlEndpointConsumerBuilder useIterator(String useIterator) {
             setProperty("useIterator", useIterator);
             return this;
         }
@@ -461,7 +453,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
+        default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -472,7 +464,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
+        default ElsqlEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -483,7 +475,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
+        default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -494,7 +486,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
+        default ElsqlEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -509,7 +501,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffMultiplier(
+        default ElsqlEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -524,7 +516,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder backoffMultiplier(
+        default ElsqlEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -536,7 +528,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder delay(long delay) {
+        default ElsqlEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -547,7 +539,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder delay(String delay) {
+        default ElsqlEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -557,7 +549,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder greedy(boolean greedy) {
+        default ElsqlEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -567,7 +559,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder greedy(String greedy) {
+        default ElsqlEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -578,8 +570,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default ElsqlEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -590,8 +581,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default ElsqlEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -601,7 +591,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder runLoggingLevel(
+        default ElsqlEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -613,7 +603,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder runLoggingLevel(
+        default ElsqlEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -626,7 +616,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder scheduledExecutorService(
+        default ElsqlEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -639,7 +629,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder scheduledExecutorService(
+        default ElsqlEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -652,7 +642,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder scheduler(
+        default ElsqlEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -665,7 +655,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder scheduler(String scheduler) {
+        default ElsqlEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -676,7 +666,7 @@ public interface ElsqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder schedulerProperties(
+        default ElsqlEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -689,7 +679,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder schedulerProperties(
+        default ElsqlEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -699,7 +689,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder startScheduler(
+        default ElsqlEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -709,7 +699,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder startScheduler(
+        default ElsqlEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -719,7 +709,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default ElsqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -729,7 +719,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default ElsqlEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -739,8 +729,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder useFixedDelay(
-                boolean useFixedDelay) {
+        default ElsqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -750,8 +739,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default ElsqlEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default ElsqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -763,7 +751,7 @@ public interface ElsqlEndpointBuilderFactory {
     public interface AdvancedElsqlEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ElsqlEndpointConsumerBuilder basic() {
+        default ElsqlEndpointConsumerBuilder basic() {
             return (ElsqlEndpointConsumerBuilder) this;
         }
         /**
@@ -775,7 +763,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
+        default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -789,7 +777,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
+        default AdvancedElsqlEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -799,7 +787,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
+        default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -810,7 +798,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
+        default AdvancedElsqlEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -824,7 +812,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -838,7 +826,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -852,7 +840,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -866,7 +854,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
             setProperty("processingStrategy", processingStrategy);
             return this;
@@ -881,7 +869,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -896,7 +884,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -907,7 +895,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -918,7 +906,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -929,7 +917,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
+        default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
                 Object elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
@@ -941,7 +929,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
+        default AdvancedElsqlEndpointConsumerBuilder elSqlConfig(
                 String elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
@@ -954,7 +942,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder parametersCount(
+        default AdvancedElsqlEndpointConsumerBuilder parametersCount(
                 int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -967,7 +955,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder parametersCount(
+        default AdvancedElsqlEndpointConsumerBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -979,7 +967,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder placeholder(
+        default AdvancedElsqlEndpointConsumerBuilder placeholder(
                 String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
@@ -992,7 +980,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1005,7 +993,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointConsumerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1016,7 +1004,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder synchronous(
+        default AdvancedElsqlEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1027,7 +1015,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder synchronous(
+        default AdvancedElsqlEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1038,7 +1026,7 @@ public interface ElsqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder templateOptions(
+        default AdvancedElsqlEndpointConsumerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1050,7 +1038,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder templateOptions(
+        default AdvancedElsqlEndpointConsumerBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1061,7 +1049,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
+        default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
                 boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1072,7 +1060,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
+        default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
                 String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1085,7 +1073,7 @@ public interface ElsqlEndpointBuilderFactory {
     public static interface ElsqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedElsqlEndpointProducerBuilder advanced() {
+        default AdvancedElsqlEndpointProducerBuilder advanced() {
             return (AdvancedElsqlEndpointProducerBuilder) this;
         }
         /**
@@ -1093,7 +1081,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder elsqlName(String elsqlName) {
+        default ElsqlEndpointProducerBuilder elsqlName(String elsqlName) {
             setProperty("elsqlName", elsqlName);
             return this;
         }
@@ -1106,8 +1094,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder resourceUri(
-                String resourceUri) {
+        default ElsqlEndpointProducerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -1116,7 +1103,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder allowNamedParameters(
+        default ElsqlEndpointProducerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1126,7 +1113,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder allowNamedParameters(
+        default ElsqlEndpointProducerBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1138,7 +1125,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder databaseVendor(
+        default ElsqlEndpointProducerBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
@@ -1150,7 +1137,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder databaseVendor(
+        default ElsqlEndpointProducerBuilder databaseVendor(
                 String databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
@@ -1160,7 +1147,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointProducerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1170,7 +1157,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder dataSource(String dataSource) {
+        default ElsqlEndpointProducerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1181,8 +1168,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default ElsqlEndpointProducerBuilder dataSourceRef(
-                String dataSourceRef) {
+        default ElsqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -1192,8 +1178,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder outputClass(
-                String outputClass) {
+        default ElsqlEndpointProducerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -1206,8 +1191,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder outputHeader(
-                String outputHeader) {
+        default ElsqlEndpointProducerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -1229,8 +1213,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder outputType(
-                SqlOutputType outputType) {
+        default ElsqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1252,7 +1235,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder outputType(String outputType) {
+        default ElsqlEndpointProducerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1264,7 +1247,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder separator(char separator) {
+        default ElsqlEndpointProducerBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1276,7 +1259,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointProducerBuilder separator(String separator) {
+        default ElsqlEndpointProducerBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1285,7 +1268,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder batch(boolean batch) {
+        default ElsqlEndpointProducerBuilder batch(boolean batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -1294,7 +1277,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder batch(String batch) {
+        default ElsqlEndpointProducerBuilder batch(String batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -1311,7 +1294,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder lazyStartProducer(
+        default ElsqlEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1329,7 +1312,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder lazyStartProducer(
+        default ElsqlEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1340,7 +1323,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder noop(boolean noop) {
+        default ElsqlEndpointProducerBuilder noop(boolean noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -1350,7 +1333,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder noop(String noop) {
+        default ElsqlEndpointProducerBuilder noop(String noop) {
             setProperty("noop", noop);
             return this;
         }
@@ -1361,7 +1344,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder useMessageBodyForSql(
+        default ElsqlEndpointProducerBuilder useMessageBodyForSql(
                 boolean useMessageBodyForSql) {
             setProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
@@ -1373,7 +1356,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ElsqlEndpointProducerBuilder useMessageBodyForSql(
+        default ElsqlEndpointProducerBuilder useMessageBodyForSql(
                 String useMessageBodyForSql) {
             setProperty("useMessageBodyForSql", useMessageBodyForSql);
             return this;
@@ -1386,7 +1369,7 @@ public interface ElsqlEndpointBuilderFactory {
     public interface AdvancedElsqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ElsqlEndpointProducerBuilder basic() {
+        default ElsqlEndpointProducerBuilder basic() {
             return (ElsqlEndpointProducerBuilder) this;
         }
         /**
@@ -1399,7 +1382,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1414,7 +1397,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1425,7 +1408,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1436,7 +1419,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1447,7 +1430,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
+        default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
                 Object elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
@@ -1459,7 +1442,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
+        default AdvancedElsqlEndpointProducerBuilder elSqlConfig(
                 String elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
@@ -1472,7 +1455,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder parametersCount(
+        default AdvancedElsqlEndpointProducerBuilder parametersCount(
                 int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1485,7 +1468,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder parametersCount(
+        default AdvancedElsqlEndpointProducerBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1497,7 +1480,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder placeholder(
+        default AdvancedElsqlEndpointProducerBuilder placeholder(
                 String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
@@ -1510,7 +1493,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1523,7 +1506,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointProducerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1534,7 +1517,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder synchronous(
+        default AdvancedElsqlEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1545,7 +1528,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder synchronous(
+        default AdvancedElsqlEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1556,7 +1539,7 @@ public interface ElsqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder templateOptions(
+        default AdvancedElsqlEndpointProducerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1568,7 +1551,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder templateOptions(
+        default AdvancedElsqlEndpointProducerBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1579,7 +1562,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
+        default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
                 boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1590,7 +1573,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
+        default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
                 String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -1603,7 +1586,7 @@ public interface ElsqlEndpointBuilderFactory {
     public static interface ElsqlEndpointBuilder
             extends
                 ElsqlEndpointConsumerBuilder, ElsqlEndpointProducerBuilder {
-        public default AdvancedElsqlEndpointBuilder advanced() {
+        default AdvancedElsqlEndpointBuilder advanced() {
             return (AdvancedElsqlEndpointBuilder) this;
         }
         /**
@@ -1611,7 +1594,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder elsqlName(String elsqlName) {
+        default ElsqlEndpointBuilder elsqlName(String elsqlName) {
             setProperty("elsqlName", elsqlName);
             return this;
         }
@@ -1624,7 +1607,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder resourceUri(String resourceUri) {
+        default ElsqlEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -1633,7 +1616,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder allowNamedParameters(
+        default ElsqlEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1643,7 +1626,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder allowNamedParameters(
+        default ElsqlEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -1655,7 +1638,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointBuilder databaseVendor(
+        default ElsqlEndpointBuilder databaseVendor(
                 ElSqlDatabaseVendor databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
@@ -1667,7 +1650,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointBuilder databaseVendor(String databaseVendor) {
+        default ElsqlEndpointBuilder databaseVendor(String databaseVendor) {
             setProperty("databaseVendor", databaseVendor);
             return this;
         }
@@ -1676,7 +1659,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder dataSource(Object dataSource) {
+        default ElsqlEndpointBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1686,7 +1669,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ElsqlEndpointBuilder dataSource(String dataSource) {
+        default ElsqlEndpointBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
             return this;
         }
@@ -1697,7 +1680,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default ElsqlEndpointBuilder dataSourceRef(String dataSourceRef) {
+        default ElsqlEndpointBuilder dataSourceRef(String dataSourceRef) {
             setProperty("dataSourceRef", dataSourceRef);
             return this;
         }
@@ -1707,7 +1690,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder outputClass(String outputClass) {
+        default ElsqlEndpointBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -1720,7 +1703,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder outputHeader(String outputHeader) {
+        default ElsqlEndpointBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
             return this;
         }
@@ -1742,7 +1725,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder outputType(SqlOutputType outputType) {
+        default ElsqlEndpointBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1764,7 +1747,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder outputType(String outputType) {
+        default ElsqlEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1776,7 +1759,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder separator(char separator) {
+        default ElsqlEndpointBuilder separator(char separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1788,7 +1771,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>char</code> type.
          * @group common
          */
-        public default ElsqlEndpointBuilder separator(String separator) {
+        default ElsqlEndpointBuilder separator(String separator) {
             setProperty("separator", separator);
             return this;
         }
@@ -1800,7 +1783,7 @@ public interface ElsqlEndpointBuilderFactory {
     public static interface AdvancedElsqlEndpointBuilder
             extends
                 AdvancedElsqlEndpointConsumerBuilder, AdvancedElsqlEndpointProducerBuilder {
-        public default ElsqlEndpointBuilder basic() {
+        default ElsqlEndpointBuilder basic() {
             return (ElsqlEndpointBuilder) this;
         }
         /**
@@ -1813,7 +1796,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1828,7 +1811,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
+        default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
             setProperty("alwaysPopulateStatement", alwaysPopulateStatement);
             return this;
@@ -1839,7 +1822,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1850,7 +1833,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder basicPropertyBinding(
+        default AdvancedElsqlEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1861,8 +1844,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder elSqlConfig(
-                Object elSqlConfig) {
+        default AdvancedElsqlEndpointBuilder elSqlConfig(Object elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
         }
@@ -1873,8 +1855,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>com.opengamma.elsql.ElSqlConfig</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder elSqlConfig(
-                String elSqlConfig) {
+        default AdvancedElsqlEndpointBuilder elSqlConfig(String elSqlConfig) {
             setProperty("elSqlConfig", elSqlConfig);
             return this;
         }
@@ -1886,8 +1867,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder parametersCount(
-                int parametersCount) {
+        default AdvancedElsqlEndpointBuilder parametersCount(int parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
         }
@@ -1899,7 +1879,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder parametersCount(
+        default AdvancedElsqlEndpointBuilder parametersCount(
                 String parametersCount) {
             setProperty("parametersCount", parametersCount);
             return this;
@@ -1911,8 +1891,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder placeholder(
-                String placeholder) {
+        default AdvancedElsqlEndpointBuilder placeholder(String placeholder) {
             setProperty("placeholder", placeholder);
             return this;
         }
@@ -1924,7 +1903,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1937,7 +1916,7 @@ public interface ElsqlEndpointBuilderFactory {
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
+        default AdvancedElsqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -1948,8 +1927,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedElsqlEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1959,8 +1937,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedElsqlEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1970,7 +1947,7 @@ public interface ElsqlEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder templateOptions(
+        default AdvancedElsqlEndpointBuilder templateOptions(
                 Map<String, Object> templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1982,7 +1959,7 @@ public interface ElsqlEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder templateOptions(
+        default AdvancedElsqlEndpointBuilder templateOptions(
                 String templateOptions) {
             setProperty("templateOptions", templateOptions);
             return this;
@@ -1993,7 +1970,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder usePlaceholder(
+        default AdvancedElsqlEndpointBuilder usePlaceholder(
                 boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -2004,7 +1981,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedElsqlEndpointBuilder usePlaceholder(
+        default AdvancedElsqlEndpointBuilder usePlaceholder(
                 String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
             return this;
@@ -2031,7 +2008,7 @@ public interface ElsqlEndpointBuilderFactory {
      * uses ElSql to define the SQL queries. Creates a builder to build
      * endpoints for the ElSQL component.
      */
-    public default ElsqlEndpointBuilder elsql(String path) {
+    default ElsqlEndpointBuilder elsql(String path) {
         class ElsqlEndpointBuilderImpl extends AbstractEndpointBuilder implements ElsqlEndpointBuilder, AdvancedElsqlEndpointBuilder {
             public ElsqlEndpointBuilderImpl(String path) {
                 super("elsql", path);

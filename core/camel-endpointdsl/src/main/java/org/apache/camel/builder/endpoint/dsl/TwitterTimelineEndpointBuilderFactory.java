@@ -45,7 +45,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public interface TwitterTimelineEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder advanced() {
+        default AdvancedTwitterTimelineEndpointConsumerBuilder advanced() {
             return (AdvancedTwitterTimelineEndpointConsumerBuilder) this;
         }
         /**
@@ -55,7 +55,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointConsumerBuilder timelineType(
+        default TwitterTimelineEndpointConsumerBuilder timelineType(
                 TimelineType timelineType) {
             setProperty("timelineType", timelineType);
             return this;
@@ -67,7 +67,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointConsumerBuilder timelineType(
+        default TwitterTimelineEndpointConsumerBuilder timelineType(
                 String timelineType) {
             setProperty("timelineType", timelineType);
             return this;
@@ -77,7 +77,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterTimelineEndpointConsumerBuilder user(String user) {
+        default TwitterTimelineEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -92,7 +92,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterTimelineEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -108,7 +108,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterTimelineEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -119,7 +119,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterTimelineEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -130,7 +130,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterTimelineEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -142,8 +142,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder type(
-                EndpointType type) {
+        default TwitterTimelineEndpointConsumerBuilder type(EndpointType type) {
             setProperty("type", type);
             return this;
         }
@@ -154,7 +153,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterTimelineEndpointConsumerBuilder type(String type) {
+        default TwitterTimelineEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -163,8 +162,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder count(
-                Integer count) {
+        default TwitterTimelineEndpointConsumerBuilder count(Integer count) {
             setProperty("count", count);
             return this;
         }
@@ -174,7 +172,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder count(String count) {
+        default TwitterTimelineEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
             return this;
         }
@@ -184,7 +182,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder filterOld(
+        default TwitterTimelineEndpointConsumerBuilder filterOld(
                 boolean filterOld) {
             setProperty("filterOld", filterOld);
             return this;
@@ -195,7 +193,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder filterOld(
+        default TwitterTimelineEndpointConsumerBuilder filterOld(
                 String filterOld) {
             setProperty("filterOld", filterOld);
             return this;
@@ -205,7 +203,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder lang(String lang) {
+        default TwitterTimelineEndpointConsumerBuilder lang(String lang) {
             setProperty("lang", lang);
             return this;
         }
@@ -214,7 +212,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder numberOfPages(
+        default TwitterTimelineEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -225,7 +223,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder numberOfPages(
+        default TwitterTimelineEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -236,8 +234,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder sinceId(
-                long sinceId) {
+        default TwitterTimelineEndpointConsumerBuilder sinceId(long sinceId) {
             setProperty("sinceId", sinceId);
             return this;
         }
@@ -247,8 +244,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder sinceId(
-                String sinceId) {
+        default TwitterTimelineEndpointConsumerBuilder sinceId(String sinceId) {
             setProperty("sinceId", sinceId);
             return this;
         }
@@ -258,8 +254,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterTimelineEndpointConsumerBuilder userIds(
-                String userIds) {
+        default TwitterTimelineEndpointConsumerBuilder userIds(String userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -269,7 +264,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -280,7 +275,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterTimelineEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -291,7 +286,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -302,7 +297,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterTimelineEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -317,7 +312,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
+        default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -332,7 +327,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
+        default TwitterTimelineEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -342,7 +337,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder delay(long delay) {
+        default TwitterTimelineEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -351,7 +346,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder delay(String delay) {
+        default TwitterTimelineEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -361,8 +356,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder greedy(
-                boolean greedy) {
+        default TwitterTimelineEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -372,8 +366,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder greedy(
-                String greedy) {
+        default TwitterTimelineEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -384,7 +377,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder initialDelay(
+        default TwitterTimelineEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -396,7 +389,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder initialDelay(
+        default TwitterTimelineEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -407,7 +400,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
+        default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -419,7 +412,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
+        default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -432,7 +425,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -445,7 +438,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterTimelineEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -458,7 +451,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder scheduler(
+        default TwitterTimelineEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -471,7 +464,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder scheduler(
+        default TwitterTimelineEndpointConsumerBuilder scheduler(
                 String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -483,7 +476,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
+        default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -496,7 +489,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
+        default TwitterTimelineEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -506,7 +499,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder startScheduler(
+        default TwitterTimelineEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -516,7 +509,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder startScheduler(
+        default TwitterTimelineEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -526,7 +519,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder timeUnit(
+        default TwitterTimelineEndpointConsumerBuilder timeUnit(
                 TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
@@ -537,8 +530,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder timeUnit(
-                String timeUnit) {
+        default TwitterTimelineEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -548,7 +540,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder useFixedDelay(
+        default TwitterTimelineEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -559,7 +551,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterTimelineEndpointConsumerBuilder useFixedDelay(
+        default TwitterTimelineEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -569,8 +561,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterTimelineEndpointConsumerBuilder sortById(
-                boolean sortById) {
+        default TwitterTimelineEndpointConsumerBuilder sortById(boolean sortById) {
             setProperty("sortById", sortById);
             return this;
         }
@@ -579,8 +570,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterTimelineEndpointConsumerBuilder sortById(
-                String sortById) {
+        default TwitterTimelineEndpointConsumerBuilder sortById(String sortById) {
             setProperty("sortById", sortById);
             return this;
         }
@@ -590,7 +580,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointConsumerBuilder httpProxyHost(
+        default TwitterTimelineEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -601,7 +591,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointConsumerBuilder httpProxyPassword(
+        default TwitterTimelineEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -612,7 +602,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
+        default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -624,7 +614,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
+        default TwitterTimelineEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -635,7 +625,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointConsumerBuilder httpProxyUser(
+        default TwitterTimelineEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -646,7 +636,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointConsumerBuilder accessToken(
+        default TwitterTimelineEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -657,7 +647,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointConsumerBuilder accessTokenSecret(
+        default TwitterTimelineEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -668,7 +658,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointConsumerBuilder consumerKey(
+        default TwitterTimelineEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -679,7 +669,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointConsumerBuilder consumerSecret(
+        default TwitterTimelineEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -693,7 +683,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public interface AdvancedTwitterTimelineEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TwitterTimelineEndpointConsumerBuilder basic() {
+        default TwitterTimelineEndpointConsumerBuilder basic() {
             return (TwitterTimelineEndpointConsumerBuilder) this;
         }
         /**
@@ -704,7 +694,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder distanceMetric(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
             setProperty("distanceMetric", distanceMetric);
             return this;
@@ -718,7 +708,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -732,7 +722,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -742,7 +732,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -753,7 +743,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -764,7 +754,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -775,7 +765,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -787,7 +777,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
                 Double latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -799,7 +789,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder latitude(
                 String latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -811,7 +801,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder locations(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder locations(
                 String locations) {
             setProperty("locations", locations);
             return this;
@@ -823,7 +813,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
                 Double longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -835,7 +825,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder longitude(
                 String longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -849,7 +839,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -863,7 +853,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -875,7 +865,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
                 Double radius) {
             setProperty("radius", radius);
             return this;
@@ -887,7 +877,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder radius(
                 String radius) {
             setProperty("radius", radius);
             return this;
@@ -897,7 +887,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
                 Object twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -908,7 +898,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder twitterStream(
                 String twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -919,7 +909,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -930,7 +920,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -941,7 +931,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -952,7 +942,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -965,7 +955,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public static interface TwitterTimelineEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedTwitterTimelineEndpointProducerBuilder advanced() {
+        default AdvancedTwitterTimelineEndpointProducerBuilder advanced() {
             return (AdvancedTwitterTimelineEndpointProducerBuilder) this;
         }
         /**
@@ -975,7 +965,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointProducerBuilder timelineType(
+        default TwitterTimelineEndpointProducerBuilder timelineType(
                 TimelineType timelineType) {
             setProperty("timelineType", timelineType);
             return this;
@@ -987,7 +977,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointProducerBuilder timelineType(
+        default TwitterTimelineEndpointProducerBuilder timelineType(
                 String timelineType) {
             setProperty("timelineType", timelineType);
             return this;
@@ -997,7 +987,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterTimelineEndpointProducerBuilder user(String user) {
+        default TwitterTimelineEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -1014,7 +1004,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterTimelineEndpointProducerBuilder lazyStartProducer(
+        default TwitterTimelineEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1032,7 +1022,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterTimelineEndpointProducerBuilder lazyStartProducer(
+        default TwitterTimelineEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1043,7 +1033,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointProducerBuilder httpProxyHost(
+        default TwitterTimelineEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1054,7 +1044,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointProducerBuilder httpProxyPassword(
+        default TwitterTimelineEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1065,7 +1055,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointProducerBuilder httpProxyPort(
+        default TwitterTimelineEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1077,7 +1067,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointProducerBuilder httpProxyPort(
+        default TwitterTimelineEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1088,7 +1078,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointProducerBuilder httpProxyUser(
+        default TwitterTimelineEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1099,7 +1089,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointProducerBuilder accessToken(
+        default TwitterTimelineEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -1110,7 +1100,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointProducerBuilder accessTokenSecret(
+        default TwitterTimelineEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1121,7 +1111,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointProducerBuilder consumerKey(
+        default TwitterTimelineEndpointProducerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -1132,7 +1122,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointProducerBuilder consumerSecret(
+        default TwitterTimelineEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1146,7 +1136,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public interface AdvancedTwitterTimelineEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default TwitterTimelineEndpointProducerBuilder basic() {
+        default TwitterTimelineEndpointProducerBuilder basic() {
             return (TwitterTimelineEndpointProducerBuilder) this;
         }
         /**
@@ -1155,7 +1145,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1166,7 +1156,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1177,7 +1167,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointProducerBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1188,7 +1178,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointProducerBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1201,7 +1191,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public static interface TwitterTimelineEndpointBuilder
             extends
                 TwitterTimelineEndpointConsumerBuilder, TwitterTimelineEndpointProducerBuilder {
-        public default AdvancedTwitterTimelineEndpointBuilder advanced() {
+        default AdvancedTwitterTimelineEndpointBuilder advanced() {
             return (AdvancedTwitterTimelineEndpointBuilder) this;
         }
         /**
@@ -1211,7 +1201,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointBuilder timelineType(
+        default TwitterTimelineEndpointBuilder timelineType(
                 TimelineType timelineType) {
             setProperty("timelineType", timelineType);
             return this;
@@ -1223,8 +1213,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwitterTimelineEndpointBuilder timelineType(
-                String timelineType) {
+        default TwitterTimelineEndpointBuilder timelineType(String timelineType) {
             setProperty("timelineType", timelineType);
             return this;
         }
@@ -1233,7 +1222,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterTimelineEndpointBuilder user(String user) {
+        default TwitterTimelineEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -1243,7 +1232,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointBuilder httpProxyHost(
+        default TwitterTimelineEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1254,7 +1243,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointBuilder httpProxyPassword(
+        default TwitterTimelineEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1265,7 +1254,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointBuilder httpProxyPort(
+        default TwitterTimelineEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1277,7 +1266,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointBuilder httpProxyPort(
+        default TwitterTimelineEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1288,7 +1277,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterTimelineEndpointBuilder httpProxyUser(
+        default TwitterTimelineEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1299,8 +1288,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointBuilder accessToken(
-                String accessToken) {
+        default TwitterTimelineEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -1310,7 +1298,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointBuilder accessTokenSecret(
+        default TwitterTimelineEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1321,8 +1309,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointBuilder consumerKey(
-                String consumerKey) {
+        default TwitterTimelineEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -1332,7 +1319,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterTimelineEndpointBuilder consumerSecret(
+        default TwitterTimelineEndpointBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1345,7 +1332,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     public static interface AdvancedTwitterTimelineEndpointBuilder
             extends
                 AdvancedTwitterTimelineEndpointConsumerBuilder, AdvancedTwitterTimelineEndpointProducerBuilder {
-        public default TwitterTimelineEndpointBuilder basic() {
+        default TwitterTimelineEndpointBuilder basic() {
             return (TwitterTimelineEndpointBuilder) this;
         }
         /**
@@ -1354,7 +1341,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1365,7 +1352,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterTimelineEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1376,7 +1363,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1387,7 +1374,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterTimelineEndpointBuilder synchronous(
+        default AdvancedTwitterTimelineEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1414,7 +1401,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * status of specific user. Creates a builder to build endpoints for the
      * Twitter Timeline component.
      */
-    public default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
+    default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
         class TwitterTimelineEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterTimelineEndpointBuilder, AdvancedTwitterTimelineEndpointBuilder {
             public TwitterTimelineEndpointBuilderImpl(String path) {
                 super("twitter-timeline", path);

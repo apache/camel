@@ -38,7 +38,7 @@ public interface JdbcEndpointBuilderFactory {
     public static interface JdbcEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJdbcEndpointBuilder advanced() {
+        default AdvancedJdbcEndpointBuilder advanced() {
             return (AdvancedJdbcEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder dataSourceName(String dataSourceName) {
+        default JdbcEndpointBuilder dataSourceName(String dataSourceName) {
             setProperty("dataSourceName", dataSourceName);
             return this;
         }
@@ -58,7 +58,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder allowNamedParameters(
+        default JdbcEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -68,7 +68,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder allowNamedParameters(
+        default JdbcEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
             setProperty("allowNamedParameters", allowNamedParameters);
             return this;
@@ -79,7 +79,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder outputClass(String outputClass) {
+        default JdbcEndpointBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
             return this;
         }
@@ -89,7 +89,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
+        default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -99,7 +99,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder outputType(String outputType) {
+        default JdbcEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -110,8 +110,7 @@ public interface JdbcEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+        default JdbcEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -123,7 +122,7 @@ public interface JdbcEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default JdbcEndpointBuilder parameters(String parameters) {
+        default JdbcEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -133,7 +132,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder readSize(int readSize) {
+        default JdbcEndpointBuilder readSize(int readSize) {
             setProperty("readSize", readSize);
             return this;
         }
@@ -143,7 +142,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder readSize(String readSize) {
+        default JdbcEndpointBuilder readSize(String readSize) {
             setProperty("readSize", readSize);
             return this;
         }
@@ -159,8 +158,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder resetAutoCommit(
-                boolean resetAutoCommit) {
+        default JdbcEndpointBuilder resetAutoCommit(boolean resetAutoCommit) {
             setProperty("resetAutoCommit", resetAutoCommit);
             return this;
         }
@@ -176,8 +174,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder resetAutoCommit(
-                String resetAutoCommit) {
+        default JdbcEndpointBuilder resetAutoCommit(String resetAutoCommit) {
             setProperty("resetAutoCommit", resetAutoCommit);
             return this;
         }
@@ -186,7 +183,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder transacted(boolean transacted) {
+        default JdbcEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -195,7 +192,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder transacted(String transacted) {
+        default JdbcEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -206,7 +203,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useGetBytesForBlob(
+        default JdbcEndpointBuilder useGetBytesForBlob(
                 boolean useGetBytesForBlob) {
             setProperty("useGetBytesForBlob", useGetBytesForBlob);
             return this;
@@ -218,8 +215,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useGetBytesForBlob(
-                String useGetBytesForBlob) {
+        default JdbcEndpointBuilder useGetBytesForBlob(String useGetBytesForBlob) {
             setProperty("useGetBytesForBlob", useGetBytesForBlob);
             return this;
         }
@@ -231,7 +227,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useHeadersAsParameters(
+        default JdbcEndpointBuilder useHeadersAsParameters(
                 boolean useHeadersAsParameters) {
             setProperty("useHeadersAsParameters", useHeadersAsParameters);
             return this;
@@ -244,7 +240,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useHeadersAsParameters(
+        default JdbcEndpointBuilder useHeadersAsParameters(
                 String useHeadersAsParameters) {
             setProperty("useHeadersAsParameters", useHeadersAsParameters);
             return this;
@@ -259,7 +255,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
+        default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 boolean useJDBC4ColumnNameAndLabelSemantics) {
             setProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
             return this;
@@ -274,7 +270,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
+        default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 String useJDBC4ColumnNameAndLabelSemantics) {
             setProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
             return this;
@@ -287,7 +283,7 @@ public interface JdbcEndpointBuilderFactory {
     public static interface AdvancedJdbcEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default JdbcEndpointBuilder basic() {
+        default JdbcEndpointBuilder basic() {
             return (JdbcEndpointBuilder) this;
         }
         /**
@@ -296,7 +292,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder basicPropertyBinding(
+        default AdvancedJdbcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -307,7 +303,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder basicPropertyBinding(
+        default AdvancedJdbcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -321,8 +317,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder beanRowMapper(
-                Object beanRowMapper) {
+        default AdvancedJdbcEndpointBuilder beanRowMapper(Object beanRowMapper) {
             setProperty("beanRowMapper", beanRowMapper);
             return this;
         }
@@ -335,8 +330,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.BeanRowMapper</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder beanRowMapper(
-                String beanRowMapper) {
+        default AdvancedJdbcEndpointBuilder beanRowMapper(String beanRowMapper) {
             setProperty("beanRowMapper", beanRowMapper);
             return this;
         }
@@ -348,7 +342,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
+        default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -361,7 +355,7 @@ public interface JdbcEndpointBuilderFactory {
          * <code>org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
+        default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             setProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
@@ -372,8 +366,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJdbcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -383,8 +376,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJdbcEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJdbcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -402,7 +394,7 @@ public interface JdbcEndpointBuilderFactory {
      * SQL queries are sent in the message body. Creates a builder to build
      * endpoints for the JDBC component.
      */
-    public default JdbcEndpointBuilder jdbc(String path) {
+    default JdbcEndpointBuilder jdbc(String path) {
         class JdbcEndpointBuilderImpl extends AbstractEndpointBuilder implements JdbcEndpointBuilder, AdvancedJdbcEndpointBuilder {
             public JdbcEndpointBuilderImpl(String path) {
                 super("jdbc", path);

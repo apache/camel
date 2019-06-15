@@ -36,7 +36,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
     public static interface GoogleMailStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleMailStreamEndpointBuilder advanced() {
+        default AdvancedGoogleMailStreamEndpointBuilder advanced() {
             return (AdvancedGoogleMailStreamEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder index(String index) {
+        default GoogleMailStreamEndpointBuilder index(String index) {
             setProperty("index", index);
             return this;
         }
@@ -54,8 +54,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder accessToken(
-                String accessToken) {
+        default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -64,7 +63,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder applicationName(
+        default GoogleMailStreamEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -74,7 +73,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder clientId(String clientId) {
+        default GoogleMailStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -83,8 +82,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder clientSecret(
-                String clientSecret) {
+        default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -93,7 +91,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder labels(String labels) {
+        default GoogleMailStreamEndpointBuilder labels(String labels) {
             setProperty("labels", labels);
             return this;
         }
@@ -102,8 +100,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder markAsRead(
-                boolean markAsRead) {
+        default GoogleMailStreamEndpointBuilder markAsRead(boolean markAsRead) {
             setProperty("markAsRead", markAsRead);
             return this;
         }
@@ -112,8 +109,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder markAsRead(
-                String markAsRead) {
+        default GoogleMailStreamEndpointBuilder markAsRead(String markAsRead) {
             setProperty("markAsRead", markAsRead);
             return this;
         }
@@ -122,8 +118,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder maxResults(
-                long maxResults) {
+        default GoogleMailStreamEndpointBuilder maxResults(long maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -132,8 +127,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder maxResults(
-                String maxResults) {
+        default GoogleMailStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -142,7 +136,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder query(String query) {
+        default GoogleMailStreamEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -153,8 +147,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleMailStreamEndpointBuilder refreshToken(
-                String refreshToken) {
+        default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
         }
@@ -166,7 +159,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
     public static interface AdvancedGoogleMailStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleMailStreamEndpointBuilder basic() {
+        default GoogleMailStreamEndpointBuilder basic() {
             return (GoogleMailStreamEndpointBuilder) this;
         }
         /**
@@ -175,7 +168,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -186,7 +179,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -197,7 +190,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailStreamEndpointBuilder synchronous(
+        default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -208,7 +201,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleMailStreamEndpointBuilder synchronous(
+        default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -218,7 +211,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
      * The google-mail component provides access to Google Mail. Creates a
      * builder to build endpoints for the Google Mail Stream component.
      */
-    public default GoogleMailStreamEndpointBuilder googleMailStream(String path) {
+    default GoogleMailStreamEndpointBuilder googleMailStream(String path) {
         class GoogleMailStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailStreamEndpointBuilder, AdvancedGoogleMailStreamEndpointBuilder {
             public GoogleMailStreamEndpointBuilderImpl(String path) {
                 super("google-mail-stream", path);

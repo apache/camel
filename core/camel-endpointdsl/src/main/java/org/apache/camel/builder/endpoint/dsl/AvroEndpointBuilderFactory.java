@@ -38,7 +38,7 @@ public interface AvroEndpointBuilderFactory {
     public interface AvroEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAvroEndpointConsumerBuilder advanced() {
+        default AdvancedAvroEndpointConsumerBuilder advanced() {
             return (AdvancedAvroEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder transport(
-                AvroTransport transport) {
+        default AvroEndpointConsumerBuilder transport(AvroTransport transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -58,7 +57,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder transport(String transport) {
+        default AvroEndpointConsumerBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -67,7 +66,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder port(int port) {
+        default AvroEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -76,7 +75,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder port(String port) {
+        default AvroEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -85,7 +84,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder host(String host) {
+        default AvroEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -94,8 +93,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder messageName(
-                String messageName) {
+        default AvroEndpointConsumerBuilder messageName(String messageName) {
             setProperty("messageName", messageName);
             return this;
         }
@@ -104,7 +102,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder protocol(Object protocol) {
+        default AvroEndpointConsumerBuilder protocol(Object protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -114,7 +112,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder protocol(String protocol) {
+        default AvroEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -123,7 +121,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder protocolClassName(
+        default AvroEndpointConsumerBuilder protocolClassName(
                 String protocolClassName) {
             setProperty("protocolClassName", protocolClassName);
             return this;
@@ -133,7 +131,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder protocolLocation(
+        default AvroEndpointConsumerBuilder protocolLocation(
                 String protocolLocation) {
             setProperty("protocolLocation", protocolLocation);
             return this;
@@ -145,7 +143,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder reflectionProtocol(
+        default AvroEndpointConsumerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
@@ -157,7 +155,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder reflectionProtocol(
+        default AvroEndpointConsumerBuilder reflectionProtocol(
                 String reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
@@ -168,7 +166,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder singleParameter(
+        default AvroEndpointConsumerBuilder singleParameter(
                 boolean singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
@@ -179,7 +177,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder singleParameter(
+        default AvroEndpointConsumerBuilder singleParameter(
                 String singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
@@ -189,8 +187,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointConsumerBuilder uriAuthority(
-                String uriAuthority) {
+        default AvroEndpointConsumerBuilder uriAuthority(String uriAuthority) {
             setProperty("uriAuthority", uriAuthority);
             return this;
         }
@@ -205,7 +202,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AvroEndpointConsumerBuilder bridgeErrorHandler(
+        default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -221,7 +218,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AvroEndpointConsumerBuilder bridgeErrorHandler(
+        default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -234,7 +231,7 @@ public interface AvroEndpointBuilderFactory {
     public interface AdvancedAvroEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AvroEndpointConsumerBuilder basic() {
+        default AvroEndpointConsumerBuilder basic() {
             return (AvroEndpointConsumerBuilder) this;
         }
         /**
@@ -246,7 +243,7 @@ public interface AvroEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -260,7 +257,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -270,7 +267,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAvroEndpointConsumerBuilder exchangePattern(
+        default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -281,7 +278,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAvroEndpointConsumerBuilder exchangePattern(
+        default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -292,7 +289,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -303,7 +300,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -314,7 +311,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointConsumerBuilder synchronous(
+        default AdvancedAvroEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -325,7 +322,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointConsumerBuilder synchronous(
+        default AdvancedAvroEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -338,7 +335,7 @@ public interface AvroEndpointBuilderFactory {
     public static interface AvroEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAvroEndpointProducerBuilder advanced() {
+        default AdvancedAvroEndpointProducerBuilder advanced() {
             return (AdvancedAvroEndpointProducerBuilder) this;
         }
         /**
@@ -347,8 +344,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder transport(
-                AvroTransport transport) {
+        default AvroEndpointProducerBuilder transport(AvroTransport transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -358,7 +354,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder transport(String transport) {
+        default AvroEndpointProducerBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -367,7 +363,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder port(int port) {
+        default AvroEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -376,7 +372,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder port(String port) {
+        default AvroEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -385,7 +381,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder host(String host) {
+        default AvroEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -394,8 +390,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder messageName(
-                String messageName) {
+        default AvroEndpointProducerBuilder messageName(String messageName) {
             setProperty("messageName", messageName);
             return this;
         }
@@ -404,7 +399,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder protocol(Object protocol) {
+        default AvroEndpointProducerBuilder protocol(Object protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -414,7 +409,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder protocol(String protocol) {
+        default AvroEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -423,7 +418,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder protocolClassName(
+        default AvroEndpointProducerBuilder protocolClassName(
                 String protocolClassName) {
             setProperty("protocolClassName", protocolClassName);
             return this;
@@ -433,7 +428,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder protocolLocation(
+        default AvroEndpointProducerBuilder protocolLocation(
                 String protocolLocation) {
             setProperty("protocolLocation", protocolLocation);
             return this;
@@ -445,7 +440,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder reflectionProtocol(
+        default AvroEndpointProducerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
@@ -457,7 +452,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder reflectionProtocol(
+        default AvroEndpointProducerBuilder reflectionProtocol(
                 String reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
@@ -468,7 +463,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder singleParameter(
+        default AvroEndpointProducerBuilder singleParameter(
                 boolean singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
@@ -479,7 +474,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder singleParameter(
+        default AvroEndpointProducerBuilder singleParameter(
                 String singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
@@ -489,8 +484,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointProducerBuilder uriAuthority(
-                String uriAuthority) {
+        default AvroEndpointProducerBuilder uriAuthority(String uriAuthority) {
             setProperty("uriAuthority", uriAuthority);
             return this;
         }
@@ -507,7 +501,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AvroEndpointProducerBuilder lazyStartProducer(
+        default AvroEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -525,7 +519,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AvroEndpointProducerBuilder lazyStartProducer(
+        default AvroEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -538,7 +532,7 @@ public interface AvroEndpointBuilderFactory {
     public interface AdvancedAvroEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AvroEndpointProducerBuilder basic() {
+        default AvroEndpointProducerBuilder basic() {
             return (AvroEndpointProducerBuilder) this;
         }
         /**
@@ -547,7 +541,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -558,7 +552,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -569,7 +563,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointProducerBuilder synchronous(
+        default AdvancedAvroEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -580,7 +574,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointProducerBuilder synchronous(
+        default AdvancedAvroEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -593,7 +587,7 @@ public interface AvroEndpointBuilderFactory {
     public static interface AvroEndpointBuilder
             extends
                 AvroEndpointConsumerBuilder, AvroEndpointProducerBuilder {
-        public default AdvancedAvroEndpointBuilder advanced() {
+        default AdvancedAvroEndpointBuilder advanced() {
             return (AdvancedAvroEndpointBuilder) this;
         }
         /**
@@ -602,7 +596,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder transport(AvroTransport transport) {
+        default AvroEndpointBuilder transport(AvroTransport transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -612,7 +606,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.camel.component.avro.AvroTransport</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder transport(String transport) {
+        default AvroEndpointBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -621,7 +615,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder port(int port) {
+        default AvroEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -630,7 +624,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder port(String port) {
+        default AvroEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -639,7 +633,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder host(String host) {
+        default AvroEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -648,7 +642,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder messageName(String messageName) {
+        default AvroEndpointBuilder messageName(String messageName) {
             setProperty("messageName", messageName);
             return this;
         }
@@ -657,7 +651,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder protocol(Object protocol) {
+        default AvroEndpointBuilder protocol(Object protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -667,7 +661,7 @@ public interface AvroEndpointBuilderFactory {
          * <code>org.apache.avro.Protocol</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder protocol(String protocol) {
+        default AvroEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -676,8 +670,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder protocolClassName(
-                String protocolClassName) {
+        default AvroEndpointBuilder protocolClassName(String protocolClassName) {
             setProperty("protocolClassName", protocolClassName);
             return this;
         }
@@ -686,8 +679,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder protocolLocation(
-                String protocolLocation) {
+        default AvroEndpointBuilder protocolLocation(String protocolLocation) {
             setProperty("protocolLocation", protocolLocation);
             return this;
         }
@@ -698,7 +690,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder reflectionProtocol(
+        default AvroEndpointBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
@@ -710,8 +702,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder reflectionProtocol(
-                String reflectionProtocol) {
+        default AvroEndpointBuilder reflectionProtocol(String reflectionProtocol) {
             setProperty("reflectionProtocol", reflectionProtocol);
             return this;
         }
@@ -721,8 +712,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder singleParameter(
-                boolean singleParameter) {
+        default AvroEndpointBuilder singleParameter(boolean singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
         }
@@ -732,8 +722,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder singleParameter(
-                String singleParameter) {
+        default AvroEndpointBuilder singleParameter(String singleParameter) {
             setProperty("singleParameter", singleParameter);
             return this;
         }
@@ -742,7 +731,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AvroEndpointBuilder uriAuthority(String uriAuthority) {
+        default AvroEndpointBuilder uriAuthority(String uriAuthority) {
             setProperty("uriAuthority", uriAuthority);
             return this;
         }
@@ -754,7 +743,7 @@ public interface AvroEndpointBuilderFactory {
     public static interface AdvancedAvroEndpointBuilder
             extends
                 AdvancedAvroEndpointConsumerBuilder, AdvancedAvroEndpointProducerBuilder {
-        public default AvroEndpointBuilder basic() {
+        default AvroEndpointBuilder basic() {
             return (AvroEndpointBuilder) this;
         }
         /**
@@ -763,7 +752,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -774,7 +763,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointBuilder basicPropertyBinding(
+        default AdvancedAvroEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -785,8 +774,7 @@ public interface AvroEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAvroEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -796,8 +784,7 @@ public interface AvroEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAvroEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedAvroEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -814,7 +801,7 @@ public interface AvroEndpointBuilderFactory {
      * Working with Apache Avro for data serialization. Creates a builder to
      * build endpoints for the Avro component.
      */
-    public default AvroEndpointBuilder avro(String path) {
+    default AvroEndpointBuilder avro(String path) {
         class AvroEndpointBuilderImpl extends AbstractEndpointBuilder implements AvroEndpointBuilder, AdvancedAvroEndpointBuilder {
             public AvroEndpointBuilderImpl(String path) {
                 super("avro", path);

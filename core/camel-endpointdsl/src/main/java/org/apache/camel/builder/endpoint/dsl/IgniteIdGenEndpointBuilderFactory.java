@@ -37,7 +37,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
     public static interface IgniteIdGenEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIgniteIdGenEndpointBuilder advanced() {
+        default AdvancedIgniteIdGenEndpointBuilder advanced() {
             return (AdvancedIgniteIdGenEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default IgniteIdGenEndpointBuilder name(String name) {
+        default IgniteIdGenEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -55,7 +55,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -66,7 +66,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
+        default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
             setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
@@ -77,7 +77,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -88,7 +88,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
+        default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
             setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
@@ -101,7 +101,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
     public static interface AdvancedIgniteIdGenEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default IgniteIdGenEndpointBuilder basic() {
+        default IgniteIdGenEndpointBuilder basic() {
             return (IgniteIdGenEndpointBuilder) this;
         }
         /**
@@ -110,7 +110,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +121,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
+        default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,7 +132,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteIdGenEndpointBuilder synchronous(
+        default AdvancedIgniteIdGenEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -143,7 +143,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIgniteIdGenEndpointBuilder synchronous(
+        default AdvancedIgniteIdGenEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -164,7 +164,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * Creates a builder to build endpoints for the Ignite ID Generator
      * component.
      */
-    public default IgniteIdGenEndpointBuilder igniteIdGen(String path) {
+    default IgniteIdGenEndpointBuilder igniteIdGen(String path) {
         class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {
             public IgniteIdGenEndpointBuilderImpl(String path) {
                 super("ignite-idgen", path);

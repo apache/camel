@@ -36,7 +36,7 @@ public interface ChunkEndpointBuilderFactory {
     public static interface ChunkEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedChunkEndpointBuilder advanced() {
+        default AdvancedChunkEndpointBuilder advanced() {
             return (AdvancedChunkEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder resourceUri(String resourceUri) {
+        default ChunkEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -58,7 +58,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder contentCache(boolean contentCache) {
+        default ChunkEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -67,7 +67,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder contentCache(String contentCache) {
+        default ChunkEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -76,7 +76,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder encoding(String encoding) {
+        default ChunkEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -85,7 +85,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder extension(String extension) {
+        default ChunkEndpointBuilder extension(String extension) {
             setProperty("extension", extension);
             return this;
         }
@@ -94,7 +94,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder themeFolder(String themeFolder) {
+        default ChunkEndpointBuilder themeFolder(String themeFolder) {
             setProperty("themeFolder", themeFolder);
             return this;
         }
@@ -103,7 +103,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder themeLayer(String themeLayer) {
+        default ChunkEndpointBuilder themeLayer(String themeLayer) {
             setProperty("themeLayer", themeLayer);
             return this;
         }
@@ -112,7 +112,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
+        default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
             setProperty("themeSubfolder", themeSubfolder);
             return this;
         }
@@ -124,7 +124,7 @@ public interface ChunkEndpointBuilderFactory {
     public static interface AdvancedChunkEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ChunkEndpointBuilder basic() {
+        default ChunkEndpointBuilder basic() {
             return (ChunkEndpointBuilder) this;
         }
         /**
@@ -133,7 +133,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChunkEndpointBuilder basicPropertyBinding(
+        default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -144,7 +144,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChunkEndpointBuilder basicPropertyBinding(
+        default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -155,8 +155,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChunkEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -166,8 +165,7 @@ public interface ChunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedChunkEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedChunkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -176,7 +174,7 @@ public interface ChunkEndpointBuilderFactory {
      * Transforms the message using a Chunk template. Creates a builder to build
      * endpoints for the Chunk component.
      */
-    public default ChunkEndpointBuilder chunk(String path) {
+    default ChunkEndpointBuilder chunk(String path) {
         class ChunkEndpointBuilderImpl extends AbstractEndpointBuilder implements ChunkEndpointBuilder, AdvancedChunkEndpointBuilder {
             public ChunkEndpointBuilderImpl(String path) {
                 super("chunk", path);

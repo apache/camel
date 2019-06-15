@@ -39,7 +39,7 @@ public interface WebsocketEndpointBuilderFactory {
     public interface WebsocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedWebsocketEndpointConsumerBuilder advanced() {
+        default AdvancedWebsocketEndpointConsumerBuilder advanced() {
             return (AdvancedWebsocketEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder host(String host) {
+        default WebsocketEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -58,7 +58,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder port(Integer port) {
+        default WebsocketEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -69,7 +69,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder port(String port) {
+        default WebsocketEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -78,8 +78,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder resourceUri(
-                String resourceUri) {
+        default WebsocketEndpointConsumerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -90,7 +89,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
+        default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -103,7 +102,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
+        default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -119,7 +118,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
+        default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -135,7 +134,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
+        default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -146,7 +145,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default WebsocketEndpointConsumerBuilder sessionSupport(
+        default WebsocketEndpointConsumerBuilder sessionSupport(
                 boolean sessionSupport) {
             setProperty("sessionSupport", sessionSupport);
             return this;
@@ -157,7 +156,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default WebsocketEndpointConsumerBuilder sessionSupport(
+        default WebsocketEndpointConsumerBuilder sessionSupport(
                 String sessionSupport) {
             setProperty("sessionSupport", sessionSupport);
             return this;
@@ -172,7 +171,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default WebsocketEndpointConsumerBuilder staticResources(
+        default WebsocketEndpointConsumerBuilder staticResources(
                 String staticResources) {
             setProperty("staticResources", staticResources);
             return this;
@@ -182,7 +181,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointConsumerBuilder allowedOrigins(
+        default WebsocketEndpointConsumerBuilder allowedOrigins(
                 String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
@@ -192,7 +191,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
+        default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -202,7 +201,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
+        default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -212,8 +211,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointConsumerBuilder filterPath(
-                String filterPath) {
+        default WebsocketEndpointConsumerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -223,8 +221,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointConsumerBuilder enableJmx(
-                boolean enableJmx) {
+        default WebsocketEndpointConsumerBuilder enableJmx(boolean enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -234,8 +231,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointConsumerBuilder enableJmx(
-                String enableJmx) {
+        default WebsocketEndpointConsumerBuilder enableJmx(String enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -245,7 +241,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointConsumerBuilder sslContextParameters(
+        default WebsocketEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -256,7 +252,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointConsumerBuilder sslContextParameters(
+        default WebsocketEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -270,7 +266,7 @@ public interface WebsocketEndpointBuilderFactory {
     public interface AdvancedWebsocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default WebsocketEndpointConsumerBuilder basic() {
+        default WebsocketEndpointConsumerBuilder basic() {
             return (WebsocketEndpointConsumerBuilder) this;
         }
         /**
@@ -282,7 +278,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -296,7 +292,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedWebsocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -306,7 +302,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -317,7 +313,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedWebsocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -328,7 +324,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -339,7 +335,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -350,7 +346,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
+        default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
                 Integer bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -362,7 +358,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
+        default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
                 String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -373,7 +369,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
+        default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
                 Integer maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
@@ -385,7 +381,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
+        default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
                 String maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
@@ -396,7 +392,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -408,7 +404,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointConsumerBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -419,7 +415,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder minVersion(
+        default AdvancedWebsocketEndpointConsumerBuilder minVersion(
                 Integer minVersion) {
             setProperty("minVersion", minVersion);
             return this;
@@ -431,7 +427,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder minVersion(
+        default AdvancedWebsocketEndpointConsumerBuilder minVersion(
                 String minVersion) {
             setProperty("minVersion", minVersion);
             return this;
@@ -442,7 +438,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder synchronous(
+        default AdvancedWebsocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -453,7 +449,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointConsumerBuilder synchronous(
+        default AdvancedWebsocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -466,7 +462,7 @@ public interface WebsocketEndpointBuilderFactory {
     public static interface WebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedWebsocketEndpointProducerBuilder advanced() {
+        default AdvancedWebsocketEndpointProducerBuilder advanced() {
             return (AdvancedWebsocketEndpointProducerBuilder) this;
         }
         /**
@@ -475,7 +471,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder host(String host) {
+        default WebsocketEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -485,7 +481,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder port(Integer port) {
+        default WebsocketEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -496,7 +492,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder port(String port) {
+        default WebsocketEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -505,8 +501,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder resourceUri(
-                String resourceUri) {
+        default WebsocketEndpointProducerBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -517,7 +512,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
+        default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -530,7 +525,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
+        default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -548,7 +543,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder lazyStartProducer(
+        default WebsocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -566,7 +561,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder lazyStartProducer(
+        default WebsocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -577,8 +572,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder sendTimeout(
-                Integer sendTimeout) {
+        default WebsocketEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
             return this;
         }
@@ -589,8 +583,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder sendTimeout(
-                String sendTimeout) {
+        default WebsocketEndpointProducerBuilder sendTimeout(String sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
             return this;
         }
@@ -601,8 +594,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder sendToAll(
-                Boolean sendToAll) {
+        default WebsocketEndpointProducerBuilder sendToAll(Boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -614,8 +606,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default WebsocketEndpointProducerBuilder sendToAll(
-                String sendToAll) {
+        default WebsocketEndpointProducerBuilder sendToAll(String sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -624,7 +615,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointProducerBuilder allowedOrigins(
+        default WebsocketEndpointProducerBuilder allowedOrigins(
                 String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
@@ -634,7 +625,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointProducerBuilder crossOriginFilterOn(
+        default WebsocketEndpointProducerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -644,7 +635,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointProducerBuilder crossOriginFilterOn(
+        default WebsocketEndpointProducerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -654,8 +645,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointProducerBuilder filterPath(
-                String filterPath) {
+        default WebsocketEndpointProducerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -665,8 +655,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointProducerBuilder enableJmx(
-                boolean enableJmx) {
+        default WebsocketEndpointProducerBuilder enableJmx(boolean enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -676,8 +665,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointProducerBuilder enableJmx(
-                String enableJmx) {
+        default WebsocketEndpointProducerBuilder enableJmx(String enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -687,7 +675,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointProducerBuilder sslContextParameters(
+        default WebsocketEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -698,7 +686,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointProducerBuilder sslContextParameters(
+        default WebsocketEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -712,7 +700,7 @@ public interface WebsocketEndpointBuilderFactory {
     public interface AdvancedWebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default WebsocketEndpointProducerBuilder basic() {
+        default WebsocketEndpointProducerBuilder basic() {
             return (WebsocketEndpointProducerBuilder) this;
         }
         /**
@@ -721,7 +709,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -732,7 +720,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -743,7 +731,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder bufferSize(
+        default AdvancedWebsocketEndpointProducerBuilder bufferSize(
                 Integer bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -755,7 +743,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder bufferSize(
+        default AdvancedWebsocketEndpointProducerBuilder bufferSize(
                 String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -766,7 +754,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
+        default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
                 Integer maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
@@ -778,7 +766,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
+        default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
                 String maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
@@ -789,7 +777,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -801,7 +789,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointProducerBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -812,7 +800,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder minVersion(
+        default AdvancedWebsocketEndpointProducerBuilder minVersion(
                 Integer minVersion) {
             setProperty("minVersion", minVersion);
             return this;
@@ -824,7 +812,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder minVersion(
+        default AdvancedWebsocketEndpointProducerBuilder minVersion(
                 String minVersion) {
             setProperty("minVersion", minVersion);
             return this;
@@ -835,7 +823,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder synchronous(
+        default AdvancedWebsocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -846,7 +834,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointProducerBuilder synchronous(
+        default AdvancedWebsocketEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -859,7 +847,7 @@ public interface WebsocketEndpointBuilderFactory {
     public static interface WebsocketEndpointBuilder
             extends
                 WebsocketEndpointConsumerBuilder, WebsocketEndpointProducerBuilder {
-        public default AdvancedWebsocketEndpointBuilder advanced() {
+        default AdvancedWebsocketEndpointBuilder advanced() {
             return (AdvancedWebsocketEndpointBuilder) this;
         }
         /**
@@ -868,7 +856,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointBuilder host(String host) {
+        default WebsocketEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -878,7 +866,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointBuilder port(Integer port) {
+        default WebsocketEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -889,7 +877,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointBuilder port(String port) {
+        default WebsocketEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -898,7 +886,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebsocketEndpointBuilder resourceUri(String resourceUri) {
+        default WebsocketEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -909,7 +897,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default WebsocketEndpointBuilder maxBinaryMessageSize(
+        default WebsocketEndpointBuilder maxBinaryMessageSize(
                 Integer maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -922,7 +910,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default WebsocketEndpointBuilder maxBinaryMessageSize(
+        default WebsocketEndpointBuilder maxBinaryMessageSize(
                 String maxBinaryMessageSize) {
             setProperty("maxBinaryMessageSize", maxBinaryMessageSize);
             return this;
@@ -932,8 +920,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointBuilder allowedOrigins(
-                String allowedOrigins) {
+        default WebsocketEndpointBuilder allowedOrigins(String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
         }
@@ -942,7 +929,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointBuilder crossOriginFilterOn(
+        default WebsocketEndpointBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -952,7 +939,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group cors
          */
-        public default WebsocketEndpointBuilder crossOriginFilterOn(
+        default WebsocketEndpointBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -962,7 +949,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group cors
          */
-        public default WebsocketEndpointBuilder filterPath(String filterPath) {
+        default WebsocketEndpointBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -972,7 +959,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointBuilder enableJmx(boolean enableJmx) {
+        default WebsocketEndpointBuilder enableJmx(boolean enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -982,7 +969,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group monitoring
          */
-        public default WebsocketEndpointBuilder enableJmx(String enableJmx) {
+        default WebsocketEndpointBuilder enableJmx(String enableJmx) {
             setProperty("enableJmx", enableJmx);
             return this;
         }
@@ -992,7 +979,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointBuilder sslContextParameters(
+        default WebsocketEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1003,7 +990,7 @@ public interface WebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WebsocketEndpointBuilder sslContextParameters(
+        default WebsocketEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1016,7 +1003,7 @@ public interface WebsocketEndpointBuilderFactory {
     public static interface AdvancedWebsocketEndpointBuilder
             extends
                 AdvancedWebsocketEndpointConsumerBuilder, AdvancedWebsocketEndpointProducerBuilder {
-        public default WebsocketEndpointBuilder basic() {
+        default WebsocketEndpointBuilder basic() {
             return (WebsocketEndpointBuilder) this;
         }
         /**
@@ -1025,7 +1012,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1036,7 +1023,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
+        default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1047,8 +1034,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder bufferSize(
-                Integer bufferSize) {
+        default AdvancedWebsocketEndpointBuilder bufferSize(Integer bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -1059,8 +1045,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder bufferSize(
-                String bufferSize) {
+        default AdvancedWebsocketEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -1070,8 +1055,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder maxIdleTime(
-                Integer maxIdleTime) {
+        default AdvancedWebsocketEndpointBuilder maxIdleTime(Integer maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
         }
@@ -1082,8 +1066,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder maxIdleTime(
-                String maxIdleTime) {
+        default AdvancedWebsocketEndpointBuilder maxIdleTime(String maxIdleTime) {
             setProperty("maxIdleTime", maxIdleTime);
             return this;
         }
@@ -1093,7 +1076,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
                 Integer maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -1105,7 +1088,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
+        default AdvancedWebsocketEndpointBuilder maxTextMessageSize(
                 String maxTextMessageSize) {
             setProperty("maxTextMessageSize", maxTextMessageSize);
             return this;
@@ -1116,8 +1099,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder minVersion(
-                Integer minVersion) {
+        default AdvancedWebsocketEndpointBuilder minVersion(Integer minVersion) {
             setProperty("minVersion", minVersion);
             return this;
         }
@@ -1128,8 +1110,7 @@ public interface WebsocketEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder minVersion(
-                String minVersion) {
+        default AdvancedWebsocketEndpointBuilder minVersion(String minVersion) {
             setProperty("minVersion", minVersion);
             return this;
         }
@@ -1139,8 +1120,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedWebsocketEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1150,8 +1130,7 @@ public interface WebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebsocketEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedWebsocketEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1161,7 +1140,7 @@ public interface WebsocketEndpointBuilderFactory {
      * communicating with clients using websocket. Creates a builder to build
      * endpoints for the Jetty Websocket component.
      */
-    public default WebsocketEndpointBuilder websocket(String path) {
+    default WebsocketEndpointBuilder websocket(String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {
             public WebsocketEndpointBuilderImpl(String path) {
                 super("websocket", path);

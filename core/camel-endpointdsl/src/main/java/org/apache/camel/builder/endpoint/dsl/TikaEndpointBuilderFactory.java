@@ -37,7 +37,7 @@ public interface TikaEndpointBuilderFactory {
     public static interface TikaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedTikaEndpointBuilder advanced() {
+        default AdvancedTikaEndpointBuilder advanced() {
             return (AdvancedTikaEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface TikaEndpointBuilderFactory {
          * <code>org.apache.camel.component.tika.TikaOperation</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder operation(TikaOperation operation) {
+        default TikaEndpointBuilder operation(TikaOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -56,7 +56,7 @@ public interface TikaEndpointBuilderFactory {
          * <code>org.apache.camel.component.tika.TikaOperation</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder operation(String operation) {
+        default TikaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -65,7 +65,7 @@ public interface TikaEndpointBuilderFactory {
          * The option is a <code>org.apache.tika.config.TikaConfig</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
+        default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
             setProperty("tikaConfig", tikaConfig);
             return this;
         }
@@ -75,7 +75,7 @@ public interface TikaEndpointBuilderFactory {
          * <code>org.apache.tika.config.TikaConfig</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaConfig(String tikaConfig) {
+        default TikaEndpointBuilder tikaConfig(String tikaConfig) {
             setProperty("tikaConfig", tikaConfig);
             return this;
         }
@@ -84,7 +84,7 @@ public interface TikaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
+        default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
             setProperty("tikaConfigUri", tikaConfigUri);
             return this;
         }
@@ -94,7 +94,7 @@ public interface TikaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaParseOutputEncoding(
+        default TikaEndpointBuilder tikaParseOutputEncoding(
                 String tikaParseOutputEncoding) {
             setProperty("tikaParseOutputEncoding", tikaParseOutputEncoding);
             return this;
@@ -109,7 +109,7 @@ public interface TikaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaParseOutputFormat(
+        default TikaEndpointBuilder tikaParseOutputFormat(
                 TikaParseOutputFormat tikaParseOutputFormat) {
             setProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
@@ -124,7 +124,7 @@ public interface TikaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default TikaEndpointBuilder tikaParseOutputFormat(
+        default TikaEndpointBuilder tikaParseOutputFormat(
                 String tikaParseOutputFormat) {
             setProperty("tikaParseOutputFormat", tikaParseOutputFormat);
             return this;
@@ -137,7 +137,7 @@ public interface TikaEndpointBuilderFactory {
     public static interface AdvancedTikaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default TikaEndpointBuilder basic() {
+        default TikaEndpointBuilder basic() {
             return (TikaEndpointBuilder) this;
         }
         /**
@@ -146,7 +146,7 @@ public interface TikaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTikaEndpointBuilder basicPropertyBinding(
+        default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -157,7 +157,7 @@ public interface TikaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTikaEndpointBuilder basicPropertyBinding(
+        default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -168,8 +168,7 @@ public interface TikaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTikaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedTikaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -179,8 +178,7 @@ public interface TikaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTikaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedTikaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -206,7 +204,7 @@ public interface TikaEndpointBuilderFactory {
      * metadata from thousands of file types. Creates a builder to build
      * endpoints for the Tika component.
      */
-    public default TikaEndpointBuilder tika(String path) {
+    default TikaEndpointBuilder tika(String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {
             public TikaEndpointBuilderImpl(String path) {
                 super("tika", path);

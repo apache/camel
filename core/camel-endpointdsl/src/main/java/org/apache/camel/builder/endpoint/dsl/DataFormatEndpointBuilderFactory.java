@@ -37,7 +37,7 @@ public interface DataFormatEndpointBuilderFactory {
     public static interface DataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDataFormatEndpointBuilder advanced() {
+        default AdvancedDataFormatEndpointBuilder advanced() {
             return (AdvancedDataFormatEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DataFormatEndpointBuilder name(String name) {
+        default DataFormatEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -54,7 +54,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DataFormatEndpointBuilder operation(String operation) {
+        default DataFormatEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -66,7 +66,7 @@ public interface DataFormatEndpointBuilderFactory {
     public static interface AdvancedDataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DataFormatEndpointBuilder basic() {
+        default DataFormatEndpointBuilder basic() {
             return (DataFormatEndpointBuilder) this;
         }
         /**
@@ -75,7 +75,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
+        default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -86,7 +86,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
+        default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -97,7 +97,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataFormatEndpointBuilder synchronous(
+        default AdvancedDataFormatEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -108,8 +108,7 @@ public interface DataFormatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDataFormatEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDataFormatEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -119,7 +118,7 @@ public interface DataFormatEndpointBuilderFactory {
      * was a regular Component supporting Endpoints and URIs. Creates a builder
      * to build endpoints for the Data Format component.
      */
-    public default DataFormatEndpointBuilder dataFormat(String path) {
+    default DataFormatEndpointBuilder dataFormat(String path) {
         class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {
             public DataFormatEndpointBuilderImpl(String path) {
                 super("dataformat", path);

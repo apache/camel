@@ -39,7 +39,7 @@ public interface XmppEndpointBuilderFactory {
     public interface XmppEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedXmppEndpointConsumerBuilder advanced() {
+        default AdvancedXmppEndpointConsumerBuilder advanced() {
             return (AdvancedXmppEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder host(String host) {
+        default XmppEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -56,7 +56,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder port(int port) {
+        default XmppEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -65,7 +65,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder port(String port) {
+        default XmppEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -75,8 +75,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder participant(
-                String participant) {
+        default XmppEndpointConsumerBuilder participant(String participant) {
             setProperty("participant", participant);
             return this;
         }
@@ -85,7 +84,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder login(boolean login) {
+        default XmppEndpointConsumerBuilder login(boolean login) {
             setProperty("login", login);
             return this;
         }
@@ -94,7 +93,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder login(String login) {
+        default XmppEndpointConsumerBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -104,7 +103,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder nickname(String nickname) {
+        default XmppEndpointConsumerBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
             return this;
         }
@@ -113,7 +112,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder pubsub(boolean pubsub) {
+        default XmppEndpointConsumerBuilder pubsub(boolean pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -122,7 +121,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder pubsub(String pubsub) {
+        default XmppEndpointConsumerBuilder pubsub(String pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -138,7 +137,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder room(String room) {
+        default XmppEndpointConsumerBuilder room(String room) {
             setProperty("room", room);
             return this;
         }
@@ -148,8 +147,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder serviceName(
-                String serviceName) {
+        default XmppEndpointConsumerBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
             return this;
         }
@@ -164,7 +162,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder testConnectionOnStartup(
+        default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -180,7 +178,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointConsumerBuilder testConnectionOnStartup(
+        default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -196,7 +194,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder bridgeErrorHandler(
+        default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -212,7 +210,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder bridgeErrorHandler(
+        default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -225,7 +223,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder connectionPollDelay(
+        default XmppEndpointConsumerBuilder connectionPollDelay(
                 int connectionPollDelay) {
             setProperty("connectionPollDelay", connectionPollDelay);
             return this;
@@ -238,7 +236,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder connectionPollDelay(
+        default XmppEndpointConsumerBuilder connectionPollDelay(
                 String connectionPollDelay) {
             setProperty("connectionPollDelay", connectionPollDelay);
             return this;
@@ -250,7 +248,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder doc(boolean doc) {
+        default XmppEndpointConsumerBuilder doc(boolean doc) {
             setProperty("doc", doc);
             return this;
         }
@@ -261,7 +259,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default XmppEndpointConsumerBuilder doc(String doc) {
+        default XmppEndpointConsumerBuilder doc(String doc) {
             setProperty("doc", doc);
             return this;
         }
@@ -272,7 +270,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointConsumerBuilder headerFilterStrategy(
+        default XmppEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -284,7 +282,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointConsumerBuilder headerFilterStrategy(
+        default XmppEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -294,7 +292,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointConsumerBuilder password(String password) {
+        default XmppEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -304,7 +302,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointConsumerBuilder user(String user) {
+        default XmppEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -316,7 +314,7 @@ public interface XmppEndpointBuilderFactory {
     public interface AdvancedXmppEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default XmppEndpointConsumerBuilder basic() {
+        default XmppEndpointConsumerBuilder basic() {
             return (XmppEndpointConsumerBuilder) this;
         }
         /**
@@ -325,7 +323,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder createAccount(
+        default AdvancedXmppEndpointConsumerBuilder createAccount(
                 boolean createAccount) {
             setProperty("createAccount", createAccount);
             return this;
@@ -336,7 +334,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder createAccount(
+        default AdvancedXmppEndpointConsumerBuilder createAccount(
                 String createAccount) {
             setProperty("createAccount", createAccount);
             return this;
@@ -346,8 +344,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder resource(
-                String resource) {
+        default AdvancedXmppEndpointConsumerBuilder resource(String resource) {
             setProperty("resource", resource);
             return this;
         }
@@ -360,7 +357,7 @@ public interface XmppEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
+        default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -374,7 +371,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
+        default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -384,7 +381,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder exchangePattern(
+        default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -395,7 +392,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedXmppEndpointConsumerBuilder exchangePattern(
+        default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -406,7 +403,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -417,7 +414,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -430,7 +427,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder connectionConfig(
+        default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 Object connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -443,7 +440,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder connectionConfig(
+        default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 String connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -454,7 +451,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder synchronous(
+        default AdvancedXmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -465,7 +462,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointConsumerBuilder synchronous(
+        default AdvancedXmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -478,7 +475,7 @@ public interface XmppEndpointBuilderFactory {
     public static interface XmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedXmppEndpointProducerBuilder advanced() {
+        default AdvancedXmppEndpointProducerBuilder advanced() {
             return (AdvancedXmppEndpointProducerBuilder) this;
         }
         /**
@@ -486,7 +483,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder host(String host) {
+        default XmppEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -495,7 +492,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder port(int port) {
+        default XmppEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -504,7 +501,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder port(String port) {
+        default XmppEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -514,8 +511,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder participant(
-                String participant) {
+        default XmppEndpointProducerBuilder participant(String participant) {
             setProperty("participant", participant);
             return this;
         }
@@ -524,7 +520,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder login(boolean login) {
+        default XmppEndpointProducerBuilder login(boolean login) {
             setProperty("login", login);
             return this;
         }
@@ -533,7 +529,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder login(String login) {
+        default XmppEndpointProducerBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -543,7 +539,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder nickname(String nickname) {
+        default XmppEndpointProducerBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
             return this;
         }
@@ -552,7 +548,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder pubsub(boolean pubsub) {
+        default XmppEndpointProducerBuilder pubsub(boolean pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -561,7 +557,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder pubsub(String pubsub) {
+        default XmppEndpointProducerBuilder pubsub(String pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -577,7 +573,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder room(String room) {
+        default XmppEndpointProducerBuilder room(String room) {
             setProperty("room", room);
             return this;
         }
@@ -587,8 +583,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder serviceName(
-                String serviceName) {
+        default XmppEndpointProducerBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
             return this;
         }
@@ -603,7 +598,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder testConnectionOnStartup(
+        default XmppEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -619,7 +614,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointProducerBuilder testConnectionOnStartup(
+        default XmppEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -637,7 +632,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default XmppEndpointProducerBuilder lazyStartProducer(
+        default XmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -655,7 +650,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default XmppEndpointProducerBuilder lazyStartProducer(
+        default XmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -667,7 +662,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointProducerBuilder headerFilterStrategy(
+        default XmppEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -679,7 +674,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointProducerBuilder headerFilterStrategy(
+        default XmppEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -689,7 +684,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointProducerBuilder password(String password) {
+        default XmppEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -699,7 +694,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointProducerBuilder user(String user) {
+        default XmppEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -711,7 +706,7 @@ public interface XmppEndpointBuilderFactory {
     public interface AdvancedXmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default XmppEndpointProducerBuilder basic() {
+        default XmppEndpointProducerBuilder basic() {
             return (XmppEndpointProducerBuilder) this;
         }
         /**
@@ -720,7 +715,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointProducerBuilder createAccount(
+        default AdvancedXmppEndpointProducerBuilder createAccount(
                 boolean createAccount) {
             setProperty("createAccount", createAccount);
             return this;
@@ -731,7 +726,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointProducerBuilder createAccount(
+        default AdvancedXmppEndpointProducerBuilder createAccount(
                 String createAccount) {
             setProperty("createAccount", createAccount);
             return this;
@@ -741,8 +736,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointProducerBuilder resource(
-                String resource) {
+        default AdvancedXmppEndpointProducerBuilder resource(String resource) {
             setProperty("resource", resource);
             return this;
         }
@@ -752,7 +746,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -763,7 +757,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -776,7 +770,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder connectionConfig(
+        default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 Object connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -789,7 +783,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder connectionConfig(
+        default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 String connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -800,7 +794,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder synchronous(
+        default AdvancedXmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -811,7 +805,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointProducerBuilder synchronous(
+        default AdvancedXmppEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -824,7 +818,7 @@ public interface XmppEndpointBuilderFactory {
     public static interface XmppEndpointBuilder
             extends
                 XmppEndpointConsumerBuilder, XmppEndpointProducerBuilder {
-        public default AdvancedXmppEndpointBuilder advanced() {
+        default AdvancedXmppEndpointBuilder advanced() {
             return (AdvancedXmppEndpointBuilder) this;
         }
         /**
@@ -832,7 +826,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder host(String host) {
+        default XmppEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -841,7 +835,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder port(int port) {
+        default XmppEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -850,7 +844,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder port(String port) {
+        default XmppEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -860,7 +854,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder participant(String participant) {
+        default XmppEndpointBuilder participant(String participant) {
             setProperty("participant", participant);
             return this;
         }
@@ -869,7 +863,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder login(boolean login) {
+        default XmppEndpointBuilder login(boolean login) {
             setProperty("login", login);
             return this;
         }
@@ -878,7 +872,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder login(String login) {
+        default XmppEndpointBuilder login(String login) {
             setProperty("login", login);
             return this;
         }
@@ -888,7 +882,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder nickname(String nickname) {
+        default XmppEndpointBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
             return this;
         }
@@ -897,7 +891,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder pubsub(boolean pubsub) {
+        default XmppEndpointBuilder pubsub(boolean pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -906,7 +900,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder pubsub(String pubsub) {
+        default XmppEndpointBuilder pubsub(String pubsub) {
             setProperty("pubsub", pubsub);
             return this;
         }
@@ -922,7 +916,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder room(String room) {
+        default XmppEndpointBuilder room(String room) {
             setProperty("room", room);
             return this;
         }
@@ -932,7 +926,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder serviceName(String serviceName) {
+        default XmppEndpointBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
             return this;
         }
@@ -947,7 +941,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder testConnectionOnStartup(
+        default XmppEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -963,7 +957,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default XmppEndpointBuilder testConnectionOnStartup(
+        default XmppEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -975,7 +969,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointBuilder headerFilterStrategy(
+        default XmppEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -987,7 +981,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group filter
          */
-        public default XmppEndpointBuilder headerFilterStrategy(
+        default XmppEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -997,7 +991,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointBuilder password(String password) {
+        default XmppEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1007,7 +1001,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default XmppEndpointBuilder user(String user) {
+        default XmppEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -1019,7 +1013,7 @@ public interface XmppEndpointBuilderFactory {
     public static interface AdvancedXmppEndpointBuilder
             extends
                 AdvancedXmppEndpointConsumerBuilder, AdvancedXmppEndpointProducerBuilder {
-        public default XmppEndpointBuilder basic() {
+        default XmppEndpointBuilder basic() {
             return (XmppEndpointBuilder) this;
         }
         /**
@@ -1028,8 +1022,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointBuilder createAccount(
-                boolean createAccount) {
+        default AdvancedXmppEndpointBuilder createAccount(boolean createAccount) {
             setProperty("createAccount", createAccount);
             return this;
         }
@@ -1039,8 +1032,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointBuilder createAccount(
-                String createAccount) {
+        default AdvancedXmppEndpointBuilder createAccount(String createAccount) {
             setProperty("createAccount", createAccount);
             return this;
         }
@@ -1049,7 +1041,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common (advanced)
          */
-        public default AdvancedXmppEndpointBuilder resource(String resource) {
+        default AdvancedXmppEndpointBuilder resource(String resource) {
             setProperty("resource", resource);
             return this;
         }
@@ -1059,7 +1051,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1070,7 +1062,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder basicPropertyBinding(
+        default AdvancedXmppEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1083,7 +1075,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder connectionConfig(
+        default AdvancedXmppEndpointBuilder connectionConfig(
                 Object connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -1096,7 +1088,7 @@ public interface XmppEndpointBuilderFactory {
          * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder connectionConfig(
+        default AdvancedXmppEndpointBuilder connectionConfig(
                 String connectionConfig) {
             setProperty("connectionConfig", connectionConfig);
             return this;
@@ -1107,8 +1099,7 @@ public interface XmppEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedXmppEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1118,8 +1109,7 @@ public interface XmppEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXmppEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedXmppEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1128,7 +1118,7 @@ public interface XmppEndpointBuilderFactory {
      * To send and receive messages from a XMPP (chat) server. Creates a builder
      * to build endpoints for the XMPP component.
      */
-    public default XmppEndpointBuilder xmpp(String path) {
+    default XmppEndpointBuilder xmpp(String path) {
         class XmppEndpointBuilderImpl extends AbstractEndpointBuilder implements XmppEndpointBuilder, AdvancedXmppEndpointBuilder {
             public XmppEndpointBuilderImpl(String path) {
                 super("xmpp", path);

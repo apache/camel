@@ -39,7 +39,7 @@ public interface CometdEndpointBuilderFactory {
     public interface CometdEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedCometdEndpointConsumerBuilder advanced() {
+        default AdvancedCometdEndpointConsumerBuilder advanced() {
             return (AdvancedCometdEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder host(String host) {
+        default CometdEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -56,7 +56,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder port(int port) {
+        default CometdEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -65,7 +65,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder port(String port) {
+        default CometdEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -75,8 +75,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder channelName(
-                String channelName) {
+        default CometdEndpointConsumerBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
             return this;
         }
@@ -86,7 +85,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder allowedOrigins(
+        default CometdEndpointConsumerBuilder allowedOrigins(
                 String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
@@ -100,8 +99,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder baseResource(
-                String baseResource) {
+        default CometdEndpointConsumerBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
             return this;
         }
@@ -110,7 +108,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder crossOriginFilterOn(
+        default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -120,7 +118,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder crossOriginFilterOn(
+        default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -131,8 +129,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder filterPath(
-                String filterPath) {
+        default CometdEndpointConsumerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -142,7 +139,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder interval(int interval) {
+        default CometdEndpointConsumerBuilder interval(int interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -152,7 +149,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder interval(String interval) {
+        default CometdEndpointConsumerBuilder interval(String interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -163,7 +160,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder jsonCommented(
+        default CometdEndpointConsumerBuilder jsonCommented(
                 boolean jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
@@ -175,8 +172,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder jsonCommented(
-                String jsonCommented) {
+        default CometdEndpointConsumerBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
         }
@@ -185,7 +181,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder logLevel(int logLevel) {
+        default CometdEndpointConsumerBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -194,7 +190,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder logLevel(String logLevel) {
+        default CometdEndpointConsumerBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -204,7 +200,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder maxInterval(int maxInterval) {
+        default CometdEndpointConsumerBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -214,8 +210,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder maxInterval(
-                String maxInterval) {
+        default CometdEndpointConsumerBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -225,7 +220,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder multiFrameInterval(
+        default CometdEndpointConsumerBuilder multiFrameInterval(
                 int multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
@@ -236,7 +231,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder multiFrameInterval(
+        default CometdEndpointConsumerBuilder multiFrameInterval(
                 String multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
@@ -247,7 +242,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder timeout(int timeout) {
+        default CometdEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -257,7 +252,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointConsumerBuilder timeout(String timeout) {
+        default CometdEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -272,7 +267,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CometdEndpointConsumerBuilder bridgeErrorHandler(
+        default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -288,7 +283,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CometdEndpointConsumerBuilder bridgeErrorHandler(
+        default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -299,7 +294,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CometdEndpointConsumerBuilder sessionHeadersEnabled(
+        default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 boolean sessionHeadersEnabled) {
             setProperty("sessionHeadersEnabled", sessionHeadersEnabled);
             return this;
@@ -310,7 +305,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CometdEndpointConsumerBuilder sessionHeadersEnabled(
+        default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 String sessionHeadersEnabled) {
             setProperty("sessionHeadersEnabled", sessionHeadersEnabled);
             return this;
@@ -323,7 +318,7 @@ public interface CometdEndpointBuilderFactory {
     public interface AdvancedCometdEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default CometdEndpointConsumerBuilder basic() {
+        default CometdEndpointConsumerBuilder basic() {
             return (CometdEndpointConsumerBuilder) this;
         }
         /**
@@ -335,7 +330,7 @@ public interface CometdEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -349,7 +344,7 @@ public interface CometdEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -359,7 +354,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCometdEndpointConsumerBuilder exchangePattern(
+        default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -370,7 +365,7 @@ public interface CometdEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCometdEndpointConsumerBuilder exchangePattern(
+        default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -381,7 +376,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -392,7 +387,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -403,7 +398,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointConsumerBuilder synchronous(
+        default AdvancedCometdEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -414,7 +409,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointConsumerBuilder synchronous(
+        default AdvancedCometdEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -427,7 +422,7 @@ public interface CometdEndpointBuilderFactory {
     public static interface CometdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCometdEndpointProducerBuilder advanced() {
+        default AdvancedCometdEndpointProducerBuilder advanced() {
             return (AdvancedCometdEndpointProducerBuilder) this;
         }
         /**
@@ -435,7 +430,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder host(String host) {
+        default CometdEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -444,7 +439,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder port(int port) {
+        default CometdEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -453,7 +448,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder port(String port) {
+        default CometdEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -463,8 +458,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder channelName(
-                String channelName) {
+        default CometdEndpointProducerBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
             return this;
         }
@@ -474,7 +468,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder allowedOrigins(
+        default CometdEndpointProducerBuilder allowedOrigins(
                 String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
@@ -488,8 +482,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder baseResource(
-                String baseResource) {
+        default CometdEndpointProducerBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
             return this;
         }
@@ -498,7 +491,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder crossOriginFilterOn(
+        default CometdEndpointProducerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -508,7 +501,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder crossOriginFilterOn(
+        default CometdEndpointProducerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -519,8 +512,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder filterPath(
-                String filterPath) {
+        default CometdEndpointProducerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -530,7 +522,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder interval(int interval) {
+        default CometdEndpointProducerBuilder interval(int interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -540,7 +532,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder interval(String interval) {
+        default CometdEndpointProducerBuilder interval(String interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -551,7 +543,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder jsonCommented(
+        default CometdEndpointProducerBuilder jsonCommented(
                 boolean jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
@@ -563,8 +555,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder jsonCommented(
-                String jsonCommented) {
+        default CometdEndpointProducerBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
         }
@@ -573,7 +564,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder logLevel(int logLevel) {
+        default CometdEndpointProducerBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -582,7 +573,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder logLevel(String logLevel) {
+        default CometdEndpointProducerBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -592,7 +583,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder maxInterval(int maxInterval) {
+        default CometdEndpointProducerBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -602,8 +593,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder maxInterval(
-                String maxInterval) {
+        default CometdEndpointProducerBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -613,7 +603,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder multiFrameInterval(
+        default CometdEndpointProducerBuilder multiFrameInterval(
                 int multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
@@ -624,7 +614,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder multiFrameInterval(
+        default CometdEndpointProducerBuilder multiFrameInterval(
                 String multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
@@ -635,7 +625,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder timeout(int timeout) {
+        default CometdEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -645,7 +635,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointProducerBuilder timeout(String timeout) {
+        default CometdEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -656,7 +646,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CometdEndpointProducerBuilder disconnectLocalSession(
+        default CometdEndpointProducerBuilder disconnectLocalSession(
                 boolean disconnectLocalSession) {
             setProperty("disconnectLocalSession", disconnectLocalSession);
             return this;
@@ -668,7 +658,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CometdEndpointProducerBuilder disconnectLocalSession(
+        default CometdEndpointProducerBuilder disconnectLocalSession(
                 String disconnectLocalSession) {
             setProperty("disconnectLocalSession", disconnectLocalSession);
             return this;
@@ -686,7 +676,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CometdEndpointProducerBuilder lazyStartProducer(
+        default CometdEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -704,7 +694,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CometdEndpointProducerBuilder lazyStartProducer(
+        default CometdEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -717,7 +707,7 @@ public interface CometdEndpointBuilderFactory {
     public interface AdvancedCometdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default CometdEndpointProducerBuilder basic() {
+        default CometdEndpointProducerBuilder basic() {
             return (CometdEndpointProducerBuilder) this;
         }
         /**
@@ -726,7 +716,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -737,7 +727,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -748,7 +738,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointProducerBuilder synchronous(
+        default AdvancedCometdEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -759,7 +749,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointProducerBuilder synchronous(
+        default AdvancedCometdEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -772,7 +762,7 @@ public interface CometdEndpointBuilderFactory {
     public static interface CometdEndpointBuilder
             extends
                 CometdEndpointConsumerBuilder, CometdEndpointProducerBuilder {
-        public default AdvancedCometdEndpointBuilder advanced() {
+        default AdvancedCometdEndpointBuilder advanced() {
             return (AdvancedCometdEndpointBuilder) this;
         }
         /**
@@ -780,7 +770,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder host(String host) {
+        default CometdEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -789,7 +779,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder port(int port) {
+        default CometdEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -798,7 +788,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder port(String port) {
+        default CometdEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -808,7 +798,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder channelName(String channelName) {
+        default CometdEndpointBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
             return this;
         }
@@ -818,8 +808,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder allowedOrigins(
-                String allowedOrigins) {
+        default CometdEndpointBuilder allowedOrigins(String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
             return this;
         }
@@ -832,7 +821,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder baseResource(String baseResource) {
+        default CometdEndpointBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
             return this;
         }
@@ -841,7 +830,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder crossOriginFilterOn(
+        default CometdEndpointBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -851,7 +840,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder crossOriginFilterOn(
+        default CometdEndpointBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
             setProperty("crossOriginFilterOn", crossOriginFilterOn);
             return this;
@@ -862,7 +851,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder filterPath(String filterPath) {
+        default CometdEndpointBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
             return this;
         }
@@ -872,7 +861,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder interval(int interval) {
+        default CometdEndpointBuilder interval(int interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -882,7 +871,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder interval(String interval) {
+        default CometdEndpointBuilder interval(String interval) {
             setProperty("interval", interval);
             return this;
         }
@@ -893,7 +882,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder jsonCommented(boolean jsonCommented) {
+        default CometdEndpointBuilder jsonCommented(boolean jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
         }
@@ -904,7 +893,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder jsonCommented(String jsonCommented) {
+        default CometdEndpointBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
             return this;
         }
@@ -913,7 +902,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder logLevel(int logLevel) {
+        default CometdEndpointBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -922,7 +911,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder logLevel(String logLevel) {
+        default CometdEndpointBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
             return this;
         }
@@ -932,7 +921,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder maxInterval(int maxInterval) {
+        default CometdEndpointBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -942,7 +931,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder maxInterval(String maxInterval) {
+        default CometdEndpointBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
             return this;
         }
@@ -952,8 +941,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder multiFrameInterval(
-                int multiFrameInterval) {
+        default CometdEndpointBuilder multiFrameInterval(int multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
         }
@@ -963,7 +951,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder multiFrameInterval(
+        default CometdEndpointBuilder multiFrameInterval(
                 String multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
             return this;
@@ -974,7 +962,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder timeout(int timeout) {
+        default CometdEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -984,7 +972,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CometdEndpointBuilder timeout(String timeout) {
+        default CometdEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -996,7 +984,7 @@ public interface CometdEndpointBuilderFactory {
     public static interface AdvancedCometdEndpointBuilder
             extends
                 AdvancedCometdEndpointConsumerBuilder, AdvancedCometdEndpointProducerBuilder {
-        public default CometdEndpointBuilder basic() {
+        default CometdEndpointBuilder basic() {
             return (CometdEndpointBuilder) this;
         }
         /**
@@ -1005,7 +993,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1016,7 +1004,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointBuilder basicPropertyBinding(
+        default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1027,8 +1015,7 @@ public interface CometdEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCometdEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1038,8 +1025,7 @@ public interface CometdEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCometdEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCometdEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1049,7 +1035,7 @@ public interface CometdEndpointBuilderFactory {
      * implementation of the cometd/bayeux protocol. Creates a builder to build
      * endpoints for the CometD component.
      */
-    public default CometdEndpointBuilder cometd(String path) {
+    default CometdEndpointBuilder cometd(String path) {
         class CometdEndpointBuilderImpl extends AbstractEndpointBuilder implements CometdEndpointBuilder, AdvancedCometdEndpointBuilder {
             public CometdEndpointBuilderImpl(String path) {
                 super("cometd", path);

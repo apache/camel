@@ -37,7 +37,7 @@ public interface InfluxDbEndpointBuilderFactory {
     public static interface InfluxDbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedInfluxDbEndpointBuilder advanced() {
+        default AdvancedInfluxDbEndpointBuilder advanced() {
             return (AdvancedInfluxDbEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder connectionBean(
-                String connectionBean) {
+        default InfluxDbEndpointBuilder connectionBean(String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
         }
@@ -55,7 +54,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder batch(boolean batch) {
+        default InfluxDbEndpointBuilder batch(boolean batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -64,7 +63,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder batch(String batch) {
+        default InfluxDbEndpointBuilder batch(String batch) {
             setProperty("batch", batch);
             return this;
         }
@@ -73,7 +72,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder databaseName(String databaseName) {
+        default InfluxDbEndpointBuilder databaseName(String databaseName) {
             setProperty("databaseName", databaseName);
             return this;
         }
@@ -82,7 +81,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder operation(String operation) {
+        default InfluxDbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -91,7 +90,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder query(String query) {
+        default InfluxDbEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -101,8 +100,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default InfluxDbEndpointBuilder retentionPolicy(
-                String retentionPolicy) {
+        default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
             setProperty("retentionPolicy", retentionPolicy);
             return this;
         }
@@ -114,7 +112,7 @@ public interface InfluxDbEndpointBuilderFactory {
     public static interface AdvancedInfluxDbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default InfluxDbEndpointBuilder basic() {
+        default InfluxDbEndpointBuilder basic() {
             return (InfluxDbEndpointBuilder) this;
         }
         /**
@@ -123,7 +121,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
+        default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -134,7 +132,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
+        default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -145,8 +143,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfluxDbEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -156,8 +153,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedInfluxDbEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -167,7 +163,7 @@ public interface InfluxDbEndpointBuilderFactory {
      * series database. Creates a builder to build endpoints for the InfluxDB
      * component.
      */
-    public default InfluxDbEndpointBuilder influxDb(String path) {
+    default InfluxDbEndpointBuilder influxDb(String path) {
         class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {
             public InfluxDbEndpointBuilderImpl(String path) {
                 super("influxdb", path);

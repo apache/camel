@@ -36,7 +36,7 @@ public interface VelocityEndpointBuilderFactory {
     public static interface VelocityEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedVelocityEndpointBuilder advanced() {
+        default AdvancedVelocityEndpointBuilder advanced() {
             return (AdvancedVelocityEndpointBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder resourceUri(String resourceUri) {
+        default VelocityEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -58,7 +58,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder contentCache(boolean contentCache) {
+        default VelocityEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -67,7 +67,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder contentCache(String contentCache) {
+        default VelocityEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -76,7 +76,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder encoding(String encoding) {
+        default VelocityEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -86,7 +86,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder loaderCache(boolean loaderCache) {
+        default VelocityEndpointBuilder loaderCache(boolean loaderCache) {
             setProperty("loaderCache", loaderCache);
             return this;
         }
@@ -96,7 +96,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder loaderCache(String loaderCache) {
+        default VelocityEndpointBuilder loaderCache(String loaderCache) {
             setProperty("loaderCache", loaderCache);
             return this;
         }
@@ -106,8 +106,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default VelocityEndpointBuilder propertiesFile(
-                String propertiesFile) {
+        default VelocityEndpointBuilder propertiesFile(String propertiesFile) {
             setProperty("propertiesFile", propertiesFile);
             return this;
         }
@@ -119,7 +118,7 @@ public interface VelocityEndpointBuilderFactory {
     public static interface AdvancedVelocityEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default VelocityEndpointBuilder basic() {
+        default VelocityEndpointBuilder basic() {
             return (VelocityEndpointBuilder) this;
         }
         /**
@@ -128,7 +127,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVelocityEndpointBuilder basicPropertyBinding(
+        default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -139,7 +138,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVelocityEndpointBuilder basicPropertyBinding(
+        default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -150,8 +149,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVelocityEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedVelocityEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -161,8 +159,7 @@ public interface VelocityEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVelocityEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -171,7 +168,7 @@ public interface VelocityEndpointBuilderFactory {
      * Transforms the message using a Velocity template. Creates a builder to
      * build endpoints for the Velocity component.
      */
-    public default VelocityEndpointBuilder velocity(String path) {
+    default VelocityEndpointBuilder velocity(String path) {
         class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder, AdvancedVelocityEndpointBuilder {
             public VelocityEndpointBuilderImpl(String path) {
                 super("velocity", path);

@@ -37,7 +37,7 @@ public interface NovaEndpointBuilderFactory {
     public static interface NovaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNovaEndpointBuilder advanced() {
+        default AdvancedNovaEndpointBuilder advanced() {
             return (AdvancedNovaEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder host(String host) {
+        default NovaEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder apiVersion(String apiVersion) {
+        default NovaEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -64,7 +64,7 @@ public interface NovaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default NovaEndpointBuilder config(Object config) {
+        default NovaEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface NovaEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder config(String config) {
+        default NovaEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -83,7 +83,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder domain(String domain) {
+        default NovaEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -92,7 +92,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder operation(String operation) {
+        default NovaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -101,7 +101,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder password(String password) {
+        default NovaEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -110,7 +110,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder project(String project) {
+        default NovaEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -119,7 +119,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder subsystem(String subsystem) {
+        default NovaEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
             return this;
         }
@@ -128,7 +128,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NovaEndpointBuilder username(String username) {
+        default NovaEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -140,7 +140,7 @@ public interface NovaEndpointBuilderFactory {
     public static interface AdvancedNovaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default NovaEndpointBuilder basic() {
+        default NovaEndpointBuilder basic() {
             return (NovaEndpointBuilder) this;
         }
         /**
@@ -149,7 +149,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNovaEndpointBuilder basicPropertyBinding(
+        default AdvancedNovaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface NovaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNovaEndpointBuilder basicPropertyBinding(
+        default AdvancedNovaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,8 +171,7 @@ public interface NovaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNovaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNovaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -182,8 +181,7 @@ public interface NovaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNovaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNovaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -193,7 +191,7 @@ public interface NovaEndpointBuilderFactory {
      * compute services. Creates a builder to build endpoints for the OpenStack
      * Nova component.
      */
-    public default NovaEndpointBuilder nova(String path) {
+    default NovaEndpointBuilder nova(String path) {
         class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder, AdvancedNovaEndpointBuilder {
             public NovaEndpointBuilderImpl(String path) {
                 super("openstack-nova", path);

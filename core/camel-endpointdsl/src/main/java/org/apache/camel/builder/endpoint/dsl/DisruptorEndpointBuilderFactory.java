@@ -40,7 +40,7 @@ public interface DisruptorEndpointBuilderFactory {
     public interface DisruptorEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDisruptorEndpointConsumerBuilder advanced() {
+        default AdvancedDisruptorEndpointConsumerBuilder advanced() {
             return (AdvancedDisruptorEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorEndpointConsumerBuilder name(String name) {
+        default DisruptorEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointConsumerBuilder size(int size) {
+        default DisruptorEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -76,7 +76,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointConsumerBuilder size(String size) {
+        default DisruptorEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -91,7 +91,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
+        default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -107,7 +107,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
+        default DisruptorEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -117,7 +117,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder concurrentConsumers(
+        default DisruptorEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -127,7 +127,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder concurrentConsumers(
+        default DisruptorEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -141,7 +141,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder multipleConsumers(
+        default DisruptorEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -155,7 +155,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder multipleConsumers(
+        default DisruptorEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -168,7 +168,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder waitStrategy(
+        default DisruptorEndpointConsumerBuilder waitStrategy(
                 DisruptorWaitStrategy waitStrategy) {
             setProperty("waitStrategy", waitStrategy);
             return this;
@@ -181,7 +181,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * @group consumer
          */
-        public default DisruptorEndpointConsumerBuilder waitStrategy(
+        default DisruptorEndpointConsumerBuilder waitStrategy(
                 String waitStrategy) {
             setProperty("waitStrategy", waitStrategy);
             return this;
@@ -194,7 +194,7 @@ public interface DisruptorEndpointBuilderFactory {
     public interface AdvancedDisruptorEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DisruptorEndpointConsumerBuilder basic() {
+        default DisruptorEndpointConsumerBuilder basic() {
             return (DisruptorEndpointConsumerBuilder) this;
         }
         /**
@@ -206,7 +206,7 @@ public interface DisruptorEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -220,7 +220,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDisruptorEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -230,7 +230,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
+        default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -241,7 +241,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
+        default AdvancedDisruptorEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -252,7 +252,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -263,7 +263,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -274,7 +274,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder synchronous(
+        default AdvancedDisruptorEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -285,7 +285,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointConsumerBuilder synchronous(
+        default AdvancedDisruptorEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -298,7 +298,7 @@ public interface DisruptorEndpointBuilderFactory {
     public static interface DisruptorEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDisruptorEndpointProducerBuilder advanced() {
+        default AdvancedDisruptorEndpointProducerBuilder advanced() {
             return (AdvancedDisruptorEndpointProducerBuilder) this;
         }
         /**
@@ -306,7 +306,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorEndpointProducerBuilder name(String name) {
+        default DisruptorEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -320,7 +320,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointProducerBuilder size(int size) {
+        default DisruptorEndpointProducerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -334,7 +334,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointProducerBuilder size(String size) {
+        default DisruptorEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -347,7 +347,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder blockWhenFull(
+        default DisruptorEndpointProducerBuilder blockWhenFull(
                 boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
@@ -361,7 +361,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder blockWhenFull(
+        default DisruptorEndpointProducerBuilder blockWhenFull(
                 String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
@@ -379,7 +379,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder lazyStartProducer(
+        default DisruptorEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -397,7 +397,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder lazyStartProducer(
+        default DisruptorEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -411,7 +411,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder producerType(
+        default DisruptorEndpointProducerBuilder producerType(
                 DisruptorProducerType producerType) {
             setProperty("producerType", producerType);
             return this;
@@ -425,7 +425,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder producerType(
+        default DisruptorEndpointProducerBuilder producerType(
                 String producerType) {
             setProperty("producerType", producerType);
             return this;
@@ -437,7 +437,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder timeout(long timeout) {
+        default DisruptorEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -448,7 +448,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder timeout(String timeout) {
+        default DisruptorEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -462,7 +462,7 @@ public interface DisruptorEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder waitForTaskToComplete(
+        default DisruptorEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -477,7 +477,7 @@ public interface DisruptorEndpointBuilderFactory {
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * @group producer
          */
-        public default DisruptorEndpointProducerBuilder waitForTaskToComplete(
+        default DisruptorEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -490,7 +490,7 @@ public interface DisruptorEndpointBuilderFactory {
     public interface AdvancedDisruptorEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DisruptorEndpointProducerBuilder basic() {
+        default DisruptorEndpointProducerBuilder basic() {
             return (DisruptorEndpointProducerBuilder) this;
         }
         /**
@@ -499,7 +499,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -510,7 +510,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -521,7 +521,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointProducerBuilder synchronous(
+        default AdvancedDisruptorEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -532,7 +532,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointProducerBuilder synchronous(
+        default AdvancedDisruptorEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -545,7 +545,7 @@ public interface DisruptorEndpointBuilderFactory {
     public static interface DisruptorEndpointBuilder
             extends
                 DisruptorEndpointConsumerBuilder, DisruptorEndpointProducerBuilder {
-        public default AdvancedDisruptorEndpointBuilder advanced() {
+        default AdvancedDisruptorEndpointBuilder advanced() {
             return (AdvancedDisruptorEndpointBuilder) this;
         }
         /**
@@ -553,7 +553,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DisruptorEndpointBuilder name(String name) {
+        default DisruptorEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -567,7 +567,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointBuilder size(int size) {
+        default DisruptorEndpointBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -581,7 +581,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default DisruptorEndpointBuilder size(String size) {
+        default DisruptorEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -593,7 +593,7 @@ public interface DisruptorEndpointBuilderFactory {
     public static interface AdvancedDisruptorEndpointBuilder
             extends
                 AdvancedDisruptorEndpointConsumerBuilder, AdvancedDisruptorEndpointProducerBuilder {
-        public default DisruptorEndpointBuilder basic() {
+        default DisruptorEndpointBuilder basic() {
             return (DisruptorEndpointBuilder) this;
         }
         /**
@@ -602,7 +602,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -613,7 +613,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
+        default AdvancedDisruptorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -624,8 +624,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDisruptorEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -635,8 +634,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDisruptorEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDisruptorEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -664,7 +662,7 @@ public interface DisruptorEndpointBuilderFactory {
      * Disruptor. Creates a builder to build endpoints for the Disruptor
      * component.
      */
-    public default DisruptorEndpointBuilder disruptor(String path) {
+    default DisruptorEndpointBuilder disruptor(String path) {
         class DisruptorEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorEndpointBuilder, AdvancedDisruptorEndpointBuilder {
             public DisruptorEndpointBuilderImpl(String path) {
                 super("disruptor", path);

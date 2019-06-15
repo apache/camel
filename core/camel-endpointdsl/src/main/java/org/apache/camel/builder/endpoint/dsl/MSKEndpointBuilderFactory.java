@@ -36,7 +36,7 @@ public interface MSKEndpointBuilderFactory {
     public static interface MSKEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMSKEndpointBuilder advanced() {
+        default AdvancedMSKEndpointBuilder advanced() {
             return (AdvancedMSKEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface MSKEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MSKEndpointBuilder label(String label) {
+        default MSKEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -53,7 +53,7 @@ public interface MSKEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MSKEndpointBuilder region(String region) {
+        default MSKEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -65,7 +65,7 @@ public interface MSKEndpointBuilderFactory {
     public static interface AdvancedMSKEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MSKEndpointBuilder basic() {
+        default MSKEndpointBuilder basic() {
             return (MSKEndpointBuilder) this;
         }
         /**
@@ -74,7 +74,7 @@ public interface MSKEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMSKEndpointBuilder basicPropertyBinding(
+        default AdvancedMSKEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -85,7 +85,7 @@ public interface MSKEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMSKEndpointBuilder basicPropertyBinding(
+        default AdvancedMSKEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,8 +96,7 @@ public interface MSKEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMSKEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMSKEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -107,7 +106,7 @@ public interface MSKEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMSKEndpointBuilder synchronous(String synchronous) {
+        default AdvancedMSKEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -124,7 +123,7 @@ public interface MSKEndpointBuilderFactory {
      * The aws-kms is used for managing Amazon KMS Creates a builder to build
      * endpoints for the AWS MSK component.
      */
-    public default MSKEndpointBuilder mSK(String path) {
+    default MSKEndpointBuilder mSK(String path) {
         class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder, AdvancedMSKEndpointBuilder {
             public MSKEndpointBuilderImpl(String path) {
                 super("aws-msk", path);

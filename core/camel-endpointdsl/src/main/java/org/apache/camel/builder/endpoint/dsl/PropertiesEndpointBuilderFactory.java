@@ -40,7 +40,7 @@ public interface PropertiesEndpointBuilderFactory {
     public interface PropertiesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedPropertiesEndpointConsumerBuilder advanced() {
+        default AdvancedPropertiesEndpointConsumerBuilder advanced() {
             return (AdvancedPropertiesEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PropertiesEndpointConsumerBuilder key(String key) {
+        default PropertiesEndpointConsumerBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -58,7 +58,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
+        default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
                 boolean ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -69,7 +69,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
+        default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
                 String ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -82,7 +82,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointConsumerBuilder locations(
+        default PropertiesEndpointConsumerBuilder locations(
                 List<Object> locations) {
             setProperty("locations", locations);
             return this;
@@ -95,8 +95,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointConsumerBuilder locations(
-                String locations) {
+        default PropertiesEndpointConsumerBuilder locations(String locations) {
             setProperty("locations", locations);
             return this;
         }
@@ -111,7 +110,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
+        default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -127,7 +126,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
+        default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -140,7 +139,7 @@ public interface PropertiesEndpointBuilderFactory {
     public interface AdvancedPropertiesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default PropertiesEndpointConsumerBuilder basic() {
+        default PropertiesEndpointConsumerBuilder basic() {
             return (PropertiesEndpointConsumerBuilder) this;
         }
         /**
@@ -152,7 +151,7 @@ public interface PropertiesEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -166,7 +165,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -176,7 +175,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
+        default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -187,7 +186,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
+        default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -198,7 +197,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -209,7 +208,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -220,7 +219,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder synchronous(
+        default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -231,7 +230,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointConsumerBuilder synchronous(
+        default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -244,7 +243,7 @@ public interface PropertiesEndpointBuilderFactory {
     public static interface PropertiesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedPropertiesEndpointProducerBuilder advanced() {
+        default AdvancedPropertiesEndpointProducerBuilder advanced() {
             return (AdvancedPropertiesEndpointProducerBuilder) this;
         }
         /**
@@ -252,7 +251,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PropertiesEndpointProducerBuilder key(String key) {
+        default PropertiesEndpointProducerBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -262,7 +261,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointProducerBuilder ignoreMissingLocation(
+        default PropertiesEndpointProducerBuilder ignoreMissingLocation(
                 boolean ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -273,7 +272,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointProducerBuilder ignoreMissingLocation(
+        default PropertiesEndpointProducerBuilder ignoreMissingLocation(
                 String ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -286,7 +285,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointProducerBuilder locations(
+        default PropertiesEndpointProducerBuilder locations(
                 List<Object> locations) {
             setProperty("locations", locations);
             return this;
@@ -299,8 +298,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointProducerBuilder locations(
-                String locations) {
+        default PropertiesEndpointProducerBuilder locations(String locations) {
             setProperty("locations", locations);
             return this;
         }
@@ -317,7 +315,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default PropertiesEndpointProducerBuilder lazyStartProducer(
+        default PropertiesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -335,7 +333,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default PropertiesEndpointProducerBuilder lazyStartProducer(
+        default PropertiesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -348,7 +346,7 @@ public interface PropertiesEndpointBuilderFactory {
     public interface AdvancedPropertiesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default PropertiesEndpointProducerBuilder basic() {
+        default PropertiesEndpointProducerBuilder basic() {
             return (PropertiesEndpointProducerBuilder) this;
         }
         /**
@@ -357,7 +355,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -368,7 +366,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -379,7 +377,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointProducerBuilder synchronous(
+        default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -390,7 +388,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointProducerBuilder synchronous(
+        default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -403,7 +401,7 @@ public interface PropertiesEndpointBuilderFactory {
     public static interface PropertiesEndpointBuilder
             extends
                 PropertiesEndpointConsumerBuilder, PropertiesEndpointProducerBuilder {
-        public default AdvancedPropertiesEndpointBuilder advanced() {
+        default AdvancedPropertiesEndpointBuilder advanced() {
             return (AdvancedPropertiesEndpointBuilder) this;
         }
         /**
@@ -411,7 +409,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PropertiesEndpointBuilder key(String key) {
+        default PropertiesEndpointBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -421,7 +419,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointBuilder ignoreMissingLocation(
+        default PropertiesEndpointBuilder ignoreMissingLocation(
                 boolean ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -432,7 +430,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PropertiesEndpointBuilder ignoreMissingLocation(
+        default PropertiesEndpointBuilder ignoreMissingLocation(
                 String ignoreMissingLocation) {
             setProperty("ignoreMissingLocation", ignoreMissingLocation);
             return this;
@@ -445,8 +443,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointBuilder locations(
-                List<Object> locations) {
+        default PropertiesEndpointBuilder locations(List<Object> locations) {
             setProperty("locations", locations);
             return this;
         }
@@ -458,7 +455,7 @@ public interface PropertiesEndpointBuilderFactory {
          * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
          * @group common
          */
-        public default PropertiesEndpointBuilder locations(String locations) {
+        default PropertiesEndpointBuilder locations(String locations) {
             setProperty("locations", locations);
             return this;
         }
@@ -470,7 +467,7 @@ public interface PropertiesEndpointBuilderFactory {
     public static interface AdvancedPropertiesEndpointBuilder
             extends
                 AdvancedPropertiesEndpointConsumerBuilder, AdvancedPropertiesEndpointProducerBuilder {
-        public default PropertiesEndpointBuilder basic() {
+        default PropertiesEndpointBuilder basic() {
             return (PropertiesEndpointBuilder) this;
         }
         /**
@@ -479,7 +476,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -490,7 +487,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
+        default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -501,7 +498,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointBuilder synchronous(
+        default AdvancedPropertiesEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -512,8 +509,7 @@ public interface PropertiesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPropertiesEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedPropertiesEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -523,7 +519,7 @@ public interface PropertiesEndpointBuilderFactory {
      * endpoint uris. Creates a builder to build endpoints for the Properties
      * component.
      */
-    public default PropertiesEndpointBuilder properties(String path) {
+    default PropertiesEndpointBuilder properties(String path) {
         class PropertiesEndpointBuilderImpl extends AbstractEndpointBuilder implements PropertiesEndpointBuilder, AdvancedPropertiesEndpointBuilder {
             public PropertiesEndpointBuilderImpl(String path) {
                 super("properties", path);

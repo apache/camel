@@ -39,7 +39,7 @@ public interface BrowseEndpointBuilderFactory {
     public interface BrowseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedBrowseEndpointConsumerBuilder advanced() {
+        default AdvancedBrowseEndpointConsumerBuilder advanced() {
             return (AdvancedBrowseEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BrowseEndpointConsumerBuilder name(String name) {
+        default BrowseEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default BrowseEndpointConsumerBuilder bridgeErrorHandler(
+        default BrowseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,7 +78,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default BrowseEndpointConsumerBuilder bridgeErrorHandler(
+        default BrowseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -91,7 +91,7 @@ public interface BrowseEndpointBuilderFactory {
     public interface AdvancedBrowseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default BrowseEndpointConsumerBuilder basic() {
+        default BrowseEndpointConsumerBuilder basic() {
             return (BrowseEndpointConsumerBuilder) this;
         }
         /**
@@ -103,7 +103,7 @@ public interface BrowseEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -117,7 +117,7 @@ public interface BrowseEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedBrowseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -127,7 +127,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
+        default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -138,7 +138,7 @@ public interface BrowseEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
+        default AdvancedBrowseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -149,7 +149,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,7 +171,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointConsumerBuilder synchronous(
+        default AdvancedBrowseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -182,7 +182,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointConsumerBuilder synchronous(
+        default AdvancedBrowseEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -195,7 +195,7 @@ public interface BrowseEndpointBuilderFactory {
     public static interface BrowseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBrowseEndpointProducerBuilder advanced() {
+        default AdvancedBrowseEndpointProducerBuilder advanced() {
             return (AdvancedBrowseEndpointProducerBuilder) this;
         }
         /**
@@ -203,7 +203,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BrowseEndpointProducerBuilder name(String name) {
+        default BrowseEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -220,7 +220,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default BrowseEndpointProducerBuilder lazyStartProducer(
+        default BrowseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -238,7 +238,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default BrowseEndpointProducerBuilder lazyStartProducer(
+        default BrowseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -251,7 +251,7 @@ public interface BrowseEndpointBuilderFactory {
     public interface AdvancedBrowseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default BrowseEndpointProducerBuilder basic() {
+        default BrowseEndpointProducerBuilder basic() {
             return (BrowseEndpointProducerBuilder) this;
         }
         /**
@@ -260,7 +260,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -271,7 +271,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -282,7 +282,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointProducerBuilder synchronous(
+        default AdvancedBrowseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -293,7 +293,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointProducerBuilder synchronous(
+        default AdvancedBrowseEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -306,7 +306,7 @@ public interface BrowseEndpointBuilderFactory {
     public static interface BrowseEndpointBuilder
             extends
                 BrowseEndpointConsumerBuilder, BrowseEndpointProducerBuilder {
-        public default AdvancedBrowseEndpointBuilder advanced() {
+        default AdvancedBrowseEndpointBuilder advanced() {
             return (AdvancedBrowseEndpointBuilder) this;
         }
         /**
@@ -314,7 +314,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default BrowseEndpointBuilder name(String name) {
+        default BrowseEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -326,7 +326,7 @@ public interface BrowseEndpointBuilderFactory {
     public static interface AdvancedBrowseEndpointBuilder
             extends
                 AdvancedBrowseEndpointConsumerBuilder, AdvancedBrowseEndpointProducerBuilder {
-        public default BrowseEndpointBuilder basic() {
+        default BrowseEndpointBuilder basic() {
             return (BrowseEndpointBuilder) this;
         }
         /**
@@ -335,7 +335,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -346,7 +346,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointBuilder basicPropertyBinding(
+        default AdvancedBrowseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -357,8 +357,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedBrowseEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -368,8 +367,7 @@ public interface BrowseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBrowseEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedBrowseEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -379,7 +377,7 @@ public interface BrowseEndpointBuilderFactory {
      * endpoints that supports BrowsableEndpoint. Creates a builder to build
      * endpoints for the Browse component.
      */
-    public default BrowseEndpointBuilder browse(String path) {
+    default BrowseEndpointBuilder browse(String path) {
         class BrowseEndpointBuilderImpl extends AbstractEndpointBuilder implements BrowseEndpointBuilder, AdvancedBrowseEndpointBuilder {
             public BrowseEndpointBuilderImpl(String path) {
                 super("browse", path);

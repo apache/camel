@@ -40,7 +40,7 @@ public interface StreamEndpointBuilderFactory {
     public interface StreamEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedStreamEndpointConsumerBuilder advanced() {
+        default AdvancedStreamEndpointConsumerBuilder advanced() {
             return (AdvancedStreamEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointConsumerBuilder kind(String kind) {
+        default StreamEndpointConsumerBuilder kind(String kind) {
             setProperty("kind", kind);
             return this;
         }
@@ -59,7 +59,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointConsumerBuilder encoding(String encoding) {
+        default StreamEndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -69,7 +69,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointConsumerBuilder fileName(String fileName) {
+        default StreamEndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -80,7 +80,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointConsumerBuilder url(String url) {
+        default StreamEndpointConsumerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -95,7 +95,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder bridgeErrorHandler(
+        default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,7 +111,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder bridgeErrorHandler(
+        default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -122,8 +122,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder fileWatcher(
-                boolean fileWatcher) {
+        default StreamEndpointConsumerBuilder fileWatcher(boolean fileWatcher) {
             setProperty("fileWatcher", fileWatcher);
             return this;
         }
@@ -133,8 +132,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder fileWatcher(
-                String fileWatcher) {
+        default StreamEndpointConsumerBuilder fileWatcher(String fileWatcher) {
             setProperty("fileWatcher", fileWatcher);
             return this;
         }
@@ -145,7 +143,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder groupLines(int groupLines) {
+        default StreamEndpointConsumerBuilder groupLines(int groupLines) {
             setProperty("groupLines", groupLines);
             return this;
         }
@@ -156,8 +154,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder groupLines(
-                String groupLines) {
+        default StreamEndpointConsumerBuilder groupLines(String groupLines) {
             setProperty("groupLines", groupLines);
             return this;
         }
@@ -167,8 +164,7 @@ public interface StreamEndpointBuilderFactory {
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder groupStrategy(
-                Object groupStrategy) {
+        default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
             setProperty("groupStrategy", groupStrategy);
             return this;
         }
@@ -178,8 +174,7 @@ public interface StreamEndpointBuilderFactory {
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder groupStrategy(
-                String groupStrategy) {
+        default StreamEndpointConsumerBuilder groupStrategy(String groupStrategy) {
             setProperty("groupStrategy", groupStrategy);
             return this;
         }
@@ -191,7 +186,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder initialPromptDelay(
+        default StreamEndpointConsumerBuilder initialPromptDelay(
                 long initialPromptDelay) {
             setProperty("initialPromptDelay", initialPromptDelay);
             return this;
@@ -204,7 +199,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder initialPromptDelay(
+        default StreamEndpointConsumerBuilder initialPromptDelay(
                 String initialPromptDelay) {
             setProperty("initialPromptDelay", initialPromptDelay);
             return this;
@@ -214,8 +209,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder promptDelay(
-                long promptDelay) {
+        default StreamEndpointConsumerBuilder promptDelay(long promptDelay) {
             setProperty("promptDelay", promptDelay);
             return this;
         }
@@ -224,8 +218,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder promptDelay(
-                String promptDelay) {
+        default StreamEndpointConsumerBuilder promptDelay(String promptDelay) {
             setProperty("promptDelay", promptDelay);
             return this;
         }
@@ -235,8 +228,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder promptMessage(
-                String promptMessage) {
+        default StreamEndpointConsumerBuilder promptMessage(String promptMessage) {
             setProperty("promptMessage", promptMessage);
             return this;
         }
@@ -247,7 +239,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder retry(boolean retry) {
+        default StreamEndpointConsumerBuilder retry(boolean retry) {
             setProperty("retry", retry);
             return this;
         }
@@ -258,7 +250,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder retry(String retry) {
+        default StreamEndpointConsumerBuilder retry(String retry) {
             setProperty("retry", retry);
             return this;
         }
@@ -268,8 +260,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder scanStream(
-                boolean scanStream) {
+        default StreamEndpointConsumerBuilder scanStream(boolean scanStream) {
             setProperty("scanStream", scanStream);
             return this;
         }
@@ -279,8 +270,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder scanStream(
-                String scanStream) {
+        default StreamEndpointConsumerBuilder scanStream(String scanStream) {
             setProperty("scanStream", scanStream);
             return this;
         }
@@ -289,7 +279,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder scanStreamDelay(
+        default StreamEndpointConsumerBuilder scanStreamDelay(
                 long scanStreamDelay) {
             setProperty("scanStreamDelay", scanStreamDelay);
             return this;
@@ -299,7 +289,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default StreamEndpointConsumerBuilder scanStreamDelay(
+        default StreamEndpointConsumerBuilder scanStreamDelay(
                 String scanStreamDelay) {
             setProperty("scanStreamDelay", scanStreamDelay);
             return this;
@@ -312,7 +302,7 @@ public interface StreamEndpointBuilderFactory {
     public interface AdvancedStreamEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default StreamEndpointConsumerBuilder basic() {
+        default StreamEndpointConsumerBuilder basic() {
             return (StreamEndpointConsumerBuilder) this;
         }
         /**
@@ -324,7 +314,7 @@ public interface StreamEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -338,7 +328,7 @@ public interface StreamEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
+        default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -348,7 +338,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStreamEndpointConsumerBuilder exchangePattern(
+        default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -359,7 +349,7 @@ public interface StreamEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedStreamEndpointConsumerBuilder exchangePattern(
+        default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -370,7 +360,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -381,7 +371,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -395,7 +385,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder connectTimeout(
+        default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -409,7 +399,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder connectTimeout(
+        default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -420,7 +410,7 @@ public interface StreamEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder httpHeaders(
+        default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -432,7 +422,7 @@ public interface StreamEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder httpHeaders(
+        default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -447,7 +437,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder readTimeout(
+        default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -462,7 +452,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder readTimeout(
+        default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -473,7 +463,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder synchronous(
+        default AdvancedStreamEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -484,7 +474,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointConsumerBuilder synchronous(
+        default AdvancedStreamEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -497,7 +487,7 @@ public interface StreamEndpointBuilderFactory {
     public static interface StreamEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedStreamEndpointProducerBuilder advanced() {
+        default AdvancedStreamEndpointProducerBuilder advanced() {
             return (AdvancedStreamEndpointProducerBuilder) this;
         }
         /**
@@ -505,7 +495,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointProducerBuilder kind(String kind) {
+        default StreamEndpointProducerBuilder kind(String kind) {
             setProperty("kind", kind);
             return this;
         }
@@ -516,7 +506,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointProducerBuilder encoding(String encoding) {
+        default StreamEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -526,7 +516,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointProducerBuilder fileName(String fileName) {
+        default StreamEndpointProducerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -537,7 +527,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointProducerBuilder url(String url) {
+        default StreamEndpointProducerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -549,8 +539,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder autoCloseCount(
-                int autoCloseCount) {
+        default StreamEndpointProducerBuilder autoCloseCount(int autoCloseCount) {
             setProperty("autoCloseCount", autoCloseCount);
             return this;
         }
@@ -562,7 +551,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder autoCloseCount(
+        default StreamEndpointProducerBuilder autoCloseCount(
                 String autoCloseCount) {
             setProperty("autoCloseCount", autoCloseCount);
             return this;
@@ -575,8 +564,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder closeOnDone(
-                boolean closeOnDone) {
+        default StreamEndpointProducerBuilder closeOnDone(boolean closeOnDone) {
             setProperty("closeOnDone", closeOnDone);
             return this;
         }
@@ -588,8 +576,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder closeOnDone(
-                String closeOnDone) {
+        default StreamEndpointProducerBuilder closeOnDone(String closeOnDone) {
             setProperty("closeOnDone", closeOnDone);
             return this;
         }
@@ -598,7 +585,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder delay(long delay) {
+        default StreamEndpointProducerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -607,7 +594,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder delay(String delay) {
+        default StreamEndpointProducerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -624,7 +611,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder lazyStartProducer(
+        default StreamEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -642,7 +629,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default StreamEndpointProducerBuilder lazyStartProducer(
+        default StreamEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -655,7 +642,7 @@ public interface StreamEndpointBuilderFactory {
     public interface AdvancedStreamEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default StreamEndpointProducerBuilder basic() {
+        default StreamEndpointProducerBuilder basic() {
             return (StreamEndpointProducerBuilder) this;
         }
         /**
@@ -664,7 +651,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -675,7 +662,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -689,7 +676,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder connectTimeout(
+        default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -703,7 +690,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder connectTimeout(
+        default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -714,7 +701,7 @@ public interface StreamEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder httpHeaders(
+        default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -726,7 +713,7 @@ public interface StreamEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder httpHeaders(
+        default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -741,7 +728,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder readTimeout(
+        default AdvancedStreamEndpointProducerBuilder readTimeout(
                 int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -756,7 +743,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder readTimeout(
+        default AdvancedStreamEndpointProducerBuilder readTimeout(
                 String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -767,7 +754,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder synchronous(
+        default AdvancedStreamEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -778,7 +765,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointProducerBuilder synchronous(
+        default AdvancedStreamEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -791,7 +778,7 @@ public interface StreamEndpointBuilderFactory {
     public static interface StreamEndpointBuilder
             extends
                 StreamEndpointConsumerBuilder, StreamEndpointProducerBuilder {
-        public default AdvancedStreamEndpointBuilder advanced() {
+        default AdvancedStreamEndpointBuilder advanced() {
             return (AdvancedStreamEndpointBuilder) this;
         }
         /**
@@ -799,7 +786,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointBuilder kind(String kind) {
+        default StreamEndpointBuilder kind(String kind) {
             setProperty("kind", kind);
             return this;
         }
@@ -810,7 +797,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointBuilder encoding(String encoding) {
+        default StreamEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -820,7 +807,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointBuilder fileName(String fileName) {
+        default StreamEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
             return this;
         }
@@ -831,7 +818,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default StreamEndpointBuilder url(String url) {
+        default StreamEndpointBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -843,7 +830,7 @@ public interface StreamEndpointBuilderFactory {
     public static interface AdvancedStreamEndpointBuilder
             extends
                 AdvancedStreamEndpointConsumerBuilder, AdvancedStreamEndpointProducerBuilder {
-        public default StreamEndpointBuilder basic() {
+        default StreamEndpointBuilder basic() {
             return (StreamEndpointBuilder) this;
         }
         /**
@@ -852,7 +839,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -863,7 +850,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -877,8 +864,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder connectTimeout(
-                int connectTimeout) {
+        default AdvancedStreamEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -891,7 +877,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder connectTimeout(
+        default AdvancedStreamEndpointBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -902,7 +888,7 @@ public interface StreamEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder httpHeaders(
+        default AdvancedStreamEndpointBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -914,8 +900,7 @@ public interface StreamEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder httpHeaders(
-                String httpHeaders) {
+        default AdvancedStreamEndpointBuilder httpHeaders(String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -929,7 +914,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
+        default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -943,8 +928,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder readTimeout(
-                String readTimeout) {
+        default AdvancedStreamEndpointBuilder readTimeout(String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -954,8 +938,7 @@ public interface StreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedStreamEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -965,8 +948,7 @@ public interface StreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedStreamEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedStreamEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -976,7 +958,7 @@ public interface StreamEndpointBuilderFactory {
      * system-err streams as well as allowing streaming of file and URL. Creates
      * a builder to build endpoints for the Stream component.
      */
-    public default StreamEndpointBuilder stream(String path) {
+    default StreamEndpointBuilder stream(String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {
             public StreamEndpointBuilderImpl(String path) {
                 super("stream", path);

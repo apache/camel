@@ -45,7 +45,7 @@ public interface HipchatEndpointBuilderFactory {
     public interface HipchatEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedHipchatEndpointConsumerBuilder advanced() {
+        default AdvancedHipchatEndpointConsumerBuilder advanced() {
             return (AdvancedHipchatEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder protocol(String protocol) {
+        default HipchatEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -62,7 +62,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder host(String host) {
+        default HipchatEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -71,7 +71,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder port(Integer port) {
+        default HipchatEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -81,7 +81,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder port(String port) {
+        default HipchatEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -90,7 +90,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder authToken(String authToken) {
+        default HipchatEndpointConsumerBuilder authToken(String authToken) {
             setProperty("authToken", authToken);
             return this;
         }
@@ -100,8 +100,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder consumeUsers(
-                String consumeUsers) {
+        default HipchatEndpointConsumerBuilder consumeUsers(String consumeUsers) {
             setProperty("consumeUsers", consumeUsers);
             return this;
         }
@@ -112,8 +111,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder httpClient(
-                Object httpClient) {
+        default HipchatEndpointConsumerBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -124,8 +122,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointConsumerBuilder httpClient(
-                String httpClient) {
+        default HipchatEndpointConsumerBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -140,7 +137,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HipchatEndpointConsumerBuilder bridgeErrorHandler(
+        default HipchatEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -156,7 +153,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HipchatEndpointConsumerBuilder bridgeErrorHandler(
+        default HipchatEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,7 +164,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -178,7 +175,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -189,7 +186,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffErrorThreshold(
+        default HipchatEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -200,7 +197,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffErrorThreshold(
+        default HipchatEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -211,7 +208,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffIdleThreshold(
+        default HipchatEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -222,7 +219,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffIdleThreshold(
+        default HipchatEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -237,7 +234,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffMultiplier(
+        default HipchatEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -252,7 +249,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder backoffMultiplier(
+        default HipchatEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -264,7 +261,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder delay(long delay) {
+        default HipchatEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -275,7 +272,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder delay(String delay) {
+        default HipchatEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -285,7 +282,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder greedy(boolean greedy) {
+        default HipchatEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -295,7 +292,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder greedy(String greedy) {
+        default HipchatEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -306,8 +303,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default HipchatEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -318,8 +314,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default HipchatEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -329,7 +324,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder runLoggingLevel(
+        default HipchatEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -341,7 +336,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder runLoggingLevel(
+        default HipchatEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -354,7 +349,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder scheduledExecutorService(
+        default HipchatEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -367,7 +362,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder scheduledExecutorService(
+        default HipchatEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -380,7 +375,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder scheduler(
+        default HipchatEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -393,7 +388,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder scheduler(String scheduler) {
+        default HipchatEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -404,7 +399,7 @@ public interface HipchatEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder schedulerProperties(
+        default HipchatEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -417,7 +412,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder schedulerProperties(
+        default HipchatEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -427,7 +422,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder startScheduler(
+        default HipchatEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -437,7 +432,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder startScheduler(
+        default HipchatEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -447,7 +442,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default HipchatEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -457,7 +452,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default HipchatEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -467,7 +462,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder useFixedDelay(
+        default HipchatEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -478,7 +473,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default HipchatEndpointConsumerBuilder useFixedDelay(
+        default HipchatEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -491,7 +486,7 @@ public interface HipchatEndpointBuilderFactory {
     public interface AdvancedHipchatEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default HipchatEndpointConsumerBuilder basic() {
+        default HipchatEndpointConsumerBuilder basic() {
             return (HipchatEndpointConsumerBuilder) this;
         }
         /**
@@ -503,7 +498,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -517,7 +512,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHipchatEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -527,7 +522,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
+        default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -538,7 +533,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
+        default AdvancedHipchatEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -552,7 +547,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
+        default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -566,7 +561,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
+        default AdvancedHipchatEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -577,7 +572,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -588,7 +583,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -599,7 +594,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointConsumerBuilder synchronous(
+        default AdvancedHipchatEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -610,7 +605,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointConsumerBuilder synchronous(
+        default AdvancedHipchatEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -623,7 +618,7 @@ public interface HipchatEndpointBuilderFactory {
     public static interface HipchatEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHipchatEndpointProducerBuilder advanced() {
+        default AdvancedHipchatEndpointProducerBuilder advanced() {
             return (AdvancedHipchatEndpointProducerBuilder) this;
         }
         /**
@@ -631,7 +626,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder protocol(String protocol) {
+        default HipchatEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -640,7 +635,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder host(String host) {
+        default HipchatEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -649,7 +644,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder port(Integer port) {
+        default HipchatEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -659,7 +654,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder port(String port) {
+        default HipchatEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -668,7 +663,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder authToken(String authToken) {
+        default HipchatEndpointProducerBuilder authToken(String authToken) {
             setProperty("authToken", authToken);
             return this;
         }
@@ -678,8 +673,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder consumeUsers(
-                String consumeUsers) {
+        default HipchatEndpointProducerBuilder consumeUsers(String consumeUsers) {
             setProperty("consumeUsers", consumeUsers);
             return this;
         }
@@ -690,8 +684,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder httpClient(
-                Object httpClient) {
+        default HipchatEndpointProducerBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -702,8 +695,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointProducerBuilder httpClient(
-                String httpClient) {
+        default HipchatEndpointProducerBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -720,7 +712,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HipchatEndpointProducerBuilder lazyStartProducer(
+        default HipchatEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -738,7 +730,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HipchatEndpointProducerBuilder lazyStartProducer(
+        default HipchatEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -751,7 +743,7 @@ public interface HipchatEndpointBuilderFactory {
     public interface AdvancedHipchatEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default HipchatEndpointProducerBuilder basic() {
+        default HipchatEndpointProducerBuilder basic() {
             return (HipchatEndpointProducerBuilder) this;
         }
         /**
@@ -760,7 +752,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -771,7 +763,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -782,7 +774,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointProducerBuilder synchronous(
+        default AdvancedHipchatEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -793,7 +785,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointProducerBuilder synchronous(
+        default AdvancedHipchatEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -806,7 +798,7 @@ public interface HipchatEndpointBuilderFactory {
     public static interface HipchatEndpointBuilder
             extends
                 HipchatEndpointConsumerBuilder, HipchatEndpointProducerBuilder {
-        public default AdvancedHipchatEndpointBuilder advanced() {
+        default AdvancedHipchatEndpointBuilder advanced() {
             return (AdvancedHipchatEndpointBuilder) this;
         }
         /**
@@ -814,7 +806,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder protocol(String protocol) {
+        default HipchatEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -823,7 +815,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder host(String host) {
+        default HipchatEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -832,7 +824,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder port(Integer port) {
+        default HipchatEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -842,7 +834,7 @@ public interface HipchatEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HipchatEndpointBuilder port(String port) {
+        default HipchatEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -851,7 +843,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder authToken(String authToken) {
+        default HipchatEndpointBuilder authToken(String authToken) {
             setProperty("authToken", authToken);
             return this;
         }
@@ -861,7 +853,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder consumeUsers(String consumeUsers) {
+        default HipchatEndpointBuilder consumeUsers(String consumeUsers) {
             setProperty("consumeUsers", consumeUsers);
             return this;
         }
@@ -872,7 +864,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder httpClient(Object httpClient) {
+        default HipchatEndpointBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -883,7 +875,7 @@ public interface HipchatEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * @group common
          */
-        public default HipchatEndpointBuilder httpClient(String httpClient) {
+        default HipchatEndpointBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -895,7 +887,7 @@ public interface HipchatEndpointBuilderFactory {
     public static interface AdvancedHipchatEndpointBuilder
             extends
                 AdvancedHipchatEndpointConsumerBuilder, AdvancedHipchatEndpointProducerBuilder {
-        public default HipchatEndpointBuilder basic() {
+        default HipchatEndpointBuilder basic() {
             return (HipchatEndpointBuilder) this;
         }
         /**
@@ -904,7 +896,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -915,7 +907,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointBuilder basicPropertyBinding(
+        default AdvancedHipchatEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -926,8 +918,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedHipchatEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -937,8 +928,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHipchatEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedHipchatEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -948,7 +938,7 @@ public interface HipchatEndpointBuilderFactory {
      * Hipchat service. Creates a builder to build endpoints for the Hipchat
      * component.
      */
-    public default HipchatEndpointBuilder hipchat(String path) {
+    default HipchatEndpointBuilder hipchat(String path) {
         class HipchatEndpointBuilderImpl extends AbstractEndpointBuilder implements HipchatEndpointBuilder, AdvancedHipchatEndpointBuilder {
             public HipchatEndpointBuilderImpl(String path) {
                 super("hipchat", path);

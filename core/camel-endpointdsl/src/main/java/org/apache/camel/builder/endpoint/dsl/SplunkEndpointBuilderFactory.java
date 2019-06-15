@@ -44,7 +44,7 @@ public interface SplunkEndpointBuilderFactory {
     public interface SplunkEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSplunkEndpointConsumerBuilder advanced() {
+        default AdvancedSplunkEndpointConsumerBuilder advanced() {
             return (AdvancedSplunkEndpointConsumerBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder name(String name) {
+        default SplunkEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -61,7 +61,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder app(String app) {
+        default SplunkEndpointConsumerBuilder app(String app) {
             setProperty("app", app);
             return this;
         }
@@ -70,7 +70,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder connectionTimeout(
+        default SplunkEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -80,7 +80,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder connectionTimeout(
+        default SplunkEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -90,7 +90,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder host(String host) {
+        default SplunkEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -99,7 +99,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder owner(String owner) {
+        default SplunkEndpointConsumerBuilder owner(String owner) {
             setProperty("owner", owner);
             return this;
         }
@@ -108,7 +108,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder port(int port) {
+        default SplunkEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -117,7 +117,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder port(String port) {
+        default SplunkEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -126,7 +126,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointConsumerBuilder scheme(String scheme) {
+        default SplunkEndpointConsumerBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
             return this;
         }
@@ -141,7 +141,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder bridgeErrorHandler(
+        default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -157,7 +157,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder bridgeErrorHandler(
+        default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,7 +167,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder count(int count) {
+        default SplunkEndpointConsumerBuilder count(int count) {
             setProperty("count", count);
             return this;
         }
@@ -176,7 +176,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder count(String count) {
+        default SplunkEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
             return this;
         }
@@ -185,8 +185,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder earliestTime(
-                String earliestTime) {
+        default SplunkEndpointConsumerBuilder earliestTime(String earliestTime) {
             setProperty("earliestTime", earliestTime);
             return this;
         }
@@ -195,7 +194,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder initEarliestTime(
+        default SplunkEndpointConsumerBuilder initEarliestTime(
                 String initEarliestTime) {
             setProperty("initEarliestTime", initEarliestTime);
             return this;
@@ -205,8 +204,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder latestTime(
-                String latestTime) {
+        default SplunkEndpointConsumerBuilder latestTime(String latestTime) {
             setProperty("latestTime", latestTime);
             return this;
         }
@@ -215,8 +213,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder savedSearch(
-                String savedSearch) {
+        default SplunkEndpointConsumerBuilder savedSearch(String savedSearch) {
             setProperty("savedSearch", savedSearch);
             return this;
         }
@@ -225,7 +222,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder search(String search) {
+        default SplunkEndpointConsumerBuilder search(String search) {
             setProperty("search", search);
             return this;
         }
@@ -235,7 +232,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -246,7 +243,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -257,7 +254,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder streaming(Boolean streaming) {
+        default SplunkEndpointConsumerBuilder streaming(Boolean streaming) {
             setProperty("streaming", streaming);
             return this;
         }
@@ -268,7 +265,7 @@ public interface SplunkEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SplunkEndpointConsumerBuilder streaming(String streaming) {
+        default SplunkEndpointConsumerBuilder streaming(String streaming) {
             setProperty("streaming", streaming);
             return this;
         }
@@ -278,7 +275,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffErrorThreshold(
+        default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -289,7 +286,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffErrorThreshold(
+        default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -300,7 +297,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffIdleThreshold(
+        default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -311,7 +308,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffIdleThreshold(
+        default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -326,7 +323,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffMultiplier(
+        default SplunkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -341,7 +338,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder backoffMultiplier(
+        default SplunkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -353,7 +350,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder delay(long delay) {
+        default SplunkEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -364,7 +361,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder delay(String delay) {
+        default SplunkEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -374,7 +371,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder greedy(boolean greedy) {
+        default SplunkEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -384,7 +381,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder greedy(String greedy) {
+        default SplunkEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -395,8 +392,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default SplunkEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -407,8 +403,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default SplunkEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -418,7 +413,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder runLoggingLevel(
+        default SplunkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -430,7 +425,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder runLoggingLevel(
+        default SplunkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -443,7 +438,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder scheduledExecutorService(
+        default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -456,7 +451,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder scheduledExecutorService(
+        default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -469,7 +464,7 @@ public interface SplunkEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder scheduler(
+        default SplunkEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -482,7 +477,7 @@ public interface SplunkEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder scheduler(String scheduler) {
+        default SplunkEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -493,7 +488,7 @@ public interface SplunkEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder schedulerProperties(
+        default SplunkEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -506,7 +501,7 @@ public interface SplunkEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder schedulerProperties(
+        default SplunkEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -516,7 +511,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder startScheduler(
+        default SplunkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -526,7 +521,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder startScheduler(
+        default SplunkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -536,7 +531,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+        default SplunkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -546,7 +541,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -556,7 +551,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder useFixedDelay(
+        default SplunkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -567,8 +562,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default SplunkEndpointConsumerBuilder useFixedDelay(
-                String useFixedDelay) {
+        default SplunkEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
         }
@@ -577,7 +571,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder password(String password) {
+        default SplunkEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -586,7 +580,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder sslProtocol(
+        default SplunkEndpointConsumerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
@@ -597,8 +591,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder sslProtocol(
-                String sslProtocol) {
+        default SplunkEndpointConsumerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -607,7 +600,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder username(String username) {
+        default SplunkEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -618,7 +611,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder useSunHttpsHandler(
+        default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -630,7 +623,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointConsumerBuilder useSunHttpsHandler(
+        default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -643,7 +636,7 @@ public interface SplunkEndpointBuilderFactory {
     public interface AdvancedSplunkEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SplunkEndpointConsumerBuilder basic() {
+        default SplunkEndpointConsumerBuilder basic() {
             return (SplunkEndpointConsumerBuilder) this;
         }
         /**
@@ -655,7 +648,7 @@ public interface SplunkEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -669,7 +662,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -679,7 +672,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
+        default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -690,7 +683,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
+        default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -704,7 +697,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
+        default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -718,7 +711,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
+        default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -729,7 +722,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -740,7 +733,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -751,7 +744,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointConsumerBuilder synchronous(
+        default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -762,7 +755,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointConsumerBuilder synchronous(
+        default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -775,7 +768,7 @@ public interface SplunkEndpointBuilderFactory {
     public static interface SplunkEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSplunkEndpointProducerBuilder advanced() {
+        default AdvancedSplunkEndpointProducerBuilder advanced() {
             return (AdvancedSplunkEndpointProducerBuilder) this;
         }
         /**
@@ -783,7 +776,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder name(String name) {
+        default SplunkEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -792,7 +785,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder app(String app) {
+        default SplunkEndpointProducerBuilder app(String app) {
             setProperty("app", app);
             return this;
         }
@@ -801,7 +794,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder connectionTimeout(
+        default SplunkEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -811,7 +804,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder connectionTimeout(
+        default SplunkEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -821,7 +814,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder host(String host) {
+        default SplunkEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -830,7 +823,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder owner(String owner) {
+        default SplunkEndpointProducerBuilder owner(String owner) {
             setProperty("owner", owner);
             return this;
         }
@@ -839,7 +832,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder port(int port) {
+        default SplunkEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -848,7 +841,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder port(String port) {
+        default SplunkEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -857,7 +850,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointProducerBuilder scheme(String scheme) {
+        default SplunkEndpointProducerBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
             return this;
         }
@@ -866,7 +859,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder eventHost(String eventHost) {
+        default SplunkEndpointProducerBuilder eventHost(String eventHost) {
             setProperty("eventHost", eventHost);
             return this;
         }
@@ -875,7 +868,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder index(String index) {
+        default SplunkEndpointProducerBuilder index(String index) {
             setProperty("index", index);
             return this;
         }
@@ -892,7 +885,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder lazyStartProducer(
+        default SplunkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -910,7 +903,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder lazyStartProducer(
+        default SplunkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -920,7 +913,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder raw(boolean raw) {
+        default SplunkEndpointProducerBuilder raw(boolean raw) {
             setProperty("raw", raw);
             return this;
         }
@@ -929,7 +922,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder raw(String raw) {
+        default SplunkEndpointProducerBuilder raw(String raw) {
             setProperty("raw", raw);
             return this;
         }
@@ -938,7 +931,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder source(String source) {
+        default SplunkEndpointProducerBuilder source(String source) {
             setProperty("source", source);
             return this;
         }
@@ -947,8 +940,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder sourceType(
-                String sourceType) {
+        default SplunkEndpointProducerBuilder sourceType(String sourceType) {
             setProperty("sourceType", sourceType);
             return this;
         }
@@ -957,7 +949,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder tcpReceiverPort(
+        default SplunkEndpointProducerBuilder tcpReceiverPort(
                 int tcpReceiverPort) {
             setProperty("tcpReceiverPort", tcpReceiverPort);
             return this;
@@ -967,7 +959,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default SplunkEndpointProducerBuilder tcpReceiverPort(
+        default SplunkEndpointProducerBuilder tcpReceiverPort(
                 String tcpReceiverPort) {
             setProperty("tcpReceiverPort", tcpReceiverPort);
             return this;
@@ -977,7 +969,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder password(String password) {
+        default SplunkEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -986,7 +978,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder sslProtocol(
+        default SplunkEndpointProducerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
@@ -997,8 +989,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder sslProtocol(
-                String sslProtocol) {
+        default SplunkEndpointProducerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -1007,7 +998,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder username(String username) {
+        default SplunkEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1018,7 +1009,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder useSunHttpsHandler(
+        default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -1030,7 +1021,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointProducerBuilder useSunHttpsHandler(
+        default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -1043,7 +1034,7 @@ public interface SplunkEndpointBuilderFactory {
     public interface AdvancedSplunkEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SplunkEndpointProducerBuilder basic() {
+        default SplunkEndpointProducerBuilder basic() {
             return (SplunkEndpointProducerBuilder) this;
         }
         /**
@@ -1052,7 +1043,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1063,7 +1054,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1074,7 +1065,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointProducerBuilder synchronous(
+        default AdvancedSplunkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1085,7 +1076,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointProducerBuilder synchronous(
+        default AdvancedSplunkEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1098,7 +1089,7 @@ public interface SplunkEndpointBuilderFactory {
     public static interface SplunkEndpointBuilder
             extends
                 SplunkEndpointConsumerBuilder, SplunkEndpointProducerBuilder {
-        public default AdvancedSplunkEndpointBuilder advanced() {
+        default AdvancedSplunkEndpointBuilder advanced() {
             return (AdvancedSplunkEndpointBuilder) this;
         }
         /**
@@ -1106,7 +1097,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder name(String name) {
+        default SplunkEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -1115,7 +1106,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder app(String app) {
+        default SplunkEndpointBuilder app(String app) {
             setProperty("app", app);
             return this;
         }
@@ -1124,8 +1115,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder connectionTimeout(
-                int connectionTimeout) {
+        default SplunkEndpointBuilder connectionTimeout(int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -1134,8 +1124,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder connectionTimeout(
-                String connectionTimeout) {
+        default SplunkEndpointBuilder connectionTimeout(String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -1144,7 +1133,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder host(String host) {
+        default SplunkEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1153,7 +1142,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder owner(String owner) {
+        default SplunkEndpointBuilder owner(String owner) {
             setProperty("owner", owner);
             return this;
         }
@@ -1162,7 +1151,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder port(int port) {
+        default SplunkEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1171,7 +1160,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder port(String port) {
+        default SplunkEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1180,7 +1169,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SplunkEndpointBuilder scheme(String scheme) {
+        default SplunkEndpointBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
             return this;
         }
@@ -1189,7 +1178,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder password(String password) {
+        default SplunkEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1198,7 +1187,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder sslProtocol(
+        default SplunkEndpointBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
@@ -1209,7 +1198,7 @@ public interface SplunkEndpointBuilderFactory {
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
+        default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
             return this;
         }
@@ -1218,7 +1207,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder username(String username) {
+        default SplunkEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1229,7 +1218,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder useSunHttpsHandler(
+        default SplunkEndpointBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -1241,7 +1230,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default SplunkEndpointBuilder useSunHttpsHandler(
+        default SplunkEndpointBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
             setProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
@@ -1254,7 +1243,7 @@ public interface SplunkEndpointBuilderFactory {
     public static interface AdvancedSplunkEndpointBuilder
             extends
                 AdvancedSplunkEndpointConsumerBuilder, AdvancedSplunkEndpointProducerBuilder {
-        public default SplunkEndpointBuilder basic() {
+        default SplunkEndpointBuilder basic() {
             return (SplunkEndpointBuilder) this;
         }
         /**
@@ -1263,7 +1252,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1274,7 +1263,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointBuilder basicPropertyBinding(
+        default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1285,8 +1274,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSplunkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1296,8 +1284,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSplunkEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSplunkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1313,7 +1300,7 @@ public interface SplunkEndpointBuilderFactory {
      * The splunk component allows to publish or search for events in Splunk.
      * Creates a builder to build endpoints for the Splunk component.
      */
-    public default SplunkEndpointBuilder splunk(String path) {
+    default SplunkEndpointBuilder splunk(String path) {
         class SplunkEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkEndpointBuilder, AdvancedSplunkEndpointBuilder {
             public SplunkEndpointBuilderImpl(String path) {
                 super("splunk", path);

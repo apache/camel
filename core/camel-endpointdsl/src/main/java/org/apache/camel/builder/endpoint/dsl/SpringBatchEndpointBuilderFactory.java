@@ -37,7 +37,7 @@ public interface SpringBatchEndpointBuilderFactory {
     public static interface SpringBatchEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSpringBatchEndpointBuilder advanced() {
+        default AdvancedSpringBatchEndpointBuilder advanced() {
             return (AdvancedSpringBatchEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobName(String jobName) {
+        default SpringBatchEndpointBuilder jobName(String jobName) {
             setProperty("jobName", jobName);
             return this;
         }
@@ -55,8 +55,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobFromHeader(
-                boolean jobFromHeader) {
+        default SpringBatchEndpointBuilder jobFromHeader(boolean jobFromHeader) {
             setProperty("jobFromHeader", jobFromHeader);
             return this;
         }
@@ -66,8 +65,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobFromHeader(
-                String jobFromHeader) {
+        default SpringBatchEndpointBuilder jobFromHeader(String jobFromHeader) {
             setProperty("jobFromHeader", jobFromHeader);
             return this;
         }
@@ -77,7 +75,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
+        default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
             setProperty("jobLauncher", jobLauncher);
             return this;
         }
@@ -87,7 +85,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
+        default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
             setProperty("jobLauncher", jobLauncher);
             return this;
         }
@@ -98,7 +96,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
+        default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
             setProperty("jobRegistry", jobRegistry);
             return this;
         }
@@ -109,7 +107,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {
+        default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {
             setProperty("jobRegistry", jobRegistry);
             return this;
         }
@@ -121,7 +119,7 @@ public interface SpringBatchEndpointBuilderFactory {
     public static interface AdvancedSpringBatchEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SpringBatchEndpointBuilder basic() {
+        default SpringBatchEndpointBuilder basic() {
             return (SpringBatchEndpointBuilder) this;
         }
         /**
@@ -130,7 +128,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -141,7 +139,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -152,7 +150,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringBatchEndpointBuilder synchronous(
+        default AdvancedSpringBatchEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -163,7 +161,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringBatchEndpointBuilder synchronous(
+        default AdvancedSpringBatchEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -174,7 +172,7 @@ public interface SpringBatchEndpointBuilderFactory {
      * further processing. Creates a builder to build endpoints for the Spring
      * Batch component.
      */
-    public default SpringBatchEndpointBuilder springBatch(String path) {
+    default SpringBatchEndpointBuilder springBatch(String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {
             public SpringBatchEndpointBuilderImpl(String path) {
                 super("spring-batch", path);

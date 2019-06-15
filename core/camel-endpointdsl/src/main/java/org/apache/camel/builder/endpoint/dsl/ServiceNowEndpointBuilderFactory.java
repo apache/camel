@@ -38,7 +38,7 @@ public interface ServiceNowEndpointBuilderFactory {
     public static interface ServiceNowEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedServiceNowEndpointBuilder advanced() {
+        default AdvancedServiceNowEndpointBuilder advanced() {
             return (AdvancedServiceNowEndpointBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder instanceName(
-                String instanceName) {
+        default ServiceNowEndpointBuilder instanceName(String instanceName) {
             setProperty("instanceName", instanceName);
             return this;
         }
@@ -59,7 +58,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder display(String display) {
+        default ServiceNowEndpointBuilder display(String display) {
             setProperty("display", display);
             return this;
         }
@@ -69,8 +68,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder displayValue(
-                String displayValue) {
+        default ServiceNowEndpointBuilder displayValue(String displayValue) {
             setProperty("displayValue", displayValue);
             return this;
         }
@@ -80,7 +78,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder excludeReferenceLink(
+        default ServiceNowEndpointBuilder excludeReferenceLink(
                 Boolean excludeReferenceLink) {
             setProperty("excludeReferenceLink", excludeReferenceLink);
             return this;
@@ -92,7 +90,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder excludeReferenceLink(
+        default ServiceNowEndpointBuilder excludeReferenceLink(
                 String excludeReferenceLink) {
             setProperty("excludeReferenceLink", excludeReferenceLink);
             return this;
@@ -103,7 +101,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder favorites(Boolean favorites) {
+        default ServiceNowEndpointBuilder favorites(Boolean favorites) {
             setProperty("favorites", favorites);
             return this;
         }
@@ -114,7 +112,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder favorites(String favorites) {
+        default ServiceNowEndpointBuilder favorites(String favorites) {
             setProperty("favorites", favorites);
             return this;
         }
@@ -126,7 +124,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAggregates(
+        default ServiceNowEndpointBuilder includeAggregates(
                 Boolean includeAggregates) {
             setProperty("includeAggregates", includeAggregates);
             return this;
@@ -140,7 +138,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAggregates(
+        default ServiceNowEndpointBuilder includeAggregates(
                 String includeAggregates) {
             setProperty("includeAggregates", includeAggregates);
             return this;
@@ -153,7 +151,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAvailableAggregates(
+        default ServiceNowEndpointBuilder includeAvailableAggregates(
                 Boolean includeAvailableAggregates) {
             setProperty("includeAvailableAggregates", includeAvailableAggregates);
             return this;
@@ -167,7 +165,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAvailableAggregates(
+        default ServiceNowEndpointBuilder includeAvailableAggregates(
                 String includeAvailableAggregates) {
             setProperty("includeAvailableAggregates", includeAvailableAggregates);
             return this;
@@ -179,7 +177,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAvailableBreakdowns(
+        default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 Boolean includeAvailableBreakdowns) {
             setProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
             return this;
@@ -192,7 +190,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeAvailableBreakdowns(
+        default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 String includeAvailableBreakdowns) {
             setProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
             return this;
@@ -204,7 +202,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeScoreNotes(
+        default ServiceNowEndpointBuilder includeScoreNotes(
                 Boolean includeScoreNotes) {
             setProperty("includeScoreNotes", includeScoreNotes);
             return this;
@@ -217,7 +215,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeScoreNotes(
+        default ServiceNowEndpointBuilder includeScoreNotes(
                 String includeScoreNotes) {
             setProperty("includeScoreNotes", includeScoreNotes);
             return this;
@@ -229,8 +227,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeScores(
-                Boolean includeScores) {
+        default ServiceNowEndpointBuilder includeScores(Boolean includeScores) {
             setProperty("includeScores", includeScores);
             return this;
         }
@@ -242,8 +239,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder includeScores(
-                String includeScores) {
+        default ServiceNowEndpointBuilder includeScores(String includeScores) {
             setProperty("includeScores", includeScores);
             return this;
         }
@@ -252,7 +248,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder inputDisplayValue(
+        default ServiceNowEndpointBuilder inputDisplayValue(
                 Boolean inputDisplayValue) {
             setProperty("inputDisplayValue", inputDisplayValue);
             return this;
@@ -263,7 +259,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder inputDisplayValue(
+        default ServiceNowEndpointBuilder inputDisplayValue(
                 String inputDisplayValue) {
             setProperty("inputDisplayValue", inputDisplayValue);
             return this;
@@ -274,7 +270,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder key(Boolean key) {
+        default ServiceNowEndpointBuilder key(Boolean key) {
             setProperty("key", key);
             return this;
         }
@@ -285,7 +281,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder key(String key) {
+        default ServiceNowEndpointBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -295,7 +291,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder models(
+        default ServiceNowEndpointBuilder models(
                 Map<String, Class<Object>> models) {
             setProperty("models", models);
             return this;
@@ -307,7 +303,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder models(String models) {
+        default ServiceNowEndpointBuilder models(String models) {
             setProperty("models", models);
             return this;
         }
@@ -317,7 +313,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder perPage(Integer perPage) {
+        default ServiceNowEndpointBuilder perPage(Integer perPage) {
             setProperty("perPage", perPage);
             return this;
         }
@@ -328,7 +324,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder perPage(String perPage) {
+        default ServiceNowEndpointBuilder perPage(String perPage) {
             setProperty("perPage", perPage);
             return this;
         }
@@ -340,8 +336,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder release(
-                ServiceNowRelease release) {
+        default ServiceNowEndpointBuilder release(ServiceNowRelease release) {
             setProperty("release", release);
             return this;
         }
@@ -353,7 +348,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder release(String release) {
+        default ServiceNowEndpointBuilder release(String release) {
             setProperty("release", release);
             return this;
         }
@@ -363,7 +358,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder requestModels(
+        default ServiceNowEndpointBuilder requestModels(
                 Map<String, Class<Object>> requestModels) {
             setProperty("requestModels", requestModels);
             return this;
@@ -375,8 +370,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder requestModels(
-                String requestModels) {
+        default ServiceNowEndpointBuilder requestModels(String requestModels) {
             setProperty("requestModels", requestModels);
             return this;
         }
@@ -386,7 +380,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder resource(String resource) {
+        default ServiceNowEndpointBuilder resource(String resource) {
             setProperty("resource", resource);
             return this;
         }
@@ -396,7 +390,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder responseModels(
+        default ServiceNowEndpointBuilder responseModels(
                 Map<String, Class<Object>> responseModels) {
             setProperty("responseModels", responseModels);
             return this;
@@ -408,8 +402,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder responseModels(
-                String responseModels) {
+        default ServiceNowEndpointBuilder responseModels(String responseModels) {
             setProperty("responseModels", responseModels);
             return this;
         }
@@ -419,7 +412,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder sortBy(String sortBy) {
+        default ServiceNowEndpointBuilder sortBy(String sortBy) {
             setProperty("sortBy", sortBy);
             return this;
         }
@@ -430,7 +423,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder sortDir(String sortDir) {
+        default ServiceNowEndpointBuilder sortDir(String sortDir) {
             setProperty("sortDir", sortDir);
             return this;
         }
@@ -439,7 +432,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder suppressAutoSysField(
+        default ServiceNowEndpointBuilder suppressAutoSysField(
                 Boolean suppressAutoSysField) {
             setProperty("suppressAutoSysField", suppressAutoSysField);
             return this;
@@ -450,7 +443,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder suppressAutoSysField(
+        default ServiceNowEndpointBuilder suppressAutoSysField(
                 String suppressAutoSysField) {
             setProperty("suppressAutoSysField", suppressAutoSysField);
             return this;
@@ -462,7 +455,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder suppressPaginationHeader(
+        default ServiceNowEndpointBuilder suppressPaginationHeader(
                 Boolean suppressPaginationHeader) {
             setProperty("suppressPaginationHeader", suppressPaginationHeader);
             return this;
@@ -475,7 +468,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder suppressPaginationHeader(
+        default ServiceNowEndpointBuilder suppressPaginationHeader(
                 String suppressPaginationHeader) {
             setProperty("suppressPaginationHeader", suppressPaginationHeader);
             return this;
@@ -485,7 +478,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder table(String table) {
+        default ServiceNowEndpointBuilder table(String table) {
             setProperty("table", table);
             return this;
         }
@@ -495,7 +488,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder target(Boolean target) {
+        default ServiceNowEndpointBuilder target(Boolean target) {
             setProperty("target", target);
             return this;
         }
@@ -506,7 +499,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder target(String target) {
+        default ServiceNowEndpointBuilder target(String target) {
             setProperty("target", target);
             return this;
         }
@@ -515,8 +508,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder topLevelOnly(
-                Boolean topLevelOnly) {
+        default ServiceNowEndpointBuilder topLevelOnly(Boolean topLevelOnly) {
             setProperty("topLevelOnly", topLevelOnly);
             return this;
         }
@@ -526,8 +518,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ServiceNowEndpointBuilder topLevelOnly(
-                String topLevelOnly) {
+        default ServiceNowEndpointBuilder topLevelOnly(String topLevelOnly) {
             setProperty("topLevelOnly", topLevelOnly);
             return this;
         }
@@ -536,7 +527,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default ServiceNowEndpointBuilder proxyHost(String proxyHost) {
+        default ServiceNowEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -545,7 +536,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default ServiceNowEndpointBuilder proxyPort(Integer proxyPort) {
+        default ServiceNowEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -555,7 +546,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default ServiceNowEndpointBuilder proxyPort(String proxyPort) {
+        default ServiceNowEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -564,7 +555,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder apiUrl(String apiUrl) {
+        default ServiceNowEndpointBuilder apiUrl(String apiUrl) {
             setProperty("apiUrl", apiUrl);
             return this;
         }
@@ -573,8 +564,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder oauthClientId(
-                String oauthClientId) {
+        default ServiceNowEndpointBuilder oauthClientId(String oauthClientId) {
             setProperty("oauthClientId", oauthClientId);
             return this;
         }
@@ -583,7 +573,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder oauthClientSecret(
+        default ServiceNowEndpointBuilder oauthClientSecret(
                 String oauthClientSecret) {
             setProperty("oauthClientSecret", oauthClientSecret);
             return this;
@@ -593,8 +583,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder oauthTokenUrl(
-                String oauthTokenUrl) {
+        default ServiceNowEndpointBuilder oauthTokenUrl(String oauthTokenUrl) {
             setProperty("oauthTokenUrl", oauthTokenUrl);
             return this;
         }
@@ -603,7 +592,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder password(String password) {
+        default ServiceNowEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -612,8 +601,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder proxyPassword(
-                String proxyPassword) {
+        default ServiceNowEndpointBuilder proxyPassword(String proxyPassword) {
             setProperty("proxyPassword", proxyPassword);
             return this;
         }
@@ -622,8 +610,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder proxyUserName(
-                String proxyUserName) {
+        default ServiceNowEndpointBuilder proxyUserName(String proxyUserName) {
             setProperty("proxyUserName", proxyUserName);
             return this;
         }
@@ -634,7 +621,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder sslContextParameters(
+        default ServiceNowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -646,7 +633,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder sslContextParameters(
+        default ServiceNowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -656,7 +643,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ServiceNowEndpointBuilder userName(String userName) {
+        default ServiceNowEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -668,7 +655,7 @@ public interface ServiceNowEndpointBuilderFactory {
     public static interface AdvancedServiceNowEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ServiceNowEndpointBuilder basic() {
+        default ServiceNowEndpointBuilder basic() {
             return (ServiceNowEndpointBuilder) this;
         }
         /**
@@ -676,8 +663,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder apiVersion(
-                String apiVersion) {
+        default AdvancedServiceNowEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -687,7 +673,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
+        default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -698,7 +684,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
+        default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -708,8 +694,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder dateFormat(
-                String dateFormat) {
+        default AdvancedServiceNowEndpointBuilder dateFormat(String dateFormat) {
             setProperty("dateFormat", dateFormat);
             return this;
         }
@@ -718,7 +703,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder dateTimeFormat(
+        default AdvancedServiceNowEndpointBuilder dateTimeFormat(
                 String dateTimeFormat) {
             setProperty("dateTimeFormat", dateTimeFormat);
             return this;
@@ -729,7 +714,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder httpClientPolicy(
+        default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 Object httpClientPolicy) {
             setProperty("httpClientPolicy", httpClientPolicy);
             return this;
@@ -740,7 +725,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder httpClientPolicy(
+        default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 String httpClientPolicy) {
             setProperty("httpClientPolicy", httpClientPolicy);
             return this;
@@ -751,7 +736,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
+        default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
             setProperty("mapper", mapper);
             return this;
         }
@@ -761,7 +746,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder mapper(String mapper) {
+        default AdvancedServiceNowEndpointBuilder mapper(String mapper) {
             setProperty("mapper", mapper);
             return this;
         }
@@ -771,7 +756,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
+        default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 Object proxyAuthorizationPolicy) {
             setProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
             return this;
@@ -782,7 +767,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
+        default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 String proxyAuthorizationPolicy) {
             setProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
             return this;
@@ -794,7 +779,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
+        default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 Boolean retrieveTargetRecordOnImport) {
             setProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
             return this;
@@ -807,7 +792,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
+        default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 String retrieveTargetRecordOnImport) {
             setProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
             return this;
@@ -818,7 +803,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder synchronous(
+        default AdvancedServiceNowEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -829,8 +814,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedServiceNowEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -839,8 +823,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedServiceNowEndpointBuilder timeFormat(
-                String timeFormat) {
+        default AdvancedServiceNowEndpointBuilder timeFormat(String timeFormat) {
             setProperty("timeFormat", timeFormat);
             return this;
         }
@@ -859,7 +842,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * services. Creates a builder to build endpoints for the ServiceNow
      * component.
      */
-    public default ServiceNowEndpointBuilder serviceNow(String path) {
+    default ServiceNowEndpointBuilder serviceNow(String path) {
         class ServiceNowEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceNowEndpointBuilder, AdvancedServiceNowEndpointBuilder {
             public ServiceNowEndpointBuilderImpl(String path) {
                 super("servicenow", path);

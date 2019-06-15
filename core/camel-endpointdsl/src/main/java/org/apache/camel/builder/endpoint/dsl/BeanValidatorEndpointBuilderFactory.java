@@ -37,7 +37,7 @@ public interface BeanValidatorEndpointBuilderFactory {
     public static interface BeanValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedBeanValidatorEndpointBuilder advanced() {
+        default AdvancedBeanValidatorEndpointBuilder advanced() {
             return (AdvancedBeanValidatorEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder label(String label) {
+        default BeanValidatorEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -55,7 +55,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder constraintValidatorFactory(
+        default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 Object constraintValidatorFactory) {
             setProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
@@ -66,7 +66,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder constraintValidatorFactory(
+        default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 String constraintValidatorFactory) {
             setProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
@@ -76,7 +76,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder group(String group) {
+        default BeanValidatorEndpointBuilder group(String group) {
             setProperty("group", group);
             return this;
         }
@@ -86,7 +86,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder messageInterpolator(
+        default BeanValidatorEndpointBuilder messageInterpolator(
                 Object messageInterpolator) {
             setProperty("messageInterpolator", messageInterpolator);
             return this;
@@ -97,7 +97,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.MessageInterpolator</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder messageInterpolator(
+        default BeanValidatorEndpointBuilder messageInterpolator(
                 String messageInterpolator) {
             setProperty("messageInterpolator", messageInterpolator);
             return this;
@@ -108,7 +108,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder traversableResolver(
+        default BeanValidatorEndpointBuilder traversableResolver(
                 Object traversableResolver) {
             setProperty("traversableResolver", traversableResolver);
             return this;
@@ -119,7 +119,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.TraversableResolver</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder traversableResolver(
+        default BeanValidatorEndpointBuilder traversableResolver(
                 String traversableResolver) {
             setProperty("traversableResolver", traversableResolver);
             return this;
@@ -130,7 +130,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.ValidationProviderResolver</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder validationProviderResolver(
+        default BeanValidatorEndpointBuilder validationProviderResolver(
                 Object validationProviderResolver) {
             setProperty("validationProviderResolver", validationProviderResolver);
             return this;
@@ -141,7 +141,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * <code>javax.validation.ValidationProviderResolver</code> type.
          * @group producer
          */
-        public default BeanValidatorEndpointBuilder validationProviderResolver(
+        default BeanValidatorEndpointBuilder validationProviderResolver(
                 String validationProviderResolver) {
             setProperty("validationProviderResolver", validationProviderResolver);
             return this;
@@ -154,7 +154,7 @@ public interface BeanValidatorEndpointBuilderFactory {
     public static interface AdvancedBeanValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default BeanValidatorEndpointBuilder basic() {
+        default BeanValidatorEndpointBuilder basic() {
             return (BeanValidatorEndpointBuilder) this;
         }
         /**
@@ -163,7 +163,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -174,7 +174,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -185,7 +185,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanValidatorEndpointBuilder synchronous(
+        default AdvancedBeanValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -196,7 +196,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBeanValidatorEndpointBuilder synchronous(
+        default AdvancedBeanValidatorEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -207,7 +207,7 @@ public interface BeanValidatorEndpointBuilderFactory {
      * using the Java Bean Validation API. Creates a builder to build endpoints
      * for the Bean Validator component.
      */
-    public default BeanValidatorEndpointBuilder beanValidator(String path) {
+    default BeanValidatorEndpointBuilder beanValidator(String path) {
         class BeanValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanValidatorEndpointBuilder, AdvancedBeanValidatorEndpointBuilder {
             public BeanValidatorEndpointBuilderImpl(String path) {
                 super("bean-validator", path);

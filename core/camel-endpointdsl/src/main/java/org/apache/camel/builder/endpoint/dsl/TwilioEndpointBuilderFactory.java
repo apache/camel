@@ -39,7 +39,7 @@ public interface TwilioEndpointBuilderFactory {
     public interface TwilioEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTwilioEndpointConsumerBuilder advanced() {
+        default AdvancedTwilioEndpointConsumerBuilder advanced() {
             return (AdvancedTwilioEndpointConsumerBuilder) this;
         }
         /**
@@ -49,8 +49,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointConsumerBuilder apiName(
-                TwilioApiName apiName) {
+        default TwilioEndpointConsumerBuilder apiName(TwilioApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -61,7 +60,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointConsumerBuilder apiName(String apiName) {
+        default TwilioEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -70,8 +69,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointConsumerBuilder methodName(
-                String methodName) {
+        default TwilioEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -80,7 +78,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointConsumerBuilder inBody(String inBody) {
+        default TwilioEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -95,7 +93,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwilioEndpointConsumerBuilder bridgeErrorHandler(
+        default TwilioEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,7 +109,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwilioEndpointConsumerBuilder bridgeErrorHandler(
+        default TwilioEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,7 +122,7 @@ public interface TwilioEndpointBuilderFactory {
     public interface AdvancedTwilioEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TwilioEndpointConsumerBuilder basic() {
+        default TwilioEndpointConsumerBuilder basic() {
             return (TwilioEndpointConsumerBuilder) this;
         }
         /**
@@ -136,7 +134,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -150,7 +148,7 @@ public interface TwilioEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwilioEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -160,7 +158,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -171,7 +169,7 @@ public interface TwilioEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwilioEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -182,7 +180,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -193,7 +191,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -204,7 +202,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointConsumerBuilder synchronous(
+        default AdvancedTwilioEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -215,7 +213,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointConsumerBuilder synchronous(
+        default AdvancedTwilioEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -228,7 +226,7 @@ public interface TwilioEndpointBuilderFactory {
     public static interface TwilioEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedTwilioEndpointProducerBuilder advanced() {
+        default AdvancedTwilioEndpointProducerBuilder advanced() {
             return (AdvancedTwilioEndpointProducerBuilder) this;
         }
         /**
@@ -238,8 +236,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointProducerBuilder apiName(
-                TwilioApiName apiName) {
+        default TwilioEndpointProducerBuilder apiName(TwilioApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -250,7 +247,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointProducerBuilder apiName(String apiName) {
+        default TwilioEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -259,8 +256,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointProducerBuilder methodName(
-                String methodName) {
+        default TwilioEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -269,7 +265,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointProducerBuilder inBody(String inBody) {
+        default TwilioEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -286,7 +282,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default TwilioEndpointProducerBuilder lazyStartProducer(
+        default TwilioEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -304,7 +300,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default TwilioEndpointProducerBuilder lazyStartProducer(
+        default TwilioEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -317,7 +313,7 @@ public interface TwilioEndpointBuilderFactory {
     public interface AdvancedTwilioEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default TwilioEndpointProducerBuilder basic() {
+        default TwilioEndpointProducerBuilder basic() {
             return (TwilioEndpointProducerBuilder) this;
         }
         /**
@@ -326,7 +322,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -337,7 +333,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -348,7 +344,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointProducerBuilder synchronous(
+        default AdvancedTwilioEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -359,7 +355,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointProducerBuilder synchronous(
+        default AdvancedTwilioEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -372,7 +368,7 @@ public interface TwilioEndpointBuilderFactory {
     public static interface TwilioEndpointBuilder
             extends
                 TwilioEndpointConsumerBuilder, TwilioEndpointProducerBuilder {
-        public default AdvancedTwilioEndpointBuilder advanced() {
+        default AdvancedTwilioEndpointBuilder advanced() {
             return (AdvancedTwilioEndpointBuilder) this;
         }
         /**
@@ -382,7 +378,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointBuilder apiName(TwilioApiName apiName) {
+        default TwilioEndpointBuilder apiName(TwilioApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -393,7 +389,7 @@ public interface TwilioEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default TwilioEndpointBuilder apiName(String apiName) {
+        default TwilioEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -402,7 +398,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointBuilder methodName(String methodName) {
+        default TwilioEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -411,7 +407,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwilioEndpointBuilder inBody(String inBody) {
+        default TwilioEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -423,7 +419,7 @@ public interface TwilioEndpointBuilderFactory {
     public static interface AdvancedTwilioEndpointBuilder
             extends
                 AdvancedTwilioEndpointConsumerBuilder, AdvancedTwilioEndpointProducerBuilder {
-        public default TwilioEndpointBuilder basic() {
+        default TwilioEndpointBuilder basic() {
             return (TwilioEndpointBuilder) this;
         }
         /**
@@ -432,7 +428,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -443,7 +439,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointBuilder basicPropertyBinding(
+        default AdvancedTwilioEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -454,8 +450,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedTwilioEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -465,8 +460,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwilioEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedTwilioEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -485,7 +479,7 @@ public interface TwilioEndpointBuilderFactory {
      * using Twilio Java SDK. Creates a builder to build endpoints for the
      * Twilio component.
      */
-    public default TwilioEndpointBuilder twilio(String path) {
+    default TwilioEndpointBuilder twilio(String path) {
         class TwilioEndpointBuilderImpl extends AbstractEndpointBuilder implements TwilioEndpointBuilder, AdvancedTwilioEndpointBuilder {
             public TwilioEndpointBuilderImpl(String path) {
                 super("twilio", path);

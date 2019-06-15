@@ -45,7 +45,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public interface TwitterDirectMessageEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder advanced() {
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder advanced() {
             return (AdvancedTwitterDirectMessageEndpointConsumerBuilder) this;
         }
         /**
@@ -54,8 +54,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder user(
-                String user) {
+        default TwitterDirectMessageEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -70,7 +69,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -86,7 +85,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -97,7 +96,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -108,7 +107,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -120,7 +119,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder type(
+        default TwitterDirectMessageEndpointConsumerBuilder type(
                 EndpointType type) {
             setProperty("type", type);
             return this;
@@ -132,8 +131,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder type(
-                String type) {
+        default TwitterDirectMessageEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -142,8 +140,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder count(
-                Integer count) {
+        default TwitterDirectMessageEndpointConsumerBuilder count(Integer count) {
             setProperty("count", count);
             return this;
         }
@@ -153,8 +150,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder count(
-                String count) {
+        default TwitterDirectMessageEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
             return this;
         }
@@ -164,7 +160,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder filterOld(
+        default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 boolean filterOld) {
             setProperty("filterOld", filterOld);
             return this;
@@ -175,7 +171,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder filterOld(
+        default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 String filterOld) {
             setProperty("filterOld", filterOld);
             return this;
@@ -185,8 +181,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder lang(
-                String lang) {
+        default TwitterDirectMessageEndpointConsumerBuilder lang(String lang) {
             setProperty("lang", lang);
             return this;
         }
@@ -195,7 +190,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
+        default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -206,7 +201,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
+        default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -217,8 +212,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sinceId(
-                long sinceId) {
+        default TwitterDirectMessageEndpointConsumerBuilder sinceId(long sinceId) {
             setProperty("sinceId", sinceId);
             return this;
         }
@@ -228,7 +222,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sinceId(
+        default TwitterDirectMessageEndpointConsumerBuilder sinceId(
                 String sinceId) {
             setProperty("sinceId", sinceId);
             return this;
@@ -239,7 +233,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder userIds(
+        default TwitterDirectMessageEndpointConsumerBuilder userIds(
                 String userIds) {
             setProperty("userIds", userIds);
             return this;
@@ -250,7 +244,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -261,7 +255,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -272,7 +266,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -283,7 +277,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -298,7 +292,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -313,7 +307,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
+        default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -323,8 +317,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder delay(
-                long delay) {
+        default TwitterDirectMessageEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -333,8 +326,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder delay(
-                String delay) {
+        default TwitterDirectMessageEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -344,7 +336,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder greedy(
+        default TwitterDirectMessageEndpointConsumerBuilder greedy(
                 boolean greedy) {
             setProperty("greedy", greedy);
             return this;
@@ -355,8 +347,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder greedy(
-                String greedy) {
+        default TwitterDirectMessageEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -367,7 +358,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
+        default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -379,7 +370,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
+        default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -390,7 +381,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
+        default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -402,7 +393,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
+        default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -415,7 +406,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -428,7 +419,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -441,7 +432,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder scheduler(
+        default TwitterDirectMessageEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -454,7 +445,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder scheduler(
+        default TwitterDirectMessageEndpointConsumerBuilder scheduler(
                 String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -466,7 +457,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
+        default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -479,7 +470,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
+        default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -489,7 +480,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
+        default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -499,7 +490,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
+        default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -509,7 +500,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
+        default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
@@ -520,7 +511,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
+        default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
@@ -531,7 +522,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
+        default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -542,7 +533,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
+        default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -552,7 +543,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sortById(
+        default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 boolean sortById) {
             setProperty("sortById", sortById);
             return this;
@@ -562,7 +553,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder sortById(
+        default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 String sortById) {
             setProperty("sortById", sortById);
             return this;
@@ -573,7 +564,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder httpProxyHost(
+        default TwitterDirectMessageEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -584,7 +575,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder httpProxyPassword(
+        default TwitterDirectMessageEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -595,7 +586,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -607,7 +598,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -618,7 +609,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder httpProxyUser(
+        default TwitterDirectMessageEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -629,7 +620,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder accessToken(
+        default TwitterDirectMessageEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -640,7 +631,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder accessTokenSecret(
+        default TwitterDirectMessageEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -651,7 +642,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder consumerKey(
+        default TwitterDirectMessageEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -662,7 +653,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointConsumerBuilder consumerSecret(
+        default TwitterDirectMessageEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -676,7 +667,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public interface AdvancedTwitterDirectMessageEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TwitterDirectMessageEndpointConsumerBuilder basic() {
+        default TwitterDirectMessageEndpointConsumerBuilder basic() {
             return (TwitterDirectMessageEndpointConsumerBuilder) this;
         }
         /**
@@ -687,7 +678,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder distanceMetric(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
             setProperty("distanceMetric", distanceMetric);
             return this;
@@ -701,7 +692,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -715,7 +706,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -725,7 +716,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -736,7 +727,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -747,7 +738,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -758,7 +749,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -770,7 +761,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 Double latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -782,7 +773,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 String latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -794,7 +785,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder locations(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder locations(
                 String locations) {
             setProperty("locations", locations);
             return this;
@@ -806,7 +797,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 Double longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -818,7 +809,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 String longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -832,7 +823,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -846,7 +837,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -858,7 +849,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 Double radius) {
             setProperty("radius", radius);
             return this;
@@ -870,7 +861,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 String radius) {
             setProperty("radius", radius);
             return this;
@@ -880,7 +871,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
                 Object twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -891,7 +882,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
                 String twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -902,7 +893,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -913,7 +904,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -924,7 +915,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -935,7 +926,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -948,7 +939,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public static interface TwitterDirectMessageEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedTwitterDirectMessageEndpointProducerBuilder advanced() {
+        default AdvancedTwitterDirectMessageEndpointProducerBuilder advanced() {
             return (AdvancedTwitterDirectMessageEndpointProducerBuilder) this;
         }
         /**
@@ -957,8 +948,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterDirectMessageEndpointProducerBuilder user(
-                String user) {
+        default TwitterDirectMessageEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -975,7 +965,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
+        default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -993,7 +983,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
+        default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1004,7 +994,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointProducerBuilder httpProxyHost(
+        default TwitterDirectMessageEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1015,7 +1005,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointProducerBuilder httpProxyPassword(
+        default TwitterDirectMessageEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1026,7 +1016,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1038,7 +1028,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1049,7 +1039,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointProducerBuilder httpProxyUser(
+        default TwitterDirectMessageEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1060,7 +1050,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointProducerBuilder accessToken(
+        default TwitterDirectMessageEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -1071,7 +1061,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointProducerBuilder accessTokenSecret(
+        default TwitterDirectMessageEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1082,7 +1072,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointProducerBuilder consumerKey(
+        default TwitterDirectMessageEndpointProducerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -1093,7 +1083,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointProducerBuilder consumerSecret(
+        default TwitterDirectMessageEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1107,7 +1097,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public interface AdvancedTwitterDirectMessageEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default TwitterDirectMessageEndpointProducerBuilder basic() {
+        default TwitterDirectMessageEndpointProducerBuilder basic() {
             return (TwitterDirectMessageEndpointProducerBuilder) this;
         }
         /**
@@ -1116,7 +1106,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1127,7 +1117,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1138,7 +1128,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1149,7 +1139,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1162,7 +1152,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public static interface TwitterDirectMessageEndpointBuilder
             extends
                 TwitterDirectMessageEndpointConsumerBuilder, TwitterDirectMessageEndpointProducerBuilder {
-        public default AdvancedTwitterDirectMessageEndpointBuilder advanced() {
+        default AdvancedTwitterDirectMessageEndpointBuilder advanced() {
             return (AdvancedTwitterDirectMessageEndpointBuilder) this;
         }
         /**
@@ -1171,7 +1161,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterDirectMessageEndpointBuilder user(String user) {
+        default TwitterDirectMessageEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -1181,7 +1171,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointBuilder httpProxyHost(
+        default TwitterDirectMessageEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1192,7 +1182,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointBuilder httpProxyPassword(
+        default TwitterDirectMessageEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1203,7 +1193,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1215,7 +1205,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointBuilder httpProxyPort(
+        default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1226,7 +1216,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterDirectMessageEndpointBuilder httpProxyUser(
+        default TwitterDirectMessageEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1237,7 +1227,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointBuilder accessToken(
+        default TwitterDirectMessageEndpointBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -1248,7 +1238,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointBuilder accessTokenSecret(
+        default TwitterDirectMessageEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1259,7 +1249,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointBuilder consumerKey(
+        default TwitterDirectMessageEndpointBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -1270,7 +1260,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterDirectMessageEndpointBuilder consumerSecret(
+        default TwitterDirectMessageEndpointBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1283,7 +1273,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     public static interface AdvancedTwitterDirectMessageEndpointBuilder
             extends
                 AdvancedTwitterDirectMessageEndpointConsumerBuilder, AdvancedTwitterDirectMessageEndpointProducerBuilder {
-        public default TwitterDirectMessageEndpointBuilder basic() {
+        default TwitterDirectMessageEndpointBuilder basic() {
             return (TwitterDirectMessageEndpointBuilder) this;
         }
         /**
@@ -1292,7 +1282,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1303,7 +1293,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1314,7 +1304,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1325,7 +1315,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
+        default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1344,8 +1334,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * messages. Creates a builder to build endpoints for the Twitter Direct
      * Message component.
      */
-    public default TwitterDirectMessageEndpointBuilder twitterDirectMessage(
-            String path) {
+    default TwitterDirectMessageEndpointBuilder twitterDirectMessage(String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {
             public TwitterDirectMessageEndpointBuilderImpl(String path) {
                 super("twitter-directmessage", path);

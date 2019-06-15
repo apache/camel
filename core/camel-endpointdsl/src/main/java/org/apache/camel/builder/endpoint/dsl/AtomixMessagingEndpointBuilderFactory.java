@@ -41,7 +41,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public interface AtomixMessagingEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder advanced() {
+        default AdvancedAtomixMessagingEndpointConsumerBuilder advanced() {
             return (AdvancedAtomixMessagingEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder resourceName(
+        default AtomixMessagingEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -59,8 +59,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder atomix(
-                Object atomix) {
+        default AtomixMessagingEndpointConsumerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -70,8 +69,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder atomix(
-                String atomix) {
+        default AtomixMessagingEndpointConsumerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -81,7 +79,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder broadcastType(
+        default AtomixMessagingEndpointConsumerBuilder broadcastType(
                 BroadcastType broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -92,7 +90,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder broadcastType(
+        default AtomixMessagingEndpointConsumerBuilder broadcastType(
                 String broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -102,7 +100,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder channelName(
+        default AtomixMessagingEndpointConsumerBuilder channelName(
                 String channelName) {
             setProperty("channelName", channelName);
             return this;
@@ -112,7 +110,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder configurationUri(
+        default AtomixMessagingEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -123,7 +121,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder defaultAction(
+        default AtomixMessagingEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -134,7 +132,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder defaultAction(
+        default AtomixMessagingEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -144,7 +142,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder memberName(
+        default AtomixMessagingEndpointConsumerBuilder memberName(
                 String memberName) {
             setProperty("memberName", memberName);
             return this;
@@ -155,8 +153,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder nodes(
-                List<Object> nodes) {
+        default AtomixMessagingEndpointConsumerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -166,7 +163,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder nodes(String nodes) {
+        default AtomixMessagingEndpointConsumerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -175,7 +172,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder resultHeader(
+        default AtomixMessagingEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -186,7 +183,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder transport(
+        default AtomixMessagingEndpointConsumerBuilder transport(
                 Class<Object> transport) {
             setProperty("transport", transport);
             return this;
@@ -197,7 +194,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointConsumerBuilder transport(
+        default AtomixMessagingEndpointConsumerBuilder transport(
                 String transport) {
             setProperty("transport", transport);
             return this;
@@ -213,7 +210,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
+        default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -229,7 +226,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
+        default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -243,7 +240,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public interface AdvancedAtomixMessagingEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AtomixMessagingEndpointConsumerBuilder basic() {
+        default AtomixMessagingEndpointConsumerBuilder basic() {
             return (AtomixMessagingEndpointConsumerBuilder) this;
         }
         /**
@@ -255,7 +252,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -269,7 +266,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -279,7 +276,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -290,7 +287,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -301,7 +298,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -312,7 +309,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -322,7 +319,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -333,7 +330,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -343,7 +340,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -354,7 +351,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -366,7 +363,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -378,7 +375,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -388,7 +385,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -399,7 +396,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -410,7 +407,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -422,7 +419,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -433,7 +430,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -445,7 +442,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -456,7 +453,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -467,7 +464,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -480,7 +477,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public static interface AtomixMessagingEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAtomixMessagingEndpointProducerBuilder advanced() {
+        default AdvancedAtomixMessagingEndpointProducerBuilder advanced() {
             return (AdvancedAtomixMessagingEndpointProducerBuilder) this;
         }
         /**
@@ -488,7 +485,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder resourceName(
+        default AtomixMessagingEndpointProducerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -498,8 +495,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder atomix(
-                Object atomix) {
+        default AtomixMessagingEndpointProducerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -509,8 +505,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder atomix(
-                String atomix) {
+        default AtomixMessagingEndpointProducerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -520,7 +515,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder broadcastType(
+        default AtomixMessagingEndpointProducerBuilder broadcastType(
                 BroadcastType broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -531,7 +526,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder broadcastType(
+        default AtomixMessagingEndpointProducerBuilder broadcastType(
                 String broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -541,7 +536,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder channelName(
+        default AtomixMessagingEndpointProducerBuilder channelName(
                 String channelName) {
             setProperty("channelName", channelName);
             return this;
@@ -551,7 +546,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder configurationUri(
+        default AtomixMessagingEndpointProducerBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -562,7 +557,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder defaultAction(
+        default AtomixMessagingEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -573,7 +568,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder defaultAction(
+        default AtomixMessagingEndpointProducerBuilder defaultAction(
                 String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -583,7 +578,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder memberName(
+        default AtomixMessagingEndpointProducerBuilder memberName(
                 String memberName) {
             setProperty("memberName", memberName);
             return this;
@@ -594,8 +589,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder nodes(
-                List<Object> nodes) {
+        default AtomixMessagingEndpointProducerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -605,7 +599,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder nodes(String nodes) {
+        default AtomixMessagingEndpointProducerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -614,7 +608,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder resultHeader(
+        default AtomixMessagingEndpointProducerBuilder resultHeader(
                 String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
@@ -625,7 +619,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder transport(
+        default AtomixMessagingEndpointProducerBuilder transport(
                 Class<Object> transport) {
             setProperty("transport", transport);
             return this;
@@ -636,7 +630,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointProducerBuilder transport(
+        default AtomixMessagingEndpointProducerBuilder transport(
                 String transport) {
             setProperty("transport", transport);
             return this;
@@ -654,7 +648,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
+        default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -672,7 +666,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
+        default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -686,7 +680,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public interface AdvancedAtomixMessagingEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AtomixMessagingEndpointProducerBuilder basic() {
+        default AtomixMessagingEndpointProducerBuilder basic() {
             return (AtomixMessagingEndpointProducerBuilder) this;
         }
         /**
@@ -695,7 +689,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -706,7 +700,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -716,7 +710,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -727,7 +721,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -737,7 +731,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -748,7 +742,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -760,7 +754,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -772,7 +766,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
                 String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -782,7 +776,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -793,7 +787,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointProducerBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -804,7 +798,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -816,7 +810,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -827,7 +821,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -839,7 +833,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -850,7 +844,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -861,7 +855,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -874,7 +868,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public static interface AtomixMessagingEndpointBuilder
             extends
                 AtomixMessagingEndpointConsumerBuilder, AtomixMessagingEndpointProducerBuilder {
-        public default AdvancedAtomixMessagingEndpointBuilder advanced() {
+        default AdvancedAtomixMessagingEndpointBuilder advanced() {
             return (AdvancedAtomixMessagingEndpointBuilder) this;
         }
         /**
@@ -882,8 +876,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder resourceName(
-                String resourceName) {
+        default AtomixMessagingEndpointBuilder resourceName(String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
         }
@@ -892,7 +885,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.AtomixClient</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder atomix(Object atomix) {
+        default AtomixMessagingEndpointBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -902,7 +895,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder atomix(String atomix) {
+        default AtomixMessagingEndpointBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
             return this;
         }
@@ -912,7 +905,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder broadcastType(
+        default AtomixMessagingEndpointBuilder broadcastType(
                 BroadcastType broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -923,7 +916,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder broadcastType(
+        default AtomixMessagingEndpointBuilder broadcastType(
                 String broadcastType) {
             setProperty("broadcastType", broadcastType);
             return this;
@@ -933,8 +926,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder channelName(
-                String channelName) {
+        default AtomixMessagingEndpointBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
             return this;
         }
@@ -943,7 +935,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder configurationUri(
+        default AtomixMessagingEndpointBuilder configurationUri(
                 String configurationUri) {
             setProperty("configurationUri", configurationUri);
             return this;
@@ -954,7 +946,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder defaultAction(
+        default AtomixMessagingEndpointBuilder defaultAction(
                 Action defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -965,7 +957,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder defaultAction(
+        default AtomixMessagingEndpointBuilder defaultAction(
                 String defaultAction) {
             setProperty("defaultAction", defaultAction);
             return this;
@@ -975,8 +967,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder memberName(
-                String memberName) {
+        default AtomixMessagingEndpointBuilder memberName(String memberName) {
             setProperty("memberName", memberName);
             return this;
         }
@@ -986,7 +977,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder nodes(List<Object> nodes) {
+        default AtomixMessagingEndpointBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -996,7 +987,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder nodes(String nodes) {
+        default AtomixMessagingEndpointBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
             return this;
         }
@@ -1005,8 +996,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder resultHeader(
-                String resultHeader) {
+        default AtomixMessagingEndpointBuilder resultHeader(String resultHeader) {
             setProperty("resultHeader", resultHeader);
             return this;
         }
@@ -1016,8 +1006,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder transport(
-                Class<Object> transport) {
+        default AtomixMessagingEndpointBuilder transport(Class<Object> transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -1027,7 +1016,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
          * @group common
          */
-        public default AtomixMessagingEndpointBuilder transport(String transport) {
+        default AtomixMessagingEndpointBuilder transport(String transport) {
             setProperty("transport", transport);
             return this;
         }
@@ -1039,7 +1028,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     public static interface AdvancedAtomixMessagingEndpointBuilder
             extends
                 AdvancedAtomixMessagingEndpointConsumerBuilder, AdvancedAtomixMessagingEndpointProducerBuilder {
-        public default AtomixMessagingEndpointBuilder basic() {
+        default AtomixMessagingEndpointBuilder basic() {
             return (AtomixMessagingEndpointBuilder) this;
         }
         /**
@@ -1048,7 +1037,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1059,7 +1048,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1069,7 +1058,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -1080,7 +1069,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
+        default AdvancedAtomixMessagingEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
             setProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
@@ -1090,7 +1079,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>java.util.Properties</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -1101,7 +1090,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
+        default AdvancedAtomixMessagingEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
             setProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
@@ -1113,7 +1102,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointBuilder ephemeral(
                 boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -1125,7 +1114,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder ephemeral(
+        default AdvancedAtomixMessagingEndpointBuilder ephemeral(
                 String ephemeral) {
             setProperty("ephemeral", ephemeral);
             return this;
@@ -1135,7 +1124,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -1146,7 +1135,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * <code>io.atomix.resource.ReadConsistency</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder readConsistency(
+        default AdvancedAtomixMessagingEndpointBuilder readConsistency(
                 String readConsistency) {
             setProperty("readConsistency", readConsistency);
             return this;
@@ -1157,7 +1146,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -1169,7 +1158,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
+        default AdvancedAtomixMessagingEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
             setProperty("resourceConfigs", resourceConfigs);
             return this;
@@ -1180,7 +1169,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -1192,7 +1181,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * java.util.Properties&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
+        default AdvancedAtomixMessagingEndpointBuilder resourceOptions(
                 String resourceOptions) {
             setProperty("resourceOptions", resourceOptions);
             return this;
@@ -1203,7 +1192,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1214,7 +1203,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomixMessagingEndpointBuilder synchronous(
+        default AdvancedAtomixMessagingEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1248,7 +1237,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * messaging. Creates a builder to build endpoints for the Atomix Messaging
      * component.
      */
-    public default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
+    default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
         class AtomixMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMessagingEndpointBuilder, AdvancedAtomixMessagingEndpointBuilder {
             public AtomixMessagingEndpointBuilderImpl(String path) {
                 super("atomix-messaging", path);

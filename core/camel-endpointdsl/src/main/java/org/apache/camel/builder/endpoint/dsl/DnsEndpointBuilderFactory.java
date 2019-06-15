@@ -36,7 +36,7 @@ public interface DnsEndpointBuilderFactory {
     public static interface DnsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDnsEndpointBuilder advanced() {
+        default AdvancedDnsEndpointBuilder advanced() {
             return (AdvancedDnsEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface DnsEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DnsEndpointBuilder dnsType(DnsType dnsType) {
+        default DnsEndpointBuilder dnsType(DnsType dnsType) {
             setProperty("dnsType", dnsType);
             return this;
         }
@@ -55,7 +55,7 @@ public interface DnsEndpointBuilderFactory {
          * <code>org.apache.camel.component.dns.DnsType</code> type.
          * @group producer
          */
-        public default DnsEndpointBuilder dnsType(String dnsType) {
+        default DnsEndpointBuilder dnsType(String dnsType) {
             setProperty("dnsType", dnsType);
             return this;
         }
@@ -67,7 +67,7 @@ public interface DnsEndpointBuilderFactory {
     public static interface AdvancedDnsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DnsEndpointBuilder basic() {
+        default DnsEndpointBuilder basic() {
             return (DnsEndpointBuilder) this;
         }
         /**
@@ -76,7 +76,7 @@ public interface DnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDnsEndpointBuilder basicPropertyBinding(
+        default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -87,7 +87,7 @@ public interface DnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDnsEndpointBuilder basicPropertyBinding(
+        default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -98,8 +98,7 @@ public interface DnsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDnsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -109,7 +108,7 @@ public interface DnsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
+        default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -125,7 +124,7 @@ public interface DnsEndpointBuilderFactory {
      * To lookup domain information and run DNS queries using DNSJava. Creates a
      * builder to build endpoints for the DNS component.
      */
-    public default DnsEndpointBuilder dns(String path) {
+    default DnsEndpointBuilder dns(String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {
             public DnsEndpointBuilderImpl(String path) {
                 super("dns", path);

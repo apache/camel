@@ -36,7 +36,7 @@ public interface BonitaEndpointBuilderFactory {
     public static interface BonitaEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedBonitaEndpointBuilder advanced() {
+        default AdvancedBonitaEndpointBuilder advanced() {
             return (AdvancedBonitaEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface BonitaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default BonitaEndpointBuilder operation(BonitaOperation operation) {
+        default BonitaEndpointBuilder operation(BonitaOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -57,7 +57,7 @@ public interface BonitaEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default BonitaEndpointBuilder operation(String operation) {
+        default BonitaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -66,7 +66,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default BonitaEndpointBuilder hostname(String hostname) {
+        default BonitaEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -75,7 +75,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default BonitaEndpointBuilder port(String port) {
+        default BonitaEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -84,7 +84,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default BonitaEndpointBuilder processName(String processName) {
+        default BonitaEndpointBuilder processName(String processName) {
             setProperty("processName", processName);
             return this;
         }
@@ -93,7 +93,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BonitaEndpointBuilder password(String password) {
+        default BonitaEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -102,7 +102,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default BonitaEndpointBuilder username(String username) {
+        default BonitaEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -114,7 +114,7 @@ public interface BonitaEndpointBuilderFactory {
     public static interface AdvancedBonitaEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default BonitaEndpointBuilder basic() {
+        default BonitaEndpointBuilder basic() {
             return (BonitaEndpointBuilder) this;
         }
         /**
@@ -123,7 +123,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBonitaEndpointBuilder basicPropertyBinding(
+        default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -134,7 +134,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBonitaEndpointBuilder basicPropertyBinding(
+        default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -145,8 +145,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBonitaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -156,8 +155,7 @@ public interface BonitaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedBonitaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -174,7 +172,7 @@ public interface BonitaEndpointBuilderFactory {
      * Used for communicating with a remote Bonita BPM process engine. Creates a
      * builder to build endpoints for the Bonita component.
      */
-    public default BonitaEndpointBuilder bonita(String path) {
+    default BonitaEndpointBuilder bonita(String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {
             public BonitaEndpointBuilderImpl(String path) {
                 super("bonita", path);

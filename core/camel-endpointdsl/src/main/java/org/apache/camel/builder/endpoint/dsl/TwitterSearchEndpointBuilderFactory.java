@@ -44,16 +44,16 @@ public interface TwitterSearchEndpointBuilderFactory {
     public interface TwitterSearchEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTwitterSearchEndpointConsumerBuilder advanced() {
+        default AdvancedTwitterSearchEndpointConsumerBuilder advanced() {
             return (AdvancedTwitterSearchEndpointConsumerBuilder) this;
         }
         /**
-         * The search keywords. Multiple values can be separated with comma.
+         * The search query, use the keywords AND, OR, - and () to narrow the
+         * search results.
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterSearchEndpointConsumerBuilder keywords(
-                String keywords) {
+        default TwitterSearchEndpointConsumerBuilder keywords(String keywords) {
             setProperty("keywords", keywords);
             return this;
         }
@@ -68,7 +68,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -84,7 +84,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
+        default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -95,7 +95,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -106,7 +106,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -118,8 +118,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder type(
-                EndpointType type) {
+        default TwitterSearchEndpointConsumerBuilder type(EndpointType type) {
             setProperty("type", type);
             return this;
         }
@@ -130,7 +129,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterSearchEndpointConsumerBuilder type(String type) {
+        default TwitterSearchEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -139,7 +138,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder count(Integer count) {
+        default TwitterSearchEndpointConsumerBuilder count(Integer count) {
             setProperty("count", count);
             return this;
         }
@@ -149,7 +148,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder count(String count) {
+        default TwitterSearchEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
             return this;
         }
@@ -159,8 +158,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder filterOld(
-                boolean filterOld) {
+        default TwitterSearchEndpointConsumerBuilder filterOld(boolean filterOld) {
             setProperty("filterOld", filterOld);
             return this;
         }
@@ -170,8 +168,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder filterOld(
-                String filterOld) {
+        default TwitterSearchEndpointConsumerBuilder filterOld(String filterOld) {
             setProperty("filterOld", filterOld);
             return this;
         }
@@ -180,7 +177,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder lang(String lang) {
+        default TwitterSearchEndpointConsumerBuilder lang(String lang) {
             setProperty("lang", lang);
             return this;
         }
@@ -189,7 +186,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder numberOfPages(
+        default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -200,7 +197,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder numberOfPages(
+        default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
             setProperty("numberOfPages", numberOfPages);
             return this;
@@ -211,7 +208,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder sinceId(long sinceId) {
+        default TwitterSearchEndpointConsumerBuilder sinceId(long sinceId) {
             setProperty("sinceId", sinceId);
             return this;
         }
@@ -221,8 +218,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder sinceId(
-                String sinceId) {
+        default TwitterSearchEndpointConsumerBuilder sinceId(String sinceId) {
             setProperty("sinceId", sinceId);
             return this;
         }
@@ -232,8 +228,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group filter
          */
-        public default TwitterSearchEndpointConsumerBuilder userIds(
-                String userIds) {
+        default TwitterSearchEndpointConsumerBuilder userIds(String userIds) {
             setProperty("userIds", userIds);
             return this;
         }
@@ -243,7 +238,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -254,7 +249,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
+        default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -265,7 +260,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -276,7 +271,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
+        default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -291,7 +286,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
+        default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -306,7 +301,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
+        default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -316,7 +311,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder delay(long delay) {
+        default TwitterSearchEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -325,7 +320,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder delay(String delay) {
+        default TwitterSearchEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -335,8 +330,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder greedy(
-                boolean greedy) {
+        default TwitterSearchEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -346,7 +340,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder greedy(String greedy) {
+        default TwitterSearchEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -357,7 +351,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder initialDelay(
+        default TwitterSearchEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -369,7 +363,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder initialDelay(
+        default TwitterSearchEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -380,7 +374,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
+        default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -392,7 +386,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
+        default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -405,7 +399,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -418,7 +412,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
+        default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -431,7 +425,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder scheduler(
+        default TwitterSearchEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -444,8 +438,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder scheduler(
-                String scheduler) {
+        default TwitterSearchEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -456,7 +449,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder schedulerProperties(
+        default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -469,7 +462,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder schedulerProperties(
+        default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -479,7 +472,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder startScheduler(
+        default TwitterSearchEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -489,7 +482,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder startScheduler(
+        default TwitterSearchEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -499,8 +492,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder timeUnit(
-                TimeUnit timeUnit) {
+        default TwitterSearchEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -510,8 +502,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder timeUnit(
-                String timeUnit) {
+        default TwitterSearchEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -521,7 +512,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder useFixedDelay(
+        default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -532,7 +523,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default TwitterSearchEndpointConsumerBuilder useFixedDelay(
+        default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -542,8 +533,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterSearchEndpointConsumerBuilder sortById(
-                boolean sortById) {
+        default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
             setProperty("sortById", sortById);
             return this;
         }
@@ -552,8 +542,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group sort
          */
-        public default TwitterSearchEndpointConsumerBuilder sortById(
-                String sortById) {
+        default TwitterSearchEndpointConsumerBuilder sortById(String sortById) {
             setProperty("sortById", sortById);
             return this;
         }
@@ -563,7 +552,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointConsumerBuilder httpProxyHost(
+        default TwitterSearchEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -574,7 +563,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
+        default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -585,7 +574,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointConsumerBuilder httpProxyPort(
+        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -597,7 +586,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterSearchEndpointConsumerBuilder httpProxyPort(
+        default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -608,7 +597,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointConsumerBuilder httpProxyUser(
+        default TwitterSearchEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -619,7 +608,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointConsumerBuilder accessToken(
+        default TwitterSearchEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -630,7 +619,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointConsumerBuilder accessTokenSecret(
+        default TwitterSearchEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -641,7 +630,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointConsumerBuilder consumerKey(
+        default TwitterSearchEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -652,7 +641,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointConsumerBuilder consumerSecret(
+        default TwitterSearchEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -665,7 +654,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     public interface AdvancedTwitterSearchEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TwitterSearchEndpointConsumerBuilder basic() {
+        default TwitterSearchEndpointConsumerBuilder basic() {
             return (TwitterSearchEndpointConsumerBuilder) this;
         }
         /**
@@ -676,7 +665,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder distanceMetric(
+        default AdvancedTwitterSearchEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
             setProperty("distanceMetric", distanceMetric);
             return this;
@@ -690,7 +679,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -704,7 +693,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
+        default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -714,7 +703,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -725,7 +714,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
+        default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -736,7 +725,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -747,7 +736,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
+        default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
             setProperty("extendedMode", extendedMode);
             return this;
@@ -759,7 +748,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
+        default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 Double latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -771,7 +760,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
+        default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 String latitude) {
             setProperty("latitude", latitude);
             return this;
@@ -783,7 +772,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder locations(
+        default AdvancedTwitterSearchEndpointConsumerBuilder locations(
                 String locations) {
             setProperty("locations", locations);
             return this;
@@ -795,7 +784,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
+        default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 Double longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -807,7 +796,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
+        default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 String longitude) {
             setProperty("longitude", longitude);
             return this;
@@ -821,7 +810,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -835,7 +824,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
+        default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -847,7 +836,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder radius(
+        default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 Double radius) {
             setProperty("radius", radius);
             return this;
@@ -859,7 +848,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder radius(
+        default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 String radius) {
             setProperty("radius", radius);
             return this;
@@ -869,7 +858,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterSearchEndpointConsumerBuilder twitterStream(
                 Object twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -880,7 +869,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>twitter4j.TwitterStream</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder twitterStream(
+        default AdvancedTwitterSearchEndpointConsumerBuilder twitterStream(
                 String twitterStream) {
             setProperty("twitterStream", twitterStream);
             return this;
@@ -891,7 +880,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -902,7 +891,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -913,7 +902,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -924,7 +913,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
+        default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -937,16 +926,16 @@ public interface TwitterSearchEndpointBuilderFactory {
     public static interface TwitterSearchEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedTwitterSearchEndpointProducerBuilder advanced() {
+        default AdvancedTwitterSearchEndpointProducerBuilder advanced() {
             return (AdvancedTwitterSearchEndpointProducerBuilder) this;
         }
         /**
-         * The search keywords. Multiple values can be separated with comma.
+         * The search query, use the keywords AND, OR, - and () to narrow the
+         * search results.
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterSearchEndpointProducerBuilder keywords(
-                String keywords) {
+        default TwitterSearchEndpointProducerBuilder keywords(String keywords) {
             setProperty("keywords", keywords);
             return this;
         }
@@ -963,7 +952,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterSearchEndpointProducerBuilder lazyStartProducer(
+        default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -981,7 +970,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default TwitterSearchEndpointProducerBuilder lazyStartProducer(
+        default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -992,7 +981,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointProducerBuilder httpProxyHost(
+        default TwitterSearchEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -1003,7 +992,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointProducerBuilder httpProxyPassword(
+        default TwitterSearchEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1014,7 +1003,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointProducerBuilder httpProxyPort(
+        default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1026,7 +1015,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterSearchEndpointProducerBuilder httpProxyPort(
+        default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -1037,7 +1026,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointProducerBuilder httpProxyUser(
+        default TwitterSearchEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -1048,7 +1037,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointProducerBuilder accessToken(
+        default TwitterSearchEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -1059,7 +1048,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointProducerBuilder accessTokenSecret(
+        default TwitterSearchEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1070,7 +1059,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointProducerBuilder consumerKey(
+        default TwitterSearchEndpointProducerBuilder consumerKey(
                 String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
@@ -1081,7 +1070,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointProducerBuilder consumerSecret(
+        default TwitterSearchEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1094,7 +1083,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     public interface AdvancedTwitterSearchEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default TwitterSearchEndpointProducerBuilder basic() {
+        default TwitterSearchEndpointProducerBuilder basic() {
             return (TwitterSearchEndpointProducerBuilder) this;
         }
         /**
@@ -1103,7 +1092,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1114,7 +1103,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1125,7 +1114,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
+        default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1136,7 +1125,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
+        default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1149,15 +1138,16 @@ public interface TwitterSearchEndpointBuilderFactory {
     public static interface TwitterSearchEndpointBuilder
             extends
                 TwitterSearchEndpointConsumerBuilder, TwitterSearchEndpointProducerBuilder {
-        public default AdvancedTwitterSearchEndpointBuilder advanced() {
+        default AdvancedTwitterSearchEndpointBuilder advanced() {
             return (AdvancedTwitterSearchEndpointBuilder) this;
         }
         /**
-         * The search keywords. Multiple values can be separated with comma.
+         * The search query, use the keywords AND, OR, - and () to narrow the
+         * search results.
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default TwitterSearchEndpointBuilder keywords(String keywords) {
+        default TwitterSearchEndpointBuilder keywords(String keywords) {
             setProperty("keywords", keywords);
             return this;
         }
@@ -1167,8 +1157,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointBuilder httpProxyHost(
-                String httpProxyHost) {
+        default TwitterSearchEndpointBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
         }
@@ -1178,7 +1167,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointBuilder httpProxyPassword(
+        default TwitterSearchEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -1189,8 +1178,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointBuilder httpProxyPort(
-                Integer httpProxyPort) {
+        default TwitterSearchEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1201,8 +1189,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterSearchEndpointBuilder httpProxyPort(
-                String httpProxyPort) {
+        default TwitterSearchEndpointBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
         }
@@ -1212,8 +1199,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterSearchEndpointBuilder httpProxyUser(
-                String httpProxyUser) {
+        default TwitterSearchEndpointBuilder httpProxyUser(String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
         }
@@ -1223,8 +1209,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointBuilder accessToken(
-                String accessToken) {
+        default TwitterSearchEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -1234,7 +1219,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointBuilder accessTokenSecret(
+        default TwitterSearchEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -1245,8 +1230,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointBuilder consumerKey(
-                String consumerKey) {
+        default TwitterSearchEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -1256,7 +1240,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterSearchEndpointBuilder consumerSecret(
+        default TwitterSearchEndpointBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -1269,7 +1253,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     public static interface AdvancedTwitterSearchEndpointBuilder
             extends
                 AdvancedTwitterSearchEndpointConsumerBuilder, AdvancedTwitterSearchEndpointProducerBuilder {
-        public default TwitterSearchEndpointBuilder basic() {
+        default TwitterSearchEndpointBuilder basic() {
             return (TwitterSearchEndpointBuilder) this;
         }
         /**
@@ -1278,7 +1262,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1289,7 +1273,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1300,7 +1284,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointBuilder synchronous(
+        default AdvancedTwitterSearchEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1311,7 +1295,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterSearchEndpointBuilder synchronous(
+        default AdvancedTwitterSearchEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1329,7 +1313,7 @@ public interface TwitterSearchEndpointBuilderFactory {
      * The Twitter Search component consumes search results. Creates a builder
      * to build endpoints for the Twitter Search component.
      */
-    public default TwitterSearchEndpointBuilder twitterSearch(String path) {
+    default TwitterSearchEndpointBuilder twitterSearch(String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {
             public TwitterSearchEndpointBuilderImpl(String path) {
                 super("twitter-search", path);

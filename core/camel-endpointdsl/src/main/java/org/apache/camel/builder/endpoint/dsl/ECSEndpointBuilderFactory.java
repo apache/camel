@@ -36,7 +36,7 @@ public interface ECSEndpointBuilderFactory {
     public static interface ECSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedECSEndpointBuilder advanced() {
+        default AdvancedECSEndpointBuilder advanced() {
             return (AdvancedECSEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface ECSEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ECSEndpointBuilder label(String label) {
+        default ECSEndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -53,7 +53,7 @@ public interface ECSEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ECSEndpointBuilder region(String region) {
+        default ECSEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -65,7 +65,7 @@ public interface ECSEndpointBuilderFactory {
     public static interface AdvancedECSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ECSEndpointBuilder basic() {
+        default ECSEndpointBuilder basic() {
             return (ECSEndpointBuilder) this;
         }
         /**
@@ -74,7 +74,7 @@ public interface ECSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedECSEndpointBuilder basicPropertyBinding(
+        default AdvancedECSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -85,7 +85,7 @@ public interface ECSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedECSEndpointBuilder basicPropertyBinding(
+        default AdvancedECSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,8 +96,7 @@ public interface ECSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedECSEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedECSEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -107,7 +106,7 @@ public interface ECSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedECSEndpointBuilder synchronous(String synchronous) {
+        default AdvancedECSEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -124,7 +123,7 @@ public interface ECSEndpointBuilderFactory {
      * The aws-kms is used for managing Amazon ECS Creates a builder to build
      * endpoints for the AWS ECS component.
      */
-    public default ECSEndpointBuilder eCS(String path) {
+    default ECSEndpointBuilder eCS(String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {
             public ECSEndpointBuilderImpl(String path) {
                 super("aws-ecs", path);

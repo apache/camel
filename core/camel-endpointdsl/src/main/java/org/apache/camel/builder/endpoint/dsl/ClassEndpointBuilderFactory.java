@@ -37,7 +37,7 @@ public interface ClassEndpointBuilderFactory {
     public static interface ClassEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedClassEndpointBuilder advanced() {
+        default AdvancedClassEndpointBuilder advanced() {
             return (AdvancedClassEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ClassEndpointBuilder beanName(String beanName) {
+        default ClassEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
             return this;
         }
@@ -56,7 +56,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default ClassEndpointBuilder cache(Boolean cache) {
+        default ClassEndpointBuilder cache(Boolean cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -68,7 +68,7 @@ public interface ClassEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ClassEndpointBuilder cache(String cache) {
+        default ClassEndpointBuilder cache(String cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -77,7 +77,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ClassEndpointBuilder method(String method) {
+        default ClassEndpointBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -87,8 +87,7 @@ public interface ClassEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default ClassEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+        default ClassEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -99,7 +98,7 @@ public interface ClassEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ClassEndpointBuilder parameters(String parameters) {
+        default ClassEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -111,7 +110,7 @@ public interface ClassEndpointBuilderFactory {
     public static interface AdvancedClassEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ClassEndpointBuilder basic() {
+        default ClassEndpointBuilder basic() {
             return (ClassEndpointBuilder) this;
         }
         /**
@@ -120,7 +119,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedClassEndpointBuilder basicPropertyBinding(
+        default AdvancedClassEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -131,7 +130,7 @@ public interface ClassEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedClassEndpointBuilder basicPropertyBinding(
+        default AdvancedClassEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,8 +141,7 @@ public interface ClassEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedClassEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedClassEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -153,8 +151,7 @@ public interface ClassEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedClassEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedClassEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -163,7 +160,7 @@ public interface ClassEndpointBuilderFactory {
      * The class component is for invoking Java classes (Java beans) from Camel.
      * Creates a builder to build endpoints for the Class component.
      */
-    public default ClassEndpointBuilder classEndpoint(String path) {
+    default ClassEndpointBuilder classEndpoint(String path) {
         class ClassEndpointBuilderImpl extends AbstractEndpointBuilder implements ClassEndpointBuilder, AdvancedClassEndpointBuilder {
             public ClassEndpointBuilderImpl(String path) {
                 super("class", path);

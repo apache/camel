@@ -37,7 +37,7 @@ public interface LuceneEndpointBuilderFactory {
     public static interface LuceneEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLuceneEndpointBuilder advanced() {
+        default AdvancedLuceneEndpointBuilder advanced() {
             return (AdvancedLuceneEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder host(String host) {
+        default LuceneEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -55,7 +55,7 @@ public interface LuceneEndpointBuilderFactory {
          * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder operation(LuceneOperation operation) {
+        default LuceneEndpointBuilder operation(LuceneOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -65,7 +65,7 @@ public interface LuceneEndpointBuilderFactory {
          * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder operation(String operation) {
+        default LuceneEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -79,7 +79,7 @@ public interface LuceneEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LuceneEndpointBuilder analyzer(Object analyzer) {
+        default LuceneEndpointBuilder analyzer(Object analyzer) {
             setProperty("analyzer", analyzer);
             return this;
         }
@@ -93,7 +93,7 @@ public interface LuceneEndpointBuilderFactory {
          * <code>org.apache.lucene.analysis.Analyzer</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder analyzer(String analyzer) {
+        default LuceneEndpointBuilder analyzer(String analyzer) {
             setProperty("analyzer", analyzer);
             return this;
         }
@@ -103,7 +103,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder indexDir(File indexDir) {
+        default LuceneEndpointBuilder indexDir(File indexDir) {
             setProperty("indexDir", indexDir);
             return this;
         }
@@ -113,7 +113,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder indexDir(String indexDir) {
+        default LuceneEndpointBuilder indexDir(String indexDir) {
             setProperty("indexDir", indexDir);
             return this;
         }
@@ -122,7 +122,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder maxHits(int maxHits) {
+        default LuceneEndpointBuilder maxHits(int maxHits) {
             setProperty("maxHits", maxHits);
             return this;
         }
@@ -131,7 +131,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder maxHits(String maxHits) {
+        default LuceneEndpointBuilder maxHits(String maxHits) {
             setProperty("maxHits", maxHits);
             return this;
         }
@@ -141,7 +141,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder srcDir(File srcDir) {
+        default LuceneEndpointBuilder srcDir(File srcDir) {
             setProperty("srcDir", srcDir);
             return this;
         }
@@ -151,7 +151,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group producer
          */
-        public default LuceneEndpointBuilder srcDir(String srcDir) {
+        default LuceneEndpointBuilder srcDir(String srcDir) {
             setProperty("srcDir", srcDir);
             return this;
         }
@@ -163,7 +163,7 @@ public interface LuceneEndpointBuilderFactory {
     public static interface AdvancedLuceneEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LuceneEndpointBuilder basic() {
+        default LuceneEndpointBuilder basic() {
             return (LuceneEndpointBuilder) this;
         }
         /**
@@ -172,7 +172,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLuceneEndpointBuilder basicPropertyBinding(
+        default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -183,7 +183,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLuceneEndpointBuilder basicPropertyBinding(
+        default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -194,8 +194,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLuceneEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -205,8 +204,7 @@ public interface LuceneEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLuceneEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -223,7 +221,7 @@ public interface LuceneEndpointBuilderFactory {
      * To insert or query from Apache Lucene databases. Creates a builder to
      * build endpoints for the Lucene component.
      */
-    public default LuceneEndpointBuilder lucene(String path) {
+    default LuceneEndpointBuilder lucene(String path) {
         class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {
             public LuceneEndpointBuilderImpl(String path) {
                 super("lucene", path);

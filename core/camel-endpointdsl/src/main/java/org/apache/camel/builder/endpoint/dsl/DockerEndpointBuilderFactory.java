@@ -38,7 +38,7 @@ public interface DockerEndpointBuilderFactory {
     public interface DockerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedDockerEndpointConsumerBuilder advanced() {
+        default AdvancedDockerEndpointConsumerBuilder advanced() {
             return (AdvancedDockerEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder operation(
+        default DockerEndpointConsumerBuilder operation(
                 DockerOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -58,7 +58,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder operation(String operation) {
+        default DockerEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -67,7 +67,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder email(String email) {
+        default DockerEndpointConsumerBuilder email(String email) {
             setProperty("email", email);
             return this;
         }
@@ -76,7 +76,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder host(String host) {
+        default DockerEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -85,7 +85,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder port(Integer port) {
+        default DockerEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -95,7 +95,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder port(String port) {
+        default DockerEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -104,7 +104,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder requestTimeout(
+        default DockerEndpointConsumerBuilder requestTimeout(
                 Integer requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -115,7 +115,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointConsumerBuilder requestTimeout(
+        default DockerEndpointConsumerBuilder requestTimeout(
                 String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -131,7 +131,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default DockerEndpointConsumerBuilder bridgeErrorHandler(
+        default DockerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -147,7 +147,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default DockerEndpointConsumerBuilder bridgeErrorHandler(
+        default DockerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -157,7 +157,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder certPath(String certPath) {
+        default DockerEndpointConsumerBuilder certPath(String certPath) {
             setProperty("certPath", certPath);
             return this;
         }
@@ -166,7 +166,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder password(String password) {
+        default DockerEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -175,7 +175,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder secure(boolean secure) {
+        default DockerEndpointConsumerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -184,7 +184,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder secure(String secure) {
+        default DockerEndpointConsumerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -193,7 +193,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder tlsVerify(boolean tlsVerify) {
+        default DockerEndpointConsumerBuilder tlsVerify(boolean tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -202,7 +202,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder tlsVerify(String tlsVerify) {
+        default DockerEndpointConsumerBuilder tlsVerify(String tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -211,7 +211,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointConsumerBuilder username(String username) {
+        default DockerEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -223,7 +223,7 @@ public interface DockerEndpointBuilderFactory {
     public interface AdvancedDockerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default DockerEndpointConsumerBuilder basic() {
+        default DockerEndpointConsumerBuilder basic() {
             return (DockerEndpointConsumerBuilder) this;
         }
         /**
@@ -235,7 +235,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -249,7 +249,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedDockerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -259,7 +259,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDockerEndpointConsumerBuilder exchangePattern(
+        default AdvancedDockerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -270,7 +270,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedDockerEndpointConsumerBuilder exchangePattern(
+        default AdvancedDockerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -281,7 +281,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -292,7 +292,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -303,7 +303,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder cmdExecFactory(
+        default AdvancedDockerEndpointConsumerBuilder cmdExecFactory(
                 String cmdExecFactory) {
             setProperty("cmdExecFactory", cmdExecFactory);
             return this;
@@ -313,7 +313,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
+        default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -323,7 +323,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
+        default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
                 String followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -333,7 +333,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder loggingFilter(
+        default AdvancedDockerEndpointConsumerBuilder loggingFilter(
                 boolean loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
@@ -343,7 +343,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder loggingFilter(
+        default AdvancedDockerEndpointConsumerBuilder loggingFilter(
                 String loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
@@ -353,7 +353,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -364,7 +364,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -374,7 +374,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
+        default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -385,7 +385,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
+        default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
                 String maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -395,7 +395,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder serverAddress(
+        default AdvancedDockerEndpointConsumerBuilder serverAddress(
                 String serverAddress) {
             setProperty("serverAddress", serverAddress);
             return this;
@@ -405,8 +405,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder socket(
-                boolean socket) {
+        default AdvancedDockerEndpointConsumerBuilder socket(boolean socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -415,8 +414,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder socket(
-                String socket) {
+        default AdvancedDockerEndpointConsumerBuilder socket(String socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -426,7 +424,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder synchronous(
+        default AdvancedDockerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -437,7 +435,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointConsumerBuilder synchronous(
+        default AdvancedDockerEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -450,7 +448,7 @@ public interface DockerEndpointBuilderFactory {
     public static interface DockerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDockerEndpointProducerBuilder advanced() {
+        default AdvancedDockerEndpointProducerBuilder advanced() {
             return (AdvancedDockerEndpointProducerBuilder) this;
         }
         /**
@@ -459,7 +457,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder operation(
+        default DockerEndpointProducerBuilder operation(
                 DockerOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -470,7 +468,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder operation(String operation) {
+        default DockerEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -479,7 +477,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder email(String email) {
+        default DockerEndpointProducerBuilder email(String email) {
             setProperty("email", email);
             return this;
         }
@@ -488,7 +486,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder host(String host) {
+        default DockerEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -497,7 +495,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder port(Integer port) {
+        default DockerEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -507,7 +505,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder port(String port) {
+        default DockerEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -516,7 +514,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder requestTimeout(
+        default DockerEndpointProducerBuilder requestTimeout(
                 Integer requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -527,7 +525,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointProducerBuilder requestTimeout(
+        default DockerEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -545,7 +543,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DockerEndpointProducerBuilder lazyStartProducer(
+        default DockerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -563,7 +561,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DockerEndpointProducerBuilder lazyStartProducer(
+        default DockerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -573,7 +571,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder certPath(String certPath) {
+        default DockerEndpointProducerBuilder certPath(String certPath) {
             setProperty("certPath", certPath);
             return this;
         }
@@ -582,7 +580,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder password(String password) {
+        default DockerEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -591,7 +589,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder secure(boolean secure) {
+        default DockerEndpointProducerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -600,7 +598,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder secure(String secure) {
+        default DockerEndpointProducerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -609,7 +607,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder tlsVerify(boolean tlsVerify) {
+        default DockerEndpointProducerBuilder tlsVerify(boolean tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -618,7 +616,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder tlsVerify(String tlsVerify) {
+        default DockerEndpointProducerBuilder tlsVerify(String tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -627,7 +625,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointProducerBuilder username(String username) {
+        default DockerEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -639,7 +637,7 @@ public interface DockerEndpointBuilderFactory {
     public interface AdvancedDockerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default DockerEndpointProducerBuilder basic() {
+        default DockerEndpointProducerBuilder basic() {
             return (DockerEndpointProducerBuilder) this;
         }
         /**
@@ -648,7 +646,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -659,7 +657,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -670,7 +668,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder cmdExecFactory(
+        default AdvancedDockerEndpointProducerBuilder cmdExecFactory(
                 String cmdExecFactory) {
             setProperty("cmdExecFactory", cmdExecFactory);
             return this;
@@ -680,7 +678,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
+        default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -690,7 +688,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
+        default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
                 String followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -700,7 +698,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder loggingFilter(
+        default AdvancedDockerEndpointProducerBuilder loggingFilter(
                 boolean loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
@@ -710,7 +708,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder loggingFilter(
+        default AdvancedDockerEndpointProducerBuilder loggingFilter(
                 String loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
@@ -720,7 +718,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -731,7 +729,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -741,7 +739,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
+        default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -752,7 +750,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
+        default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
                 String maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -762,7 +760,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder serverAddress(
+        default AdvancedDockerEndpointProducerBuilder serverAddress(
                 String serverAddress) {
             setProperty("serverAddress", serverAddress);
             return this;
@@ -772,8 +770,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder socket(
-                boolean socket) {
+        default AdvancedDockerEndpointProducerBuilder socket(boolean socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -782,8 +779,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder socket(
-                String socket) {
+        default AdvancedDockerEndpointProducerBuilder socket(String socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -793,7 +789,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder synchronous(
+        default AdvancedDockerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -804,7 +800,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointProducerBuilder synchronous(
+        default AdvancedDockerEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -817,7 +813,7 @@ public interface DockerEndpointBuilderFactory {
     public static interface DockerEndpointBuilder
             extends
                 DockerEndpointConsumerBuilder, DockerEndpointProducerBuilder {
-        public default AdvancedDockerEndpointBuilder advanced() {
+        default AdvancedDockerEndpointBuilder advanced() {
             return (AdvancedDockerEndpointBuilder) this;
         }
         /**
@@ -826,7 +822,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder operation(DockerOperation operation) {
+        default DockerEndpointBuilder operation(DockerOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -836,7 +832,7 @@ public interface DockerEndpointBuilderFactory {
          * <code>org.apache.camel.component.docker.DockerOperation</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder operation(String operation) {
+        default DockerEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -845,7 +841,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder email(String email) {
+        default DockerEndpointBuilder email(String email) {
             setProperty("email", email);
             return this;
         }
@@ -854,7 +850,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder host(String host) {
+        default DockerEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -863,7 +859,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder port(Integer port) {
+        default DockerEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -873,7 +869,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointBuilder port(String port) {
+        default DockerEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -882,8 +878,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default DockerEndpointBuilder requestTimeout(
-                Integer requestTimeout) {
+        default DockerEndpointBuilder requestTimeout(Integer requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -893,8 +888,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default DockerEndpointBuilder requestTimeout(
-                String requestTimeout) {
+        default DockerEndpointBuilder requestTimeout(String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -903,7 +897,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder certPath(String certPath) {
+        default DockerEndpointBuilder certPath(String certPath) {
             setProperty("certPath", certPath);
             return this;
         }
@@ -912,7 +906,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder password(String password) {
+        default DockerEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -921,7 +915,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder secure(boolean secure) {
+        default DockerEndpointBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -930,7 +924,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder secure(String secure) {
+        default DockerEndpointBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -939,7 +933,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder tlsVerify(boolean tlsVerify) {
+        default DockerEndpointBuilder tlsVerify(boolean tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -948,7 +942,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder tlsVerify(String tlsVerify) {
+        default DockerEndpointBuilder tlsVerify(String tlsVerify) {
             setProperty("tlsVerify", tlsVerify);
             return this;
         }
@@ -957,7 +951,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DockerEndpointBuilder username(String username) {
+        default DockerEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -969,7 +963,7 @@ public interface DockerEndpointBuilderFactory {
     public static interface AdvancedDockerEndpointBuilder
             extends
                 AdvancedDockerEndpointConsumerBuilder, AdvancedDockerEndpointProducerBuilder {
-        public default DockerEndpointBuilder basic() {
+        default DockerEndpointBuilder basic() {
             return (DockerEndpointBuilder) this;
         }
         /**
@@ -978,7 +972,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -989,7 +983,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder basicPropertyBinding(
+        default AdvancedDockerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1000,7 +994,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder cmdExecFactory(
+        default AdvancedDockerEndpointBuilder cmdExecFactory(
                 String cmdExecFactory) {
             setProperty("cmdExecFactory", cmdExecFactory);
             return this;
@@ -1010,7 +1004,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder followRedirectFilter(
+        default AdvancedDockerEndpointBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -1020,7 +1014,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder followRedirectFilter(
+        default AdvancedDockerEndpointBuilder followRedirectFilter(
                 String followRedirectFilter) {
             setProperty("followRedirectFilter", followRedirectFilter);
             return this;
@@ -1030,7 +1024,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder loggingFilter(
+        default AdvancedDockerEndpointBuilder loggingFilter(
                 boolean loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
@@ -1040,8 +1034,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder loggingFilter(
-                String loggingFilter) {
+        default AdvancedDockerEndpointBuilder loggingFilter(String loggingFilter) {
             setProperty("loggingFilter", loggingFilter);
             return this;
         }
@@ -1050,7 +1043,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointBuilder maxPerRouteConnections(
                 Integer maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -1061,7 +1054,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder maxPerRouteConnections(
+        default AdvancedDockerEndpointBuilder maxPerRouteConnections(
                 String maxPerRouteConnections) {
             setProperty("maxPerRouteConnections", maxPerRouteConnections);
             return this;
@@ -1071,7 +1064,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder maxTotalConnections(
+        default AdvancedDockerEndpointBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -1082,7 +1075,7 @@ public interface DockerEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder maxTotalConnections(
+        default AdvancedDockerEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -1092,8 +1085,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder serverAddress(
-                String serverAddress) {
+        default AdvancedDockerEndpointBuilder serverAddress(String serverAddress) {
             setProperty("serverAddress", serverAddress);
             return this;
         }
@@ -1102,7 +1094,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder socket(boolean socket) {
+        default AdvancedDockerEndpointBuilder socket(boolean socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -1111,7 +1103,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder socket(String socket) {
+        default AdvancedDockerEndpointBuilder socket(String socket) {
             setProperty("socket", socket);
             return this;
         }
@@ -1121,8 +1113,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDockerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1132,8 +1123,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDockerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDockerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1150,7 +1140,7 @@ public interface DockerEndpointBuilderFactory {
      * The docker component is used for managing Docker containers. Creates a
      * builder to build endpoints for the Docker component.
      */
-    public default DockerEndpointBuilder docker(String path) {
+    default DockerEndpointBuilder docker(String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {
             public DockerEndpointBuilderImpl(String path) {
                 super("docker", path);

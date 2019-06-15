@@ -38,7 +38,7 @@ public interface MongoDbEndpointBuilderFactory {
     public interface MongoDbEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMongoDbEndpointConsumerBuilder advanced() {
+        default AdvancedMongoDbEndpointConsumerBuilder advanced() {
             return (AdvancedMongoDbEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder connectionBean(
+        default MongoDbEndpointConsumerBuilder connectionBean(
                 String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
@@ -56,8 +56,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder collection(
-                String collection) {
+        default MongoDbEndpointConsumerBuilder collection(String collection) {
             setProperty("collection", collection);
             return this;
         }
@@ -67,7 +66,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder collectionIndex(
+        default MongoDbEndpointConsumerBuilder collectionIndex(
                 String collectionIndex) {
             setProperty("collectionIndex", collectionIndex);
             return this;
@@ -78,7 +77,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder createCollection(
+        default MongoDbEndpointConsumerBuilder createCollection(
                 boolean createCollection) {
             setProperty("createCollection", createCollection);
             return this;
@@ -89,7 +88,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder createCollection(
+        default MongoDbEndpointConsumerBuilder createCollection(
                 String createCollection) {
             setProperty("createCollection", createCollection);
             return this;
@@ -99,7 +98,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder database(String database) {
+        default MongoDbEndpointConsumerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -111,7 +110,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder operation(
+        default MongoDbEndpointConsumerBuilder operation(
                 MongoDbOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -124,7 +123,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder operation(String operation) {
+        default MongoDbEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -138,7 +137,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder outputType(
+        default MongoDbEndpointConsumerBuilder outputType(
                 MongoDbOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
@@ -153,8 +152,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointConsumerBuilder outputType(
-                String outputType) {
+        default MongoDbEndpointConsumerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -169,7 +167,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
+        default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -185,7 +183,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
+        default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -195,8 +193,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default MongoDbEndpointConsumerBuilder consumerType(
-                String consumerType) {
+        default MongoDbEndpointConsumerBuilder consumerType(String consumerType) {
             setProperty("consumerType", consumerType);
             return this;
         }
@@ -205,8 +202,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group changeStream
          */
-        public default MongoDbEndpointConsumerBuilder streamFilter(
-                String streamFilter) {
+        default MongoDbEndpointConsumerBuilder streamFilter(String streamFilter) {
             setProperty("streamFilter", streamFilter);
             return this;
         }
@@ -217,8 +213,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder persistentId(
-                String persistentId) {
+        default MongoDbEndpointConsumerBuilder persistentId(String persistentId) {
             setProperty("persistentId", persistentId);
             return this;
         }
@@ -230,7 +225,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder persistentTailTracking(
+        default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -243,7 +238,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder persistentTailTracking(
+        default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 String persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -255,7 +250,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder tailTrackCollection(
+        default MongoDbEndpointConsumerBuilder tailTrackCollection(
                 String tailTrackCollection) {
             setProperty("tailTrackCollection", tailTrackCollection);
             return this;
@@ -268,8 +263,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder tailTrackDb(
-                String tailTrackDb) {
+        default MongoDbEndpointConsumerBuilder tailTrackDb(String tailTrackDb) {
             setProperty("tailTrackDb", tailTrackDb);
             return this;
         }
@@ -279,7 +273,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder tailTrackField(
+        default MongoDbEndpointConsumerBuilder tailTrackField(
                 String tailTrackField) {
             setProperty("tailTrackField", tailTrackField);
             return this;
@@ -295,7 +289,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointConsumerBuilder tailTrackIncreasingField(
+        default MongoDbEndpointConsumerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
             setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
@@ -308,7 +302,7 @@ public interface MongoDbEndpointBuilderFactory {
     public interface AdvancedMongoDbEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MongoDbEndpointConsumerBuilder basic() {
+        default MongoDbEndpointConsumerBuilder basic() {
             return (MongoDbEndpointConsumerBuilder) this;
         }
         /**
@@ -320,7 +314,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -334,7 +328,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -344,7 +338,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
+        default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -355,7 +349,7 @@ public interface MongoDbEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
+        default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -366,7 +360,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -377,7 +371,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -393,7 +387,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -409,7 +403,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -424,7 +418,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
+        default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 boolean dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
@@ -439,7 +433,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
+        default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 String dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
@@ -450,7 +444,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder synchronous(
+        default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -461,7 +455,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder synchronous(
+        default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +467,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -485,7 +479,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -498,7 +492,7 @@ public interface MongoDbEndpointBuilderFactory {
     public static interface MongoDbEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMongoDbEndpointProducerBuilder advanced() {
+        default AdvancedMongoDbEndpointProducerBuilder advanced() {
             return (AdvancedMongoDbEndpointProducerBuilder) this;
         }
         /**
@@ -506,7 +500,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder connectionBean(
+        default MongoDbEndpointProducerBuilder connectionBean(
                 String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
@@ -516,8 +510,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder collection(
-                String collection) {
+        default MongoDbEndpointProducerBuilder collection(String collection) {
             setProperty("collection", collection);
             return this;
         }
@@ -527,7 +520,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder collectionIndex(
+        default MongoDbEndpointProducerBuilder collectionIndex(
                 String collectionIndex) {
             setProperty("collectionIndex", collectionIndex);
             return this;
@@ -538,7 +531,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder createCollection(
+        default MongoDbEndpointProducerBuilder createCollection(
                 boolean createCollection) {
             setProperty("createCollection", createCollection);
             return this;
@@ -549,7 +542,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder createCollection(
+        default MongoDbEndpointProducerBuilder createCollection(
                 String createCollection) {
             setProperty("createCollection", createCollection);
             return this;
@@ -559,7 +552,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder database(String database) {
+        default MongoDbEndpointProducerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -571,7 +564,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder operation(
+        default MongoDbEndpointProducerBuilder operation(
                 MongoDbOperation operation) {
             setProperty("operation", operation);
             return this;
@@ -584,7 +577,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder operation(String operation) {
+        default MongoDbEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -598,7 +591,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder outputType(
+        default MongoDbEndpointProducerBuilder outputType(
                 MongoDbOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
@@ -613,8 +606,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointProducerBuilder outputType(
-                String outputType) {
+        default MongoDbEndpointProducerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -631,7 +623,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MongoDbEndpointProducerBuilder lazyStartProducer(
+        default MongoDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -649,7 +641,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MongoDbEndpointProducerBuilder lazyStartProducer(
+        default MongoDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -659,8 +651,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group changeStream
          */
-        public default MongoDbEndpointProducerBuilder streamFilter(
-                String streamFilter) {
+        default MongoDbEndpointProducerBuilder streamFilter(String streamFilter) {
             setProperty("streamFilter", streamFilter);
             return this;
         }
@@ -671,8 +662,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder persistentId(
-                String persistentId) {
+        default MongoDbEndpointProducerBuilder persistentId(String persistentId) {
             setProperty("persistentId", persistentId);
             return this;
         }
@@ -684,7 +674,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder persistentTailTracking(
+        default MongoDbEndpointProducerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -697,7 +687,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder persistentTailTracking(
+        default MongoDbEndpointProducerBuilder persistentTailTracking(
                 String persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -709,7 +699,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder tailTrackCollection(
+        default MongoDbEndpointProducerBuilder tailTrackCollection(
                 String tailTrackCollection) {
             setProperty("tailTrackCollection", tailTrackCollection);
             return this;
@@ -722,8 +712,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder tailTrackDb(
-                String tailTrackDb) {
+        default MongoDbEndpointProducerBuilder tailTrackDb(String tailTrackDb) {
             setProperty("tailTrackDb", tailTrackDb);
             return this;
         }
@@ -733,7 +722,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder tailTrackField(
+        default MongoDbEndpointProducerBuilder tailTrackField(
                 String tailTrackField) {
             setProperty("tailTrackField", tailTrackField);
             return this;
@@ -749,7 +738,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointProducerBuilder tailTrackIncreasingField(
+        default MongoDbEndpointProducerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
             setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
@@ -762,7 +751,7 @@ public interface MongoDbEndpointBuilderFactory {
     public interface AdvancedMongoDbEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default MongoDbEndpointProducerBuilder basic() {
+        default MongoDbEndpointProducerBuilder basic() {
             return (MongoDbEndpointProducerBuilder) this;
         }
         /**
@@ -771,7 +760,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -782,7 +771,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -798,7 +787,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -814,7 +803,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -829,7 +818,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder dynamicity(
+        default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 boolean dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
@@ -844,7 +833,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder dynamicity(
+        default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 String dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
@@ -855,7 +844,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder synchronous(
+        default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -866,7 +855,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder synchronous(
+        default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -878,7 +867,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -890,7 +879,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -903,7 +892,7 @@ public interface MongoDbEndpointBuilderFactory {
     public static interface MongoDbEndpointBuilder
             extends
                 MongoDbEndpointConsumerBuilder, MongoDbEndpointProducerBuilder {
-        public default AdvancedMongoDbEndpointBuilder advanced() {
+        default AdvancedMongoDbEndpointBuilder advanced() {
             return (AdvancedMongoDbEndpointBuilder) this;
         }
         /**
@@ -911,8 +900,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder connectionBean(
-                String connectionBean) {
+        default MongoDbEndpointBuilder connectionBean(String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
         }
@@ -921,7 +909,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder collection(String collection) {
+        default MongoDbEndpointBuilder collection(String collection) {
             setProperty("collection", collection);
             return this;
         }
@@ -931,8 +919,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder collectionIndex(
-                String collectionIndex) {
+        default MongoDbEndpointBuilder collectionIndex(String collectionIndex) {
             setProperty("collectionIndex", collectionIndex);
             return this;
         }
@@ -942,8 +929,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder createCollection(
-                boolean createCollection) {
+        default MongoDbEndpointBuilder createCollection(boolean createCollection) {
             setProperty("createCollection", createCollection);
             return this;
         }
@@ -953,8 +939,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder createCollection(
-                String createCollection) {
+        default MongoDbEndpointBuilder createCollection(String createCollection) {
             setProperty("createCollection", createCollection);
             return this;
         }
@@ -963,7 +948,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MongoDbEndpointBuilder database(String database) {
+        default MongoDbEndpointBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -975,8 +960,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointBuilder operation(
-                MongoDbOperation operation) {
+        default MongoDbEndpointBuilder operation(MongoDbOperation operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -988,7 +972,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointBuilder operation(String operation) {
+        default MongoDbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -1002,8 +986,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointBuilder outputType(
-                MongoDbOutputType outputType) {
+        default MongoDbEndpointBuilder outputType(MongoDbOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1017,7 +1000,7 @@ public interface MongoDbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default MongoDbEndpointBuilder outputType(String outputType) {
+        default MongoDbEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -1026,7 +1009,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group changeStream
          */
-        public default MongoDbEndpointBuilder streamFilter(String streamFilter) {
+        default MongoDbEndpointBuilder streamFilter(String streamFilter) {
             setProperty("streamFilter", streamFilter);
             return this;
         }
@@ -1037,7 +1020,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder persistentId(String persistentId) {
+        default MongoDbEndpointBuilder persistentId(String persistentId) {
             setProperty("persistentId", persistentId);
             return this;
         }
@@ -1049,7 +1032,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder persistentTailTracking(
+        default MongoDbEndpointBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -1062,7 +1045,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder persistentTailTracking(
+        default MongoDbEndpointBuilder persistentTailTracking(
                 String persistentTailTracking) {
             setProperty("persistentTailTracking", persistentTailTracking);
             return this;
@@ -1074,7 +1057,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder tailTrackCollection(
+        default MongoDbEndpointBuilder tailTrackCollection(
                 String tailTrackCollection) {
             setProperty("tailTrackCollection", tailTrackCollection);
             return this;
@@ -1087,7 +1070,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder tailTrackDb(String tailTrackDb) {
+        default MongoDbEndpointBuilder tailTrackDb(String tailTrackDb) {
             setProperty("tailTrackDb", tailTrackDb);
             return this;
         }
@@ -1097,8 +1080,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder tailTrackField(
-                String tailTrackField) {
+        default MongoDbEndpointBuilder tailTrackField(String tailTrackField) {
             setProperty("tailTrackField", tailTrackField);
             return this;
         }
@@ -1113,7 +1095,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group tail
          */
-        public default MongoDbEndpointBuilder tailTrackIncreasingField(
+        default MongoDbEndpointBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
             setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
@@ -1126,7 +1108,7 @@ public interface MongoDbEndpointBuilderFactory {
     public static interface AdvancedMongoDbEndpointBuilder
             extends
                 AdvancedMongoDbEndpointConsumerBuilder, AdvancedMongoDbEndpointProducerBuilder {
-        public default MongoDbEndpointBuilder basic() {
+        default MongoDbEndpointBuilder basic() {
             return (MongoDbEndpointBuilder) this;
         }
         /**
@@ -1135,7 +1117,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1146,7 +1128,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
+        default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1162,7 +1144,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -1178,7 +1160,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
+        default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
             setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
@@ -1193,8 +1175,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder dynamicity(
-                boolean dynamicity) {
+        default AdvancedMongoDbEndpointBuilder dynamicity(boolean dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
         }
@@ -1208,8 +1189,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder dynamicity(
-                String dynamicity) {
+        default AdvancedMongoDbEndpointBuilder dynamicity(String dynamicity) {
             setProperty("dynamicity", dynamicity);
             return this;
         }
@@ -1219,8 +1199,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMongoDbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1230,8 +1209,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMongoDbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1242,7 +1220,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -1254,7 +1232,7 @@ public interface MongoDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
+        default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
             setProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
@@ -1280,7 +1258,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Component for working with documents stored in MongoDB database. Creates
      * a builder to build endpoints for the MongoDB component.
      */
-    public default MongoDbEndpointBuilder mongoDb(String path) {
+    default MongoDbEndpointBuilder mongoDb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {
             public MongoDbEndpointBuilderImpl(String path) {
                 super("mongodb3", path);

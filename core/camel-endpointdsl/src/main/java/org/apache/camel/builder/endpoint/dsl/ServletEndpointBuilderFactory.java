@@ -38,7 +38,7 @@ public interface ServletEndpointBuilderFactory {
     public static interface ServletEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedServletEndpointBuilder advanced() {
+        default AdvancedServletEndpointBuilder advanced() {
             return (AdvancedServletEndpointBuilder) this;
         }
         /**
@@ -61,7 +61,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ServletEndpointBuilder disableStreamCache(
+        default ServletEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -86,7 +86,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ServletEndpointBuilder disableStreamCache(
+        default ServletEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -98,7 +98,7 @@ public interface ServletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default ServletEndpointBuilder headerFilterStrategy(
+        default ServletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -110,7 +110,7 @@ public interface ServletEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default ServletEndpointBuilder headerFilterStrategy(
+        default ServletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -121,7 +121,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServletEndpointBuilder chunked(boolean chunked) {
+        default ServletEndpointBuilder chunked(boolean chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -131,7 +131,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServletEndpointBuilder chunked(String chunked) {
+        default ServletEndpointBuilder chunked(String chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -148,7 +148,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServletEndpointBuilder transferException(
+        default ServletEndpointBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -166,7 +166,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServletEndpointBuilder transferException(
+        default ServletEndpointBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -179,7 +179,7 @@ public interface ServletEndpointBuilderFactory {
     public static interface AdvancedServletEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ServletEndpointBuilder basic() {
+        default ServletEndpointBuilder basic() {
             return (ServletEndpointBuilder) this;
         }
         /**
@@ -189,8 +189,7 @@ public interface ServletEndpointBuilderFactory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedServletEndpointBuilder httpBinding(
-                Object httpBinding) {
+        default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -201,8 +200,7 @@ public interface ServletEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedServletEndpointBuilder httpBinding(
-                String httpBinding) {
+        default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -212,7 +210,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder basicPropertyBinding(
+        default AdvancedServletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -223,7 +221,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder basicPropertyBinding(
+        default AdvancedServletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -235,7 +233,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageBody(
+        default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -247,7 +245,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageBody(
+        default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -259,7 +257,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -271,7 +269,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -283,7 +281,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -295,7 +293,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -306,8 +304,7 @@ public interface ServletEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedServletEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -317,8 +314,7 @@ public interface ServletEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServletEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedServletEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -328,7 +324,7 @@ public interface ServletEndpointBuilderFactory {
      * container. Creates a builder to build endpoints for the Servlet
      * component.
      */
-    public default ServletEndpointBuilder servlet(String path) {
+    default ServletEndpointBuilder servlet(String path) {
         class ServletEndpointBuilderImpl extends AbstractEndpointBuilder implements ServletEndpointBuilder, AdvancedServletEndpointBuilder {
             public ServletEndpointBuilderImpl(String path) {
                 super("servlet", path);

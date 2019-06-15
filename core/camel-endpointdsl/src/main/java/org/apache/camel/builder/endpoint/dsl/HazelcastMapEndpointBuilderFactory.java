@@ -38,7 +38,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public interface HazelcastMapEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedHazelcastMapEndpointConsumerBuilder advanced() {
+        default AdvancedHazelcastMapEndpointConsumerBuilder advanced() {
             return (AdvancedHazelcastMapEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder cacheName(
-                String cacheName) {
+        default HazelcastMapEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -59,7 +58,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder defaultOperation(
+        default HazelcastMapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -72,7 +71,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder defaultOperation(
+        default HazelcastMapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -84,7 +83,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
+        default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -96,7 +95,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
+        default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -108,7 +107,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder hazelcastInstanceName(
+        default HazelcastMapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -118,8 +117,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder reliable(
-                boolean reliable) {
+        default HazelcastMapEndpointConsumerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -128,8 +126,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointConsumerBuilder reliable(
-                String reliable) {
+        default HazelcastMapEndpointConsumerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -144,7 +141,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
+        default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -160,7 +157,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
+        default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -170,7 +167,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder pollingTimeout(
+        default HazelcastMapEndpointConsumerBuilder pollingTimeout(
                 long pollingTimeout) {
             setProperty("pollingTimeout", pollingTimeout);
             return this;
@@ -180,7 +177,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder pollingTimeout(
+        default HazelcastMapEndpointConsumerBuilder pollingTimeout(
                 String pollingTimeout) {
             setProperty("pollingTimeout", pollingTimeout);
             return this;
@@ -190,7 +187,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder poolSize(int poolSize) {
+        default HazelcastMapEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -199,8 +196,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder poolSize(
-                String poolSize) {
+        default HazelcastMapEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -210,7 +206,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
+        default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
                 HazelcastQueueConsumerMode queueConsumerMode) {
             setProperty("queueConsumerMode", queueConsumerMode);
             return this;
@@ -221,7 +217,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * @group consumer
          */
-        public default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
+        default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
                 String queueConsumerMode) {
             setProperty("queueConsumerMode", queueConsumerMode);
             return this;
@@ -231,7 +227,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
+        default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -241,7 +237,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
+        default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -252,7 +248,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder onErrorDelay(
+        default HazelcastMapEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -263,7 +259,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder onErrorDelay(
+        default HazelcastMapEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -276,8 +272,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder pollTimeout(
-                int pollTimeout) {
+        default HazelcastMapEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -289,7 +284,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder pollTimeout(
+        default HazelcastMapEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -301,7 +296,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder transacted(
+        default HazelcastMapEndpointConsumerBuilder transacted(
                 boolean transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -313,8 +308,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder transacted(
-                String transacted) {
+        default HazelcastMapEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -324,7 +318,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder transferExchange(
+        default HazelcastMapEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -335,7 +329,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointConsumerBuilder transferExchange(
+        default HazelcastMapEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -348,7 +342,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public interface AdvancedHazelcastMapEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default HazelcastMapEndpointConsumerBuilder basic() {
+        default HazelcastMapEndpointConsumerBuilder basic() {
             return (HazelcastMapEndpointConsumerBuilder) this;
         }
         /**
@@ -360,7 +354,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -374,7 +368,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
+        default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -384,7 +378,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
+        default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -395,7 +389,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
+        default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -406,7 +400,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -417,7 +411,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -428,7 +422,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
+        default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -439,7 +433,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
+        default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -452,7 +446,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public static interface HazelcastMapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHazelcastMapEndpointProducerBuilder advanced() {
+        default AdvancedHazelcastMapEndpointProducerBuilder advanced() {
             return (AdvancedHazelcastMapEndpointProducerBuilder) this;
         }
         /**
@@ -460,8 +454,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder cacheName(
-                String cacheName) {
+        default HazelcastMapEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -473,7 +466,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder defaultOperation(
+        default HazelcastMapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -486,7 +479,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder defaultOperation(
+        default HazelcastMapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -498,7 +491,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder hazelcastInstance(
+        default HazelcastMapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -510,7 +503,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder hazelcastInstance(
+        default HazelcastMapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -522,7 +515,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder hazelcastInstanceName(
+        default HazelcastMapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -532,8 +525,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder reliable(
-                boolean reliable) {
+        default HazelcastMapEndpointProducerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -542,8 +534,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointProducerBuilder reliable(
-                String reliable) {
+        default HazelcastMapEndpointProducerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -560,7 +551,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HazelcastMapEndpointProducerBuilder lazyStartProducer(
+        default HazelcastMapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,7 +569,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HazelcastMapEndpointProducerBuilder lazyStartProducer(
+        default HazelcastMapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -588,7 +579,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder concurrentConsumers(
+        default HazelcastMapEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -598,7 +589,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder concurrentConsumers(
+        default HazelcastMapEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -609,7 +600,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder onErrorDelay(
+        default HazelcastMapEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -620,7 +611,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder onErrorDelay(
+        default HazelcastMapEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
@@ -633,8 +624,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder pollTimeout(
-                int pollTimeout) {
+        default HazelcastMapEndpointProducerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -646,7 +636,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder pollTimeout(
+        default HazelcastMapEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
@@ -658,7 +648,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder transacted(
+        default HazelcastMapEndpointProducerBuilder transacted(
                 boolean transacted) {
             setProperty("transacted", transacted);
             return this;
@@ -670,8 +660,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder transacted(
-                String transacted) {
+        default HazelcastMapEndpointProducerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -681,7 +670,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder transferExchange(
+        default HazelcastMapEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -692,7 +681,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointProducerBuilder transferExchange(
+        default HazelcastMapEndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -705,7 +694,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public interface AdvancedHazelcastMapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default HazelcastMapEndpointProducerBuilder basic() {
+        default HazelcastMapEndpointProducerBuilder basic() {
             return (HazelcastMapEndpointProducerBuilder) this;
         }
         /**
@@ -714,7 +703,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -725,7 +714,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -736,7 +725,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
+        default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -747,7 +736,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
+        default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -760,7 +749,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public static interface HazelcastMapEndpointBuilder
             extends
                 HazelcastMapEndpointConsumerBuilder, HazelcastMapEndpointProducerBuilder {
-        public default AdvancedHazelcastMapEndpointBuilder advanced() {
+        default AdvancedHazelcastMapEndpointBuilder advanced() {
             return (AdvancedHazelcastMapEndpointBuilder) this;
         }
         /**
@@ -768,7 +757,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder cacheName(String cacheName) {
+        default HazelcastMapEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
             return this;
         }
@@ -780,7 +769,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder defaultOperation(
+        default HazelcastMapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -793,7 +782,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder defaultOperation(
+        default HazelcastMapEndpointBuilder defaultOperation(
                 String defaultOperation) {
             setProperty("defaultOperation", defaultOperation);
             return this;
@@ -805,7 +794,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder hazelcastInstance(
+        default HazelcastMapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -817,7 +806,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder hazelcastInstance(
+        default HazelcastMapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
             setProperty("hazelcastInstance", hazelcastInstance);
             return this;
@@ -829,7 +818,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder hazelcastInstanceName(
+        default HazelcastMapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
             setProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
@@ -839,7 +828,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder reliable(boolean reliable) {
+        default HazelcastMapEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -848,7 +837,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HazelcastMapEndpointBuilder reliable(String reliable) {
+        default HazelcastMapEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
             return this;
         }
@@ -857,7 +846,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder concurrentConsumers(
+        default HazelcastMapEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -867,7 +856,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder concurrentConsumers(
+        default HazelcastMapEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -878,7 +867,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder onErrorDelay(int onErrorDelay) {
+        default HazelcastMapEndpointBuilder onErrorDelay(int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
         }
@@ -888,8 +877,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder onErrorDelay(
-                String onErrorDelay) {
+        default HazelcastMapEndpointBuilder onErrorDelay(String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
             return this;
         }
@@ -901,7 +889,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder pollTimeout(int pollTimeout) {
+        default HazelcastMapEndpointBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -913,8 +901,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder pollTimeout(
-                String pollTimeout) {
+        default HazelcastMapEndpointBuilder pollTimeout(String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -925,7 +912,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder transacted(boolean transacted) {
+        default HazelcastMapEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -936,7 +923,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder transacted(String transacted) {
+        default HazelcastMapEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -946,7 +933,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder transferExchange(
+        default HazelcastMapEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -957,7 +944,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group seda
          */
-        public default HazelcastMapEndpointBuilder transferExchange(
+        default HazelcastMapEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -970,7 +957,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     public static interface AdvancedHazelcastMapEndpointBuilder
             extends
                 AdvancedHazelcastMapEndpointConsumerBuilder, AdvancedHazelcastMapEndpointProducerBuilder {
-        public default HazelcastMapEndpointBuilder basic() {
+        default HazelcastMapEndpointBuilder basic() {
             return (HazelcastMapEndpointBuilder) this;
         }
         /**
@@ -979,7 +966,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -990,7 +977,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
+        default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1001,7 +988,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointBuilder synchronous(
+        default AdvancedHazelcastMapEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1012,7 +999,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHazelcastMapEndpointBuilder synchronous(
+        default AdvancedHazelcastMapEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1039,7 +1026,7 @@ public interface HazelcastMapEndpointBuilderFactory {
      * The hazelcast-map component is used to access Hazelcast distributed map.
      * Creates a builder to build endpoints for the Hazelcast Map component.
      */
-    public default HazelcastMapEndpointBuilder hazelcastMap(String path) {
+    default HazelcastMapEndpointBuilder hazelcastMap(String path) {
         class HazelcastMapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMapEndpointBuilder, AdvancedHazelcastMapEndpointBuilder {
             public HazelcastMapEndpointBuilderImpl(String path) {
                 super("hazelcast-map", path);

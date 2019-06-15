@@ -38,7 +38,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
     public static interface GoogleCalendarStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleCalendarStreamEndpointBuilder advanced() {
+        default AdvancedGoogleCalendarStreamEndpointBuilder advanced() {
             return (AdvancedGoogleCalendarStreamEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder index(String index) {
+        default GoogleCalendarStreamEndpointBuilder index(String index) {
             setProperty("index", index);
             return this;
         }
@@ -56,7 +56,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder accessToken(
+        default GoogleCalendarStreamEndpointBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -67,7 +67,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder applicationName(
+        default GoogleCalendarStreamEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -77,8 +77,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder calendarId(
-                String calendarId) {
+        default GoogleCalendarStreamEndpointBuilder calendarId(String calendarId) {
             setProperty("calendarId", calendarId);
             return this;
         }
@@ -87,8 +86,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder clientId(
-                String clientId) {
+        default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -97,7 +95,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder clientSecret(
+        default GoogleCalendarStreamEndpointBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -108,7 +106,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
+        default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 boolean considerLastUpdate) {
             setProperty("considerLastUpdate", considerLastUpdate);
             return this;
@@ -119,7 +117,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
+        default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 String considerLastUpdate) {
             setProperty("considerLastUpdate", considerLastUpdate);
             return this;
@@ -129,7 +127,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder consumeFromNow(
+        default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 boolean consumeFromNow) {
             setProperty("consumeFromNow", consumeFromNow);
             return this;
@@ -139,7 +137,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder consumeFromNow(
+        default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 String consumeFromNow) {
             setProperty("consumeFromNow", consumeFromNow);
             return this;
@@ -149,8 +147,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder maxResults(
-                int maxResults) {
+        default GoogleCalendarStreamEndpointBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -159,8 +156,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder maxResults(
-                String maxResults) {
+        default GoogleCalendarStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -169,7 +165,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder query(String query) {
+        default GoogleCalendarStreamEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -180,7 +176,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder refreshToken(
+        default GoogleCalendarStreamEndpointBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -193,8 +189,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder scopes(
-                List<String> scopes) {
+        default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -206,7 +201,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group consumer
          */
-        public default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
+        default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -218,7 +213,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
     public static interface AdvancedGoogleCalendarStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleCalendarStreamEndpointBuilder basic() {
+        default GoogleCalendarStreamEndpointBuilder basic() {
             return (GoogleCalendarStreamEndpointBuilder) this;
         }
         /**
@@ -227,7 +222,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -238,7 +233,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -249,7 +244,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
+        default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -260,7 +255,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
+        default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -271,8 +266,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
      * streaming mode. Creates a builder to build endpoints for the Google
      * Calendar Stream component.
      */
-    public default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
-            String path) {
+    default GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {
             public GoogleCalendarStreamEndpointBuilderImpl(String path) {
                 super("google-calendar-stream", path);

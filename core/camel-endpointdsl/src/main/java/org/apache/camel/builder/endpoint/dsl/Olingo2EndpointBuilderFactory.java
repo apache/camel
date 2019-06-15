@@ -39,7 +39,7 @@ public interface Olingo2EndpointBuilderFactory {
     public interface Olingo2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedOlingo2EndpointConsumerBuilder advanced() {
+        default AdvancedOlingo2EndpointConsumerBuilder advanced() {
             return (AdvancedOlingo2EndpointConsumerBuilder) this;
         }
         /**
@@ -48,8 +48,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder apiName(
-                Olingo2ApiName apiName) {
+        default Olingo2EndpointConsumerBuilder apiName(Olingo2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -59,7 +58,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder apiName(String apiName) {
+        default Olingo2EndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -68,8 +67,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder methodName(
-                String methodName) {
+        default Olingo2EndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -79,8 +77,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder connectTimeout(
-                int connectTimeout) {
+        default Olingo2EndpointConsumerBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -90,7 +87,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder connectTimeout(
+        default Olingo2EndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -101,8 +98,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder contentType(
-                String contentType) {
+        default Olingo2EndpointConsumerBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -112,7 +108,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder filterAlreadySeen(
+        default Olingo2EndpointConsumerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -123,7 +119,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder filterAlreadySeen(
+        default Olingo2EndpointConsumerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -138,7 +134,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -153,7 +149,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointConsumerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -167,7 +163,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpClientBuilder(
+        default Olingo2EndpointConsumerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -181,7 +177,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpClientBuilder(
+        default Olingo2EndpointConsumerBuilder httpClientBuilder(
                 String httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -193,7 +189,7 @@ public interface Olingo2EndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpHeaders(
+        default Olingo2EndpointConsumerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -206,8 +202,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder httpHeaders(
-                String httpHeaders) {
+        default Olingo2EndpointConsumerBuilder httpHeaders(String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -216,7 +211,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder inBody(String inBody) {
+        default Olingo2EndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -225,7 +220,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder proxy(Object proxy) {
+        default Olingo2EndpointConsumerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -235,7 +230,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder proxy(String proxy) {
+        default Olingo2EndpointConsumerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -245,8 +240,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder serviceUri(
-                String serviceUri) {
+        default Olingo2EndpointConsumerBuilder serviceUri(String serviceUri) {
             setProperty("serviceUri", serviceUri);
             return this;
         }
@@ -256,8 +250,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder socketTimeout(
-                int socketTimeout) {
+        default Olingo2EndpointConsumerBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -267,7 +260,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder socketTimeout(
+        default Olingo2EndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
@@ -278,7 +271,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder sslContextParameters(
+        default Olingo2EndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -289,7 +282,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointConsumerBuilder sslContextParameters(
+        default Olingo2EndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -305,7 +298,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default Olingo2EndpointConsumerBuilder bridgeErrorHandler(
+        default Olingo2EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -321,7 +314,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default Olingo2EndpointConsumerBuilder bridgeErrorHandler(
+        default Olingo2EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -334,7 +327,7 @@ public interface Olingo2EndpointBuilderFactory {
     public interface AdvancedOlingo2EndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default Olingo2EndpointConsumerBuilder basic() {
+        default Olingo2EndpointConsumerBuilder basic() {
             return (Olingo2EndpointConsumerBuilder) this;
         }
         /**
@@ -346,7 +339,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -360,7 +353,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
+        default AdvancedOlingo2EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -370,7 +363,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
+        default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -381,7 +374,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
+        default AdvancedOlingo2EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -392,7 +385,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -403,7 +396,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -414,7 +407,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder synchronous(
+        default AdvancedOlingo2EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -425,7 +418,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointConsumerBuilder synchronous(
+        default AdvancedOlingo2EndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -438,7 +431,7 @@ public interface Olingo2EndpointBuilderFactory {
     public static interface Olingo2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedOlingo2EndpointProducerBuilder advanced() {
+        default AdvancedOlingo2EndpointProducerBuilder advanced() {
             return (AdvancedOlingo2EndpointProducerBuilder) this;
         }
         /**
@@ -447,8 +440,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder apiName(
-                Olingo2ApiName apiName) {
+        default Olingo2EndpointProducerBuilder apiName(Olingo2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -458,7 +450,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder apiName(String apiName) {
+        default Olingo2EndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -467,8 +459,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder methodName(
-                String methodName) {
+        default Olingo2EndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -478,8 +469,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder connectTimeout(
-                int connectTimeout) {
+        default Olingo2EndpointProducerBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -489,7 +479,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder connectTimeout(
+        default Olingo2EndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -500,8 +490,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder contentType(
-                String contentType) {
+        default Olingo2EndpointProducerBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -511,7 +500,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder filterAlreadySeen(
+        default Olingo2EndpointProducerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -522,7 +511,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder filterAlreadySeen(
+        default Olingo2EndpointProducerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -537,7 +526,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -552,7 +541,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointProducerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -566,7 +555,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpClientBuilder(
+        default Olingo2EndpointProducerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -580,7 +569,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpClientBuilder(
+        default Olingo2EndpointProducerBuilder httpClientBuilder(
                 String httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -592,7 +581,7 @@ public interface Olingo2EndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpHeaders(
+        default Olingo2EndpointProducerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -605,8 +594,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder httpHeaders(
-                String httpHeaders) {
+        default Olingo2EndpointProducerBuilder httpHeaders(String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -615,7 +603,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder inBody(String inBody) {
+        default Olingo2EndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -624,7 +612,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder proxy(Object proxy) {
+        default Olingo2EndpointProducerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -634,7 +622,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder proxy(String proxy) {
+        default Olingo2EndpointProducerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -644,8 +632,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder serviceUri(
-                String serviceUri) {
+        default Olingo2EndpointProducerBuilder serviceUri(String serviceUri) {
             setProperty("serviceUri", serviceUri);
             return this;
         }
@@ -655,8 +642,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder socketTimeout(
-                int socketTimeout) {
+        default Olingo2EndpointProducerBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -666,7 +652,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder socketTimeout(
+        default Olingo2EndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
@@ -677,7 +663,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder sslContextParameters(
+        default Olingo2EndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -688,7 +674,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointProducerBuilder sslContextParameters(
+        default Olingo2EndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -706,7 +692,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default Olingo2EndpointProducerBuilder lazyStartProducer(
+        default Olingo2EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -724,7 +710,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default Olingo2EndpointProducerBuilder lazyStartProducer(
+        default Olingo2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -737,7 +723,7 @@ public interface Olingo2EndpointBuilderFactory {
     public interface AdvancedOlingo2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default Olingo2EndpointProducerBuilder basic() {
+        default Olingo2EndpointProducerBuilder basic() {
             return (Olingo2EndpointProducerBuilder) this;
         }
         /**
@@ -746,7 +732,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -757,7 +743,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointProducerBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -768,7 +754,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointProducerBuilder synchronous(
+        default AdvancedOlingo2EndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -779,7 +765,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointProducerBuilder synchronous(
+        default AdvancedOlingo2EndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -792,7 +778,7 @@ public interface Olingo2EndpointBuilderFactory {
     public static interface Olingo2EndpointBuilder
             extends
                 Olingo2EndpointConsumerBuilder, Olingo2EndpointProducerBuilder {
-        public default AdvancedOlingo2EndpointBuilder advanced() {
+        default AdvancedOlingo2EndpointBuilder advanced() {
             return (AdvancedOlingo2EndpointBuilder) this;
         }
         /**
@@ -801,7 +787,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder apiName(Olingo2ApiName apiName) {
+        default Olingo2EndpointBuilder apiName(Olingo2ApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -811,7 +797,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder apiName(String apiName) {
+        default Olingo2EndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -820,7 +806,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder methodName(String methodName) {
+        default Olingo2EndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -830,7 +816,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder connectTimeout(int connectTimeout) {
+        default Olingo2EndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -840,8 +826,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder connectTimeout(
-                String connectTimeout) {
+        default Olingo2EndpointBuilder connectTimeout(String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -851,7 +836,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder contentType(String contentType) {
+        default Olingo2EndpointBuilder contentType(String contentType) {
             setProperty("contentType", contentType);
             return this;
         }
@@ -861,7 +846,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder filterAlreadySeen(
+        default Olingo2EndpointBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -872,7 +857,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder filterAlreadySeen(
+        default Olingo2EndpointBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
             setProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
@@ -887,7 +872,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -902,7 +887,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpAsyncClientBuilder(
+        default Olingo2EndpointBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
             setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
@@ -916,7 +901,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpClientBuilder(
+        default Olingo2EndpointBuilder httpClientBuilder(
                 Object httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -930,7 +915,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpClientBuilder(
+        default Olingo2EndpointBuilder httpClientBuilder(
                 String httpClientBuilder) {
             setProperty("httpClientBuilder", httpClientBuilder);
             return this;
@@ -942,7 +927,7 @@ public interface Olingo2EndpointBuilderFactory {
          * java.lang.String&gt;</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpHeaders(
+        default Olingo2EndpointBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
@@ -955,7 +940,7 @@ public interface Olingo2EndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default Olingo2EndpointBuilder httpHeaders(String httpHeaders) {
+        default Olingo2EndpointBuilder httpHeaders(String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
             return this;
         }
@@ -964,7 +949,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder inBody(String inBody) {
+        default Olingo2EndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -973,7 +958,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder proxy(Object proxy) {
+        default Olingo2EndpointBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -983,7 +968,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.http.HttpHost</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder proxy(String proxy) {
+        default Olingo2EndpointBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
             return this;
         }
@@ -993,7 +978,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder serviceUri(String serviceUri) {
+        default Olingo2EndpointBuilder serviceUri(String serviceUri) {
             setProperty("serviceUri", serviceUri);
             return this;
         }
@@ -1003,7 +988,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder socketTimeout(int socketTimeout) {
+        default Olingo2EndpointBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -1013,7 +998,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder socketTimeout(String socketTimeout) {
+        default Olingo2EndpointBuilder socketTimeout(String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
             return this;
         }
@@ -1023,7 +1008,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder sslContextParameters(
+        default Olingo2EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1034,7 +1019,7 @@ public interface Olingo2EndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default Olingo2EndpointBuilder sslContextParameters(
+        default Olingo2EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1047,7 +1032,7 @@ public interface Olingo2EndpointBuilderFactory {
     public static interface AdvancedOlingo2EndpointBuilder
             extends
                 AdvancedOlingo2EndpointConsumerBuilder, AdvancedOlingo2EndpointProducerBuilder {
-        public default Olingo2EndpointBuilder basic() {
+        default Olingo2EndpointBuilder basic() {
             return (Olingo2EndpointBuilder) this;
         }
         /**
@@ -1056,7 +1041,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1067,7 +1052,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointBuilder basicPropertyBinding(
+        default AdvancedOlingo2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1078,8 +1063,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedOlingo2EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1089,8 +1073,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOlingo2EndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedOlingo2EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1108,7 +1091,7 @@ public interface Olingo2EndpointBuilderFactory {
      * Communicates with OData 2.0 services using Apache Olingo. Creates a
      * builder to build endpoints for the Olingo2 component.
      */
-    public default Olingo2EndpointBuilder olingo2(String path) {
+    default Olingo2EndpointBuilder olingo2(String path) {
         class Olingo2EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo2EndpointBuilder, AdvancedOlingo2EndpointBuilder {
             public Olingo2EndpointBuilderImpl(String path) {
                 super("olingo2", path);

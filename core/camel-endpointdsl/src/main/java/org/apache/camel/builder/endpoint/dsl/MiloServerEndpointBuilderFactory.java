@@ -38,7 +38,7 @@ public interface MiloServerEndpointBuilderFactory {
     public interface MiloServerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMiloServerEndpointConsumerBuilder advanced() {
+        default AdvancedMiloServerEndpointConsumerBuilder advanced() {
             return (AdvancedMiloServerEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MiloServerEndpointConsumerBuilder itemId(String itemId) {
+        default MiloServerEndpointConsumerBuilder itemId(String itemId) {
             setProperty("itemId", itemId);
             return this;
         }
@@ -61,7 +61,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
+        default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -77,7 +77,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
+        default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -90,7 +90,7 @@ public interface MiloServerEndpointBuilderFactory {
     public interface AdvancedMiloServerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MiloServerEndpointConsumerBuilder basic() {
+        default MiloServerEndpointConsumerBuilder basic() {
             return (MiloServerEndpointConsumerBuilder) this;
         }
         /**
@@ -102,7 +102,7 @@ public interface MiloServerEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -116,7 +116,7 @@ public interface MiloServerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMiloServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -126,7 +126,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
+        default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -137,7 +137,7 @@ public interface MiloServerEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
+        default AdvancedMiloServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -148,7 +148,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -159,7 +159,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -170,7 +170,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder synchronous(
+        default AdvancedMiloServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -181,7 +181,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointConsumerBuilder synchronous(
+        default AdvancedMiloServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -194,7 +194,7 @@ public interface MiloServerEndpointBuilderFactory {
     public static interface MiloServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMiloServerEndpointProducerBuilder advanced() {
+        default AdvancedMiloServerEndpointProducerBuilder advanced() {
             return (AdvancedMiloServerEndpointProducerBuilder) this;
         }
         /**
@@ -202,7 +202,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MiloServerEndpointProducerBuilder itemId(String itemId) {
+        default MiloServerEndpointProducerBuilder itemId(String itemId) {
             setProperty("itemId", itemId);
             return this;
         }
@@ -219,7 +219,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MiloServerEndpointProducerBuilder lazyStartProducer(
+        default MiloServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -237,7 +237,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MiloServerEndpointProducerBuilder lazyStartProducer(
+        default MiloServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -250,7 +250,7 @@ public interface MiloServerEndpointBuilderFactory {
     public interface AdvancedMiloServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default MiloServerEndpointProducerBuilder basic() {
+        default MiloServerEndpointProducerBuilder basic() {
             return (MiloServerEndpointProducerBuilder) this;
         }
         /**
@@ -259,7 +259,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -270,7 +270,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -281,7 +281,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointProducerBuilder synchronous(
+        default AdvancedMiloServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -292,7 +292,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointProducerBuilder synchronous(
+        default AdvancedMiloServerEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -305,7 +305,7 @@ public interface MiloServerEndpointBuilderFactory {
     public static interface MiloServerEndpointBuilder
             extends
                 MiloServerEndpointConsumerBuilder, MiloServerEndpointProducerBuilder {
-        public default AdvancedMiloServerEndpointBuilder advanced() {
+        default AdvancedMiloServerEndpointBuilder advanced() {
             return (AdvancedMiloServerEndpointBuilder) this;
         }
         /**
@@ -313,7 +313,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MiloServerEndpointBuilder itemId(String itemId) {
+        default MiloServerEndpointBuilder itemId(String itemId) {
             setProperty("itemId", itemId);
             return this;
         }
@@ -325,7 +325,7 @@ public interface MiloServerEndpointBuilderFactory {
     public static interface AdvancedMiloServerEndpointBuilder
             extends
                 AdvancedMiloServerEndpointConsumerBuilder, AdvancedMiloServerEndpointProducerBuilder {
-        public default MiloServerEndpointBuilder basic() {
+        default MiloServerEndpointBuilder basic() {
             return (MiloServerEndpointBuilder) this;
         }
         /**
@@ -334,7 +334,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -345,7 +345,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
+        default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -356,7 +356,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointBuilder synchronous(
+        default AdvancedMiloServerEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -367,8 +367,7 @@ public interface MiloServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMiloServerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMiloServerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -377,7 +376,7 @@ public interface MiloServerEndpointBuilderFactory {
      * Make telemetry data available as an OPC UA server Creates a builder to
      * build endpoints for the OPC UA Server component.
      */
-    public default MiloServerEndpointBuilder miloServer(String path) {
+    default MiloServerEndpointBuilder miloServer(String path) {
         class MiloServerEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloServerEndpointBuilder, AdvancedMiloServerEndpointBuilder {
             public MiloServerEndpointBuilderImpl(String path) {
                 super("milo-server", path);

@@ -37,7 +37,7 @@ public interface CinderEndpointBuilderFactory {
     public static interface CinderEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCinderEndpointBuilder advanced() {
+        default AdvancedCinderEndpointBuilder advanced() {
             return (AdvancedCinderEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder host(String host) {
+        default CinderEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder apiVersion(String apiVersion) {
+        default CinderEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -64,7 +64,7 @@ public interface CinderEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default CinderEndpointBuilder config(Object config) {
+        default CinderEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface CinderEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder config(String config) {
+        default CinderEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -83,7 +83,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder domain(String domain) {
+        default CinderEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -92,7 +92,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder operation(String operation) {
+        default CinderEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -101,7 +101,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder password(String password) {
+        default CinderEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -110,7 +110,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder project(String project) {
+        default CinderEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -119,7 +119,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder subsystem(String subsystem) {
+        default CinderEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
             return this;
         }
@@ -128,7 +128,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CinderEndpointBuilder username(String username) {
+        default CinderEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -140,7 +140,7 @@ public interface CinderEndpointBuilderFactory {
     public static interface AdvancedCinderEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default CinderEndpointBuilder basic() {
+        default CinderEndpointBuilder basic() {
             return (CinderEndpointBuilder) this;
         }
         /**
@@ -149,7 +149,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCinderEndpointBuilder basicPropertyBinding(
+        default AdvancedCinderEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface CinderEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCinderEndpointBuilder basicPropertyBinding(
+        default AdvancedCinderEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,8 +171,7 @@ public interface CinderEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCinderEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCinderEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -182,8 +181,7 @@ public interface CinderEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCinderEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCinderEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -193,7 +191,7 @@ public interface CinderEndpointBuilderFactory {
      * block storage services. Creates a builder to build endpoints for the
      * OpenStack Cinder component.
      */
-    public default CinderEndpointBuilder cinder(String path) {
+    default CinderEndpointBuilder cinder(String path) {
         class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder, AdvancedCinderEndpointBuilder {
             public CinderEndpointBuilderImpl(String path) {
                 super("openstack-cinder", path);

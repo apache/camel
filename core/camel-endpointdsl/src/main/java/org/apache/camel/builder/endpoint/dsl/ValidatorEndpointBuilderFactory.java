@@ -36,7 +36,7 @@ public interface ValidatorEndpointBuilderFactory {
     public static interface ValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedValidatorEndpointBuilder advanced() {
+        default AdvancedValidatorEndpointBuilder advanced() {
             return (AdvancedValidatorEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder resourceUri(String resourceUri) {
+        default ValidatorEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -55,8 +55,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder failOnNullBody(
-                boolean failOnNullBody) {
+        default ValidatorEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -65,8 +64,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder failOnNullBody(
-                String failOnNullBody) {
+        default ValidatorEndpointBuilder failOnNullBody(String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
         }
@@ -75,7 +73,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder failOnNullHeader(
+        default ValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
@@ -85,7 +83,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder failOnNullHeader(
+        default ValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
@@ -95,7 +93,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ValidatorEndpointBuilder headerName(String headerName) {
+        default ValidatorEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -107,7 +105,7 @@ public interface ValidatorEndpointBuilderFactory {
     public static interface AdvancedValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default ValidatorEndpointBuilder basic() {
+        default ValidatorEndpointBuilder basic() {
             return (ValidatorEndpointBuilder) this;
         }
         /**
@@ -116,7 +114,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -127,7 +125,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -140,7 +138,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder errorHandler(
+        default AdvancedValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -153,7 +151,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder errorHandler(
+        default AdvancedValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -164,7 +162,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder resourceResolver(
+        default AdvancedValidatorEndpointBuilder resourceResolver(
                 Object resourceResolver) {
             setProperty("resourceResolver", resourceResolver);
             return this;
@@ -176,7 +174,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder resourceResolver(
+        default AdvancedValidatorEndpointBuilder resourceResolver(
                 String resourceResolver) {
             setProperty("resourceResolver", resourceResolver);
             return this;
@@ -190,7 +188,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder resourceResolverFactory(
+        default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
             setProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
@@ -204,7 +202,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder resourceResolverFactory(
+        default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
             setProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
@@ -214,7 +212,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>javax.xml.validation.SchemaFactory</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder schemaFactory(
+        default AdvancedValidatorEndpointBuilder schemaFactory(
                 Object schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
             return this;
@@ -225,7 +223,7 @@ public interface ValidatorEndpointBuilderFactory {
          * <code>javax.xml.validation.SchemaFactory</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder schemaFactory(
+        default AdvancedValidatorEndpointBuilder schemaFactory(
                 String schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
             return this;
@@ -235,7 +233,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder schemaLanguage(
+        default AdvancedValidatorEndpointBuilder schemaLanguage(
                 String schemaLanguage) {
             setProperty("schemaLanguage", schemaLanguage);
             return this;
@@ -246,8 +244,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedValidatorEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -257,8 +254,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedValidatorEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -269,7 +265,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder useSharedSchema(
+        default AdvancedValidatorEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
             setProperty("useSharedSchema", useSharedSchema);
             return this;
@@ -281,7 +277,7 @@ public interface ValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedValidatorEndpointBuilder useSharedSchema(
+        default AdvancedValidatorEndpointBuilder useSharedSchema(
                 String useSharedSchema) {
             setProperty("useSharedSchema", useSharedSchema);
             return this;
@@ -291,7 +287,7 @@ public interface ValidatorEndpointBuilderFactory {
      * Validates the payload of a message using XML Schema and JAXP Validation.
      * Creates a builder to build endpoints for the Validator component.
      */
-    public default ValidatorEndpointBuilder validator(String path) {
+    default ValidatorEndpointBuilder validator(String path) {
         class ValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements ValidatorEndpointBuilder, AdvancedValidatorEndpointBuilder {
             public ValidatorEndpointBuilderImpl(String path) {
                 super("validator", path);

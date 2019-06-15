@@ -37,7 +37,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
     public static interface GoogleSheetsStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleSheetsStreamEndpointBuilder advanced() {
+        default AdvancedGoogleSheetsStreamEndpointBuilder advanced() {
             return (AdvancedGoogleSheetsStreamEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder apiName(String apiName) {
+        default GoogleSheetsStreamEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -55,8 +55,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder accessToken(
-                String accessToken) {
+        default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -66,7 +65,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder applicationName(
+        default GoogleSheetsStreamEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -76,8 +75,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder clientId(
-                String clientId) {
+        default GoogleSheetsStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -86,7 +84,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder clientSecret(
+        default GoogleSheetsStreamEndpointBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -96,7 +94,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder includeGridData(
+        default GoogleSheetsStreamEndpointBuilder includeGridData(
                 boolean includeGridData) {
             setProperty("includeGridData", includeGridData);
             return this;
@@ -106,7 +104,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder includeGridData(
+        default GoogleSheetsStreamEndpointBuilder includeGridData(
                 String includeGridData) {
             setProperty("includeGridData", includeGridData);
             return this;
@@ -116,7 +114,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder majorDimension(
+        default GoogleSheetsStreamEndpointBuilder majorDimension(
                 String majorDimension) {
             setProperty("majorDimension", majorDimension);
             return this;
@@ -128,8 +126,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder maxResults(
-                int maxResults) {
+        default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -140,8 +137,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder maxResults(
-                String maxResults) {
+        default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -150,7 +146,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder range(String range) {
+        default GoogleSheetsStreamEndpointBuilder range(String range) {
             setProperty("range", range);
             return this;
         }
@@ -161,7 +157,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder refreshToken(
+        default GoogleSheetsStreamEndpointBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -175,8 +171,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder scopes(
-                List<String> scopes) {
+        default GoogleSheetsStreamEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -189,7 +184,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
+        default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -201,7 +196,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder splitResults(
+        default GoogleSheetsStreamEndpointBuilder splitResults(
                 boolean splitResults) {
             setProperty("splitResults", splitResults);
             return this;
@@ -214,7 +209,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder splitResults(
+        default GoogleSheetsStreamEndpointBuilder splitResults(
                 String splitResults) {
             setProperty("splitResults", splitResults);
             return this;
@@ -225,7 +220,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder spreadsheetId(
+        default GoogleSheetsStreamEndpointBuilder spreadsheetId(
                 String spreadsheetId) {
             setProperty("spreadsheetId", spreadsheetId);
             return this;
@@ -235,7 +230,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GoogleSheetsStreamEndpointBuilder valueRenderOption(
+        default GoogleSheetsStreamEndpointBuilder valueRenderOption(
                 String valueRenderOption) {
             setProperty("valueRenderOption", valueRenderOption);
             return this;
@@ -248,7 +243,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
     public static interface AdvancedGoogleSheetsStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleSheetsStreamEndpointBuilder basic() {
+        default GoogleSheetsStreamEndpointBuilder basic() {
             return (GoogleSheetsStreamEndpointBuilder) this;
         }
         /**
@@ -257,7 +252,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -268,7 +263,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -279,7 +274,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
+        default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -290,7 +285,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
+        default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -300,8 +295,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
      * The google-sheets component provides access to Google Sheets. Creates a
      * builder to build endpoints for the Google Sheets Stream component.
      */
-    public default GoogleSheetsStreamEndpointBuilder googleSheetsStream(
-            String path) {
+    default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
         class GoogleSheetsStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsStreamEndpointBuilder, AdvancedGoogleSheetsStreamEndpointBuilder {
             public GoogleSheetsStreamEndpointBuilderImpl(String path) {
                 super("google-sheets-stream", path);

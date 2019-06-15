@@ -39,7 +39,7 @@ public interface MllpEndpointBuilderFactory {
     public interface MllpEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMllpEndpointConsumerBuilder advanced() {
+        default AdvancedMllpEndpointConsumerBuilder advanced() {
             return (AdvancedMllpEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder hostname(String hostname) {
+        default MllpEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -57,7 +57,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder port(int port) {
+        default MllpEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -66,7 +66,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder port(String port) {
+        default MllpEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -76,7 +76,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder autoAck(boolean autoAck) {
+        default MllpEndpointConsumerBuilder autoAck(boolean autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -86,7 +86,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder autoAck(String autoAck) {
+        default MllpEndpointConsumerBuilder autoAck(String autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -97,8 +97,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointConsumerBuilder bufferWrites(
-                boolean bufferWrites) {
+        default MllpEndpointConsumerBuilder bufferWrites(boolean bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -109,8 +108,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointConsumerBuilder bufferWrites(
-                String bufferWrites) {
+        default MllpEndpointConsumerBuilder bufferWrites(String bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -120,7 +118,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder hl7Headers(boolean hl7Headers) {
+        default MllpEndpointConsumerBuilder hl7Headers(boolean hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -130,7 +128,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder hl7Headers(String hl7Headers) {
+        default MllpEndpointConsumerBuilder hl7Headers(String hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -143,7 +141,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder requireEndOfData(
+        default MllpEndpointConsumerBuilder requireEndOfData(
                 boolean requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
@@ -157,7 +155,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder requireEndOfData(
+        default MllpEndpointConsumerBuilder requireEndOfData(
                 String requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
@@ -173,8 +171,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder stringPayload(
-                boolean stringPayload) {
+        default MllpEndpointConsumerBuilder stringPayload(boolean stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -189,8 +186,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder stringPayload(
-                String stringPayload) {
+        default MllpEndpointConsumerBuilder stringPayload(String stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -204,7 +200,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder validatePayload(
+        default MllpEndpointConsumerBuilder validatePayload(
                 boolean validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
@@ -219,7 +215,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointConsumerBuilder validatePayload(
+        default MllpEndpointConsumerBuilder validatePayload(
                 String validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
@@ -234,7 +230,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MllpEndpointConsumerBuilder bridgeErrorHandler(
+        default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -249,7 +245,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MllpEndpointConsumerBuilder bridgeErrorHandler(
+        default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -259,8 +255,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default MllpEndpointConsumerBuilder charsetName(
-                String charsetName) {
+        default MllpEndpointConsumerBuilder charsetName(String charsetName) {
             setProperty("charsetName", charsetName);
             return this;
         }
@@ -272,7 +267,7 @@ public interface MllpEndpointBuilderFactory {
     public interface AdvancedMllpEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MllpEndpointConsumerBuilder basic() {
+        default MllpEndpointConsumerBuilder basic() {
             return (MllpEndpointConsumerBuilder) this;
         }
         /**
@@ -284,7 +279,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -298,7 +293,7 @@ public interface MllpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -308,7 +303,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMllpEndpointConsumerBuilder exchangePattern(
+        default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -319,7 +314,7 @@ public interface MllpEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMllpEndpointConsumerBuilder exchangePattern(
+        default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -330,7 +325,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -341,7 +336,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -352,7 +347,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointConsumerBuilder synchronous(
+        default AdvancedMllpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -363,7 +358,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointConsumerBuilder synchronous(
+        default AdvancedMllpEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -375,8 +370,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder backlog(
-                Integer backlog) {
+        default AdvancedMllpEndpointConsumerBuilder backlog(Integer backlog) {
             setProperty("backlog", backlog);
             return this;
         }
@@ -388,8 +382,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder backlog(
-                String backlog) {
+        default AdvancedMllpEndpointConsumerBuilder backlog(String backlog) {
             setProperty("backlog", backlog);
             return this;
         }
@@ -400,7 +393,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder lenientBind(
+        default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 boolean lenientBind) {
             setProperty("lenientBind", lenientBind);
             return this;
@@ -412,7 +405,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder lenientBind(
+        default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 String lenientBind) {
             setProperty("lenientBind", lenientBind);
             return this;
@@ -425,7 +418,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
+        default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -438,7 +431,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
+        default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -448,7 +441,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder reuseAddress(
+        default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 Boolean reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
@@ -459,7 +452,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder reuseAddress(
+        default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
@@ -470,7 +463,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
+        default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 int acceptTimeout) {
             setProperty("acceptTimeout", acceptTimeout);
             return this;
@@ -481,7 +474,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
+        default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 String acceptTimeout) {
             setProperty("acceptTimeout", acceptTimeout);
             return this;
@@ -492,7 +485,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
+        default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 int bindRetryInterval) {
             setProperty("bindRetryInterval", bindRetryInterval);
             return this;
@@ -503,7 +496,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
+        default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 String bindRetryInterval) {
             setProperty("bindRetryInterval", bindRetryInterval);
             return this;
@@ -514,8 +507,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder bindTimeout(
-                int bindTimeout) {
+        default AdvancedMllpEndpointConsumerBuilder bindTimeout(int bindTimeout) {
             setProperty("bindTimeout", bindTimeout);
             return this;
         }
@@ -525,7 +517,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder bindTimeout(
+        default AdvancedMllpEndpointConsumerBuilder bindTimeout(
                 String bindTimeout) {
             setProperty("bindTimeout", bindTimeout);
             return this;
@@ -537,7 +529,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder idleTimeout(
+        default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 Integer idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
@@ -550,7 +542,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder idleTimeout(
+        default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 String idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
@@ -562,7 +554,7 @@ public interface MllpEndpointBuilderFactory {
          * @group timeout
          */
         @Deprecated
-        public default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
+        default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
                 Integer maxReceiveTimeouts) {
             setProperty("maxReceiveTimeouts", maxReceiveTimeouts);
             return this;
@@ -575,7 +567,7 @@ public interface MllpEndpointBuilderFactory {
          * @group timeout
          */
         @Deprecated
-        public default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
+        default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
                 String maxReceiveTimeouts) {
             setProperty("maxReceiveTimeouts", maxReceiveTimeouts);
             return this;
@@ -585,7 +577,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
+        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -596,7 +588,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
+        default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -606,7 +598,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 Integer sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -617,7 +609,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
+        default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -628,8 +620,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder readTimeout(
-                int readTimeout) {
+        default AdvancedMllpEndpointConsumerBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -639,7 +630,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder readTimeout(
+        default AdvancedMllpEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -650,7 +641,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
+        default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 int receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -661,7 +652,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
+        default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -674,7 +665,7 @@ public interface MllpEndpointBuilderFactory {
     public static interface MllpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMllpEndpointProducerBuilder advanced() {
+        default AdvancedMllpEndpointProducerBuilder advanced() {
             return (AdvancedMllpEndpointProducerBuilder) this;
         }
         /**
@@ -683,7 +674,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder hostname(String hostname) {
+        default MllpEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -692,7 +683,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder port(int port) {
+        default MllpEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -701,7 +692,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder port(String port) {
+        default MllpEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -711,7 +702,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder autoAck(boolean autoAck) {
+        default MllpEndpointProducerBuilder autoAck(boolean autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -721,7 +712,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder autoAck(String autoAck) {
+        default MllpEndpointProducerBuilder autoAck(String autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -732,8 +723,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointProducerBuilder bufferWrites(
-                boolean bufferWrites) {
+        default MllpEndpointProducerBuilder bufferWrites(boolean bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -744,8 +734,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointProducerBuilder bufferWrites(
-                String bufferWrites) {
+        default MllpEndpointProducerBuilder bufferWrites(String bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -755,7 +744,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder hl7Headers(boolean hl7Headers) {
+        default MllpEndpointProducerBuilder hl7Headers(boolean hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -765,7 +754,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder hl7Headers(String hl7Headers) {
+        default MllpEndpointProducerBuilder hl7Headers(String hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -778,7 +767,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder requireEndOfData(
+        default MllpEndpointProducerBuilder requireEndOfData(
                 boolean requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
@@ -792,7 +781,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder requireEndOfData(
+        default MllpEndpointProducerBuilder requireEndOfData(
                 String requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
@@ -808,8 +797,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder stringPayload(
-                boolean stringPayload) {
+        default MllpEndpointProducerBuilder stringPayload(boolean stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -824,8 +812,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder stringPayload(
-                String stringPayload) {
+        default MllpEndpointProducerBuilder stringPayload(String stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -839,7 +826,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder validatePayload(
+        default MllpEndpointProducerBuilder validatePayload(
                 boolean validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
@@ -854,7 +841,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointProducerBuilder validatePayload(
+        default MllpEndpointProducerBuilder validatePayload(
                 String validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
@@ -872,7 +859,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MllpEndpointProducerBuilder lazyStartProducer(
+        default MllpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -890,7 +877,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MllpEndpointProducerBuilder lazyStartProducer(
+        default MllpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -900,8 +887,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default MllpEndpointProducerBuilder charsetName(
-                String charsetName) {
+        default MllpEndpointProducerBuilder charsetName(String charsetName) {
             setProperty("charsetName", charsetName);
             return this;
         }
@@ -913,7 +899,7 @@ public interface MllpEndpointBuilderFactory {
     public interface AdvancedMllpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default MllpEndpointProducerBuilder basic() {
+        default MllpEndpointProducerBuilder basic() {
             return (MllpEndpointProducerBuilder) this;
         }
         /**
@@ -922,7 +908,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -933,7 +919,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -944,7 +930,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointProducerBuilder synchronous(
+        default AdvancedMllpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -955,7 +941,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointProducerBuilder synchronous(
+        default AdvancedMllpEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -966,7 +952,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder connectTimeout(
+        default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -977,7 +963,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder connectTimeout(
+        default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -989,7 +975,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder idleTimeout(
+        default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 Integer idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
@@ -1002,7 +988,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder idleTimeout(
+        default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 String idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
@@ -1012,8 +998,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder keepAlive(
-                Boolean keepAlive) {
+        default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1023,8 +1008,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder keepAlive(
-                String keepAlive) {
+        default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1033,7 +1017,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1044,7 +1028,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
+        default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1054,7 +1038,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder sendBufferSize(
+        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 Integer sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -1065,7 +1049,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder sendBufferSize(
+        default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -1075,7 +1059,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
+        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
                 Boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
@@ -1086,8 +1070,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
-                String tcpNoDelay) {
+        default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -1097,8 +1080,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder readTimeout(
-                int readTimeout) {
+        default AdvancedMllpEndpointProducerBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -1108,7 +1090,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder readTimeout(
+        default AdvancedMllpEndpointProducerBuilder readTimeout(
                 String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
@@ -1119,7 +1101,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder receiveTimeout(
+        default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 int receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1130,7 +1112,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointProducerBuilder receiveTimeout(
+        default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1143,7 +1125,7 @@ public interface MllpEndpointBuilderFactory {
     public static interface MllpEndpointBuilder
             extends
                 MllpEndpointConsumerBuilder, MllpEndpointProducerBuilder {
-        public default AdvancedMllpEndpointBuilder advanced() {
+        default AdvancedMllpEndpointBuilder advanced() {
             return (AdvancedMllpEndpointBuilder) this;
         }
         /**
@@ -1152,7 +1134,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder hostname(String hostname) {
+        default MllpEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -1161,7 +1143,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder port(int port) {
+        default MllpEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1170,7 +1152,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder port(String port) {
+        default MllpEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1180,7 +1162,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder autoAck(boolean autoAck) {
+        default MllpEndpointBuilder autoAck(boolean autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -1190,7 +1172,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder autoAck(String autoAck) {
+        default MllpEndpointBuilder autoAck(String autoAck) {
             setProperty("autoAck", autoAck);
             return this;
         }
@@ -1201,7 +1183,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointBuilder bufferWrites(boolean bufferWrites) {
+        default MllpEndpointBuilder bufferWrites(boolean bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -1212,7 +1194,7 @@ public interface MllpEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MllpEndpointBuilder bufferWrites(String bufferWrites) {
+        default MllpEndpointBuilder bufferWrites(String bufferWrites) {
             setProperty("bufferWrites", bufferWrites);
             return this;
         }
@@ -1222,7 +1204,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder hl7Headers(boolean hl7Headers) {
+        default MllpEndpointBuilder hl7Headers(boolean hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -1232,7 +1214,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder hl7Headers(String hl7Headers) {
+        default MllpEndpointBuilder hl7Headers(String hl7Headers) {
             setProperty("hl7Headers", hl7Headers);
             return this;
         }
@@ -1245,8 +1227,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder requireEndOfData(
-                boolean requireEndOfData) {
+        default MllpEndpointBuilder requireEndOfData(boolean requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
         }
@@ -1259,8 +1240,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder requireEndOfData(
-                String requireEndOfData) {
+        default MllpEndpointBuilder requireEndOfData(String requireEndOfData) {
             setProperty("requireEndOfData", requireEndOfData);
             return this;
         }
@@ -1275,7 +1255,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder stringPayload(boolean stringPayload) {
+        default MllpEndpointBuilder stringPayload(boolean stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -1290,7 +1270,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder stringPayload(String stringPayload) {
+        default MllpEndpointBuilder stringPayload(String stringPayload) {
             setProperty("stringPayload", stringPayload);
             return this;
         }
@@ -1304,8 +1284,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder validatePayload(
-                boolean validatePayload) {
+        default MllpEndpointBuilder validatePayload(boolean validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
         }
@@ -1319,8 +1298,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MllpEndpointBuilder validatePayload(
-                String validatePayload) {
+        default MllpEndpointBuilder validatePayload(String validatePayload) {
             setProperty("validatePayload", validatePayload);
             return this;
         }
@@ -1329,7 +1307,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default MllpEndpointBuilder charsetName(String charsetName) {
+        default MllpEndpointBuilder charsetName(String charsetName) {
             setProperty("charsetName", charsetName);
             return this;
         }
@@ -1341,7 +1319,7 @@ public interface MllpEndpointBuilderFactory {
     public static interface AdvancedMllpEndpointBuilder
             extends
                 AdvancedMllpEndpointConsumerBuilder, AdvancedMllpEndpointProducerBuilder {
-        public default MllpEndpointBuilder basic() {
+        default MllpEndpointBuilder basic() {
             return (MllpEndpointBuilder) this;
         }
         /**
@@ -1350,7 +1328,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1361,7 +1339,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointBuilder basicPropertyBinding(
+        default AdvancedMllpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1372,8 +1350,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMllpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1383,8 +1360,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMllpEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMllpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1395,8 +1371,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder idleTimeout(
-                Integer idleTimeout) {
+        default AdvancedMllpEndpointBuilder idleTimeout(Integer idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
         }
@@ -1408,8 +1383,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder idleTimeout(
-                String idleTimeout) {
+        default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {
             setProperty("idleTimeout", idleTimeout);
             return this;
         }
@@ -1418,7 +1392,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointBuilder receiveBufferSize(
+        default AdvancedMllpEndpointBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1429,7 +1403,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointBuilder receiveBufferSize(
+        default AdvancedMllpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1439,7 +1413,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointBuilder sendBufferSize(
+        default AdvancedMllpEndpointBuilder sendBufferSize(
                 Integer sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -1450,8 +1424,7 @@ public interface MllpEndpointBuilderFactory {
          * type.
          * @group tcp
          */
-        public default AdvancedMllpEndpointBuilder sendBufferSize(
-                String sendBufferSize) {
+        default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -1461,7 +1434,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder readTimeout(int readTimeout) {
+        default AdvancedMllpEndpointBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -1471,8 +1444,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder readTimeout(
-                String readTimeout) {
+        default AdvancedMllpEndpointBuilder readTimeout(String readTimeout) {
             setProperty("readTimeout", readTimeout);
             return this;
         }
@@ -1482,8 +1454,7 @@ public interface MllpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder receiveTimeout(
-                int receiveTimeout) {
+        default AdvancedMllpEndpointBuilder receiveTimeout(int receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -1493,8 +1464,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group timeout
          */
-        public default AdvancedMllpEndpointBuilder receiveTimeout(
-                String receiveTimeout) {
+        default AdvancedMllpEndpointBuilder receiveTimeout(String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -1504,7 +1474,7 @@ public interface MllpEndpointBuilderFactory {
      * with other systems using the MLLP protocol. Creates a builder to build
      * endpoints for the MLLP component.
      */
-    public default MllpEndpointBuilder mllp(String path) {
+    default MllpEndpointBuilder mllp(String path) {
         class MllpEndpointBuilderImpl extends AbstractEndpointBuilder implements MllpEndpointBuilder, AdvancedMllpEndpointBuilder {
             public MllpEndpointBuilderImpl(String path) {
                 super("mllp", path);

@@ -39,7 +39,7 @@ public interface JGroupsEndpointBuilderFactory {
     public interface JGroupsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJGroupsEndpointConsumerBuilder advanced() {
+        default AdvancedJGroupsEndpointConsumerBuilder advanced() {
             return (AdvancedJGroupsEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointConsumerBuilder clusterName(
-                String clusterName) {
+        default JGroupsEndpointConsumerBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
         }
@@ -58,7 +57,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointConsumerBuilder channelProperties(
+        default JGroupsEndpointConsumerBuilder channelProperties(
                 String channelProperties) {
             setProperty("channelProperties", channelProperties);
             return this;
@@ -74,7 +73,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
+        default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -90,7 +89,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
+        default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -102,7 +101,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsEndpointConsumerBuilder enableViewMessages(
+        default JGroupsEndpointConsumerBuilder enableViewMessages(
                 boolean enableViewMessages) {
             setProperty("enableViewMessages", enableViewMessages);
             return this;
@@ -114,7 +113,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsEndpointConsumerBuilder enableViewMessages(
+        default JGroupsEndpointConsumerBuilder enableViewMessages(
                 String enableViewMessages) {
             setProperty("enableViewMessages", enableViewMessages);
             return this;
@@ -127,7 +126,7 @@ public interface JGroupsEndpointBuilderFactory {
     public interface AdvancedJGroupsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JGroupsEndpointConsumerBuilder basic() {
+        default JGroupsEndpointConsumerBuilder basic() {
             return (JGroupsEndpointConsumerBuilder) this;
         }
         /**
@@ -139,7 +138,7 @@ public interface JGroupsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -153,7 +152,7 @@ public interface JGroupsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -163,7 +162,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
+        default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -174,7 +173,7 @@ public interface JGroupsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
+        default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -185,7 +184,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -196,7 +195,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -207,7 +206,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder synchronous(
+        default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -218,7 +217,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointConsumerBuilder synchronous(
+        default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -231,7 +230,7 @@ public interface JGroupsEndpointBuilderFactory {
     public static interface JGroupsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJGroupsEndpointProducerBuilder advanced() {
+        default AdvancedJGroupsEndpointProducerBuilder advanced() {
             return (AdvancedJGroupsEndpointProducerBuilder) this;
         }
         /**
@@ -239,8 +238,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointProducerBuilder clusterName(
-                String clusterName) {
+        default JGroupsEndpointProducerBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
         }
@@ -250,7 +248,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointProducerBuilder channelProperties(
+        default JGroupsEndpointProducerBuilder channelProperties(
                 String channelProperties) {
             setProperty("channelProperties", channelProperties);
             return this;
@@ -268,7 +266,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JGroupsEndpointProducerBuilder lazyStartProducer(
+        default JGroupsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -286,7 +284,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JGroupsEndpointProducerBuilder lazyStartProducer(
+        default JGroupsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -299,7 +297,7 @@ public interface JGroupsEndpointBuilderFactory {
     public interface AdvancedJGroupsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JGroupsEndpointProducerBuilder basic() {
+        default JGroupsEndpointProducerBuilder basic() {
             return (JGroupsEndpointProducerBuilder) this;
         }
         /**
@@ -308,7 +306,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -319,7 +317,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -330,7 +328,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointProducerBuilder synchronous(
+        default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -341,7 +339,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointProducerBuilder synchronous(
+        default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -354,7 +352,7 @@ public interface JGroupsEndpointBuilderFactory {
     public static interface JGroupsEndpointBuilder
             extends
                 JGroupsEndpointConsumerBuilder, JGroupsEndpointProducerBuilder {
-        public default AdvancedJGroupsEndpointBuilder advanced() {
+        default AdvancedJGroupsEndpointBuilder advanced() {
             return (AdvancedJGroupsEndpointBuilder) this;
         }
         /**
@@ -362,7 +360,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointBuilder clusterName(String clusterName) {
+        default JGroupsEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
         }
@@ -372,7 +370,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsEndpointBuilder channelProperties(
+        default JGroupsEndpointBuilder channelProperties(
                 String channelProperties) {
             setProperty("channelProperties", channelProperties);
             return this;
@@ -385,7 +383,7 @@ public interface JGroupsEndpointBuilderFactory {
     public static interface AdvancedJGroupsEndpointBuilder
             extends
                 AdvancedJGroupsEndpointConsumerBuilder, AdvancedJGroupsEndpointProducerBuilder {
-        public default JGroupsEndpointBuilder basic() {
+        default JGroupsEndpointBuilder basic() {
             return (JGroupsEndpointBuilder) this;
         }
         /**
@@ -394,7 +392,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -405,7 +403,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
+        default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -416,8 +414,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJGroupsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -427,8 +424,7 @@ public interface JGroupsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJGroupsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -438,7 +434,7 @@ public interface JGroupsEndpointBuilderFactory {
      * JGroups clusters. Creates a builder to build endpoints for the JGroups
      * component.
      */
-    public default JGroupsEndpointBuilder jGroups(String path) {
+    default JGroupsEndpointBuilder jGroups(String path) {
         class JGroupsEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsEndpointBuilder, AdvancedJGroupsEndpointBuilder {
             public JGroupsEndpointBuilderImpl(String path) {
                 super("jgroups", path);

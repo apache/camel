@@ -38,7 +38,7 @@ public interface IOTAEndpointBuilderFactory {
     public interface IOTAEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedIOTAEndpointConsumerBuilder advanced() {
+        default AdvancedIOTAEndpointConsumerBuilder advanced() {
             return (AdvancedIOTAEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder name(String name) {
+        default IOTAEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -56,7 +56,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder depth(Integer depth) {
+        default IOTAEndpointConsumerBuilder depth(Integer depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -67,7 +67,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder depth(String depth) {
+        default IOTAEndpointConsumerBuilder depth(String depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -78,7 +78,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder minWeightMagnitude(
+        default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
@@ -91,7 +91,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder minWeightMagnitude(
+        default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
@@ -101,7 +101,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder operation(String operation) {
+        default IOTAEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -110,8 +110,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder securityLevel(
-                Integer securityLevel) {
+        default IOTAEndpointConsumerBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -121,8 +120,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder securityLevel(
-                String securityLevel) {
+        default IOTAEndpointConsumerBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -131,7 +129,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder tag(String tag) {
+        default IOTAEndpointConsumerBuilder tag(String tag) {
             setProperty("tag", tag);
             return this;
         }
@@ -140,7 +138,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointConsumerBuilder url(String url) {
+        default IOTAEndpointConsumerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -155,7 +153,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default IOTAEndpointConsumerBuilder bridgeErrorHandler(
+        default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -171,7 +169,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default IOTAEndpointConsumerBuilder bridgeErrorHandler(
+        default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -184,7 +182,7 @@ public interface IOTAEndpointBuilderFactory {
     public interface AdvancedIOTAEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default IOTAEndpointConsumerBuilder basic() {
+        default IOTAEndpointConsumerBuilder basic() {
             return (IOTAEndpointConsumerBuilder) this;
         }
         /**
@@ -196,7 +194,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -210,7 +208,7 @@ public interface IOTAEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
+        default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -220,7 +218,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
+        default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -231,7 +229,7 @@ public interface IOTAEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
+        default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -242,7 +240,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -253,7 +251,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -264,7 +262,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointConsumerBuilder synchronous(
+        default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -275,7 +273,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointConsumerBuilder synchronous(
+        default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -288,7 +286,7 @@ public interface IOTAEndpointBuilderFactory {
     public static interface IOTAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIOTAEndpointProducerBuilder advanced() {
+        default AdvancedIOTAEndpointProducerBuilder advanced() {
             return (AdvancedIOTAEndpointProducerBuilder) this;
         }
         /**
@@ -296,7 +294,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder name(String name) {
+        default IOTAEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -306,7 +304,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder depth(Integer depth) {
+        default IOTAEndpointProducerBuilder depth(Integer depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -317,7 +315,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder depth(String depth) {
+        default IOTAEndpointProducerBuilder depth(String depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -328,7 +326,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder minWeightMagnitude(
+        default IOTAEndpointProducerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
@@ -341,7 +339,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder minWeightMagnitude(
+        default IOTAEndpointProducerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
@@ -351,7 +349,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder operation(String operation) {
+        default IOTAEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -360,8 +358,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder securityLevel(
-                Integer securityLevel) {
+        default IOTAEndpointProducerBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -371,8 +368,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder securityLevel(
-                String securityLevel) {
+        default IOTAEndpointProducerBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -381,7 +377,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder tag(String tag) {
+        default IOTAEndpointProducerBuilder tag(String tag) {
             setProperty("tag", tag);
             return this;
         }
@@ -390,7 +386,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointProducerBuilder url(String url) {
+        default IOTAEndpointProducerBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -407,7 +403,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default IOTAEndpointProducerBuilder lazyStartProducer(
+        default IOTAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -425,7 +421,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default IOTAEndpointProducerBuilder lazyStartProducer(
+        default IOTAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -438,7 +434,7 @@ public interface IOTAEndpointBuilderFactory {
     public interface AdvancedIOTAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default IOTAEndpointProducerBuilder basic() {
+        default IOTAEndpointProducerBuilder basic() {
             return (IOTAEndpointProducerBuilder) this;
         }
         /**
@@ -447,7 +443,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -458,7 +454,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -469,7 +465,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointProducerBuilder synchronous(
+        default AdvancedIOTAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -480,7 +476,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointProducerBuilder synchronous(
+        default AdvancedIOTAEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -493,7 +489,7 @@ public interface IOTAEndpointBuilderFactory {
     public static interface IOTAEndpointBuilder
             extends
                 IOTAEndpointConsumerBuilder, IOTAEndpointProducerBuilder {
-        public default AdvancedIOTAEndpointBuilder advanced() {
+        default AdvancedIOTAEndpointBuilder advanced() {
             return (AdvancedIOTAEndpointBuilder) this;
         }
         /**
@@ -501,7 +497,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder name(String name) {
+        default IOTAEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -511,7 +507,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder depth(Integer depth) {
+        default IOTAEndpointBuilder depth(Integer depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -522,7 +518,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointBuilder depth(String depth) {
+        default IOTAEndpointBuilder depth(String depth) {
             setProperty("depth", depth);
             return this;
         }
@@ -533,7 +529,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder minWeightMagnitude(
+        default IOTAEndpointBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
@@ -546,8 +542,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointBuilder minWeightMagnitude(
-                String minWeightMagnitude) {
+        default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
             return this;
         }
@@ -556,7 +551,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder operation(String operation) {
+        default IOTAEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -565,7 +560,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
+        default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -575,7 +570,7 @@ public interface IOTAEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default IOTAEndpointBuilder securityLevel(String securityLevel) {
+        default IOTAEndpointBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -584,7 +579,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder tag(String tag) {
+        default IOTAEndpointBuilder tag(String tag) {
             setProperty("tag", tag);
             return this;
         }
@@ -593,7 +588,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default IOTAEndpointBuilder url(String url) {
+        default IOTAEndpointBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -605,7 +600,7 @@ public interface IOTAEndpointBuilderFactory {
     public static interface AdvancedIOTAEndpointBuilder
             extends
                 AdvancedIOTAEndpointConsumerBuilder, AdvancedIOTAEndpointProducerBuilder {
-        public default IOTAEndpointBuilder basic() {
+        default IOTAEndpointBuilder basic() {
             return (IOTAEndpointBuilder) this;
         }
         /**
@@ -614,7 +609,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -625,7 +620,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointBuilder basicPropertyBinding(
+        default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -636,8 +631,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedIOTAEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -647,8 +641,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIOTAEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -657,7 +650,7 @@ public interface IOTAEndpointBuilderFactory {
      * Component for integrate IOTA DLT Creates a builder to build endpoints for
      * the IOTA component.
      */
-    public default IOTAEndpointBuilder iOTA(String path) {
+    default IOTAEndpointBuilder iOTA(String path) {
         class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {
             public IOTAEndpointBuilderImpl(String path) {
                 super("iota", path);

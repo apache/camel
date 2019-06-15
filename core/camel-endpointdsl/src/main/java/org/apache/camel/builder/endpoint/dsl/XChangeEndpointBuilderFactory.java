@@ -37,7 +37,7 @@ public interface XChangeEndpointBuilderFactory {
     public static interface XChangeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedXChangeEndpointBuilder advanced() {
+        default AdvancedXChangeEndpointBuilder advanced() {
             return (AdvancedXChangeEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface XChangeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder name(String name) {
+        default XChangeEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -55,7 +55,7 @@ public interface XChangeEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default XChangeEndpointBuilder currency(Object currency) {
+        default XChangeEndpointBuilder currency(Object currency) {
             setProperty("currency", currency);
             return this;
         }
@@ -65,7 +65,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.knowm.xchange.currency.Currency</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder currency(String currency) {
+        default XChangeEndpointBuilder currency(String currency) {
             setProperty("currency", currency);
             return this;
         }
@@ -75,7 +75,7 @@ public interface XChangeEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default XChangeEndpointBuilder currencyPair(Object currencyPair) {
+        default XChangeEndpointBuilder currencyPair(Object currencyPair) {
             setProperty("currencyPair", currencyPair);
             return this;
         }
@@ -85,7 +85,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.knowm.xchange.currency.CurrencyPair</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder currencyPair(String currencyPair) {
+        default XChangeEndpointBuilder currencyPair(String currencyPair) {
             setProperty("currencyPair", currencyPair);
             return this;
         }
@@ -95,7 +95,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder method(XChangeMethod method) {
+        default XChangeEndpointBuilder method(XChangeMethod method) {
             setProperty("method", method);
             return this;
         }
@@ -105,7 +105,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder method(String method) {
+        default XChangeEndpointBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -115,7 +115,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder service(XChangeService service) {
+        default XChangeEndpointBuilder service(XChangeService service) {
             setProperty("service", service);
             return this;
         }
@@ -125,7 +125,7 @@ public interface XChangeEndpointBuilderFactory {
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
          * @group producer
          */
-        public default XChangeEndpointBuilder service(String service) {
+        default XChangeEndpointBuilder service(String service) {
             setProperty("service", service);
             return this;
         }
@@ -137,7 +137,7 @@ public interface XChangeEndpointBuilderFactory {
     public static interface AdvancedXChangeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default XChangeEndpointBuilder basic() {
+        default XChangeEndpointBuilder basic() {
             return (XChangeEndpointBuilder) this;
         }
         /**
@@ -146,7 +146,7 @@ public interface XChangeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXChangeEndpointBuilder basicPropertyBinding(
+        default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -157,7 +157,7 @@ public interface XChangeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXChangeEndpointBuilder basicPropertyBinding(
+        default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -168,8 +168,7 @@ public interface XChangeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXChangeEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -179,8 +178,7 @@ public interface XChangeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedXChangeEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -206,7 +204,7 @@ public interface XChangeEndpointBuilderFactory {
      * exchanges for trading and accessing market data. Creates a builder to
      * build endpoints for the XChange component.
      */
-    public default XChangeEndpointBuilder xChange(String path) {
+    default XChangeEndpointBuilder xChange(String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
                 super("xchange", path);

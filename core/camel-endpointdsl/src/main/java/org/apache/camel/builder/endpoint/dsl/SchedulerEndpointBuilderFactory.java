@@ -37,7 +37,7 @@ public interface SchedulerEndpointBuilderFactory {
     public static interface SchedulerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSchedulerEndpointBuilder advanced() {
+        default AdvancedSchedulerEndpointBuilder advanced() {
             return (AdvancedSchedulerEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SchedulerEndpointBuilder name(String name) {
+        default SchedulerEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -55,8 +55,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default SchedulerEndpointBuilder concurrentTasks(
-                int concurrentTasks) {
+        default SchedulerEndpointBuilder concurrentTasks(int concurrentTasks) {
             setProperty("concurrentTasks", concurrentTasks);
             return this;
         }
@@ -66,8 +65,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default SchedulerEndpointBuilder concurrentTasks(
-                String concurrentTasks) {
+        default SchedulerEndpointBuilder concurrentTasks(String concurrentTasks) {
             setProperty("concurrentTasks", concurrentTasks);
             return this;
         }
@@ -79,7 +77,7 @@ public interface SchedulerEndpointBuilderFactory {
     public static interface AdvancedSchedulerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SchedulerEndpointBuilder basic() {
+        default SchedulerEndpointBuilder basic() {
             return (SchedulerEndpointBuilder) this;
         }
         /**
@@ -88,7 +86,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
+        default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -99,7 +97,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
+        default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -110,8 +108,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchedulerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSchedulerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -121,8 +118,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSchedulerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSchedulerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -132,7 +128,7 @@ public interface SchedulerEndpointBuilderFactory {
      * scheduler fires. Creates a builder to build endpoints for the Scheduler
      * component.
      */
-    public default SchedulerEndpointBuilder scheduler(String path) {
+    default SchedulerEndpointBuilder scheduler(String path) {
         class SchedulerEndpointBuilderImpl extends AbstractEndpointBuilder implements SchedulerEndpointBuilder, AdvancedSchedulerEndpointBuilder {
             public SchedulerEndpointBuilderImpl(String path) {
                 super("scheduler", path);

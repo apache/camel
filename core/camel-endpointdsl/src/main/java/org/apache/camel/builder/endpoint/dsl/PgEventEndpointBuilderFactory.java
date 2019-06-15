@@ -39,7 +39,7 @@ public interface PgEventEndpointBuilderFactory {
     public interface PgEventEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedPgEventEndpointConsumerBuilder advanced() {
+        default AdvancedPgEventEndpointConsumerBuilder advanced() {
             return (AdvancedPgEventEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder host(String host) {
+        default PgEventEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -56,7 +56,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder port(Integer port) {
+        default PgEventEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -66,7 +66,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder port(String port) {
+        default PgEventEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -75,7 +75,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder database(String database) {
+        default PgEventEndpointConsumerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -84,7 +84,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder channel(String channel) {
+        default PgEventEndpointConsumerBuilder channel(String channel) {
             setProperty("channel", channel);
             return this;
         }
@@ -94,8 +94,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder datasource(
-                Object datasource) {
+        default PgEventEndpointConsumerBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -106,8 +105,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointConsumerBuilder datasource(
-                String datasource) {
+        default PgEventEndpointConsumerBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -122,7 +120,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default PgEventEndpointConsumerBuilder bridgeErrorHandler(
+        default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -138,7 +136,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default PgEventEndpointConsumerBuilder bridgeErrorHandler(
+        default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -148,7 +146,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointConsumerBuilder pass(String pass) {
+        default PgEventEndpointConsumerBuilder pass(String pass) {
             setProperty("pass", pass);
             return this;
         }
@@ -157,7 +155,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointConsumerBuilder user(String user) {
+        default PgEventEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -170,7 +168,7 @@ public interface PgEventEndpointBuilderFactory {
     public interface AdvancedPgEventEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default PgEventEndpointConsumerBuilder basic() {
+        default PgEventEndpointConsumerBuilder basic() {
             return (PgEventEndpointConsumerBuilder) this;
         }
         /**
@@ -182,7 +180,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -196,7 +194,7 @@ public interface PgEventEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -206,7 +204,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
+        default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -217,7 +215,7 @@ public interface PgEventEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
+        default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -228,7 +226,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -239,7 +237,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -250,7 +248,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointConsumerBuilder synchronous(
+        default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -261,7 +259,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointConsumerBuilder synchronous(
+        default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -274,7 +272,7 @@ public interface PgEventEndpointBuilderFactory {
     public static interface PgEventEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedPgEventEndpointProducerBuilder advanced() {
+        default AdvancedPgEventEndpointProducerBuilder advanced() {
             return (AdvancedPgEventEndpointProducerBuilder) this;
         }
         /**
@@ -282,7 +280,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder host(String host) {
+        default PgEventEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -291,7 +289,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder port(Integer port) {
+        default PgEventEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -301,7 +299,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder port(String port) {
+        default PgEventEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -310,7 +308,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder database(String database) {
+        default PgEventEndpointProducerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -319,7 +317,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder channel(String channel) {
+        default PgEventEndpointProducerBuilder channel(String channel) {
             setProperty("channel", channel);
             return this;
         }
@@ -329,8 +327,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder datasource(
-                Object datasource) {
+        default PgEventEndpointProducerBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -341,8 +338,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointProducerBuilder datasource(
-                String datasource) {
+        default PgEventEndpointProducerBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -359,7 +355,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default PgEventEndpointProducerBuilder lazyStartProducer(
+        default PgEventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -377,7 +373,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default PgEventEndpointProducerBuilder lazyStartProducer(
+        default PgEventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -387,7 +383,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointProducerBuilder pass(String pass) {
+        default PgEventEndpointProducerBuilder pass(String pass) {
             setProperty("pass", pass);
             return this;
         }
@@ -396,7 +392,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointProducerBuilder user(String user) {
+        default PgEventEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -409,7 +405,7 @@ public interface PgEventEndpointBuilderFactory {
     public interface AdvancedPgEventEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default PgEventEndpointProducerBuilder basic() {
+        default PgEventEndpointProducerBuilder basic() {
             return (PgEventEndpointProducerBuilder) this;
         }
         /**
@@ -418,7 +414,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -429,7 +425,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -440,7 +436,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointProducerBuilder synchronous(
+        default AdvancedPgEventEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -451,7 +447,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointProducerBuilder synchronous(
+        default AdvancedPgEventEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -464,7 +460,7 @@ public interface PgEventEndpointBuilderFactory {
     public static interface PgEventEndpointBuilder
             extends
                 PgEventEndpointConsumerBuilder, PgEventEndpointProducerBuilder {
-        public default AdvancedPgEventEndpointBuilder advanced() {
+        default AdvancedPgEventEndpointBuilder advanced() {
             return (AdvancedPgEventEndpointBuilder) this;
         }
         /**
@@ -472,7 +468,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointBuilder host(String host) {
+        default PgEventEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -481,7 +477,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default PgEventEndpointBuilder port(Integer port) {
+        default PgEventEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -491,7 +487,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointBuilder port(String port) {
+        default PgEventEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -500,7 +496,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointBuilder database(String database) {
+        default PgEventEndpointBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -509,7 +505,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PgEventEndpointBuilder channel(String channel) {
+        default PgEventEndpointBuilder channel(String channel) {
             setProperty("channel", channel);
             return this;
         }
@@ -519,7 +515,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>javax.sql.DataSource</code> type.
          * @group common
          */
-        public default PgEventEndpointBuilder datasource(Object datasource) {
+        default PgEventEndpointBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -530,7 +526,7 @@ public interface PgEventEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default PgEventEndpointBuilder datasource(String datasource) {
+        default PgEventEndpointBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
             return this;
         }
@@ -539,7 +535,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointBuilder pass(String pass) {
+        default PgEventEndpointBuilder pass(String pass) {
             setProperty("pass", pass);
             return this;
         }
@@ -548,7 +544,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default PgEventEndpointBuilder user(String user) {
+        default PgEventEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -560,7 +556,7 @@ public interface PgEventEndpointBuilderFactory {
     public static interface AdvancedPgEventEndpointBuilder
             extends
                 AdvancedPgEventEndpointConsumerBuilder, AdvancedPgEventEndpointProducerBuilder {
-        public default PgEventEndpointBuilder basic() {
+        default PgEventEndpointBuilder basic() {
             return (PgEventEndpointBuilder) this;
         }
         /**
@@ -569,7 +565,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -580,7 +576,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointBuilder basicPropertyBinding(
+        default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -591,8 +587,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedPgEventEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -602,8 +597,7 @@ public interface PgEventEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPgEventEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedPgEventEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -613,7 +607,7 @@ public interface PgEventEndpointBuilderFactory {
      * related to the listen/notify commands. Creates a builder to build
      * endpoints for the PostgresSQL Event component.
      */
-    public default PgEventEndpointBuilder pgEvent(String path) {
+    default PgEventEndpointBuilder pgEvent(String path) {
         class PgEventEndpointBuilderImpl extends AbstractEndpointBuilder implements PgEventEndpointBuilder, AdvancedPgEventEndpointBuilder {
             public PgEventEndpointBuilderImpl(String path) {
                 super("pgevent", path);

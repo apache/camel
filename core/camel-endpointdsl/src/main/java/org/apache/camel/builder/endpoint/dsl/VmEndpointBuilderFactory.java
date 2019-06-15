@@ -41,7 +41,7 @@ public interface VmEndpointBuilderFactory {
     public interface VmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedVmEndpointConsumerBuilder advanced() {
+        default AdvancedVmEndpointConsumerBuilder advanced() {
             return (AdvancedVmEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VmEndpointConsumerBuilder name(String name) {
+        default VmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -60,7 +60,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointConsumerBuilder size(int size) {
+        default VmEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -71,7 +71,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointConsumerBuilder size(String size) {
+        default VmEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -86,7 +86,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default VmEndpointConsumerBuilder bridgeErrorHandler(
+        default VmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -102,7 +102,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default VmEndpointConsumerBuilder bridgeErrorHandler(
+        default VmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -112,7 +112,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default VmEndpointConsumerBuilder concurrentConsumers(
+        default VmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -122,7 +122,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default VmEndpointConsumerBuilder concurrentConsumers(
+        default VmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -135,7 +135,7 @@ public interface VmEndpointBuilderFactory {
     public interface AdvancedVmEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default VmEndpointConsumerBuilder basic() {
+        default VmEndpointConsumerBuilder basic() {
             return (VmEndpointConsumerBuilder) this;
         }
         /**
@@ -147,7 +147,7 @@ public interface VmEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -161,7 +161,7 @@ public interface VmEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder exceptionHandler(
+        default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -171,7 +171,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -182,7 +182,7 @@ public interface VmEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder exchangePattern(
+        default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -195,7 +195,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -208,7 +208,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
+        default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
             setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
@@ -222,7 +222,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder multipleConsumers(
+        default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -236,7 +236,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder multipleConsumers(
+        default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
             setProperty("multipleConsumers", multipleConsumers);
             return this;
@@ -248,8 +248,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder pollTimeout(
-                int pollTimeout) {
+        default AdvancedVmEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -260,8 +259,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder pollTimeout(
-                String pollTimeout) {
+        default AdvancedVmEndpointConsumerBuilder pollTimeout(String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
             return this;
         }
@@ -272,7 +270,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -284,7 +282,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
+        default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
             setProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
@@ -295,7 +293,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -306,7 +304,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -318,8 +316,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedVmEndpointConsumerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -331,7 +328,7 @@ public interface VmEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder queue(String queue) {
+        default AdvancedVmEndpointConsumerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -341,7 +338,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder synchronous(
+        default AdvancedVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,8 +349,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointConsumerBuilder synchronous(
-                String synchronous) {
+        default AdvancedVmEndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -365,7 +361,7 @@ public interface VmEndpointBuilderFactory {
     public static interface VmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedVmEndpointProducerBuilder advanced() {
+        default AdvancedVmEndpointProducerBuilder advanced() {
             return (AdvancedVmEndpointProducerBuilder) this;
         }
         /**
@@ -373,7 +369,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VmEndpointProducerBuilder name(String name) {
+        default VmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -384,7 +380,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointProducerBuilder size(int size) {
+        default VmEndpointProducerBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -395,7 +391,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointProducerBuilder size(String size) {
+        default VmEndpointProducerBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -408,8 +404,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder blockWhenFull(
-                boolean blockWhenFull) {
+        default VmEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -422,8 +417,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder blockWhenFull(
-                String blockWhenFull) {
+        default VmEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
             return this;
         }
@@ -435,7 +429,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder discardIfNoConsumers(
+        default VmEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -448,7 +442,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder discardIfNoConsumers(
+        default VmEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
             setProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
@@ -461,7 +455,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder failIfNoConsumers(
+        default VmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -474,7 +468,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder failIfNoConsumers(
+        default VmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
             setProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
@@ -492,7 +486,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder lazyStartProducer(
+        default VmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -510,7 +504,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder lazyStartProducer(
+        default VmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -522,7 +516,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
+        default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -533,8 +527,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder offerTimeout(
-                String offerTimeout) {
+        default VmEndpointProducerBuilder offerTimeout(String offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
             return this;
         }
@@ -545,7 +538,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder timeout(long timeout) {
+        default VmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -556,7 +549,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder timeout(String timeout) {
+        default VmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -571,7 +564,7 @@ public interface VmEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder waitForTaskToComplete(
+        default VmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -587,7 +580,7 @@ public interface VmEndpointBuilderFactory {
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * @group producer
          */
-        public default VmEndpointProducerBuilder waitForTaskToComplete(
+        default VmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
             setProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
@@ -600,7 +593,7 @@ public interface VmEndpointBuilderFactory {
     public interface AdvancedVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default VmEndpointProducerBuilder basic() {
+        default VmEndpointProducerBuilder basic() {
             return (VmEndpointProducerBuilder) this;
         }
         /**
@@ -609,7 +602,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -620,7 +613,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -632,8 +625,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder queue(
-                BlockingQueue queue) {
+        default AdvancedVmEndpointProducerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -645,7 +637,7 @@ public interface VmEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder queue(String queue) {
+        default AdvancedVmEndpointProducerBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -655,7 +647,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder synchronous(
+        default AdvancedVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -666,8 +658,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointProducerBuilder synchronous(
-                String synchronous) {
+        default AdvancedVmEndpointProducerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -679,7 +670,7 @@ public interface VmEndpointBuilderFactory {
     public static interface VmEndpointBuilder
             extends
                 VmEndpointConsumerBuilder, VmEndpointProducerBuilder {
-        public default AdvancedVmEndpointBuilder advanced() {
+        default AdvancedVmEndpointBuilder advanced() {
             return (AdvancedVmEndpointBuilder) this;
         }
         /**
@@ -687,7 +678,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default VmEndpointBuilder name(String name) {
+        default VmEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -698,7 +689,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointBuilder size(int size) {
+        default VmEndpointBuilder size(int size) {
             setProperty("size", size);
             return this;
         }
@@ -709,7 +700,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default VmEndpointBuilder size(String size) {
+        default VmEndpointBuilder size(String size) {
             setProperty("size", size);
             return this;
         }
@@ -721,7 +712,7 @@ public interface VmEndpointBuilderFactory {
     public static interface AdvancedVmEndpointBuilder
             extends
                 AdvancedVmEndpointConsumerBuilder, AdvancedVmEndpointProducerBuilder {
-        public default VmEndpointBuilder basic() {
+        default VmEndpointBuilder basic() {
             return (VmEndpointBuilder) this;
         }
         /**
@@ -730,7 +721,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder basicPropertyBinding(
+        default AdvancedVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -741,7 +732,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder basicPropertyBinding(
+        default AdvancedVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -753,7 +744,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
+        default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -765,7 +756,7 @@ public interface VmEndpointBuilderFactory {
          * <code>java.util.concurrent.BlockingQueue</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder queue(String queue) {
+        default AdvancedVmEndpointBuilder queue(String queue) {
             setProperty("queue", queue);
             return this;
         }
@@ -775,7 +766,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder synchronous(boolean synchronous) {
+        default AdvancedVmEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -785,7 +776,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedVmEndpointBuilder synchronous(String synchronous) {
+        default AdvancedVmEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -795,7 +786,7 @@ public interface VmEndpointBuilderFactory {
      * same CamelContext. Creates a builder to build endpoints for the VM
      * component.
      */
-    public default VmEndpointBuilder vm(String path) {
+    default VmEndpointBuilder vm(String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
             public VmEndpointBuilderImpl(String path) {
                 super("vm", path);

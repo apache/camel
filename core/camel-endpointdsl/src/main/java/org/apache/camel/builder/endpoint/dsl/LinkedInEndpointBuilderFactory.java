@@ -40,7 +40,7 @@ public interface LinkedInEndpointBuilderFactory {
     public interface LinkedInEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedLinkedInEndpointConsumerBuilder advanced() {
+        default AdvancedLinkedInEndpointConsumerBuilder advanced() {
             return (AdvancedLinkedInEndpointConsumerBuilder) this;
         }
         /**
@@ -49,8 +49,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder apiName(
-                LinkedInApiName apiName) {
+        default LinkedInEndpointConsumerBuilder apiName(LinkedInApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -60,7 +59,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder apiName(String apiName) {
+        default LinkedInEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -69,8 +68,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder methodName(
-                String methodName) {
+        default LinkedInEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -96,8 +94,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder accessToken(
-                String accessToken) {
+        default LinkedInEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -106,7 +103,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder clientId(String clientId) {
+        default LinkedInEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -115,8 +112,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder clientSecret(
-                String clientSecret) {
+        default LinkedInEndpointConsumerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -127,8 +123,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder expiryTime(
-                Long expiryTime) {
+        default LinkedInEndpointConsumerBuilder expiryTime(Long expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -139,8 +134,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder expiryTime(
-                String expiryTime) {
+        default LinkedInEndpointConsumerBuilder expiryTime(String expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -151,7 +145,7 @@ public interface LinkedInEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder httpParams(
+        default LinkedInEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -164,8 +158,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder httpParams(
-                String httpParams) {
+        default LinkedInEndpointConsumerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -174,7 +167,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder inBody(String inBody) {
+        default LinkedInEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -185,7 +178,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder lazyAuth(boolean lazyAuth) {
+        default LinkedInEndpointConsumerBuilder lazyAuth(boolean lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -196,7 +189,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder lazyAuth(String lazyAuth) {
+        default LinkedInEndpointConsumerBuilder lazyAuth(String lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -207,8 +200,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder redirectUri(
-                String redirectUri) {
+        default LinkedInEndpointConsumerBuilder redirectUri(String redirectUri) {
             setProperty("redirectUri", redirectUri);
             return this;
         }
@@ -220,8 +212,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder scopes(
-                OAuthScope[] scopes) {
+        default LinkedInEndpointConsumerBuilder scopes(OAuthScope[] scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -233,7 +224,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder scopes(String scopes) {
+        default LinkedInEndpointConsumerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -247,7 +238,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder secureStorage(
+        default LinkedInEndpointConsumerBuilder secureStorage(
                 Object secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
@@ -262,7 +253,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder secureStorage(
+        default LinkedInEndpointConsumerBuilder secureStorage(
                 String secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
@@ -272,7 +263,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder userName(String userName) {
+        default LinkedInEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -281,8 +272,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointConsumerBuilder userPassword(
-                String userPassword) {
+        default LinkedInEndpointConsumerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -297,7 +287,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
+        default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -313,7 +303,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
+        default LinkedInEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -326,7 +316,7 @@ public interface LinkedInEndpointBuilderFactory {
     public interface AdvancedLinkedInEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default LinkedInEndpointConsumerBuilder basic() {
+        default LinkedInEndpointConsumerBuilder basic() {
             return (LinkedInEndpointConsumerBuilder) this;
         }
         /**
@@ -338,7 +328,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
+        default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -352,7 +342,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
+        default AdvancedLinkedInEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -362,7 +352,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
+        default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -373,7 +363,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
+        default AdvancedLinkedInEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -384,7 +374,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -395,7 +385,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -406,7 +396,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder synchronous(
+        default AdvancedLinkedInEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -417,7 +407,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointConsumerBuilder synchronous(
+        default AdvancedLinkedInEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -430,7 +420,7 @@ public interface LinkedInEndpointBuilderFactory {
     public static interface LinkedInEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLinkedInEndpointProducerBuilder advanced() {
+        default AdvancedLinkedInEndpointProducerBuilder advanced() {
             return (AdvancedLinkedInEndpointProducerBuilder) this;
         }
         /**
@@ -439,8 +429,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder apiName(
-                LinkedInApiName apiName) {
+        default LinkedInEndpointProducerBuilder apiName(LinkedInApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -450,7 +439,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder apiName(String apiName) {
+        default LinkedInEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -459,8 +448,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder methodName(
-                String methodName) {
+        default LinkedInEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -486,8 +474,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder accessToken(
-                String accessToken) {
+        default LinkedInEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -496,7 +483,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder clientId(String clientId) {
+        default LinkedInEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -505,8 +492,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder clientSecret(
-                String clientSecret) {
+        default LinkedInEndpointProducerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -517,8 +503,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder expiryTime(
-                Long expiryTime) {
+        default LinkedInEndpointProducerBuilder expiryTime(Long expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -529,8 +514,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder expiryTime(
-                String expiryTime) {
+        default LinkedInEndpointProducerBuilder expiryTime(String expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -541,7 +525,7 @@ public interface LinkedInEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder httpParams(
+        default LinkedInEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -554,8 +538,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder httpParams(
-                String httpParams) {
+        default LinkedInEndpointProducerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -564,7 +547,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder inBody(String inBody) {
+        default LinkedInEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -575,7 +558,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder lazyAuth(boolean lazyAuth) {
+        default LinkedInEndpointProducerBuilder lazyAuth(boolean lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -586,7 +569,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder lazyAuth(String lazyAuth) {
+        default LinkedInEndpointProducerBuilder lazyAuth(String lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -597,8 +580,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder redirectUri(
-                String redirectUri) {
+        default LinkedInEndpointProducerBuilder redirectUri(String redirectUri) {
             setProperty("redirectUri", redirectUri);
             return this;
         }
@@ -610,8 +592,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder scopes(
-                OAuthScope[] scopes) {
+        default LinkedInEndpointProducerBuilder scopes(OAuthScope[] scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -623,7 +604,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder scopes(String scopes) {
+        default LinkedInEndpointProducerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -637,7 +618,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder secureStorage(
+        default LinkedInEndpointProducerBuilder secureStorage(
                 Object secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
@@ -652,7 +633,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder secureStorage(
+        default LinkedInEndpointProducerBuilder secureStorage(
                 String secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
@@ -662,7 +643,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder userName(String userName) {
+        default LinkedInEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -671,8 +652,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointProducerBuilder userPassword(
-                String userPassword) {
+        default LinkedInEndpointProducerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -689,7 +669,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default LinkedInEndpointProducerBuilder lazyStartProducer(
+        default LinkedInEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -707,7 +687,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default LinkedInEndpointProducerBuilder lazyStartProducer(
+        default LinkedInEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -720,7 +700,7 @@ public interface LinkedInEndpointBuilderFactory {
     public interface AdvancedLinkedInEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default LinkedInEndpointProducerBuilder basic() {
+        default LinkedInEndpointProducerBuilder basic() {
             return (LinkedInEndpointProducerBuilder) this;
         }
         /**
@@ -729,7 +709,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -740,7 +720,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -751,7 +731,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointProducerBuilder synchronous(
+        default AdvancedLinkedInEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -762,7 +742,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointProducerBuilder synchronous(
+        default AdvancedLinkedInEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -775,7 +755,7 @@ public interface LinkedInEndpointBuilderFactory {
     public static interface LinkedInEndpointBuilder
             extends
                 LinkedInEndpointConsumerBuilder, LinkedInEndpointProducerBuilder {
-        public default AdvancedLinkedInEndpointBuilder advanced() {
+        default AdvancedLinkedInEndpointBuilder advanced() {
             return (AdvancedLinkedInEndpointBuilder) this;
         }
         /**
@@ -784,7 +764,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder apiName(LinkedInApiName apiName) {
+        default LinkedInEndpointBuilder apiName(LinkedInApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -794,7 +774,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder apiName(String apiName) {
+        default LinkedInEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -803,7 +783,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder methodName(String methodName) {
+        default LinkedInEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -829,7 +809,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder accessToken(String accessToken) {
+        default LinkedInEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -838,7 +818,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder clientId(String clientId) {
+        default LinkedInEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -847,7 +827,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder clientSecret(String clientSecret) {
+        default LinkedInEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -858,7 +838,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder expiryTime(Long expiryTime) {
+        default LinkedInEndpointBuilder expiryTime(Long expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -869,7 +849,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder expiryTime(String expiryTime) {
+        default LinkedInEndpointBuilder expiryTime(String expiryTime) {
             setProperty("expiryTime", expiryTime);
             return this;
         }
@@ -880,7 +860,7 @@ public interface LinkedInEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder httpParams(
+        default LinkedInEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
             setProperty("httpParams", httpParams);
             return this;
@@ -893,7 +873,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointBuilder httpParams(String httpParams) {
+        default LinkedInEndpointBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
             return this;
         }
@@ -902,7 +882,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder inBody(String inBody) {
+        default LinkedInEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -913,7 +893,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder lazyAuth(boolean lazyAuth) {
+        default LinkedInEndpointBuilder lazyAuth(boolean lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -924,7 +904,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder lazyAuth(String lazyAuth) {
+        default LinkedInEndpointBuilder lazyAuth(String lazyAuth) {
             setProperty("lazyAuth", lazyAuth);
             return this;
         }
@@ -935,7 +915,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder redirectUri(String redirectUri) {
+        default LinkedInEndpointBuilder redirectUri(String redirectUri) {
             setProperty("redirectUri", redirectUri);
             return this;
         }
@@ -947,7 +927,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointBuilder scopes(OAuthScope[] scopes) {
+        default LinkedInEndpointBuilder scopes(OAuthScope[] scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -959,7 +939,7 @@ public interface LinkedInEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default LinkedInEndpointBuilder scopes(String scopes) {
+        default LinkedInEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -973,8 +953,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder secureStorage(
-                Object secureStorage) {
+        default LinkedInEndpointBuilder secureStorage(Object secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
         }
@@ -988,8 +967,7 @@ public interface LinkedInEndpointBuilderFactory {
          * <code>org.apache.camel.component.linkedin.api.OAuthSecureStorage</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder secureStorage(
-                String secureStorage) {
+        default LinkedInEndpointBuilder secureStorage(String secureStorage) {
             setProperty("secureStorage", secureStorage);
             return this;
         }
@@ -998,7 +976,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder userName(String userName) {
+        default LinkedInEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -1007,7 +985,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default LinkedInEndpointBuilder userPassword(String userPassword) {
+        default LinkedInEndpointBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
             return this;
         }
@@ -1019,7 +997,7 @@ public interface LinkedInEndpointBuilderFactory {
     public static interface AdvancedLinkedInEndpointBuilder
             extends
                 AdvancedLinkedInEndpointConsumerBuilder, AdvancedLinkedInEndpointProducerBuilder {
-        public default LinkedInEndpointBuilder basic() {
+        default LinkedInEndpointBuilder basic() {
             return (LinkedInEndpointBuilder) this;
         }
         /**
@@ -1028,7 +1006,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1039,7 +1017,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
+        default AdvancedLinkedInEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1050,8 +1028,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLinkedInEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1061,8 +1038,7 @@ public interface LinkedInEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLinkedInEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLinkedInEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1089,7 +1065,7 @@ public interface LinkedInEndpointBuilderFactory {
      * connections, companies, groups, posts, etc. Creates a builder to build
      * endpoints for the Linkedin component.
      */
-    public default LinkedInEndpointBuilder linkedIn(String path) {
+    default LinkedInEndpointBuilder linkedIn(String path) {
         class LinkedInEndpointBuilderImpl extends AbstractEndpointBuilder implements LinkedInEndpointBuilder, AdvancedLinkedInEndpointBuilder {
             public LinkedInEndpointBuilderImpl(String path) {
                 super("linkedin", path);

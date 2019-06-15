@@ -37,7 +37,7 @@ public interface AtomEndpointBuilderFactory {
     public static interface AtomEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAtomEndpointBuilder advanced() {
+        default AdvancedAtomEndpointBuilder advanced() {
             return (AdvancedAtomEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder feedUri(String feedUri) {
+        default AtomEndpointBuilder feedUri(String feedUri) {
             setProperty("feedUri", feedUri);
             return this;
         }
@@ -54,7 +54,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder feedHeader(boolean feedHeader) {
+        default AtomEndpointBuilder feedHeader(boolean feedHeader) {
             setProperty("feedHeader", feedHeader);
             return this;
         }
@@ -63,7 +63,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder feedHeader(String feedHeader) {
+        default AtomEndpointBuilder feedHeader(String feedHeader) {
             setProperty("feedHeader", feedHeader);
             return this;
         }
@@ -72,7 +72,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder filter(boolean filter) {
+        default AtomEndpointBuilder filter(boolean filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -81,7 +81,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder filter(String filter) {
+        default AtomEndpointBuilder filter(String filter) {
             setProperty("filter", filter);
             return this;
         }
@@ -91,7 +91,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>java.util.Date</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder lastUpdate(Date lastUpdate) {
+        default AtomEndpointBuilder lastUpdate(Date lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
             return this;
         }
@@ -101,7 +101,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Date</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder lastUpdate(String lastUpdate) {
+        default AtomEndpointBuilder lastUpdate(String lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
             return this;
         }
@@ -111,7 +111,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder password(String password) {
+        default AtomEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -121,7 +121,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder sortEntries(boolean sortEntries) {
+        default AtomEndpointBuilder sortEntries(boolean sortEntries) {
             setProperty("sortEntries", sortEntries);
             return this;
         }
@@ -131,7 +131,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder sortEntries(String sortEntries) {
+        default AtomEndpointBuilder sortEntries(String sortEntries) {
             setProperty("sortEntries", sortEntries);
             return this;
         }
@@ -141,7 +141,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder splitEntries(boolean splitEntries) {
+        default AtomEndpointBuilder splitEntries(boolean splitEntries) {
             setProperty("splitEntries", splitEntries);
             return this;
         }
@@ -151,7 +151,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder splitEntries(String splitEntries) {
+        default AtomEndpointBuilder splitEntries(String splitEntries) {
             setProperty("splitEntries", splitEntries);
             return this;
         }
@@ -162,8 +162,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder throttleEntries(
-                boolean throttleEntries) {
+        default AtomEndpointBuilder throttleEntries(boolean throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
             return this;
         }
@@ -174,8 +173,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder throttleEntries(
-                String throttleEntries) {
+        default AtomEndpointBuilder throttleEntries(String throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
             return this;
         }
@@ -185,7 +183,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AtomEndpointBuilder username(String username) {
+        default AtomEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -197,7 +195,7 @@ public interface AtomEndpointBuilderFactory {
     public static interface AdvancedAtomEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AtomEndpointBuilder basic() {
+        default AtomEndpointBuilder basic() {
             return (AtomEndpointBuilder) this;
         }
         /**
@@ -206,7 +204,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -217,7 +215,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomEndpointBuilder basicPropertyBinding(
+        default AdvancedAtomEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -228,8 +226,7 @@ public interface AtomEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAtomEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -239,8 +236,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtomEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedAtomEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -249,7 +245,7 @@ public interface AtomEndpointBuilderFactory {
      * The atom component is used for consuming Atom RSS feeds. Creates a
      * builder to build endpoints for the Atom component.
      */
-    public default AtomEndpointBuilder atom(String path) {
+    default AtomEndpointBuilder atom(String path) {
         class AtomEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomEndpointBuilder, AdvancedAtomEndpointBuilder {
             public AtomEndpointBuilderImpl(String path) {
                 super("atom", path);

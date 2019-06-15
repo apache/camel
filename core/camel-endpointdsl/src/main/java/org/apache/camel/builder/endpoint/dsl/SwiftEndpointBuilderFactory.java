@@ -37,7 +37,7 @@ public interface SwiftEndpointBuilderFactory {
     public static interface SwiftEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSwiftEndpointBuilder advanced() {
+        default AdvancedSwiftEndpointBuilder advanced() {
             return (AdvancedSwiftEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder host(String host) {
+        default SwiftEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder apiVersion(String apiVersion) {
+        default SwiftEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -64,7 +64,7 @@ public interface SwiftEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SwiftEndpointBuilder config(Object config) {
+        default SwiftEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface SwiftEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder config(String config) {
+        default SwiftEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -83,7 +83,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder domain(String domain) {
+        default SwiftEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -92,7 +92,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder operation(String operation) {
+        default SwiftEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -101,7 +101,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder password(String password) {
+        default SwiftEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -110,7 +110,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder project(String project) {
+        default SwiftEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -119,7 +119,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder subsystem(String subsystem) {
+        default SwiftEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
             return this;
         }
@@ -128,7 +128,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SwiftEndpointBuilder username(String username) {
+        default SwiftEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -140,7 +140,7 @@ public interface SwiftEndpointBuilderFactory {
     public static interface AdvancedSwiftEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default SwiftEndpointBuilder basic() {
+        default SwiftEndpointBuilder basic() {
             return (SwiftEndpointBuilder) this;
         }
         /**
@@ -149,7 +149,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSwiftEndpointBuilder basicPropertyBinding(
+        default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSwiftEndpointBuilder basicPropertyBinding(
+        default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,8 +171,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSwiftEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -182,8 +181,7 @@ public interface SwiftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSwiftEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -193,7 +191,7 @@ public interface SwiftEndpointBuilderFactory {
      * object storage services. Creates a builder to build endpoints for the
      * OpenStack Swift component.
      */
-    public default SwiftEndpointBuilder swift(String path) {
+    default SwiftEndpointBuilder swift(String path) {
         class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {
             public SwiftEndpointBuilderImpl(String path) {
                 super("openstack-swift", path);

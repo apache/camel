@@ -40,7 +40,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public interface QueueServiceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedQueueServiceEndpointConsumerBuilder advanced() {
+        default AdvancedQueueServiceEndpointConsumerBuilder advanced() {
             return (AdvancedQueueServiceEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QueueServiceEndpointConsumerBuilder containerAndQueueUri(
+        default QueueServiceEndpointConsumerBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
             setProperty("containerAndQueueUri", containerAndQueueUri);
             return this;
@@ -59,7 +59,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointConsumerBuilder azureQueueClient(
+        default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 Object azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -70,7 +70,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointConsumerBuilder azureQueueClient(
+        default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 String azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -81,7 +81,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointConsumerBuilder credentials(
+        default QueueServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -92,7 +92,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointConsumerBuilder credentials(
+        default QueueServiceEndpointConsumerBuilder credentials(
                 String credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -108,7 +108,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
+        default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -124,7 +124,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
+        default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -138,7 +138,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public interface AdvancedQueueServiceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default QueueServiceEndpointConsumerBuilder basic() {
+        default QueueServiceEndpointConsumerBuilder basic() {
             return (QueueServiceEndpointConsumerBuilder) this;
         }
         /**
@@ -150,7 +150,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -164,7 +164,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -174,7 +174,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
+        default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -185,7 +185,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
+        default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -196,7 +196,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -207,7 +207,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -218,7 +218,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
+        default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -229,7 +229,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
+        default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -243,7 +243,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public static interface QueueServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedQueueServiceEndpointProducerBuilder advanced() {
+        default AdvancedQueueServiceEndpointProducerBuilder advanced() {
             return (AdvancedQueueServiceEndpointProducerBuilder) this;
         }
         /**
@@ -251,7 +251,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QueueServiceEndpointProducerBuilder containerAndQueueUri(
+        default QueueServiceEndpointProducerBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
             setProperty("containerAndQueueUri", containerAndQueueUri);
             return this;
@@ -262,7 +262,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointProducerBuilder azureQueueClient(
+        default QueueServiceEndpointProducerBuilder azureQueueClient(
                 Object azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -273,7 +273,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointProducerBuilder azureQueueClient(
+        default QueueServiceEndpointProducerBuilder azureQueueClient(
                 String azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -284,7 +284,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointProducerBuilder credentials(
+        default QueueServiceEndpointProducerBuilder credentials(
                 Object credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -295,7 +295,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointProducerBuilder credentials(
+        default QueueServiceEndpointProducerBuilder credentials(
                 String credentials) {
             setProperty("credentials", credentials);
             return this;
@@ -313,7 +313,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder lazyStartProducer(
+        default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -331,7 +331,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder lazyStartProducer(
+        default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -341,7 +341,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder messageTimeToLive(
+        default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 int messageTimeToLive) {
             setProperty("messageTimeToLive", messageTimeToLive);
             return this;
@@ -351,7 +351,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder messageTimeToLive(
+        default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 String messageTimeToLive) {
             setProperty("messageTimeToLive", messageTimeToLive);
             return this;
@@ -361,7 +361,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
+        default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 int messageVisibilityDelay) {
             setProperty("messageVisibilityDelay", messageVisibilityDelay);
             return this;
@@ -371,7 +371,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
+        default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 String messageVisibilityDelay) {
             setProperty("messageVisibilityDelay", messageVisibilityDelay);
             return this;
@@ -382,7 +382,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder operation(
+        default QueueServiceEndpointProducerBuilder operation(
                 QueueServiceOperations operation) {
             setProperty("operation", operation);
             return this;
@@ -393,8 +393,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder operation(
-                String operation) {
+        default QueueServiceEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -403,7 +402,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default QueueServiceEndpointProducerBuilder queuePrefix(
+        default QueueServiceEndpointProducerBuilder queuePrefix(
                 String queuePrefix) {
             setProperty("queuePrefix", queuePrefix);
             return this;
@@ -417,7 +416,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public interface AdvancedQueueServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default QueueServiceEndpointProducerBuilder basic() {
+        default QueueServiceEndpointProducerBuilder basic() {
             return (QueueServiceEndpointProducerBuilder) this;
         }
         /**
@@ -426,7 +425,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -437,7 +436,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -448,7 +447,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointProducerBuilder synchronous(
+        default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -459,7 +458,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointProducerBuilder synchronous(
+        default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -472,7 +471,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public static interface QueueServiceEndpointBuilder
             extends
                 QueueServiceEndpointConsumerBuilder, QueueServiceEndpointProducerBuilder {
-        public default AdvancedQueueServiceEndpointBuilder advanced() {
+        default AdvancedQueueServiceEndpointBuilder advanced() {
             return (AdvancedQueueServiceEndpointBuilder) this;
         }
         /**
@@ -480,7 +479,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QueueServiceEndpointBuilder containerAndQueueUri(
+        default QueueServiceEndpointBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
             setProperty("containerAndQueueUri", containerAndQueueUri);
             return this;
@@ -491,7 +490,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointBuilder azureQueueClient(
+        default QueueServiceEndpointBuilder azureQueueClient(
                 Object azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -502,7 +501,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
          * @group common
          */
-        public default QueueServiceEndpointBuilder azureQueueClient(
+        default QueueServiceEndpointBuilder azureQueueClient(
                 String azureQueueClient) {
             setProperty("azureQueueClient", azureQueueClient);
             return this;
@@ -513,8 +512,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointBuilder credentials(
-                Object credentials) {
+        default QueueServiceEndpointBuilder credentials(Object credentials) {
             setProperty("credentials", credentials);
             return this;
         }
@@ -524,8 +522,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
          * @group common
          */
-        public default QueueServiceEndpointBuilder credentials(
-                String credentials) {
+        default QueueServiceEndpointBuilder credentials(String credentials) {
             setProperty("credentials", credentials);
             return this;
         }
@@ -538,7 +535,7 @@ public interface QueueServiceEndpointBuilderFactory {
     public static interface AdvancedQueueServiceEndpointBuilder
             extends
                 AdvancedQueueServiceEndpointConsumerBuilder, AdvancedQueueServiceEndpointProducerBuilder {
-        public default QueueServiceEndpointBuilder basic() {
+        default QueueServiceEndpointBuilder basic() {
             return (QueueServiceEndpointBuilder) this;
         }
         /**
@@ -547,7 +544,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -558,7 +555,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
+        default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -569,7 +566,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointBuilder synchronous(
+        default AdvancedQueueServiceEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -580,7 +577,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQueueServiceEndpointBuilder synchronous(
+        default AdvancedQueueServiceEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -599,7 +596,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * from Azure Storage Queue Service. Creates a builder to build endpoints
      * for the Azure Storage Queue Service component.
      */
-    public default QueueServiceEndpointBuilder queueService(String path) {
+    default QueueServiceEndpointBuilder queueService(String path) {
         class QueueServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueServiceEndpointBuilder, AdvancedQueueServiceEndpointBuilder {
             public QueueServiceEndpointBuilderImpl(String path) {
                 super("azure-queue", path);

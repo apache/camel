@@ -39,7 +39,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public interface QuickfixjEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedQuickfixjEndpointConsumerBuilder advanced() {
+        default AdvancedQuickfixjEndpointConsumerBuilder advanced() {
             return (AdvancedQuickfixjEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QuickfixjEndpointConsumerBuilder configurationName(
+        default QuickfixjEndpointConsumerBuilder configurationName(
                 String configurationName) {
             setProperty("configurationName", configurationName);
             return this;
@@ -63,7 +63,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
+        default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -78,7 +78,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
+        default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -90,8 +90,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>quickfix.SessionID</code> type.
          * @group common
          */
-        public default QuickfixjEndpointConsumerBuilder sessionID(
-                Object sessionID) {
+        default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -103,8 +102,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default QuickfixjEndpointConsumerBuilder sessionID(
-                String sessionID) {
+        default QuickfixjEndpointConsumerBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -119,7 +117,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
+        default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -135,7 +133,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
+        default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -148,7 +146,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public interface AdvancedQuickfixjEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default QuickfixjEndpointConsumerBuilder basic() {
+        default QuickfixjEndpointConsumerBuilder basic() {
             return (QuickfixjEndpointConsumerBuilder) this;
         }
         /**
@@ -160,7 +158,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
+        default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -174,7 +172,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
+        default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -184,7 +182,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
+        default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -195,7 +193,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
+        default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -206,7 +204,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -217,7 +215,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -228,7 +226,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
+        default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -239,7 +237,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
+        default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -252,7 +250,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public static interface QuickfixjEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedQuickfixjEndpointProducerBuilder advanced() {
+        default AdvancedQuickfixjEndpointProducerBuilder advanced() {
             return (AdvancedQuickfixjEndpointProducerBuilder) this;
         }
         /**
@@ -261,7 +259,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QuickfixjEndpointProducerBuilder configurationName(
+        default QuickfixjEndpointProducerBuilder configurationName(
                 String configurationName) {
             setProperty("configurationName", configurationName);
             return this;
@@ -276,7 +274,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointProducerBuilder lazyCreateEngine(
+        default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -291,7 +289,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointProducerBuilder lazyCreateEngine(
+        default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -303,8 +301,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>quickfix.SessionID</code> type.
          * @group common
          */
-        public default QuickfixjEndpointProducerBuilder sessionID(
-                Object sessionID) {
+        default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -316,8 +313,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default QuickfixjEndpointProducerBuilder sessionID(
-                String sessionID) {
+        default QuickfixjEndpointProducerBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -334,7 +330,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default QuickfixjEndpointProducerBuilder lazyStartProducer(
+        default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -352,7 +348,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default QuickfixjEndpointProducerBuilder lazyStartProducer(
+        default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -365,7 +361,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public interface AdvancedQuickfixjEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default QuickfixjEndpointProducerBuilder basic() {
+        default QuickfixjEndpointProducerBuilder basic() {
             return (QuickfixjEndpointProducerBuilder) this;
         }
         /**
@@ -374,7 +370,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -385,7 +381,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -396,7 +392,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointProducerBuilder synchronous(
+        default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -407,7 +403,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointProducerBuilder synchronous(
+        default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -420,7 +416,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public static interface QuickfixjEndpointBuilder
             extends
                 QuickfixjEndpointConsumerBuilder, QuickfixjEndpointProducerBuilder {
-        public default AdvancedQuickfixjEndpointBuilder advanced() {
+        default AdvancedQuickfixjEndpointBuilder advanced() {
             return (AdvancedQuickfixjEndpointBuilder) this;
         }
         /**
@@ -429,7 +425,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default QuickfixjEndpointBuilder configurationName(
+        default QuickfixjEndpointBuilder configurationName(
                 String configurationName) {
             setProperty("configurationName", configurationName);
             return this;
@@ -444,7 +440,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointBuilder lazyCreateEngine(
+        default QuickfixjEndpointBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -459,7 +455,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default QuickfixjEndpointBuilder lazyCreateEngine(
+        default QuickfixjEndpointBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
             setProperty("lazyCreateEngine", lazyCreateEngine);
             return this;
@@ -471,7 +467,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>quickfix.SessionID</code> type.
          * @group common
          */
-        public default QuickfixjEndpointBuilder sessionID(Object sessionID) {
+        default QuickfixjEndpointBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -483,7 +479,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default QuickfixjEndpointBuilder sessionID(String sessionID) {
+        default QuickfixjEndpointBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
             return this;
         }
@@ -495,7 +491,7 @@ public interface QuickfixjEndpointBuilderFactory {
     public static interface AdvancedQuickfixjEndpointBuilder
             extends
                 AdvancedQuickfixjEndpointConsumerBuilder, AdvancedQuickfixjEndpointProducerBuilder {
-        public default QuickfixjEndpointBuilder basic() {
+        default QuickfixjEndpointBuilder basic() {
             return (QuickfixjEndpointBuilder) this;
         }
         /**
@@ -504,7 +500,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -515,7 +511,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
+        default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -526,8 +522,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedQuickfixjEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -537,8 +532,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedQuickfixjEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedQuickfixjEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -548,7 +542,7 @@ public interface QuickfixjEndpointBuilderFactory {
      * messages to the QuickFix engine. Creates a builder to build endpoints for
      * the QuickFix component.
      */
-    public default QuickfixjEndpointBuilder quickfixj(String path) {
+    default QuickfixjEndpointBuilder quickfixj(String path) {
         class QuickfixjEndpointBuilderImpl extends AbstractEndpointBuilder implements QuickfixjEndpointBuilder, AdvancedQuickfixjEndpointBuilder {
             public QuickfixjEndpointBuilderImpl(String path) {
                 super("quickfix", path);

@@ -39,7 +39,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public interface KubernetesNodesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder advanced() {
+        default AdvancedKubernetesNodesEndpointConsumerBuilder advanced() {
             return (AdvancedKubernetesNodesEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder masterUrl(
+        default KubernetesNodesEndpointConsumerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -57,7 +57,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder apiVersion(
+        default KubernetesNodesEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -67,7 +67,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder dnsDomain(
+        default KubernetesNodesEndpointConsumerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -78,7 +78,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
+        default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -89,7 +89,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
+        default KubernetesNodesEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -99,8 +99,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder portName(
-                String portName) {
+        default KubernetesNodesEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -109,7 +108,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointConsumerBuilder portProtocol(
+        default KubernetesNodesEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -125,7 +124,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +140,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -151,8 +150,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder labelKey(
-                String labelKey) {
+        default KubernetesNodesEndpointConsumerBuilder labelKey(String labelKey) {
             setProperty("labelKey", labelKey);
             return this;
         }
@@ -161,7 +159,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder labelValue(
+        default KubernetesNodesEndpointConsumerBuilder labelValue(
                 String labelValue) {
             setProperty("labelValue", labelValue);
             return this;
@@ -171,7 +169,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder namespace(
+        default KubernetesNodesEndpointConsumerBuilder namespace(
                 String namespace) {
             setProperty("namespace", namespace);
             return this;
@@ -181,8 +179,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder poolSize(
-                int poolSize) {
+        default KubernetesNodesEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -191,8 +188,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder poolSize(
-                String poolSize) {
+        default KubernetesNodesEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -201,7 +197,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNodesEndpointConsumerBuilder resourceName(
+        default KubernetesNodesEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -211,7 +207,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder caCertData(
+        default KubernetesNodesEndpointConsumerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -221,7 +217,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder caCertFile(
+        default KubernetesNodesEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -231,7 +227,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientCertData(
+        default KubernetesNodesEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -241,7 +237,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientCertFile(
+        default KubernetesNodesEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -251,7 +247,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientKeyAlgo(
+        default KubernetesNodesEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -261,7 +257,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientKeyData(
+        default KubernetesNodesEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -271,7 +267,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientKeyFile(
+        default KubernetesNodesEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -281,7 +277,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder clientKeyPassphrase(
+        default KubernetesNodesEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -291,7 +287,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder oauthToken(
+        default KubernetesNodesEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -301,8 +297,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder password(
-                String password) {
+        default KubernetesNodesEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -311,7 +306,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder trustCerts(
+        default KubernetesNodesEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -322,7 +317,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder trustCerts(
+        default KubernetesNodesEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -332,8 +327,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointConsumerBuilder username(
-                String username) {
+        default KubernetesNodesEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -346,7 +340,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public interface AdvancedKubernetesNodesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KubernetesNodesEndpointConsumerBuilder basic() {
+        default KubernetesNodesEndpointConsumerBuilder basic() {
             return (KubernetesNodesEndpointConsumerBuilder) this;
         }
         /**
@@ -358,7 +352,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -372,7 +366,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -382,7 +376,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -393,7 +387,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -404,7 +398,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -415,7 +409,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -426,7 +420,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -438,7 +432,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -449,7 +443,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -460,7 +454,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +467,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public static interface KubernetesNodesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesNodesEndpointProducerBuilder advanced() {
+        default AdvancedKubernetesNodesEndpointProducerBuilder advanced() {
             return (AdvancedKubernetesNodesEndpointProducerBuilder) this;
         }
         /**
@@ -481,7 +475,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder masterUrl(
+        default KubernetesNodesEndpointProducerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -491,7 +485,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder apiVersion(
+        default KubernetesNodesEndpointProducerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -501,7 +495,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder dnsDomain(
+        default KubernetesNodesEndpointProducerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -512,7 +506,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder kubernetesClient(
+        default KubernetesNodesEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -523,7 +517,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder kubernetesClient(
+        default KubernetesNodesEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -533,8 +527,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder portName(
-                String portName) {
+        default KubernetesNodesEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -543,7 +536,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointProducerBuilder portProtocol(
+        default KubernetesNodesEndpointProducerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -561,7 +554,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
+        default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -579,7 +572,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
+        default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -589,7 +582,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesNodesEndpointProducerBuilder operation(
+        default KubernetesNodesEndpointProducerBuilder operation(
                 String operation) {
             setProperty("operation", operation);
             return this;
@@ -599,7 +592,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder caCertData(
+        default KubernetesNodesEndpointProducerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -609,7 +602,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder caCertFile(
+        default KubernetesNodesEndpointProducerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -619,7 +612,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientCertData(
+        default KubernetesNodesEndpointProducerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -629,7 +622,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientCertFile(
+        default KubernetesNodesEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -639,7 +632,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientKeyAlgo(
+        default KubernetesNodesEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -649,7 +642,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientKeyData(
+        default KubernetesNodesEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -659,7 +652,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientKeyFile(
+        default KubernetesNodesEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -669,7 +662,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder clientKeyPassphrase(
+        default KubernetesNodesEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -679,7 +672,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder oauthToken(
+        default KubernetesNodesEndpointProducerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -689,8 +682,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder password(
-                String password) {
+        default KubernetesNodesEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -699,7 +691,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder trustCerts(
+        default KubernetesNodesEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -710,7 +702,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder trustCerts(
+        default KubernetesNodesEndpointProducerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -720,8 +712,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointProducerBuilder username(
-                String username) {
+        default KubernetesNodesEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -734,7 +725,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public interface AdvancedKubernetesNodesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesNodesEndpointProducerBuilder basic() {
+        default KubernetesNodesEndpointProducerBuilder basic() {
             return (KubernetesNodesEndpointProducerBuilder) this;
         }
         /**
@@ -743,7 +734,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -754,7 +745,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -765,7 +756,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -777,7 +768,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -788,7 +779,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -799,7 +790,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -812,7 +803,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public static interface KubernetesNodesEndpointBuilder
             extends
                 KubernetesNodesEndpointConsumerBuilder, KubernetesNodesEndpointProducerBuilder {
-        public default AdvancedKubernetesNodesEndpointBuilder advanced() {
+        default AdvancedKubernetesNodesEndpointBuilder advanced() {
             return (AdvancedKubernetesNodesEndpointBuilder) this;
         }
         /**
@@ -820,7 +811,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder masterUrl(String masterUrl) {
+        default KubernetesNodesEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -829,8 +820,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder apiVersion(
-                String apiVersion) {
+        default KubernetesNodesEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -839,7 +829,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder dnsDomain(String dnsDomain) {
+        default KubernetesNodesEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -849,7 +839,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder kubernetesClient(
+        default KubernetesNodesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -860,7 +850,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder kubernetesClient(
+        default KubernetesNodesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -870,7 +860,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder portName(String portName) {
+        default KubernetesNodesEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -879,8 +869,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNodesEndpointBuilder portProtocol(
-                String portProtocol) {
+        default KubernetesNodesEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
         }
@@ -889,8 +878,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder caCertData(
-                String caCertData) {
+        default KubernetesNodesEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
         }
@@ -899,8 +887,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder caCertFile(
-                String caCertFile) {
+        default KubernetesNodesEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
         }
@@ -909,7 +896,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientCertData(
+        default KubernetesNodesEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -919,7 +906,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientCertFile(
+        default KubernetesNodesEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -929,7 +916,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientKeyAlgo(
+        default KubernetesNodesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -939,7 +926,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientKeyData(
+        default KubernetesNodesEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -949,7 +936,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientKeyFile(
+        default KubernetesNodesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -959,7 +946,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder clientKeyPassphrase(
+        default KubernetesNodesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -969,8 +956,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder oauthToken(
-                String oauthToken) {
+        default KubernetesNodesEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -979,7 +965,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder password(String password) {
+        default KubernetesNodesEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -988,8 +974,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder trustCerts(
-                Boolean trustCerts) {
+        default KubernetesNodesEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -999,8 +984,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder trustCerts(
-                String trustCerts) {
+        default KubernetesNodesEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -1009,7 +993,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNodesEndpointBuilder username(String username) {
+        default KubernetesNodesEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1021,7 +1005,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
     public static interface AdvancedKubernetesNodesEndpointBuilder
             extends
                 AdvancedKubernetesNodesEndpointConsumerBuilder, AdvancedKubernetesNodesEndpointProducerBuilder {
-        public default KubernetesNodesEndpointBuilder basic() {
+        default KubernetesNodesEndpointBuilder basic() {
             return (KubernetesNodesEndpointBuilder) this;
         }
         /**
@@ -1030,7 +1014,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1041,7 +1025,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1052,7 +1036,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1064,7 +1048,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesNodesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1075,7 +1059,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1086,7 +1070,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNodesEndpointBuilder synchronous(
+        default AdvancedKubernetesNodesEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1097,7 +1081,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
      * node operations and a consumer to consume node events. Creates a builder
      * to build endpoints for the Kubernetes Nodes component.
      */
-    public default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
+    default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
         class KubernetesNodesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNodesEndpointBuilder, AdvancedKubernetesNodesEndpointBuilder {
             public KubernetesNodesEndpointBuilderImpl(String path) {
                 super("kubernetes-nodes", path);

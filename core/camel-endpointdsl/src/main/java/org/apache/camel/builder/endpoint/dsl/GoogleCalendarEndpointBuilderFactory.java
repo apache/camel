@@ -38,7 +38,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public interface GoogleCalendarEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder advanced() {
+        default AdvancedGoogleCalendarEndpointConsumerBuilder advanced() {
             return (AdvancedGoogleCalendarEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder apiName(
+        default GoogleCalendarEndpointConsumerBuilder apiName(
                 GoogleCalendarApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -58,8 +58,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder apiName(
-                String apiName) {
+        default GoogleCalendarEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -68,7 +67,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder methodName(
+        default GoogleCalendarEndpointConsumerBuilder methodName(
                 String methodName) {
             setProperty("methodName", methodName);
             return this;
@@ -79,7 +78,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder accessToken(
+        default GoogleCalendarEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -90,7 +89,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder applicationName(
+        default GoogleCalendarEndpointConsumerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -100,8 +99,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder clientId(
-                String clientId) {
+        default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -110,7 +108,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder clientSecret(
+        default GoogleCalendarEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -120,7 +118,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder emailAddress(
+        default GoogleCalendarEndpointConsumerBuilder emailAddress(
                 String emailAddress) {
             setProperty("emailAddress", emailAddress);
             return this;
@@ -130,8 +128,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder inBody(
-                String inBody) {
+        default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -141,7 +138,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder p12FileName(
+        default GoogleCalendarEndpointConsumerBuilder p12FileName(
                 String p12FileName) {
             setProperty("p12FileName", p12FileName);
             return this;
@@ -153,7 +150,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder refreshToken(
+        default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -166,8 +163,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder scopes(
-                String scopes) {
+        default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -177,7 +173,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointConsumerBuilder user(String user) {
+        default GoogleCalendarEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -192,7 +188,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -208,7 +204,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -222,7 +218,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public interface AdvancedGoogleCalendarEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleCalendarEndpointConsumerBuilder basic() {
+        default GoogleCalendarEndpointConsumerBuilder basic() {
             return (GoogleCalendarEndpointConsumerBuilder) this;
         }
         /**
@@ -234,7 +230,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -248,7 +244,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -258,7 +254,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -269,7 +265,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -280,7 +276,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -291,7 +287,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -302,7 +298,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -313,7 +309,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -326,7 +322,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public static interface GoogleCalendarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoogleCalendarEndpointProducerBuilder advanced() {
+        default AdvancedGoogleCalendarEndpointProducerBuilder advanced() {
             return (AdvancedGoogleCalendarEndpointProducerBuilder) this;
         }
         /**
@@ -335,7 +331,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder apiName(
+        default GoogleCalendarEndpointProducerBuilder apiName(
                 GoogleCalendarApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -346,8 +342,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder apiName(
-                String apiName) {
+        default GoogleCalendarEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -356,7 +351,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder methodName(
+        default GoogleCalendarEndpointProducerBuilder methodName(
                 String methodName) {
             setProperty("methodName", methodName);
             return this;
@@ -367,7 +362,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder accessToken(
+        default GoogleCalendarEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -378,7 +373,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder applicationName(
+        default GoogleCalendarEndpointProducerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -388,8 +383,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder clientId(
-                String clientId) {
+        default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -398,7 +392,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder clientSecret(
+        default GoogleCalendarEndpointProducerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -408,7 +402,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder emailAddress(
+        default GoogleCalendarEndpointProducerBuilder emailAddress(
                 String emailAddress) {
             setProperty("emailAddress", emailAddress);
             return this;
@@ -418,8 +412,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder inBody(
-                String inBody) {
+        default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -429,7 +422,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder p12FileName(
+        default GoogleCalendarEndpointProducerBuilder p12FileName(
                 String p12FileName) {
             setProperty("p12FileName", p12FileName);
             return this;
@@ -441,7 +434,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder refreshToken(
+        default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -454,8 +447,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder scopes(
-                String scopes) {
+        default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -465,7 +457,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointProducerBuilder user(String user) {
+        default GoogleCalendarEndpointProducerBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -482,7 +474,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
+        default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -500,7 +492,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
+        default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -514,7 +506,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public interface AdvancedGoogleCalendarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoogleCalendarEndpointProducerBuilder basic() {
+        default GoogleCalendarEndpointProducerBuilder basic() {
             return (GoogleCalendarEndpointProducerBuilder) this;
         }
         /**
@@ -523,7 +515,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -534,7 +526,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -545,7 +537,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -556,7 +548,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -569,7 +561,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public static interface GoogleCalendarEndpointBuilder
             extends
                 GoogleCalendarEndpointConsumerBuilder, GoogleCalendarEndpointProducerBuilder {
-        public default AdvancedGoogleCalendarEndpointBuilder advanced() {
+        default AdvancedGoogleCalendarEndpointBuilder advanced() {
             return (AdvancedGoogleCalendarEndpointBuilder) this;
         }
         /**
@@ -578,7 +570,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder apiName(
+        default GoogleCalendarEndpointBuilder apiName(
                 GoogleCalendarApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -589,7 +581,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder apiName(String apiName) {
+        default GoogleCalendarEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -598,8 +590,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder methodName(
-                String methodName) {
+        default GoogleCalendarEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -609,8 +600,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder accessToken(
-                String accessToken) {
+        default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -620,7 +610,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder applicationName(
+        default GoogleCalendarEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -630,7 +620,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder clientId(String clientId) {
+        default GoogleCalendarEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -639,8 +629,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder clientSecret(
-                String clientSecret) {
+        default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -649,8 +638,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder emailAddress(
-                String emailAddress) {
+        default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
             setProperty("emailAddress", emailAddress);
             return this;
         }
@@ -659,7 +647,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder inBody(String inBody) {
+        default GoogleCalendarEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -669,8 +657,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder p12FileName(
-                String p12FileName) {
+        default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
             setProperty("p12FileName", p12FileName);
             return this;
         }
@@ -681,8 +668,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder refreshToken(
-                String refreshToken) {
+        default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
         }
@@ -694,7 +680,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder scopes(String scopes) {
+        default GoogleCalendarEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -704,7 +690,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleCalendarEndpointBuilder user(String user) {
+        default GoogleCalendarEndpointBuilder user(String user) {
             setProperty("user", user);
             return this;
         }
@@ -716,7 +702,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     public static interface AdvancedGoogleCalendarEndpointBuilder
             extends
                 AdvancedGoogleCalendarEndpointConsumerBuilder, AdvancedGoogleCalendarEndpointProducerBuilder {
-        public default GoogleCalendarEndpointBuilder basic() {
+        default GoogleCalendarEndpointBuilder basic() {
             return (GoogleCalendarEndpointBuilder) this;
         }
         /**
@@ -725,7 +711,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -736,7 +722,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -747,7 +733,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -758,7 +744,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleCalendarEndpointBuilder synchronous(
+        default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -776,7 +762,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * The google-calendar component provides access to Google Calendar. Creates
      * a builder to build endpoints for the Google Calendar component.
      */
-    public default GoogleCalendarEndpointBuilder googleCalendar(String path) {
+    default GoogleCalendarEndpointBuilder googleCalendar(String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {
             public GoogleCalendarEndpointBuilderImpl(String path) {
                 super("google-calendar", path);

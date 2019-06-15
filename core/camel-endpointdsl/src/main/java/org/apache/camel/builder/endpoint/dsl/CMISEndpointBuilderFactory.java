@@ -39,7 +39,7 @@ public interface CMISEndpointBuilderFactory {
     public interface CMISEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedCMISEndpointConsumerBuilder advanced() {
+        default AdvancedCMISEndpointConsumerBuilder advanced() {
             return (AdvancedCMISEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder cmsUrl(String cmsUrl) {
+        default CMISEndpointConsumerBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
             return this;
         }
@@ -56,7 +56,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder pageSize(int pageSize) {
+        default CMISEndpointConsumerBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -65,7 +65,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder pageSize(String pageSize) {
+        default CMISEndpointConsumerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -75,8 +75,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder readContent(
-                boolean readContent) {
+        default CMISEndpointConsumerBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -86,8 +85,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder readContent(
-                String readContent) {
+        default CMISEndpointConsumerBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -96,7 +94,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder readCount(int readCount) {
+        default CMISEndpointConsumerBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -105,7 +103,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder readCount(String readCount) {
+        default CMISEndpointConsumerBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -115,8 +113,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointConsumerBuilder repositoryId(
-                String repositoryId) {
+        default CMISEndpointConsumerBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
             return this;
         }
@@ -131,7 +128,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CMISEndpointConsumerBuilder bridgeErrorHandler(
+        default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -147,7 +144,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CMISEndpointConsumerBuilder bridgeErrorHandler(
+        default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -159,7 +156,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CMISEndpointConsumerBuilder query(String query) {
+        default CMISEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -168,7 +165,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointConsumerBuilder password(String password) {
+        default CMISEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -177,7 +174,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointConsumerBuilder username(String username) {
+        default CMISEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -189,7 +186,7 @@ public interface CMISEndpointBuilderFactory {
     public interface AdvancedCMISEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default CMISEndpointConsumerBuilder basic() {
+        default CMISEndpointConsumerBuilder basic() {
             return (CMISEndpointConsumerBuilder) this;
         }
         /**
@@ -201,7 +198,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -215,7 +212,7 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -225,7 +222,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCMISEndpointConsumerBuilder exchangePattern(
+        default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -236,7 +233,7 @@ public interface CMISEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCMISEndpointConsumerBuilder exchangePattern(
+        default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -247,7 +244,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -258,7 +255,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -271,7 +268,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -284,7 +281,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -295,7 +292,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder synchronous(
+        default AdvancedCMISEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -306,7 +303,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointConsumerBuilder synchronous(
+        default AdvancedCMISEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -319,7 +316,7 @@ public interface CMISEndpointBuilderFactory {
     public static interface CMISEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCMISEndpointProducerBuilder advanced() {
+        default AdvancedCMISEndpointProducerBuilder advanced() {
             return (AdvancedCMISEndpointProducerBuilder) this;
         }
         /**
@@ -327,7 +324,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder cmsUrl(String cmsUrl) {
+        default CMISEndpointProducerBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
             return this;
         }
@@ -336,7 +333,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder pageSize(int pageSize) {
+        default CMISEndpointProducerBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -345,7 +342,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder pageSize(String pageSize) {
+        default CMISEndpointProducerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -355,8 +352,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder readContent(
-                boolean readContent) {
+        default CMISEndpointProducerBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -366,8 +362,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder readContent(
-                String readContent) {
+        default CMISEndpointProducerBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -376,7 +371,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder readCount(int readCount) {
+        default CMISEndpointProducerBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -385,7 +380,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder readCount(String readCount) {
+        default CMISEndpointProducerBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -395,8 +390,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointProducerBuilder repositoryId(
-                String repositoryId) {
+        default CMISEndpointProducerBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
             return this;
         }
@@ -413,7 +407,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CMISEndpointProducerBuilder lazyStartProducer(
+        default CMISEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -431,7 +425,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CMISEndpointProducerBuilder lazyStartProducer(
+        default CMISEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -442,7 +436,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
+        default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
             setProperty("queryMode", queryMode);
             return this;
         }
@@ -452,7 +446,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CMISEndpointProducerBuilder queryMode(String queryMode) {
+        default CMISEndpointProducerBuilder queryMode(String queryMode) {
             setProperty("queryMode", queryMode);
             return this;
         }
@@ -461,7 +455,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointProducerBuilder password(String password) {
+        default CMISEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -470,7 +464,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointProducerBuilder username(String username) {
+        default CMISEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -482,7 +476,7 @@ public interface CMISEndpointBuilderFactory {
     public interface AdvancedCMISEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default CMISEndpointProducerBuilder basic() {
+        default CMISEndpointProducerBuilder basic() {
             return (CMISEndpointProducerBuilder) this;
         }
         /**
@@ -491,7 +485,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -502,7 +496,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -515,7 +509,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -528,7 +522,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -539,7 +533,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder synchronous(
+        default AdvancedCMISEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -550,7 +544,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointProducerBuilder synchronous(
+        default AdvancedCMISEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -563,7 +557,7 @@ public interface CMISEndpointBuilderFactory {
     public static interface CMISEndpointBuilder
             extends
                 CMISEndpointConsumerBuilder, CMISEndpointProducerBuilder {
-        public default AdvancedCMISEndpointBuilder advanced() {
+        default AdvancedCMISEndpointBuilder advanced() {
             return (AdvancedCMISEndpointBuilder) this;
         }
         /**
@@ -571,7 +565,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder cmsUrl(String cmsUrl) {
+        default CMISEndpointBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
             return this;
         }
@@ -580,7 +574,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder pageSize(int pageSize) {
+        default CMISEndpointBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -589,7 +583,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder pageSize(String pageSize) {
+        default CMISEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
             return this;
         }
@@ -599,7 +593,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder readContent(boolean readContent) {
+        default CMISEndpointBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -609,7 +603,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder readContent(String readContent) {
+        default CMISEndpointBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
             return this;
         }
@@ -618,7 +612,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder readCount(int readCount) {
+        default CMISEndpointBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -627,7 +621,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder readCount(String readCount) {
+        default CMISEndpointBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
             return this;
         }
@@ -637,7 +631,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CMISEndpointBuilder repositoryId(String repositoryId) {
+        default CMISEndpointBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
             return this;
         }
@@ -646,7 +640,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointBuilder password(String password) {
+        default CMISEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -655,7 +649,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CMISEndpointBuilder username(String username) {
+        default CMISEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -667,7 +661,7 @@ public interface CMISEndpointBuilderFactory {
     public static interface AdvancedCMISEndpointBuilder
             extends
                 AdvancedCMISEndpointConsumerBuilder, AdvancedCMISEndpointProducerBuilder {
-        public default CMISEndpointBuilder basic() {
+        default CMISEndpointBuilder basic() {
             return (CMISEndpointBuilder) this;
         }
         /**
@@ -676,7 +670,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -687,7 +681,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder basicPropertyBinding(
+        default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -700,7 +694,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -713,7 +707,7 @@ public interface CMISEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder sessionFacadeFactory(
+        default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
             setProperty("sessionFacadeFactory", sessionFacadeFactory);
             return this;
@@ -724,8 +718,7 @@ public interface CMISEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCMISEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -735,8 +728,7 @@ public interface CMISEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMISEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCMISEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -746,7 +738,7 @@ public interface CMISEndpointBuilderFactory {
      * add/read nodes to/from a CMIS compliant content repositories. Creates a
      * builder to build endpoints for the CMIS component.
      */
-    public default CMISEndpointBuilder cMIS(String path) {
+    default CMISEndpointBuilder cMIS(String path) {
         class CMISEndpointBuilderImpl extends AbstractEndpointBuilder implements CMISEndpointBuilder, AdvancedCMISEndpointBuilder {
             public CMISEndpointBuilderImpl(String path) {
                 super("cmis", path);

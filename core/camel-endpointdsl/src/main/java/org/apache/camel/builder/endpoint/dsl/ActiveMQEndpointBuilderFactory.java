@@ -41,7 +41,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public interface ActiveMQEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedActiveMQEndpointConsumerBuilder advanced() {
+        default AdvancedActiveMQEndpointConsumerBuilder advanced() {
             return (AdvancedActiveMQEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder destinationType(
+        default ActiveMQEndpointConsumerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -59,7 +59,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder destinationName(
+        default ActiveMQEndpointConsumerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -73,7 +73,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder clientId(String clientId) {
+        default ActiveMQEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -85,7 +85,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder connectionFactory(
+        default ActiveMQEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -99,7 +99,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder connectionFactory(
+        default ActiveMQEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -116,7 +116,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder disableReplyTo(
+        default ActiveMQEndpointConsumerBuilder disableReplyTo(
                 boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -133,7 +133,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder disableReplyTo(
+        default ActiveMQEndpointConsumerBuilder disableReplyTo(
                 String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -144,7 +144,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder durableSubscriptionName(
+        default ActiveMQEndpointConsumerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -159,7 +159,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder jmsMessageType(
+        default ActiveMQEndpointConsumerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -174,7 +174,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder jmsMessageType(
+        default ActiveMQEndpointConsumerBuilder jmsMessageType(
                 String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -188,7 +188,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder testConnectionOnStartup(
+        default ActiveMQEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -202,7 +202,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointConsumerBuilder testConnectionOnStartup(
+        default ActiveMQEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -213,7 +213,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder acknowledgementModeName(
+        default ActiveMQEndpointConsumerBuilder acknowledgementModeName(
                 String acknowledgementModeName) {
             setProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
@@ -232,7 +232,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder asyncConsumer(
+        default ActiveMQEndpointConsumerBuilder asyncConsumer(
                 boolean asyncConsumer) {
             setProperty("asyncConsumer", asyncConsumer);
             return this;
@@ -251,7 +251,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder asyncConsumer(
+        default ActiveMQEndpointConsumerBuilder asyncConsumer(
                 String asyncConsumer) {
             setProperty("asyncConsumer", asyncConsumer);
             return this;
@@ -261,8 +261,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder autoStartup(
-                boolean autoStartup) {
+        default ActiveMQEndpointConsumerBuilder autoStartup(boolean autoStartup) {
             setProperty("autoStartup", autoStartup);
             return this;
         }
@@ -271,8 +270,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder autoStartup(
-                String autoStartup) {
+        default ActiveMQEndpointConsumerBuilder autoStartup(String autoStartup) {
             setProperty("autoStartup", autoStartup);
             return this;
         }
@@ -287,7 +285,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder bridgeErrorHandler(
+        default ActiveMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -303,7 +301,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder bridgeErrorHandler(
+        default ActiveMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -314,7 +312,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder cacheLevel(int cacheLevel) {
+        default ActiveMQEndpointConsumerBuilder cacheLevel(int cacheLevel) {
             setProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -324,8 +322,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder cacheLevel(
-                String cacheLevel) {
+        default ActiveMQEndpointConsumerBuilder cacheLevel(String cacheLevel) {
             setProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -338,7 +335,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder cacheLevelName(
+        default ActiveMQEndpointConsumerBuilder cacheLevelName(
                 String cacheLevelName) {
             setProperty("cacheLevelName", cacheLevelName);
             return this;
@@ -353,7 +350,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder concurrentConsumers(
+        default ActiveMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -368,7 +365,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder concurrentConsumers(
+        default ActiveMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -383,7 +380,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder maxConcurrentConsumers(
+        default ActiveMQEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -398,7 +395,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder maxConcurrentConsumers(
+        default ActiveMQEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -409,7 +406,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder replyTo(String replyTo) {
+        default ActiveMQEndpointConsumerBuilder replyTo(String replyTo) {
             setProperty("replyTo", replyTo);
             return this;
         }
@@ -418,7 +415,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder replyToDeliveryPersistent(
+        default ActiveMQEndpointConsumerBuilder replyToDeliveryPersistent(
                 boolean replyToDeliveryPersistent) {
             setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
@@ -428,7 +425,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder replyToDeliveryPersistent(
+        default ActiveMQEndpointConsumerBuilder replyToDeliveryPersistent(
                 String replyToDeliveryPersistent) {
             setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
@@ -438,7 +435,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder selector(String selector) {
+        default ActiveMQEndpointConsumerBuilder selector(String selector) {
             setProperty("selector", selector);
             return this;
         }
@@ -454,7 +451,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder subscriptionDurable(
+        default ActiveMQEndpointConsumerBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
             setProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -471,7 +468,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder subscriptionDurable(
+        default ActiveMQEndpointConsumerBuilder subscriptionDurable(
                 String subscriptionDurable) {
             setProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -487,7 +484,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder subscriptionName(
+        default ActiveMQEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
             setProperty("subscriptionName", subscriptionName);
             return this;
@@ -507,7 +504,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder subscriptionShared(
+        default ActiveMQEndpointConsumerBuilder subscriptionShared(
                 boolean subscriptionShared) {
             setProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -527,7 +524,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ActiveMQEndpointConsumerBuilder subscriptionShared(
+        default ActiveMQEndpointConsumerBuilder subscriptionShared(
                 String subscriptionShared) {
             setProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -538,7 +535,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
+        default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -550,7 +547,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
+        default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -561,7 +558,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group logging
          */
-        public default ActiveMQEndpointConsumerBuilder errorHandlerLogStackTrace(
+        default ActiveMQEndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -572,7 +569,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group logging
          */
-        public default ActiveMQEndpointConsumerBuilder errorHandlerLogStackTrace(
+        default ActiveMQEndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -583,7 +580,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointConsumerBuilder password(String password) {
+        default ActiveMQEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -593,7 +590,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointConsumerBuilder username(String username) {
+        default ActiveMQEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -602,8 +599,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointConsumerBuilder transacted(
-                boolean transacted) {
+        default ActiveMQEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -612,8 +608,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointConsumerBuilder transacted(
-                String transacted) {
+        default ActiveMQEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -625,7 +620,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public interface AdvancedActiveMQEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ActiveMQEndpointConsumerBuilder basic() {
+        default ActiveMQEndpointConsumerBuilder basic() {
             return (ActiveMQEndpointConsumerBuilder) this;
         }
         /**
@@ -640,7 +635,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder acceptMessagesWhileStopping(
+        default AdvancedActiveMQEndpointConsumerBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
             setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -657,7 +652,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder acceptMessagesWhileStopping(
+        default AdvancedActiveMQEndpointConsumerBuilder acceptMessagesWhileStopping(
                 String acceptMessagesWhileStopping) {
             setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -673,7 +668,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder allowReplyManagerQuickStop(
+        default AdvancedActiveMQEndpointConsumerBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
             setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -689,7 +684,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder allowReplyManagerQuickStop(
+        default AdvancedActiveMQEndpointConsumerBuilder allowReplyManagerQuickStop(
                 String allowReplyManagerQuickStop) {
             setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -709,7 +704,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder consumerType(
+        default AdvancedActiveMQEndpointConsumerBuilder consumerType(
                 ConsumerType consumerType) {
             setProperty("consumerType", consumerType);
             return this;
@@ -729,7 +724,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder consumerType(
+        default AdvancedActiveMQEndpointConsumerBuilder consumerType(
                 String consumerType) {
             setProperty("consumerType", consumerType);
             return this;
@@ -750,7 +745,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
+        default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
                 DefaultTaskExecutorType defaultTaskExecutorType) {
             setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -771,7 +766,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
+        default AdvancedActiveMQEndpointConsumerBuilder defaultTaskExecutorType(
                 String defaultTaskExecutorType) {
             setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -785,7 +780,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder eagerLoadingOfProperties(
+        default AdvancedActiveMQEndpointConsumerBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
             setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -799,7 +794,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder eagerLoadingOfProperties(
+        default AdvancedActiveMQEndpointConsumerBuilder eagerLoadingOfProperties(
                 String eagerLoadingOfProperties) {
             setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -813,7 +808,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exceptionHandler(
+        default AdvancedActiveMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -827,7 +822,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exceptionHandler(
+        default AdvancedActiveMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -837,7 +832,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exchangePattern(
+        default AdvancedActiveMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -848,7 +843,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exchangePattern(
+        default AdvancedActiveMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -859,7 +854,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exposeListenerSession(
+        default AdvancedActiveMQEndpointConsumerBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
             setProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -870,7 +865,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exposeListenerSession(
+        default AdvancedActiveMQEndpointConsumerBuilder exposeListenerSession(
                 String exposeListenerSession) {
             setProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -883,7 +878,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder replyToSameDestinationAllowed(
+        default AdvancedActiveMQEndpointConsumerBuilder replyToSameDestinationAllowed(
                 boolean replyToSameDestinationAllowed) {
             setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
@@ -896,7 +891,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder replyToSameDestinationAllowed(
+        default AdvancedActiveMQEndpointConsumerBuilder replyToSameDestinationAllowed(
                 String replyToSameDestinationAllowed) {
             setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
@@ -907,7 +902,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder taskExecutor(
+        default AdvancedActiveMQEndpointConsumerBuilder taskExecutor(
                 Object taskExecutor) {
             setProperty("taskExecutor", taskExecutor);
             return this;
@@ -918,7 +913,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder taskExecutor(
+        default AdvancedActiveMQEndpointConsumerBuilder taskExecutor(
                 String taskExecutor) {
             setProperty("taskExecutor", taskExecutor);
             return this;
@@ -931,7 +926,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -944,7 +939,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -963,7 +958,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -982,7 +977,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -993,7 +988,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1004,7 +999,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1015,7 +1010,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1026,7 +1021,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1040,7 +1035,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder destinationResolver(
+        default AdvancedActiveMQEndpointConsumerBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -1054,7 +1049,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder destinationResolver(
+        default AdvancedActiveMQEndpointConsumerBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -1071,7 +1066,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder errorHandler(
+        default AdvancedActiveMQEndpointConsumerBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -1088,7 +1083,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder errorHandler(
+        default AdvancedActiveMQEndpointConsumerBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -1099,7 +1094,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exceptionListener(
+        default AdvancedActiveMQEndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1111,7 +1106,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder exceptionListener(
+        default AdvancedActiveMQEndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1123,7 +1118,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1135,7 +1130,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1146,7 +1141,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointConsumerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -1157,7 +1152,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointConsumerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -1171,7 +1166,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointConsumerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -1185,7 +1180,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointConsumerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -1198,7 +1193,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1211,7 +1206,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1231,7 +1226,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1251,7 +1246,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1262,7 +1257,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1273,7 +1268,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1286,7 +1281,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointConsumerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -1299,7 +1294,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointConsumerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -1312,7 +1307,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageConverter(
+        default AdvancedActiveMQEndpointConsumerBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -1325,7 +1320,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageConverter(
+        default AdvancedActiveMQEndpointConsumerBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -1339,7 +1334,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1353,7 +1348,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1367,7 +1362,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointConsumerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -1381,7 +1376,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointConsumerBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -1396,7 +1391,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointConsumerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -1411,7 +1406,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointConsumerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -1425,7 +1420,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointConsumerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -1439,7 +1434,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointConsumerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -1450,7 +1445,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointConsumerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -1461,7 +1456,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointConsumerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -1471,7 +1466,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointConsumerBuilder receiveTimeout(
                 long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1481,7 +1476,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1493,7 +1488,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointConsumerBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -1505,7 +1500,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointConsumerBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -1519,7 +1514,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -1533,7 +1528,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -1544,7 +1539,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder synchronous(
+        default AdvancedActiveMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1555,7 +1550,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder synchronous(
+        default AdvancedActiveMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1574,7 +1569,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferException(
+        default AdvancedActiveMQEndpointConsumerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1593,7 +1588,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferException(
+        default AdvancedActiveMQEndpointConsumerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1610,7 +1605,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferExchange(
+        default AdvancedActiveMQEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1627,7 +1622,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferExchange(
+        default AdvancedActiveMQEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1645,7 +1640,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferFault(
+        default AdvancedActiveMQEndpointConsumerBuilder transferFault(
                 boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -1663,7 +1658,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transferFault(
+        default AdvancedActiveMQEndpointConsumerBuilder transferFault(
                 String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -1674,7 +1669,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -1685,7 +1680,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -1697,7 +1692,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1709,7 +1704,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1720,7 +1715,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1731,7 +1726,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1742,7 +1737,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointConsumerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -1753,7 +1748,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointConsumerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -1764,7 +1759,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transactionManager(
+        default AdvancedActiveMQEndpointConsumerBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -1775,7 +1770,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transactionManager(
+        default AdvancedActiveMQEndpointConsumerBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -1785,7 +1780,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transactionName(
+        default AdvancedActiveMQEndpointConsumerBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -1796,7 +1791,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointConsumerBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -1807,7 +1802,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointConsumerBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointConsumerBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -1820,7 +1815,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public static interface ActiveMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedActiveMQEndpointProducerBuilder advanced() {
+        default AdvancedActiveMQEndpointProducerBuilder advanced() {
             return (AdvancedActiveMQEndpointProducerBuilder) this;
         }
         /**
@@ -1828,7 +1823,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder destinationType(
+        default ActiveMQEndpointProducerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -1838,7 +1833,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder destinationName(
+        default ActiveMQEndpointProducerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -1852,7 +1847,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder clientId(String clientId) {
+        default ActiveMQEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -1864,7 +1859,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder connectionFactory(
+        default ActiveMQEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1878,7 +1873,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder connectionFactory(
+        default ActiveMQEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1895,7 +1890,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder disableReplyTo(
+        default ActiveMQEndpointProducerBuilder disableReplyTo(
                 boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -1912,7 +1907,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder disableReplyTo(
+        default ActiveMQEndpointProducerBuilder disableReplyTo(
                 String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -1923,7 +1918,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder durableSubscriptionName(
+        default ActiveMQEndpointProducerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -1938,7 +1933,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder jmsMessageType(
+        default ActiveMQEndpointProducerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -1953,7 +1948,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder jmsMessageType(
+        default ActiveMQEndpointProducerBuilder jmsMessageType(
                 String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -1967,7 +1962,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder testConnectionOnStartup(
+        default ActiveMQEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -1981,7 +1976,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointProducerBuilder testConnectionOnStartup(
+        default ActiveMQEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -1993,7 +1988,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder deliveryMode(
+        default ActiveMQEndpointProducerBuilder deliveryMode(
                 Integer deliveryMode) {
             setProperty("deliveryMode", deliveryMode);
             return this;
@@ -2006,8 +2001,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder deliveryMode(
-                String deliveryMode) {
+        default ActiveMQEndpointProducerBuilder deliveryMode(String deliveryMode) {
             setProperty("deliveryMode", deliveryMode);
             return this;
         }
@@ -2016,7 +2010,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder deliveryPersistent(
+        default ActiveMQEndpointProducerBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
             setProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -2026,7 +2020,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder deliveryPersistent(
+        default ActiveMQEndpointProducerBuilder deliveryPersistent(
                 String deliveryPersistent) {
             setProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -2041,7 +2035,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder explicitQosEnabled(
+        default ActiveMQEndpointProducerBuilder explicitQosEnabled(
                 Boolean explicitQosEnabled) {
             setProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -2057,7 +2051,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder explicitQosEnabled(
+        default ActiveMQEndpointProducerBuilder explicitQosEnabled(
                 String explicitQosEnabled) {
             setProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -2068,7 +2062,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder formatDateHeadersToIso8601(
+        default ActiveMQEndpointProducerBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
             setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -2079,7 +2073,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder formatDateHeadersToIso8601(
+        default ActiveMQEndpointProducerBuilder formatDateHeadersToIso8601(
                 String formatDateHeadersToIso8601) {
             setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -2097,7 +2091,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder lazyStartProducer(
+        default ActiveMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2115,7 +2109,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder lazyStartProducer(
+        default ActiveMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2133,7 +2127,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder preserveMessageQos(
+        default ActiveMQEndpointProducerBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
             setProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -2151,7 +2145,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder preserveMessageQos(
+        default ActiveMQEndpointProducerBuilder preserveMessageQos(
                 String preserveMessageQos) {
             setProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -2164,7 +2158,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder priority(int priority) {
+        default ActiveMQEndpointProducerBuilder priority(int priority) {
             setProperty("priority", priority);
             return this;
         }
@@ -2176,7 +2170,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder priority(String priority) {
+        default ActiveMQEndpointProducerBuilder priority(String priority) {
             setProperty("priority", priority);
             return this;
         }
@@ -2187,7 +2181,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
             setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -2199,7 +2193,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToConcurrentConsumers(
                 String replyToConcurrentConsumers) {
             setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -2211,7 +2205,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToMaxConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -2223,7 +2217,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToMaxConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 String replyToMaxConcurrentConsumers) {
             setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -2234,7 +2228,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 int replyToOnTimeoutMaxConcurrentConsumers) {
             setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
@@ -2245,7 +2239,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
+        default ActiveMQEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 String replyToOnTimeoutMaxConcurrentConsumers) {
             setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
@@ -2258,7 +2252,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToOverride(
+        default ActiveMQEndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
             setProperty("replyToOverride", replyToOverride);
             return this;
@@ -2277,7 +2271,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToType(
+        default ActiveMQEndpointProducerBuilder replyToType(
                 ReplyToType replyToType) {
             setProperty("replyToType", replyToType);
             return this;
@@ -2296,8 +2290,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder replyToType(
-                String replyToType) {
+        default ActiveMQEndpointProducerBuilder replyToType(String replyToType) {
             setProperty("replyToType", replyToType);
             return this;
         }
@@ -2310,7 +2303,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder requestTimeout(
+        default ActiveMQEndpointProducerBuilder requestTimeout(
                 long requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -2324,7 +2317,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder requestTimeout(
+        default ActiveMQEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -2335,8 +2328,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder timeToLive(
-                long timeToLive) {
+        default ActiveMQEndpointProducerBuilder timeToLive(long timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -2346,8 +2338,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default ActiveMQEndpointProducerBuilder timeToLive(
-                String timeToLive) {
+        default ActiveMQEndpointProducerBuilder timeToLive(String timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -2357,7 +2348,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointProducerBuilder password(String password) {
+        default ActiveMQEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -2367,7 +2358,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointProducerBuilder username(String username) {
+        default ActiveMQEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -2376,8 +2367,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointProducerBuilder transacted(
-                boolean transacted) {
+        default ActiveMQEndpointProducerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -2386,8 +2376,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointProducerBuilder transacted(
-                String transacted) {
+        default ActiveMQEndpointProducerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -2399,7 +2388,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public interface AdvancedActiveMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ActiveMQEndpointProducerBuilder basic() {
+        default ActiveMQEndpointProducerBuilder basic() {
             return (ActiveMQEndpointProducerBuilder) this;
         }
         /**
@@ -2412,7 +2401,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder allowAdditionalHeaders(
+        default AdvancedActiveMQEndpointProducerBuilder allowAdditionalHeaders(
                 String allowAdditionalHeaders) {
             setProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
@@ -2423,7 +2412,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder allowNullBody(
+        default AdvancedActiveMQEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2434,7 +2423,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder allowNullBody(
+        default AdvancedActiveMQEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2449,7 +2438,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder alwaysCopyMessage(
+        default AdvancedActiveMQEndpointProducerBuilder alwaysCopyMessage(
                 boolean alwaysCopyMessage) {
             setProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
@@ -2464,7 +2453,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder alwaysCopyMessage(
+        default AdvancedActiveMQEndpointProducerBuilder alwaysCopyMessage(
                 String alwaysCopyMessage) {
             setProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
@@ -2480,7 +2469,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder correlationProperty(
+        default AdvancedActiveMQEndpointProducerBuilder correlationProperty(
                 String correlationProperty) {
             setProperty("correlationProperty", correlationProperty);
             return this;
@@ -2498,7 +2487,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder disableTimeToLive(
+        default AdvancedActiveMQEndpointProducerBuilder disableTimeToLive(
                 boolean disableTimeToLive) {
             setProperty("disableTimeToLive", disableTimeToLive);
             return this;
@@ -2516,7 +2505,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder disableTimeToLive(
+        default AdvancedActiveMQEndpointProducerBuilder disableTimeToLive(
                 String disableTimeToLive) {
             setProperty("disableTimeToLive", disableTimeToLive);
             return this;
@@ -2529,7 +2518,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder forceSendOriginalMessage(
+        default AdvancedActiveMQEndpointProducerBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
             setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -2542,7 +2531,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder forceSendOriginalMessage(
+        default AdvancedActiveMQEndpointProducerBuilder forceSendOriginalMessage(
                 String forceSendOriginalMessage) {
             setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -2555,7 +2544,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder includeSentJMSMessageID(
+        default AdvancedActiveMQEndpointProducerBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
             setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -2568,7 +2557,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder includeSentJMSMessageID(
+        default AdvancedActiveMQEndpointProducerBuilder includeSentJMSMessageID(
                 String includeSentJMSMessageID) {
             setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -2586,7 +2575,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder replyToCacheLevelName(
+        default AdvancedActiveMQEndpointProducerBuilder replyToCacheLevelName(
                 String replyToCacheLevelName) {
             setProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
@@ -2598,7 +2587,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder replyToDestinationSelectorName(
+        default AdvancedActiveMQEndpointProducerBuilder replyToDestinationSelectorName(
                 String replyToDestinationSelectorName) {
             setProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
             return this;
@@ -2614,7 +2603,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder streamMessageTypeEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
             setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -2630,7 +2619,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder streamMessageTypeEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder streamMessageTypeEnabled(
                 String streamMessageTypeEnabled) {
             setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -2643,7 +2632,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2656,7 +2645,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2675,7 +2664,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -2694,7 +2683,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -2705,7 +2694,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -2716,7 +2705,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -2727,7 +2716,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2738,7 +2727,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2752,7 +2741,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder destinationResolver(
+        default AdvancedActiveMQEndpointProducerBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -2766,7 +2755,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder destinationResolver(
+        default AdvancedActiveMQEndpointProducerBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -2783,7 +2772,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder errorHandler(
+        default AdvancedActiveMQEndpointProducerBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -2800,7 +2789,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder errorHandler(
+        default AdvancedActiveMQEndpointProducerBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -2811,7 +2800,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder exceptionListener(
+        default AdvancedActiveMQEndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -2823,7 +2812,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder exceptionListener(
+        default AdvancedActiveMQEndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -2835,7 +2824,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2847,7 +2836,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2858,7 +2847,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointProducerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -2869,7 +2858,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointProducerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -2883,7 +2872,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointProducerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -2897,7 +2886,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointProducerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -2910,7 +2899,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -2923,7 +2912,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -2943,7 +2932,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -2963,7 +2952,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -2974,7 +2963,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -2985,7 +2974,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -2998,7 +2987,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointProducerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -3011,7 +3000,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointProducerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -3024,7 +3013,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageConverter(
+        default AdvancedActiveMQEndpointProducerBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -3037,7 +3026,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageConverter(
+        default AdvancedActiveMQEndpointProducerBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -3051,7 +3040,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -3065,7 +3054,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -3079,7 +3068,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -3093,7 +3082,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -3108,7 +3097,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointProducerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -3123,7 +3112,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointProducerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -3137,7 +3126,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -3151,7 +3140,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointProducerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -3162,7 +3151,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointProducerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -3173,7 +3162,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointProducerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -3183,7 +3172,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointProducerBuilder receiveTimeout(
                 long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -3193,7 +3182,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -3205,7 +3194,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointProducerBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -3217,7 +3206,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointProducerBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -3231,7 +3220,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -3245,7 +3234,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -3256,7 +3245,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder synchronous(
+        default AdvancedActiveMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3267,7 +3256,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder synchronous(
+        default AdvancedActiveMQEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3286,7 +3275,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferException(
+        default AdvancedActiveMQEndpointProducerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -3305,7 +3294,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferException(
+        default AdvancedActiveMQEndpointProducerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -3322,7 +3311,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferExchange(
+        default AdvancedActiveMQEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3339,7 +3328,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferExchange(
+        default AdvancedActiveMQEndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3357,7 +3346,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferFault(
+        default AdvancedActiveMQEndpointProducerBuilder transferFault(
                 boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -3375,7 +3364,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transferFault(
+        default AdvancedActiveMQEndpointProducerBuilder transferFault(
                 String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -3386,7 +3375,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointProducerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -3397,7 +3386,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointProducerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -3409,7 +3398,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -3421,7 +3410,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -3432,7 +3421,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -3443,7 +3432,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -3454,7 +3443,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointProducerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -3465,7 +3454,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointProducerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -3476,7 +3465,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transactionManager(
+        default AdvancedActiveMQEndpointProducerBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -3487,7 +3476,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transactionManager(
+        default AdvancedActiveMQEndpointProducerBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -3497,7 +3486,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transactionName(
+        default AdvancedActiveMQEndpointProducerBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -3508,7 +3497,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointProducerBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -3519,7 +3508,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointProducerBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointProducerBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -3532,7 +3521,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public static interface ActiveMQEndpointBuilder
             extends
                 ActiveMQEndpointConsumerBuilder, ActiveMQEndpointProducerBuilder {
-        public default AdvancedActiveMQEndpointBuilder advanced() {
+        default AdvancedActiveMQEndpointBuilder advanced() {
             return (AdvancedActiveMQEndpointBuilder) this;
         }
         /**
@@ -3540,8 +3529,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder destinationType(
-                String destinationType) {
+        default ActiveMQEndpointBuilder destinationType(String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
         }
@@ -3550,8 +3538,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder destinationName(
-                String destinationName) {
+        default ActiveMQEndpointBuilder destinationName(String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
         }
@@ -3564,7 +3551,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder clientId(String clientId) {
+        default ActiveMQEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -3576,7 +3563,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder connectionFactory(
+        default ActiveMQEndpointBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -3590,7 +3577,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder connectionFactory(
+        default ActiveMQEndpointBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -3607,8 +3594,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder disableReplyTo(
-                boolean disableReplyTo) {
+        default ActiveMQEndpointBuilder disableReplyTo(boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -3624,8 +3610,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder disableReplyTo(
-                String disableReplyTo) {
+        default ActiveMQEndpointBuilder disableReplyTo(String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -3635,7 +3620,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder durableSubscriptionName(
+        default ActiveMQEndpointBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -3650,7 +3635,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder jmsMessageType(
+        default ActiveMQEndpointBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -3665,8 +3650,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder jmsMessageType(
-                String jmsMessageType) {
+        default ActiveMQEndpointBuilder jmsMessageType(String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -3679,7 +3663,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder testConnectionOnStartup(
+        default ActiveMQEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -3693,7 +3677,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ActiveMQEndpointBuilder testConnectionOnStartup(
+        default ActiveMQEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -3704,7 +3688,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointBuilder password(String password) {
+        default ActiveMQEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -3714,7 +3698,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default ActiveMQEndpointBuilder username(String username) {
+        default ActiveMQEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -3723,7 +3707,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointBuilder transacted(boolean transacted) {
+        default ActiveMQEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -3732,7 +3716,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default ActiveMQEndpointBuilder transacted(String transacted) {
+        default ActiveMQEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -3744,7 +3728,7 @@ public interface ActiveMQEndpointBuilderFactory {
     public static interface AdvancedActiveMQEndpointBuilder
             extends
                 AdvancedActiveMQEndpointConsumerBuilder, AdvancedActiveMQEndpointProducerBuilder {
-        public default ActiveMQEndpointBuilder basic() {
+        default ActiveMQEndpointBuilder basic() {
             return (ActiveMQEndpointBuilder) this;
         }
         /**
@@ -3755,7 +3739,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3768,7 +3752,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder allowSerializedHeaders(
+        default AdvancedActiveMQEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3787,7 +3771,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -3806,7 +3790,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder asyncStartListener(
+        default AdvancedActiveMQEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -3817,7 +3801,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -3828,7 +3812,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder asyncStopListener(
+        default AdvancedActiveMQEndpointBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -3839,7 +3823,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3850,7 +3834,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder basicPropertyBinding(
+        default AdvancedActiveMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3864,7 +3848,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder destinationResolver(
+        default AdvancedActiveMQEndpointBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -3878,7 +3862,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder destinationResolver(
+        default AdvancedActiveMQEndpointBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -3895,8 +3879,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder errorHandler(
-                Object errorHandler) {
+        default AdvancedActiveMQEndpointBuilder errorHandler(Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -3912,8 +3895,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder errorHandler(
-                String errorHandler) {
+        default AdvancedActiveMQEndpointBuilder errorHandler(String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -3923,7 +3905,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder exceptionListener(
+        default AdvancedActiveMQEndpointBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -3935,7 +3917,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder exceptionListener(
+        default AdvancedActiveMQEndpointBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -3947,7 +3929,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -3959,7 +3941,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder headerFilterStrategy(
+        default AdvancedActiveMQEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -3970,7 +3952,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -3981,7 +3963,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder idleConsumerLimit(
+        default AdvancedActiveMQEndpointBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -3995,7 +3977,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -4009,7 +3991,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder idleTaskExecutionLimit(
+        default AdvancedActiveMQEndpointBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -4022,7 +4004,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -4035,7 +4017,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder includeAllJMSXProperties(
+        default AdvancedActiveMQEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -4055,7 +4037,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -4075,7 +4057,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedActiveMQEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -4086,7 +4068,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -4097,7 +4079,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder mapJmsMessage(
+        default AdvancedActiveMQEndpointBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -4110,7 +4092,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -4123,7 +4105,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder maxMessagesPerTask(
+        default AdvancedActiveMQEndpointBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -4136,7 +4118,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageConverter(
+        default AdvancedActiveMQEndpointBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -4149,7 +4131,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageConverter(
+        default AdvancedActiveMQEndpointBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -4163,7 +4145,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -4177,7 +4159,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageCreatedStrategy(
+        default AdvancedActiveMQEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -4191,7 +4173,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -4205,7 +4187,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageIdEnabled(
+        default AdvancedActiveMQEndpointBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -4220,7 +4202,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -4235,7 +4217,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageListenerContainerFactory(
+        default AdvancedActiveMQEndpointBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -4249,7 +4231,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -4263,7 +4245,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder messageTimestampEnabled(
+        default AdvancedActiveMQEndpointBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -4274,7 +4256,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -4285,7 +4267,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder pubSubNoLocal(
+        default AdvancedActiveMQEndpointBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -4295,7 +4277,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointBuilder receiveTimeout(
                 long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -4305,7 +4287,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder receiveTimeout(
+        default AdvancedActiveMQEndpointBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -4317,7 +4299,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -4329,7 +4311,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder recoveryInterval(
+        default AdvancedActiveMQEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -4343,7 +4325,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -4357,7 +4339,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder requestTimeoutCheckerInterval(
+        default AdvancedActiveMQEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -4368,8 +4350,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedActiveMQEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4379,8 +4360,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedActiveMQEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4398,7 +4378,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferException(
+        default AdvancedActiveMQEndpointBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -4417,7 +4397,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferException(
+        default AdvancedActiveMQEndpointBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -4434,7 +4414,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferExchange(
+        default AdvancedActiveMQEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -4451,7 +4431,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferExchange(
+        default AdvancedActiveMQEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -4469,7 +4449,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferFault(
+        default AdvancedActiveMQEndpointBuilder transferFault(
                 boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -4487,7 +4467,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder transferFault(
+        default AdvancedActiveMQEndpointBuilder transferFault(
                 String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -4498,7 +4478,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -4509,7 +4489,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder useMessageIDAsCorrelationID(
+        default AdvancedActiveMQEndpointBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -4521,7 +4501,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -4533,7 +4513,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -4544,7 +4524,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -4555,7 +4535,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -4566,7 +4546,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -4577,7 +4557,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder lazyCreateTransactionManager(
+        default AdvancedActiveMQEndpointBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -4588,7 +4568,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder transactionManager(
+        default AdvancedActiveMQEndpointBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -4599,7 +4579,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder transactionManager(
+        default AdvancedActiveMQEndpointBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -4609,7 +4589,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder transactionName(
+        default AdvancedActiveMQEndpointBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -4620,7 +4600,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -4631,7 +4611,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedActiveMQEndpointBuilder transactionTimeout(
+        default AdvancedActiveMQEndpointBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -4674,7 +4654,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Apache ActiveMQ. This component extends the Camel JMS component. Creates
      * a builder to build endpoints for the ActiveMQ component.
      */
-    public default ActiveMQEndpointBuilder activeMQ(String path) {
+    default ActiveMQEndpointBuilder activeMQ(String path) {
         class ActiveMQEndpointBuilderImpl extends AbstractEndpointBuilder implements ActiveMQEndpointBuilder, AdvancedActiveMQEndpointBuilder {
             public ActiveMQEndpointBuilderImpl(String path) {
                 super("activemq", path);

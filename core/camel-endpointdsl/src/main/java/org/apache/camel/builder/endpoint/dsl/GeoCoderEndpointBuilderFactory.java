@@ -37,7 +37,7 @@ public interface GeoCoderEndpointBuilderFactory {
     public static interface GeoCoderEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGeoCoderEndpointBuilder advanced() {
+        default AdvancedGeoCoderEndpointBuilder advanced() {
             return (AdvancedGeoCoderEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GeoCoderEndpointBuilder address(String address) {
+        default GeoCoderEndpointBuilder address(String address) {
             setProperty("address", address);
             return this;
         }
@@ -54,7 +54,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GeoCoderEndpointBuilder latlng(String latlng) {
+        default GeoCoderEndpointBuilder latlng(String latlng) {
             setProperty("latlng", latlng);
             return this;
         }
@@ -64,7 +64,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GeoCoderEndpointBuilder headersOnly(boolean headersOnly) {
+        default GeoCoderEndpointBuilder headersOnly(boolean headersOnly) {
             setProperty("headersOnly", headersOnly);
             return this;
         }
@@ -74,7 +74,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GeoCoderEndpointBuilder headersOnly(String headersOnly) {
+        default GeoCoderEndpointBuilder headersOnly(String headersOnly) {
             setProperty("headersOnly", headersOnly);
             return this;
         }
@@ -83,7 +83,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GeoCoderEndpointBuilder language(String language) {
+        default GeoCoderEndpointBuilder language(String language) {
             setProperty("language", language);
             return this;
         }
@@ -92,8 +92,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyAuthDomain(
-                String proxyAuthDomain) {
+        default GeoCoderEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             setProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
         }
@@ -102,8 +101,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyAuthHost(
-                String proxyAuthHost) {
+        default GeoCoderEndpointBuilder proxyAuthHost(String proxyAuthHost) {
             setProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
@@ -112,8 +110,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyAuthMethod(
-                String proxyAuthMethod) {
+        default GeoCoderEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
             setProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
@@ -122,7 +119,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyAuthPassword(
+        default GeoCoderEndpointBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
             setProperty("proxyAuthPassword", proxyAuthPassword);
             return this;
@@ -132,7 +129,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyAuthUsername(
+        default GeoCoderEndpointBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
             setProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
@@ -142,7 +139,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyHost(String proxyHost) {
+        default GeoCoderEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -151,7 +148,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyPort(Integer proxyPort) {
+        default GeoCoderEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -161,7 +158,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default GeoCoderEndpointBuilder proxyPort(String proxyPort) {
+        default GeoCoderEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -170,7 +167,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GeoCoderEndpointBuilder apiKey(String apiKey) {
+        default GeoCoderEndpointBuilder apiKey(String apiKey) {
             setProperty("apiKey", apiKey);
             return this;
         }
@@ -179,7 +176,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GeoCoderEndpointBuilder clientId(String clientId) {
+        default GeoCoderEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -188,7 +185,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default GeoCoderEndpointBuilder clientKey(String clientKey) {
+        default GeoCoderEndpointBuilder clientKey(String clientKey) {
             setProperty("clientKey", clientKey);
             return this;
         }
@@ -200,7 +197,7 @@ public interface GeoCoderEndpointBuilderFactory {
     public static interface AdvancedGeoCoderEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default GeoCoderEndpointBuilder basic() {
+        default GeoCoderEndpointBuilder basic() {
             return (GeoCoderEndpointBuilder) this;
         }
         /**
@@ -209,7 +206,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
+        default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -220,7 +217,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
+        default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -231,8 +228,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGeoCoderEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGeoCoderEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -242,8 +238,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGeoCoderEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGeoCoderEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -253,7 +248,7 @@ public interface GeoCoderEndpointBuilderFactory {
      * longitude) for a given address, or reverse lookup. Creates a builder to
      * build endpoints for the Geocoder component.
      */
-    public default GeoCoderEndpointBuilder geoCoder(String path) {
+    default GeoCoderEndpointBuilder geoCoder(String path) {
         class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {
             public GeoCoderEndpointBuilderImpl(String path) {
                 super("geocoder", path);

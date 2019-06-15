@@ -37,7 +37,7 @@ public interface EjbEndpointBuilderFactory {
     public static interface EjbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedEjbEndpointBuilder advanced() {
+        default AdvancedEjbEndpointBuilder advanced() {
             return (AdvancedEjbEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface EjbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EjbEndpointBuilder beanName(String beanName) {
+        default EjbEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
             return this;
         }
@@ -56,7 +56,7 @@ public interface EjbEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group common
          */
-        public default EjbEndpointBuilder cache(Boolean cache) {
+        default EjbEndpointBuilder cache(Boolean cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -68,7 +68,7 @@ public interface EjbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default EjbEndpointBuilder cache(String cache) {
+        default EjbEndpointBuilder cache(String cache) {
             setProperty("cache", cache);
             return this;
         }
@@ -77,7 +77,7 @@ public interface EjbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default EjbEndpointBuilder method(String method) {
+        default EjbEndpointBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -87,8 +87,7 @@ public interface EjbEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group common
          */
-        public default EjbEndpointBuilder parameters(
-                Map<String, Object> parameters) {
+        default EjbEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -99,7 +98,7 @@ public interface EjbEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default EjbEndpointBuilder parameters(String parameters) {
+        default EjbEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
             return this;
         }
@@ -111,7 +110,7 @@ public interface EjbEndpointBuilderFactory {
     public static interface AdvancedEjbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default EjbEndpointBuilder basic() {
+        default EjbEndpointBuilder basic() {
             return (EjbEndpointBuilder) this;
         }
         /**
@@ -120,7 +119,7 @@ public interface EjbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEjbEndpointBuilder basicPropertyBinding(
+        default AdvancedEjbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -131,7 +130,7 @@ public interface EjbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEjbEndpointBuilder basicPropertyBinding(
+        default AdvancedEjbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -142,8 +141,7 @@ public interface EjbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEjbEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedEjbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -153,7 +151,7 @@ public interface EjbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEjbEndpointBuilder synchronous(String synchronous) {
+        default AdvancedEjbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -162,7 +160,7 @@ public interface EjbEndpointBuilderFactory {
      * The ejb component is for invoking EJB Java beans from Camel. Creates a
      * builder to build endpoints for the EJB component.
      */
-    public default EjbEndpointBuilder ejb(String path) {
+    default EjbEndpointBuilder ejb(String path) {
         class EjbEndpointBuilderImpl extends AbstractEndpointBuilder implements EjbEndpointBuilder, AdvancedEjbEndpointBuilder {
             public EjbEndpointBuilderImpl(String path) {
                 super("ejb", path);

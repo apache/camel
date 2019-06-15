@@ -37,7 +37,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
     public static interface KubernetesPersistentVolumesEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder advanced() {
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder advanced() {
             return (AdvancedKubernetesPersistentVolumesEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder masterUrl(
+        default KubernetesPersistentVolumesEndpointBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -55,7 +55,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder apiVersion(
+        default KubernetesPersistentVolumesEndpointBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -65,7 +65,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder dnsDomain(
+        default KubernetesPersistentVolumesEndpointBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -76,7 +76,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
+        default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -87,7 +87,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
+        default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -97,7 +97,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder portName(
+        default KubernetesPersistentVolumesEndpointBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -107,7 +107,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesPersistentVolumesEndpointBuilder portProtocol(
+        default KubernetesPersistentVolumesEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -117,7 +117,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder caCertData(
+        default KubernetesPersistentVolumesEndpointBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -127,7 +127,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder caCertFile(
+        default KubernetesPersistentVolumesEndpointBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -137,7 +137,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientCertData(
+        default KubernetesPersistentVolumesEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -147,7 +147,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientCertFile(
+        default KubernetesPersistentVolumesEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -157,7 +157,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientKeyAlgo(
+        default KubernetesPersistentVolumesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -167,7 +167,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientKeyData(
+        default KubernetesPersistentVolumesEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -177,7 +177,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientKeyFile(
+        default KubernetesPersistentVolumesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -187,7 +187,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder clientKeyPassphrase(
+        default KubernetesPersistentVolumesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -197,7 +197,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder oauthToken(
+        default KubernetesPersistentVolumesEndpointBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -207,7 +207,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder password(
+        default KubernetesPersistentVolumesEndpointBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -217,7 +217,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder trustCerts(
+        default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -228,7 +228,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder trustCerts(
+        default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -238,7 +238,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesPersistentVolumesEndpointBuilder username(
+        default KubernetesPersistentVolumesEndpointBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -252,7 +252,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
     public static interface AdvancedKubernetesPersistentVolumesEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesPersistentVolumesEndpointBuilder basic() {
+        default KubernetesPersistentVolumesEndpointBuilder basic() {
             return (KubernetesPersistentVolumesEndpointBuilder) this;
         }
         /**
@@ -261,7 +261,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -272,7 +272,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -283,7 +283,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -295,7 +295,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -306,7 +306,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -317,7 +317,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
+        default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -328,7 +328,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
      * execute kubernetes persistent volume operations. Creates a builder to
      * build endpoints for the Kubernetes Persistent Volume component.
      */
-    public default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
+    default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
             String path) {
         class KubernetesPersistentVolumesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPersistentVolumesEndpointBuilder, AdvancedKubernetesPersistentVolumesEndpointBuilder {
             public KubernetesPersistentVolumesEndpointBuilderImpl(String path) {

@@ -36,7 +36,7 @@ public interface JingEndpointBuilderFactory {
     public static interface JingEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJingEndpointBuilder advanced() {
+        default AdvancedJingEndpointBuilder advanced() {
             return (AdvancedJingEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface JingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JingEndpointBuilder resourceUri(String resourceUri) {
+        default JingEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -57,7 +57,7 @@ public interface JingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JingEndpointBuilder compactSyntax(boolean compactSyntax) {
+        default JingEndpointBuilder compactSyntax(boolean compactSyntax) {
             setProperty("compactSyntax", compactSyntax);
             return this;
         }
@@ -68,7 +68,7 @@ public interface JingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JingEndpointBuilder compactSyntax(String compactSyntax) {
+        default JingEndpointBuilder compactSyntax(String compactSyntax) {
             setProperty("compactSyntax", compactSyntax);
             return this;
         }
@@ -80,7 +80,7 @@ public interface JingEndpointBuilderFactory {
     public static interface AdvancedJingEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default JingEndpointBuilder basic() {
+        default JingEndpointBuilder basic() {
             return (JingEndpointBuilder) this;
         }
         /**
@@ -89,7 +89,7 @@ public interface JingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJingEndpointBuilder basicPropertyBinding(
+        default AdvancedJingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -100,7 +100,7 @@ public interface JingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJingEndpointBuilder basicPropertyBinding(
+        default AdvancedJingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -111,8 +111,7 @@ public interface JingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJingEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJingEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -122,8 +121,7 @@ public interface JingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJingEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJingEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -132,7 +130,7 @@ public interface JingEndpointBuilderFactory {
      * Validates the payload of a message using RelaxNG Syntax using Jing
      * library. Creates a builder to build endpoints for the Jing component.
      */
-    public default JingEndpointBuilder jing(String path) {
+    default JingEndpointBuilder jing(String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {
                 super("jing", path);

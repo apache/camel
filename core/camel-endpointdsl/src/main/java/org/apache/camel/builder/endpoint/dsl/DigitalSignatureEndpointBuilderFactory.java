@@ -42,7 +42,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
     public static interface DigitalSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDigitalSignatureEndpointBuilder advanced() {
+        default AdvancedDigitalSignatureEndpointBuilder advanced() {
             return (AdvancedDigitalSignatureEndpointBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder cryptoOperation(
+        default DigitalSignatureEndpointBuilder cryptoOperation(
                 CryptoOperation cryptoOperation) {
             setProperty("cryptoOperation", cryptoOperation);
             return this;
@@ -64,7 +64,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder cryptoOperation(
+        default DigitalSignatureEndpointBuilder cryptoOperation(
                 String cryptoOperation) {
             setProperty("cryptoOperation", cryptoOperation);
             return this;
@@ -74,7 +74,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder name(String name) {
+        default DigitalSignatureEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -84,8 +84,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder algorithm(
-                String algorithm) {
+        default DigitalSignatureEndpointBuilder algorithm(String algorithm) {
             setProperty("algorithm", algorithm);
             return this;
         }
@@ -98,7 +97,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder alias(String alias) {
+        default DigitalSignatureEndpointBuilder alias(String alias) {
             setProperty("alias", alias);
             return this;
         }
@@ -108,7 +107,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder certificateName(
+        default DigitalSignatureEndpointBuilder certificateName(
                 String certificateName) {
             setProperty("certificateName", certificateName);
             return this;
@@ -123,8 +122,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.security.KeyStore</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder keystore(
-                KeyStore keystore) {
+        default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
             setProperty("keystore", keystore);
             return this;
         }
@@ -139,7 +137,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder keystore(String keystore) {
+        default DigitalSignatureEndpointBuilder keystore(String keystore) {
             setProperty("keystore", keystore);
             return this;
         }
@@ -149,8 +147,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder keystoreName(
-                String keystoreName) {
+        default DigitalSignatureEndpointBuilder keystoreName(String keystoreName) {
             setProperty("keystoreName", keystoreName);
             return this;
         }
@@ -159,8 +156,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder privateKey(
-                PrivateKey privateKey) {
+        default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -170,8 +166,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder privateKey(
-                String privateKey) {
+        default DigitalSignatureEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -181,7 +176,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder privateKeyName(
+        default DigitalSignatureEndpointBuilder privateKeyName(
                 String privateKeyName) {
             setProperty("privateKeyName", privateKeyName);
             return this;
@@ -192,7 +187,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder provider(String provider) {
+        default DigitalSignatureEndpointBuilder provider(String provider) {
             setProperty("provider", provider);
             return this;
         }
@@ -201,7 +196,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder publicKeyName(
+        default DigitalSignatureEndpointBuilder publicKeyName(
                 String publicKeyName) {
             setProperty("publicKeyName", publicKeyName);
             return this;
@@ -212,7 +207,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder secureRandomName(
+        default DigitalSignatureEndpointBuilder secureRandomName(
                 String secureRandomName) {
             setProperty("secureRandomName", secureRandomName);
             return this;
@@ -223,7 +218,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DigitalSignatureEndpointBuilder signatureHeaderName(
+        default DigitalSignatureEndpointBuilder signatureHeaderName(
                 String signatureHeaderName) {
             setProperty("signatureHeaderName", signatureHeaderName);
             return this;
@@ -234,8 +229,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>char[]</code> type.
          * @group security
          */
-        public default DigitalSignatureEndpointBuilder password(
-                Character[] password) {
+        default DigitalSignatureEndpointBuilder password(Character[] password) {
             setProperty("password", password);
             return this;
         }
@@ -245,7 +239,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a <code>char[]</code> type.
          * @group security
          */
-        public default DigitalSignatureEndpointBuilder password(String password) {
+        default DigitalSignatureEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -257,7 +251,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
     public static interface AdvancedDigitalSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DigitalSignatureEndpointBuilder basic() {
+        default DigitalSignatureEndpointBuilder basic() {
             return (DigitalSignatureEndpointBuilder) this;
         }
         /**
@@ -266,7 +260,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
+        default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -277,7 +271,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
+        default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -287,7 +281,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder bufferSize(
+        default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 Integer bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -298,7 +292,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder bufferSize(
+        default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
@@ -309,7 +303,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.security.cert.Certificate</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder certificate(
+        default AdvancedDigitalSignatureEndpointBuilder certificate(
                 Certificate certificate) {
             setProperty("certificate", certificate);
             return this;
@@ -321,7 +315,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>java.security.cert.Certificate</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder certificate(
+        default AdvancedDigitalSignatureEndpointBuilder certificate(
                 String certificate) {
             setProperty("certificate", certificate);
             return this;
@@ -334,7 +328,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
+        default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 boolean clearHeaders) {
             setProperty("clearHeaders", clearHeaders);
             return this;
@@ -347,7 +341,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
+        default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 String clearHeaders) {
             setProperty("clearHeaders", clearHeaders);
             return this;
@@ -364,7 +358,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
+        default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
             setProperty("keyStoreParameters", keyStoreParameters);
             return this;
@@ -381,7 +375,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
+        default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
             setProperty("keyStoreParameters", keyStoreParameters);
             return this;
@@ -392,7 +386,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.security.PublicKey</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder publicKey(
+        default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 PublicKey publicKey) {
             setProperty("publicKey", publicKey);
             return this;
@@ -404,7 +398,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>java.security.PublicKey</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder publicKey(
+        default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
@@ -414,7 +408,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>java.security.SecureRandom</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder secureRandom(
+        default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 SecureRandom secureRandom) {
             setProperty("secureRandom", secureRandom);
             return this;
@@ -425,7 +419,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * <code>java.security.SecureRandom</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder secureRandom(
+        default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 String secureRandom) {
             setProperty("secureRandom", secureRandom);
             return this;
@@ -436,7 +430,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder synchronous(
+        default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -447,7 +441,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDigitalSignatureEndpointBuilder synchronous(
+        default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -466,7 +460,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * the Signature Service of the Java Cryptographic Extension (JCE). Creates
      * a builder to build endpoints for the Crypto (JCE) component.
      */
-    public default DigitalSignatureEndpointBuilder digitalSignature(String path) {
+    default DigitalSignatureEndpointBuilder digitalSignature(String path) {
         class DigitalSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalSignatureEndpointBuilder, AdvancedDigitalSignatureEndpointBuilder {
             public DigitalSignatureEndpointBuilderImpl(String path) {
                 super("crypto", path);

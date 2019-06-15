@@ -37,7 +37,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     public static interface MyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMyBatisBeanEndpointBuilder advanced() {
+        default AdvancedMyBatisBeanEndpointBuilder advanced() {
             return (AdvancedMyBatisBeanEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MyBatisBeanEndpointBuilder beanName(String beanName) {
+        default MyBatisBeanEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
             return this;
         }
@@ -55,7 +55,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default MyBatisBeanEndpointBuilder methodName(String methodName) {
+        default MyBatisBeanEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -67,7 +67,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     public static interface AdvancedMyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default MyBatisBeanEndpointBuilder basic() {
+        default MyBatisBeanEndpointBuilder basic() {
             return (MyBatisBeanEndpointBuilder) this;
         }
         /**
@@ -76,7 +76,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
+        default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -87,7 +87,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
+        default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -98,7 +98,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisBeanEndpointBuilder synchronous(
+        default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -109,7 +109,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMyBatisBeanEndpointBuilder synchronous(
+        default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -127,7 +127,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
      * MyBatis. Creates a builder to build endpoints for the MyBatis Bean
      * component.
      */
-    public default MyBatisBeanEndpointBuilder myBatisBean(String path) {
+    default MyBatisBeanEndpointBuilder myBatisBean(String path) {
         class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {
             public MyBatisBeanEndpointBuilderImpl(String path) {
                 super("mybatis-bean", path);

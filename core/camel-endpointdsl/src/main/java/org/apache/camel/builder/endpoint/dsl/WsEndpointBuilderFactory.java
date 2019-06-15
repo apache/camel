@@ -39,7 +39,7 @@ public interface WsEndpointBuilderFactory {
     public interface WsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedWsEndpointConsumerBuilder advanced() {
+        default AdvancedWsEndpointConsumerBuilder advanced() {
             return (AdvancedWsEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default WsEndpointConsumerBuilder sendMessageOnError(
+        default WsEndpointConsumerBuilder sendMessageOnError(
                 boolean sendMessageOnError) {
             setProperty("sendMessageOnError", sendMessageOnError);
             return this;
@@ -59,7 +59,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default WsEndpointConsumerBuilder sendMessageOnError(
+        default WsEndpointConsumerBuilder sendMessageOnError(
                 String sendMessageOnError) {
             setProperty("sendMessageOnError", sendMessageOnError);
             return this;
@@ -69,7 +69,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder httpUri(URI httpUri) {
+        default WsEndpointConsumerBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -78,7 +78,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder httpUri(String httpUri) {
+        default WsEndpointConsumerBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -90,8 +90,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder bridgeEndpoint(
-                boolean bridgeEndpoint) {
+        default WsEndpointConsumerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -103,8 +102,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder bridgeEndpoint(
-                String bridgeEndpoint) {
+        default WsEndpointConsumerBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -114,7 +112,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder bufferSize(int bufferSize) {
+        default WsEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -124,7 +122,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
+        default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -135,7 +133,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder headerFilterStrategy(
+        default WsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -147,7 +145,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder headerFilterStrategy(
+        default WsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -159,7 +157,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder throwExceptionOnFailure(
+        default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -171,7 +169,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder throwExceptionOnFailure(
+        default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -189,7 +187,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder transferException(
+        default WsEndpointConsumerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -207,7 +205,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointConsumerBuilder transferException(
+        default WsEndpointConsumerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -223,7 +221,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointConsumerBuilder sslContextParameters(
+        default WsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -239,7 +237,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointConsumerBuilder sslContextParameters(
+        default WsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -252,7 +250,7 @@ public interface WsEndpointBuilderFactory {
     public interface AdvancedWsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default WsEndpointConsumerBuilder basic() {
+        default WsEndpointConsumerBuilder basic() {
             return (WsEndpointConsumerBuilder) this;
         }
         /**
@@ -261,7 +259,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -272,7 +270,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -284,7 +282,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
+        default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -295,7 +293,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder binding(String binding) {
+        default AdvancedWsEndpointConsumerBuilder binding(String binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -306,7 +304,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfig(
+        default AdvancedWsEndpointConsumerBuilder clientConfig(
                 Object clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
@@ -318,7 +316,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfig(
+        default AdvancedWsEndpointConsumerBuilder clientConfig(
                 String clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
@@ -330,7 +328,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
+        default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -343,7 +341,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
+        default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 String clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -354,7 +352,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder synchronous(
+        default AdvancedWsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,8 +363,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointConsumerBuilder synchronous(
-                String synchronous) {
+        default AdvancedWsEndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -377,7 +374,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group security
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -390,7 +387,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -403,7 +400,7 @@ public interface WsEndpointBuilderFactory {
     public static interface WsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedWsEndpointProducerBuilder advanced() {
+        default AdvancedWsEndpointProducerBuilder advanced() {
             return (AdvancedWsEndpointProducerBuilder) this;
         }
         /**
@@ -411,8 +408,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder useStreaming(
-                boolean useStreaming) {
+        default WsEndpointProducerBuilder useStreaming(boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
         }
@@ -421,8 +417,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder useStreaming(
-                String useStreaming) {
+        default WsEndpointProducerBuilder useStreaming(String useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
         }
@@ -431,7 +426,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder httpUri(URI httpUri) {
+        default WsEndpointProducerBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -440,7 +435,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder httpUri(String httpUri) {
+        default WsEndpointProducerBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -452,8 +447,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder bridgeEndpoint(
-                boolean bridgeEndpoint) {
+        default WsEndpointProducerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -465,8 +459,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder bridgeEndpoint(
-                String bridgeEndpoint) {
+        default WsEndpointProducerBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -476,7 +469,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder bufferSize(int bufferSize) {
+        default WsEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -486,7 +479,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder bufferSize(String bufferSize) {
+        default WsEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -496,7 +489,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder connectionClose(
+        default WsEndpointProducerBuilder connectionClose(
                 boolean connectionClose) {
             setProperty("connectionClose", connectionClose);
             return this;
@@ -507,8 +500,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder connectionClose(
-                String connectionClose) {
+        default WsEndpointProducerBuilder connectionClose(String connectionClose) {
             setProperty("connectionClose", connectionClose);
             return this;
         }
@@ -518,8 +510,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder cookieHandler(
-                Object cookieHandler) {
+        default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -529,8 +520,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder cookieHandler(
-                String cookieHandler) {
+        default WsEndpointProducerBuilder cookieHandler(String cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
             return this;
         }
@@ -541,7 +531,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder headerFilterStrategy(
+        default WsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -553,7 +543,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder headerFilterStrategy(
+        default WsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -571,7 +561,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder lazyStartProducer(
+        default WsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -589,7 +579,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder lazyStartProducer(
+        default WsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -601,7 +591,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder throwExceptionOnFailure(
+        default WsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -613,7 +603,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder throwExceptionOnFailure(
+        default WsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -631,7 +621,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder transferException(
+        default WsEndpointProducerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -649,7 +639,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointProducerBuilder transferException(
+        default WsEndpointProducerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -665,7 +655,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointProducerBuilder sslContextParameters(
+        default WsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -681,7 +671,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointProducerBuilder sslContextParameters(
+        default WsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -694,7 +684,7 @@ public interface WsEndpointBuilderFactory {
     public interface AdvancedWsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default WsEndpointProducerBuilder basic() {
+        default WsEndpointProducerBuilder basic() {
             return (WsEndpointProducerBuilder) this;
         }
         /**
@@ -703,7 +693,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -714,7 +704,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -726,7 +716,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder binding(Object binding) {
+        default AdvancedWsEndpointProducerBuilder binding(Object binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -737,7 +727,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder binding(String binding) {
+        default AdvancedWsEndpointProducerBuilder binding(String binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -748,7 +738,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfig(
+        default AdvancedWsEndpointProducerBuilder clientConfig(
                 Object clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
@@ -760,7 +750,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfig(
+        default AdvancedWsEndpointProducerBuilder clientConfig(
                 String clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
@@ -772,7 +762,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfigOptions(
+        default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -785,7 +775,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfigOptions(
+        default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 String clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -796,7 +786,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder synchronous(
+        default AdvancedWsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -807,8 +797,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointProducerBuilder synchronous(
-                String synchronous) {
+        default AdvancedWsEndpointProducerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -819,7 +808,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group security
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -832,7 +821,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -845,7 +834,7 @@ public interface WsEndpointBuilderFactory {
     public static interface WsEndpointBuilder
             extends
                 WsEndpointConsumerBuilder, WsEndpointProducerBuilder {
-        public default AdvancedWsEndpointBuilder advanced() {
+        default AdvancedWsEndpointBuilder advanced() {
             return (AdvancedWsEndpointBuilder) this;
         }
         /**
@@ -853,7 +842,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder httpUri(URI httpUri) {
+        default WsEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -862,7 +851,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder httpUri(String httpUri) {
+        default WsEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -874,7 +863,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
+        default WsEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -886,7 +875,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
+        default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -896,7 +885,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder bufferSize(int bufferSize) {
+        default WsEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -906,7 +895,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder bufferSize(String bufferSize) {
+        default WsEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -917,7 +906,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder headerFilterStrategy(
+        default WsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -929,7 +918,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder headerFilterStrategy(
+        default WsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -941,7 +930,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder throwExceptionOnFailure(
+        default WsEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -953,7 +942,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder throwExceptionOnFailure(
+        default WsEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -971,8 +960,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder transferException(
-                boolean transferException) {
+        default WsEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -989,8 +977,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default WsEndpointBuilder transferException(
-                String transferException) {
+        default WsEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -1005,7 +992,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointBuilder sslContextParameters(
+        default WsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1021,7 +1008,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default WsEndpointBuilder sslContextParameters(
+        default WsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1034,7 +1021,7 @@ public interface WsEndpointBuilderFactory {
     public static interface AdvancedWsEndpointBuilder
             extends
                 AdvancedWsEndpointConsumerBuilder, AdvancedWsEndpointProducerBuilder {
-        public default WsEndpointBuilder basic() {
+        default WsEndpointBuilder basic() {
             return (WsEndpointBuilder) this;
         }
         /**
@@ -1043,7 +1030,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder basicPropertyBinding(
+        default AdvancedWsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1054,7 +1041,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder basicPropertyBinding(
+        default AdvancedWsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1066,7 +1053,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder binding(Object binding) {
+        default AdvancedWsEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -1077,7 +1064,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder binding(String binding) {
+        default AdvancedWsEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -1088,8 +1075,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder clientConfig(
-                Object clientConfig) {
+        default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1100,8 +1086,7 @@ public interface WsEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder clientConfig(
-                String clientConfig) {
+        default AdvancedWsEndpointBuilder clientConfig(String clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
         }
@@ -1112,7 +1097,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder clientConfigOptions(
+        default AdvancedWsEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -1125,7 +1110,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder clientConfigOptions(
+        default AdvancedWsEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -1136,7 +1121,7 @@ public interface WsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder synchronous(boolean synchronous) {
+        default AdvancedWsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1146,7 +1131,7 @@ public interface WsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWsEndpointBuilder synchronous(String synchronous) {
+        default AdvancedWsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1157,7 +1142,7 @@ public interface WsEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group security
          */
-        public default AdvancedWsEndpointBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -1170,7 +1155,7 @@ public interface WsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default AdvancedWsEndpointBuilder clientConfigRealmOptions(
+        default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -1180,7 +1165,7 @@ public interface WsEndpointBuilderFactory {
      * To exchange data with external Websocket servers using Async Http Client.
      * Creates a builder to build endpoints for the AHC Websocket component.
      */
-    public default WsEndpointBuilder ws(String path) {
+    default WsEndpointBuilder ws(String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
             public WsEndpointBuilderImpl(String path) {
                 super("ahc-ws", path);

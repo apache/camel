@@ -40,7 +40,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public interface GoogleDriveEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGoogleDriveEndpointConsumerBuilder advanced() {
+        default AdvancedGoogleDriveEndpointConsumerBuilder advanced() {
             return (AdvancedGoogleDriveEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder apiName(
+        default GoogleDriveEndpointConsumerBuilder apiName(
                 GoogleDriveApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -60,7 +60,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder apiName(String apiName) {
+        default GoogleDriveEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -69,8 +69,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder methodName(
-                String methodName) {
+        default GoogleDriveEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -80,7 +79,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder accessToken(
+        default GoogleDriveEndpointConsumerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -91,7 +90,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder applicationName(
+        default GoogleDriveEndpointConsumerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -103,7 +102,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder clientFactory(
+        default GoogleDriveEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
@@ -115,7 +114,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder clientFactory(
+        default GoogleDriveEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
@@ -125,8 +124,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder clientId(
-                String clientId) {
+        default GoogleDriveEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -135,7 +133,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder clientSecret(
+        default GoogleDriveEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -145,7 +143,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
+        default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -156,7 +154,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder refreshToken(
+        default GoogleDriveEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -169,8 +167,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder scopes(
-                List<String> scopes) {
+        default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -182,7 +179,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
+        default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -197,7 +194,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -213,7 +210,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
+        default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -226,7 +223,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public interface AdvancedGoogleDriveEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GoogleDriveEndpointConsumerBuilder basic() {
+        default GoogleDriveEndpointConsumerBuilder basic() {
             return (GoogleDriveEndpointConsumerBuilder) this;
         }
         /**
@@ -238,7 +235,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -252,7 +249,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -262,7 +259,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -273,7 +270,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
+        default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -284,7 +281,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -295,7 +292,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -306,7 +303,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -317,7 +314,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
+        default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -330,7 +327,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public static interface GoogleDriveEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoogleDriveEndpointProducerBuilder advanced() {
+        default AdvancedGoogleDriveEndpointProducerBuilder advanced() {
             return (AdvancedGoogleDriveEndpointProducerBuilder) this;
         }
         /**
@@ -339,7 +336,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder apiName(
+        default GoogleDriveEndpointProducerBuilder apiName(
                 GoogleDriveApiName apiName) {
             setProperty("apiName", apiName);
             return this;
@@ -350,7 +347,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder apiName(String apiName) {
+        default GoogleDriveEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -359,8 +356,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder methodName(
-                String methodName) {
+        default GoogleDriveEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -370,7 +366,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder accessToken(
+        default GoogleDriveEndpointProducerBuilder accessToken(
                 String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
@@ -381,7 +377,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder applicationName(
+        default GoogleDriveEndpointProducerBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -393,7 +389,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder clientFactory(
+        default GoogleDriveEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
@@ -405,7 +401,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder clientFactory(
+        default GoogleDriveEndpointProducerBuilder clientFactory(
                 String clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
@@ -415,8 +411,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder clientId(
-                String clientId) {
+        default GoogleDriveEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -425,7 +420,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder clientSecret(
+        default GoogleDriveEndpointProducerBuilder clientSecret(
                 String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
@@ -435,7 +430,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
+        default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -446,7 +441,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder refreshToken(
+        default GoogleDriveEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
@@ -459,8 +454,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder scopes(
-                List<String> scopes) {
+        default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -472,7 +466,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
+        default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -489,7 +483,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleDriveEndpointProducerBuilder lazyStartProducer(
+        default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -507,7 +501,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GoogleDriveEndpointProducerBuilder lazyStartProducer(
+        default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -520,7 +514,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public interface AdvancedGoogleDriveEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoogleDriveEndpointProducerBuilder basic() {
+        default GoogleDriveEndpointProducerBuilder basic() {
             return (GoogleDriveEndpointProducerBuilder) this;
         }
         /**
@@ -529,7 +523,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -540,7 +534,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -551,7 +545,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
+        default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -562,7 +556,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
+        default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -575,7 +569,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public static interface GoogleDriveEndpointBuilder
             extends
                 GoogleDriveEndpointConsumerBuilder, GoogleDriveEndpointProducerBuilder {
-        public default AdvancedGoogleDriveEndpointBuilder advanced() {
+        default AdvancedGoogleDriveEndpointBuilder advanced() {
             return (AdvancedGoogleDriveEndpointBuilder) this;
         }
         /**
@@ -584,8 +578,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder apiName(
-                GoogleDriveApiName apiName) {
+        default GoogleDriveEndpointBuilder apiName(GoogleDriveApiName apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -595,7 +588,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder apiName(String apiName) {
+        default GoogleDriveEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
             return this;
         }
@@ -604,7 +597,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder methodName(String methodName) {
+        default GoogleDriveEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
             return this;
         }
@@ -614,7 +607,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder accessToken(String accessToken) {
+        default GoogleDriveEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -624,7 +617,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder applicationName(
+        default GoogleDriveEndpointBuilder applicationName(
                 String applicationName) {
             setProperty("applicationName", applicationName);
             return this;
@@ -636,8 +629,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder clientFactory(
-                Object clientFactory) {
+        default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
         }
@@ -648,8 +640,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder clientFactory(
-                String clientFactory) {
+        default GoogleDriveEndpointBuilder clientFactory(String clientFactory) {
             setProperty("clientFactory", clientFactory);
             return this;
         }
@@ -658,7 +649,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder clientId(String clientId) {
+        default GoogleDriveEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -667,8 +658,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder clientSecret(
-                String clientSecret) {
+        default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
             return this;
         }
@@ -677,7 +667,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder inBody(String inBody) {
+        default GoogleDriveEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
             return this;
         }
@@ -688,8 +678,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder refreshToken(
-                String refreshToken) {
+        default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
             return this;
         }
@@ -701,7 +690,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
+        default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -713,7 +702,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
          * @group common
          */
-        public default GoogleDriveEndpointBuilder scopes(String scopes) {
+        default GoogleDriveEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
             return this;
         }
@@ -725,7 +714,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     public static interface AdvancedGoogleDriveEndpointBuilder
             extends
                 AdvancedGoogleDriveEndpointConsumerBuilder, AdvancedGoogleDriveEndpointProducerBuilder {
-        public default GoogleDriveEndpointBuilder basic() {
+        default GoogleDriveEndpointBuilder basic() {
             return (GoogleDriveEndpointBuilder) this;
         }
         /**
@@ -734,7 +723,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -745,7 +734,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -756,7 +745,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointBuilder synchronous(
+        default AdvancedGoogleDriveEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -767,7 +756,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleDriveEndpointBuilder synchronous(
+        default AdvancedGoogleDriveEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -786,7 +775,7 @@ public interface GoogleDriveEndpointBuilderFactory {
      * service. Creates a builder to build endpoints for the Google Drive
      * component.
      */
-    public default GoogleDriveEndpointBuilder googleDrive(String path) {
+    default GoogleDriveEndpointBuilder googleDrive(String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {
             public GoogleDriveEndpointBuilderImpl(String path) {
                 super("google-drive", path);

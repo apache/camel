@@ -39,7 +39,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public interface KubernetesHPAEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder advanced() {
+        default AdvancedKubernetesHPAEndpointConsumerBuilder advanced() {
             return (AdvancedKubernetesHPAEndpointConsumerBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesHPAEndpointConsumerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -57,7 +56,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder apiVersion(
+        default KubernetesHPAEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -67,8 +66,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesHPAEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -78,7 +76,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
+        default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -89,7 +87,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
+        default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -99,8 +97,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder portName(
-                String portName) {
+        default KubernetesHPAEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -109,7 +106,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointConsumerBuilder portProtocol(
+        default KubernetesHPAEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -125,7 +122,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +138,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -151,8 +148,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder labelKey(
-                String labelKey) {
+        default KubernetesHPAEndpointConsumerBuilder labelKey(String labelKey) {
             setProperty("labelKey", labelKey);
             return this;
         }
@@ -161,7 +157,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder labelValue(
+        default KubernetesHPAEndpointConsumerBuilder labelValue(
                 String labelValue) {
             setProperty("labelValue", labelValue);
             return this;
@@ -171,8 +167,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder namespace(
-                String namespace) {
+        default KubernetesHPAEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -181,8 +176,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder poolSize(
-                int poolSize) {
+        default KubernetesHPAEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -191,8 +185,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder poolSize(
-                String poolSize) {
+        default KubernetesHPAEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -201,7 +194,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesHPAEndpointConsumerBuilder resourceName(
+        default KubernetesHPAEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -211,7 +204,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder caCertData(
+        default KubernetesHPAEndpointConsumerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -221,7 +214,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder caCertFile(
+        default KubernetesHPAEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -231,7 +224,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientCertData(
+        default KubernetesHPAEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -241,7 +234,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientCertFile(
+        default KubernetesHPAEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -251,7 +244,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientKeyAlgo(
+        default KubernetesHPAEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -261,7 +254,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientKeyData(
+        default KubernetesHPAEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -271,7 +264,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientKeyFile(
+        default KubernetesHPAEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -281,7 +274,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder clientKeyPassphrase(
+        default KubernetesHPAEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -291,7 +284,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder oauthToken(
+        default KubernetesHPAEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -301,8 +294,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder password(
-                String password) {
+        default KubernetesHPAEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -311,7 +303,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder trustCerts(
+        default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -322,7 +314,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder trustCerts(
+        default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -332,8 +324,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointConsumerBuilder username(
-                String username) {
+        default KubernetesHPAEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -345,7 +336,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public interface AdvancedKubernetesHPAEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KubernetesHPAEndpointConsumerBuilder basic() {
+        default KubernetesHPAEndpointConsumerBuilder basic() {
             return (KubernetesHPAEndpointConsumerBuilder) this;
         }
         /**
@@ -357,7 +348,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -371,7 +362,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -381,7 +372,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -392,7 +383,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -403,7 +394,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -414,7 +405,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -425,7 +416,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -437,7 +428,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -448,7 +439,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -459,7 +450,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -472,7 +463,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public static interface KubernetesHPAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesHPAEndpointProducerBuilder advanced() {
+        default AdvancedKubernetesHPAEndpointProducerBuilder advanced() {
             return (AdvancedKubernetesHPAEndpointProducerBuilder) this;
         }
         /**
@@ -480,8 +471,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesHPAEndpointProducerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -490,7 +480,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder apiVersion(
+        default KubernetesHPAEndpointProducerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -500,8 +490,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesHPAEndpointProducerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -511,7 +500,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder kubernetesClient(
+        default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -522,7 +511,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder kubernetesClient(
+        default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -532,8 +521,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder portName(
-                String portName) {
+        default KubernetesHPAEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -542,7 +530,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointProducerBuilder portProtocol(
+        default KubernetesHPAEndpointProducerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -560,7 +548,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
+        default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,7 +566,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
+        default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -588,8 +576,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesHPAEndpointProducerBuilder operation(
-                String operation) {
+        default KubernetesHPAEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -598,7 +585,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder caCertData(
+        default KubernetesHPAEndpointProducerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -608,7 +595,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder caCertFile(
+        default KubernetesHPAEndpointProducerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -618,7 +605,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientCertData(
+        default KubernetesHPAEndpointProducerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -628,7 +615,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientCertFile(
+        default KubernetesHPAEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -638,7 +625,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientKeyAlgo(
+        default KubernetesHPAEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -648,7 +635,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientKeyData(
+        default KubernetesHPAEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -658,7 +645,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientKeyFile(
+        default KubernetesHPAEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -668,7 +655,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder clientKeyPassphrase(
+        default KubernetesHPAEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -678,7 +665,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder oauthToken(
+        default KubernetesHPAEndpointProducerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -688,8 +675,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder password(
-                String password) {
+        default KubernetesHPAEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -698,7 +684,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder trustCerts(
+        default KubernetesHPAEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -709,7 +695,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder trustCerts(
+        default KubernetesHPAEndpointProducerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -719,8 +705,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointProducerBuilder username(
-                String username) {
+        default KubernetesHPAEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -732,7 +717,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public interface AdvancedKubernetesHPAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesHPAEndpointProducerBuilder basic() {
+        default KubernetesHPAEndpointProducerBuilder basic() {
             return (KubernetesHPAEndpointProducerBuilder) this;
         }
         /**
@@ -741,7 +726,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -752,7 +737,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -763,7 +748,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -775,7 +760,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -786,7 +771,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -797,7 +782,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -810,7 +795,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public static interface KubernetesHPAEndpointBuilder
             extends
                 KubernetesHPAEndpointConsumerBuilder, KubernetesHPAEndpointProducerBuilder {
-        public default AdvancedKubernetesHPAEndpointBuilder advanced() {
+        default AdvancedKubernetesHPAEndpointBuilder advanced() {
             return (AdvancedKubernetesHPAEndpointBuilder) this;
         }
         /**
@@ -818,7 +803,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder masterUrl(String masterUrl) {
+        default KubernetesHPAEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -827,7 +812,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder apiVersion(String apiVersion) {
+        default KubernetesHPAEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -836,7 +821,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder dnsDomain(String dnsDomain) {
+        default KubernetesHPAEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -846,7 +831,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder kubernetesClient(
+        default KubernetesHPAEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -857,7 +842,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder kubernetesClient(
+        default KubernetesHPAEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -867,7 +852,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder portName(String portName) {
+        default KubernetesHPAEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -876,8 +861,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesHPAEndpointBuilder portProtocol(
-                String portProtocol) {
+        default KubernetesHPAEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
         }
@@ -886,7 +870,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder caCertData(String caCertData) {
+        default KubernetesHPAEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
         }
@@ -895,7 +879,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder caCertFile(String caCertFile) {
+        default KubernetesHPAEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
         }
@@ -904,7 +888,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientCertData(
+        default KubernetesHPAEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -914,7 +898,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientCertFile(
+        default KubernetesHPAEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -924,8 +908,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientKeyAlgo(
-                String clientKeyAlgo) {
+        default KubernetesHPAEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
@@ -934,8 +917,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientKeyData(
-                String clientKeyData) {
+        default KubernetesHPAEndpointBuilder clientKeyData(String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
         }
@@ -944,8 +926,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientKeyFile(
-                String clientKeyFile) {
+        default KubernetesHPAEndpointBuilder clientKeyFile(String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
         }
@@ -954,7 +935,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder clientKeyPassphrase(
+        default KubernetesHPAEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -964,7 +945,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder oauthToken(String oauthToken) {
+        default KubernetesHPAEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -973,7 +954,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder password(String password) {
+        default KubernetesHPAEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -982,8 +963,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder trustCerts(
-                Boolean trustCerts) {
+        default KubernetesHPAEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -993,7 +973,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder trustCerts(String trustCerts) {
+        default KubernetesHPAEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -1002,7 +982,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesHPAEndpointBuilder username(String username) {
+        default KubernetesHPAEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1014,7 +994,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     public static interface AdvancedKubernetesHPAEndpointBuilder
             extends
                 AdvancedKubernetesHPAEndpointConsumerBuilder, AdvancedKubernetesHPAEndpointProducerBuilder {
-        public default KubernetesHPAEndpointBuilder basic() {
+        default KubernetesHPAEndpointBuilder basic() {
             return (KubernetesHPAEndpointBuilder) this;
         }
         /**
@@ -1023,7 +1003,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1034,7 +1014,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1045,7 +1025,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1057,7 +1037,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1068,7 +1048,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1079,7 +1059,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesHPAEndpointBuilder synchronous(
+        default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1090,7 +1070,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
      * hpa operations and a consumer to consume HPA events. Creates a builder to
      * build endpoints for the Kubernetes HPA component.
      */
-    public default KubernetesHPAEndpointBuilder kubernetesHPA(String path) {
+    default KubernetesHPAEndpointBuilder kubernetesHPA(String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {
             public KubernetesHPAEndpointBuilderImpl(String path) {
                 super("kubernetes-hpa", path);

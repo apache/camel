@@ -38,7 +38,7 @@ public interface NatsEndpointBuilderFactory {
     public interface NatsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedNatsEndpointConsumerBuilder advanced() {
+        default AdvancedNatsEndpointConsumerBuilder advanced() {
             return (AdvancedNatsEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder servers(String servers) {
+        default NatsEndpointConsumerBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -56,7 +56,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder connection(Object connection) {
+        default NatsEndpointConsumerBuilder connection(Object connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -66,7 +66,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder connection(String connection) {
+        default NatsEndpointConsumerBuilder connection(String connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -75,7 +75,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder connectionTimeout(
+        default NatsEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -85,7 +85,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder connectionTimeout(
+        default NatsEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -95,7 +95,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder flushConnection(
+        default NatsEndpointConsumerBuilder flushConnection(
                 boolean flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
@@ -105,7 +105,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder flushConnection(
+        default NatsEndpointConsumerBuilder flushConnection(
                 String flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
@@ -115,7 +115,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder flushTimeout(int flushTimeout) {
+        default NatsEndpointConsumerBuilder flushTimeout(int flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -124,8 +124,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder flushTimeout(
-                String flushTimeout) {
+        default NatsEndpointConsumerBuilder flushTimeout(String flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -135,7 +134,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder maxPingsOut(int maxPingsOut) {
+        default NatsEndpointConsumerBuilder maxPingsOut(int maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -145,8 +144,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder maxPingsOut(
-                String maxPingsOut) {
+        default NatsEndpointConsumerBuilder maxPingsOut(String maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -155,7 +153,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder maxReconnectAttempts(
+        default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -165,7 +163,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder maxReconnectAttempts(
+        default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -178,7 +176,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder noEcho(boolean noEcho) {
+        default NatsEndpointConsumerBuilder noEcho(boolean noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -190,7 +188,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder noEcho(String noEcho) {
+        default NatsEndpointConsumerBuilder noEcho(String noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -200,7 +198,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder noRandomizeServers(
+        default NatsEndpointConsumerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
@@ -211,7 +209,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder noRandomizeServers(
+        default NatsEndpointConsumerBuilder noRandomizeServers(
                 String noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
@@ -221,7 +219,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder pedantic(boolean pedantic) {
+        default NatsEndpointConsumerBuilder pedantic(boolean pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -230,7 +228,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder pedantic(String pedantic) {
+        default NatsEndpointConsumerBuilder pedantic(String pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -240,7 +238,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder pingInterval(int pingInterval) {
+        default NatsEndpointConsumerBuilder pingInterval(int pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -250,8 +248,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder pingInterval(
-                String pingInterval) {
+        default NatsEndpointConsumerBuilder pingInterval(String pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -260,7 +257,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder reconnect(boolean reconnect) {
+        default NatsEndpointConsumerBuilder reconnect(boolean reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -269,7 +266,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder reconnect(String reconnect) {
+        default NatsEndpointConsumerBuilder reconnect(String reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -278,7 +275,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder reconnectTimeWait(
+        default NatsEndpointConsumerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
@@ -288,7 +285,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder reconnectTimeWait(
+        default NatsEndpointConsumerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
@@ -298,7 +295,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder requestCleanupInterval(
+        default NatsEndpointConsumerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -308,7 +305,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder requestCleanupInterval(
+        default NatsEndpointConsumerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -318,7 +315,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder topic(String topic) {
+        default NatsEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -327,7 +324,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder verbose(boolean verbose) {
+        default NatsEndpointConsumerBuilder verbose(boolean verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -336,7 +333,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointConsumerBuilder verbose(String verbose) {
+        default NatsEndpointConsumerBuilder verbose(String verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -351,7 +348,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder bridgeErrorHandler(
+        default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -367,7 +364,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder bridgeErrorHandler(
+        default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -378,8 +375,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder maxMessages(
-                String maxMessages) {
+        default NatsEndpointConsumerBuilder maxMessages(String maxMessages) {
             setProperty("maxMessages", maxMessages);
             return this;
         }
@@ -388,7 +384,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder poolSize(int poolSize) {
+        default NatsEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -397,7 +393,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder poolSize(String poolSize) {
+        default NatsEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
         }
@@ -406,7 +402,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default NatsEndpointConsumerBuilder queueName(String queueName) {
+        default NatsEndpointConsumerBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
             return this;
         }
@@ -415,7 +411,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointConsumerBuilder secure(boolean secure) {
+        default NatsEndpointConsumerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -424,7 +420,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointConsumerBuilder secure(String secure) {
+        default NatsEndpointConsumerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -434,7 +430,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointConsumerBuilder sslContextParameters(
+        default NatsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -445,7 +441,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointConsumerBuilder sslContextParameters(
+        default NatsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -458,7 +454,7 @@ public interface NatsEndpointBuilderFactory {
     public interface AdvancedNatsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default NatsEndpointConsumerBuilder basic() {
+        default NatsEndpointConsumerBuilder basic() {
             return (NatsEndpointConsumerBuilder) this;
         }
         /**
@@ -470,7 +466,7 @@ public interface NatsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -484,7 +480,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -494,7 +490,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNatsEndpointConsumerBuilder exchangePattern(
+        default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -505,7 +501,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNatsEndpointConsumerBuilder exchangePattern(
+        default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -516,7 +512,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -527,7 +523,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -538,7 +534,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointConsumerBuilder synchronous(
+        default AdvancedNatsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -549,7 +545,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointConsumerBuilder synchronous(
+        default AdvancedNatsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -562,7 +558,7 @@ public interface NatsEndpointBuilderFactory {
     public static interface NatsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNatsEndpointProducerBuilder advanced() {
+        default AdvancedNatsEndpointProducerBuilder advanced() {
             return (AdvancedNatsEndpointProducerBuilder) this;
         }
         /**
@@ -571,7 +567,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder servers(String servers) {
+        default NatsEndpointProducerBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -580,7 +576,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder connection(Object connection) {
+        default NatsEndpointProducerBuilder connection(Object connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -590,7 +586,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder connection(String connection) {
+        default NatsEndpointProducerBuilder connection(String connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -599,7 +595,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder connectionTimeout(
+        default NatsEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -609,7 +605,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder connectionTimeout(
+        default NatsEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -619,7 +615,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder flushConnection(
+        default NatsEndpointProducerBuilder flushConnection(
                 boolean flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
@@ -629,7 +625,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder flushConnection(
+        default NatsEndpointProducerBuilder flushConnection(
                 String flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
@@ -639,7 +635,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder flushTimeout(int flushTimeout) {
+        default NatsEndpointProducerBuilder flushTimeout(int flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -648,8 +644,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder flushTimeout(
-                String flushTimeout) {
+        default NatsEndpointProducerBuilder flushTimeout(String flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -659,7 +654,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder maxPingsOut(int maxPingsOut) {
+        default NatsEndpointProducerBuilder maxPingsOut(int maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -669,8 +664,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder maxPingsOut(
-                String maxPingsOut) {
+        default NatsEndpointProducerBuilder maxPingsOut(String maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -679,7 +673,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder maxReconnectAttempts(
+        default NatsEndpointProducerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -689,7 +683,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder maxReconnectAttempts(
+        default NatsEndpointProducerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -702,7 +696,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder noEcho(boolean noEcho) {
+        default NatsEndpointProducerBuilder noEcho(boolean noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -714,7 +708,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder noEcho(String noEcho) {
+        default NatsEndpointProducerBuilder noEcho(String noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -724,7 +718,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder noRandomizeServers(
+        default NatsEndpointProducerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
@@ -735,7 +729,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder noRandomizeServers(
+        default NatsEndpointProducerBuilder noRandomizeServers(
                 String noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
@@ -745,7 +739,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder pedantic(boolean pedantic) {
+        default NatsEndpointProducerBuilder pedantic(boolean pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -754,7 +748,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder pedantic(String pedantic) {
+        default NatsEndpointProducerBuilder pedantic(String pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -764,7 +758,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder pingInterval(int pingInterval) {
+        default NatsEndpointProducerBuilder pingInterval(int pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -774,8 +768,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder pingInterval(
-                String pingInterval) {
+        default NatsEndpointProducerBuilder pingInterval(String pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -784,7 +777,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder reconnect(boolean reconnect) {
+        default NatsEndpointProducerBuilder reconnect(boolean reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -793,7 +786,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder reconnect(String reconnect) {
+        default NatsEndpointProducerBuilder reconnect(String reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -802,7 +795,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder reconnectTimeWait(
+        default NatsEndpointProducerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
@@ -812,7 +805,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder reconnectTimeWait(
+        default NatsEndpointProducerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
@@ -822,7 +815,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder requestCleanupInterval(
+        default NatsEndpointProducerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -832,7 +825,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder requestCleanupInterval(
+        default NatsEndpointProducerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -842,7 +835,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder topic(String topic) {
+        default NatsEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -851,7 +844,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder verbose(boolean verbose) {
+        default NatsEndpointProducerBuilder verbose(boolean verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -860,7 +853,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointProducerBuilder verbose(String verbose) {
+        default NatsEndpointProducerBuilder verbose(String verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -877,7 +870,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NatsEndpointProducerBuilder lazyStartProducer(
+        default NatsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -895,7 +888,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NatsEndpointProducerBuilder lazyStartProducer(
+        default NatsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -905,8 +898,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NatsEndpointProducerBuilder replySubject(
-                String replySubject) {
+        default NatsEndpointProducerBuilder replySubject(String replySubject) {
             setProperty("replySubject", replySubject);
             return this;
         }
@@ -915,7 +907,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointProducerBuilder secure(boolean secure) {
+        default NatsEndpointProducerBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -924,7 +916,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointProducerBuilder secure(String secure) {
+        default NatsEndpointProducerBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -934,7 +926,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointProducerBuilder sslContextParameters(
+        default NatsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -945,7 +937,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointProducerBuilder sslContextParameters(
+        default NatsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -958,7 +950,7 @@ public interface NatsEndpointBuilderFactory {
     public interface AdvancedNatsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default NatsEndpointProducerBuilder basic() {
+        default NatsEndpointProducerBuilder basic() {
             return (NatsEndpointProducerBuilder) this;
         }
         /**
@@ -967,7 +959,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -978,7 +970,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -989,7 +981,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointProducerBuilder synchronous(
+        default AdvancedNatsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1000,7 +992,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointProducerBuilder synchronous(
+        default AdvancedNatsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1013,7 +1005,7 @@ public interface NatsEndpointBuilderFactory {
     public static interface NatsEndpointBuilder
             extends
                 NatsEndpointConsumerBuilder, NatsEndpointProducerBuilder {
-        public default AdvancedNatsEndpointBuilder advanced() {
+        default AdvancedNatsEndpointBuilder advanced() {
             return (AdvancedNatsEndpointBuilder) this;
         }
         /**
@@ -1022,7 +1014,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder servers(String servers) {
+        default NatsEndpointBuilder servers(String servers) {
             setProperty("servers", servers);
             return this;
         }
@@ -1031,7 +1023,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder connection(Object connection) {
+        default NatsEndpointBuilder connection(Object connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -1041,7 +1033,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>io.nats.client.Connection</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder connection(String connection) {
+        default NatsEndpointBuilder connection(String connection) {
             setProperty("connection", connection);
             return this;
         }
@@ -1050,8 +1042,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder connectionTimeout(
-                int connectionTimeout) {
+        default NatsEndpointBuilder connectionTimeout(int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -1060,8 +1051,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder connectionTimeout(
-                String connectionTimeout) {
+        default NatsEndpointBuilder connectionTimeout(String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
@@ -1070,8 +1060,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder flushConnection(
-                boolean flushConnection) {
+        default NatsEndpointBuilder flushConnection(boolean flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
         }
@@ -1080,8 +1069,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder flushConnection(
-                String flushConnection) {
+        default NatsEndpointBuilder flushConnection(String flushConnection) {
             setProperty("flushConnection", flushConnection);
             return this;
         }
@@ -1090,7 +1078,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder flushTimeout(int flushTimeout) {
+        default NatsEndpointBuilder flushTimeout(int flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -1099,7 +1087,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder flushTimeout(String flushTimeout) {
+        default NatsEndpointBuilder flushTimeout(String flushTimeout) {
             setProperty("flushTimeout", flushTimeout);
             return this;
         }
@@ -1109,7 +1097,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder maxPingsOut(int maxPingsOut) {
+        default NatsEndpointBuilder maxPingsOut(int maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -1119,7 +1107,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder maxPingsOut(String maxPingsOut) {
+        default NatsEndpointBuilder maxPingsOut(String maxPingsOut) {
             setProperty("maxPingsOut", maxPingsOut);
             return this;
         }
@@ -1128,7 +1116,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder maxReconnectAttempts(
+        default NatsEndpointBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -1138,7 +1126,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder maxReconnectAttempts(
+        default NatsEndpointBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
             setProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
@@ -1151,7 +1139,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder noEcho(boolean noEcho) {
+        default NatsEndpointBuilder noEcho(boolean noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -1163,7 +1151,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder noEcho(String noEcho) {
+        default NatsEndpointBuilder noEcho(String noEcho) {
             setProperty("noEcho", noEcho);
             return this;
         }
@@ -1173,7 +1161,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder noRandomizeServers(
+        default NatsEndpointBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
@@ -1184,8 +1172,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder noRandomizeServers(
-                String noRandomizeServers) {
+        default NatsEndpointBuilder noRandomizeServers(String noRandomizeServers) {
             setProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
@@ -1194,7 +1181,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder pedantic(boolean pedantic) {
+        default NatsEndpointBuilder pedantic(boolean pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -1203,7 +1190,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder pedantic(String pedantic) {
+        default NatsEndpointBuilder pedantic(String pedantic) {
             setProperty("pedantic", pedantic);
             return this;
         }
@@ -1213,7 +1200,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder pingInterval(int pingInterval) {
+        default NatsEndpointBuilder pingInterval(int pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -1223,7 +1210,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder pingInterval(String pingInterval) {
+        default NatsEndpointBuilder pingInterval(String pingInterval) {
             setProperty("pingInterval", pingInterval);
             return this;
         }
@@ -1232,7 +1219,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder reconnect(boolean reconnect) {
+        default NatsEndpointBuilder reconnect(boolean reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -1241,7 +1228,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder reconnect(String reconnect) {
+        default NatsEndpointBuilder reconnect(String reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -1250,8 +1237,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder reconnectTimeWait(
-                int reconnectTimeWait) {
+        default NatsEndpointBuilder reconnectTimeWait(int reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
@@ -1260,8 +1246,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder reconnectTimeWait(
-                String reconnectTimeWait) {
+        default NatsEndpointBuilder reconnectTimeWait(String reconnectTimeWait) {
             setProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
@@ -1270,7 +1255,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder requestCleanupInterval(
+        default NatsEndpointBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -1280,7 +1265,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder requestCleanupInterval(
+        default NatsEndpointBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
             setProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
@@ -1290,7 +1275,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder topic(String topic) {
+        default NatsEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -1299,7 +1284,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder verbose(boolean verbose) {
+        default NatsEndpointBuilder verbose(boolean verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -1308,7 +1293,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NatsEndpointBuilder verbose(String verbose) {
+        default NatsEndpointBuilder verbose(String verbose) {
             setProperty("verbose", verbose);
             return this;
         }
@@ -1317,7 +1302,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointBuilder secure(boolean secure) {
+        default NatsEndpointBuilder secure(boolean secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -1326,7 +1311,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NatsEndpointBuilder secure(String secure) {
+        default NatsEndpointBuilder secure(String secure) {
             setProperty("secure", secure);
             return this;
         }
@@ -1336,7 +1321,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointBuilder sslContextParameters(
+        default NatsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1347,7 +1332,7 @@ public interface NatsEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NatsEndpointBuilder sslContextParameters(
+        default NatsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -1360,7 +1345,7 @@ public interface NatsEndpointBuilderFactory {
     public static interface AdvancedNatsEndpointBuilder
             extends
                 AdvancedNatsEndpointConsumerBuilder, AdvancedNatsEndpointProducerBuilder {
-        public default NatsEndpointBuilder basic() {
+        default NatsEndpointBuilder basic() {
             return (NatsEndpointBuilder) this;
         }
         /**
@@ -1369,7 +1354,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1380,7 +1365,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointBuilder basicPropertyBinding(
+        default AdvancedNatsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1391,8 +1376,7 @@ public interface NatsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNatsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1402,8 +1386,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNatsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1412,7 +1395,7 @@ public interface NatsEndpointBuilderFactory {
      * The nats component allows you produce and consume messages from NATS.
      * Creates a builder to build endpoints for the Nats component.
      */
-    public default NatsEndpointBuilder nats(String path) {
+    default NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {
             public NatsEndpointBuilderImpl(String path) {
                 super("nats", path);

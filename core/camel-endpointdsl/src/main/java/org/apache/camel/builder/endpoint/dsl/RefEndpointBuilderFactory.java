@@ -39,7 +39,7 @@ public interface RefEndpointBuilderFactory {
     public interface RefEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedRefEndpointConsumerBuilder advanced() {
+        default AdvancedRefEndpointConsumerBuilder advanced() {
             return (AdvancedRefEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RefEndpointConsumerBuilder name(String name) {
+        default RefEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -62,7 +62,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RefEndpointConsumerBuilder bridgeErrorHandler(
+        default RefEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,7 +78,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RefEndpointConsumerBuilder bridgeErrorHandler(
+        default RefEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -91,7 +91,7 @@ public interface RefEndpointBuilderFactory {
     public interface AdvancedRefEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default RefEndpointConsumerBuilder basic() {
+        default RefEndpointConsumerBuilder basic() {
             return (RefEndpointConsumerBuilder) this;
         }
         /**
@@ -103,7 +103,7 @@ public interface RefEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedRefEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRefEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -117,7 +117,7 @@ public interface RefEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRefEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRefEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -127,7 +127,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRefEndpointConsumerBuilder exchangePattern(
+        default AdvancedRefEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -138,7 +138,7 @@ public interface RefEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRefEndpointConsumerBuilder exchangePattern(
+        default AdvancedRefEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -149,7 +149,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,7 +171,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointConsumerBuilder synchronous(
+        default AdvancedRefEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -182,7 +182,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointConsumerBuilder synchronous(
+        default AdvancedRefEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -195,7 +195,7 @@ public interface RefEndpointBuilderFactory {
     public static interface RefEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedRefEndpointProducerBuilder advanced() {
+        default AdvancedRefEndpointProducerBuilder advanced() {
             return (AdvancedRefEndpointProducerBuilder) this;
         }
         /**
@@ -203,7 +203,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RefEndpointProducerBuilder name(String name) {
+        default RefEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -220,7 +220,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default RefEndpointProducerBuilder lazyStartProducer(
+        default RefEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -238,7 +238,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default RefEndpointProducerBuilder lazyStartProducer(
+        default RefEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -251,7 +251,7 @@ public interface RefEndpointBuilderFactory {
     public interface AdvancedRefEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default RefEndpointProducerBuilder basic() {
+        default RefEndpointProducerBuilder basic() {
             return (RefEndpointProducerBuilder) this;
         }
         /**
@@ -260,7 +260,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -271,7 +271,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -282,7 +282,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointProducerBuilder synchronous(
+        default AdvancedRefEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -293,7 +293,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointProducerBuilder synchronous(
+        default AdvancedRefEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -306,7 +306,7 @@ public interface RefEndpointBuilderFactory {
     public static interface RefEndpointBuilder
             extends
                 RefEndpointConsumerBuilder, RefEndpointProducerBuilder {
-        public default AdvancedRefEndpointBuilder advanced() {
+        default AdvancedRefEndpointBuilder advanced() {
             return (AdvancedRefEndpointBuilder) this;
         }
         /**
@@ -314,7 +314,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RefEndpointBuilder name(String name) {
+        default RefEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -326,7 +326,7 @@ public interface RefEndpointBuilderFactory {
     public static interface AdvancedRefEndpointBuilder
             extends
                 AdvancedRefEndpointConsumerBuilder, AdvancedRefEndpointProducerBuilder {
-        public default RefEndpointBuilder basic() {
+        default RefEndpointBuilder basic() {
             return (RefEndpointBuilder) this;
         }
         /**
@@ -335,7 +335,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointBuilder basicPropertyBinding(
+        default AdvancedRefEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -346,7 +346,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointBuilder basicPropertyBinding(
+        default AdvancedRefEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -357,8 +357,7 @@ public interface RefEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedRefEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -368,7 +367,7 @@ public interface RefEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRefEndpointBuilder synchronous(String synchronous) {
+        default AdvancedRefEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -377,7 +376,7 @@ public interface RefEndpointBuilderFactory {
      * The ref component is used for lookup of existing endpoints bound in the
      * Registry. Creates a builder to build endpoints for the Ref component.
      */
-    public default RefEndpointBuilder ref(String path) {
+    default RefEndpointBuilder ref(String path) {
         class RefEndpointBuilderImpl extends AbstractEndpointBuilder implements RefEndpointBuilder, AdvancedRefEndpointBuilder {
             public RefEndpointBuilderImpl(String path) {
                 super("ref", path);

@@ -36,7 +36,7 @@ public interface LogEndpointBuilderFactory {
     public static interface LogEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLogEndpointBuilder advanced() {
+        default AdvancedLogEndpointBuilder advanced() {
             return (AdvancedLogEndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder loggerName(String loggerName) {
+        default LogEndpointBuilder loggerName(String loggerName) {
             setProperty("loggerName", loggerName);
             return this;
         }
@@ -54,8 +54,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupActiveOnly(
-                Boolean groupActiveOnly) {
+        default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
             setProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
@@ -66,7 +65,7 @@ public interface LogEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
+        default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
             setProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
@@ -75,7 +74,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupDelay(Long groupDelay) {
+        default LogEndpointBuilder groupDelay(Long groupDelay) {
             setProperty("groupDelay", groupDelay);
             return this;
         }
@@ -84,7 +83,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupDelay(String groupDelay) {
+        default LogEndpointBuilder groupDelay(String groupDelay) {
             setProperty("groupDelay", groupDelay);
             return this;
         }
@@ -94,7 +93,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupInterval(Long groupInterval) {
+        default LogEndpointBuilder groupInterval(Long groupInterval) {
             setProperty("groupInterval", groupInterval);
             return this;
         }
@@ -104,7 +103,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupInterval(String groupInterval) {
+        default LogEndpointBuilder groupInterval(String groupInterval) {
             setProperty("groupInterval", groupInterval);
             return this;
         }
@@ -113,7 +112,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder groupSize(Integer groupSize) {
+        default LogEndpointBuilder groupSize(Integer groupSize) {
             setProperty("groupSize", groupSize);
             return this;
         }
@@ -123,7 +122,7 @@ public interface LogEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LogEndpointBuilder groupSize(String groupSize) {
+        default LogEndpointBuilder groupSize(String groupSize) {
             setProperty("groupSize", groupSize);
             return this;
         }
@@ -132,7 +131,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder level(String level) {
+        default LogEndpointBuilder level(String level) {
             setProperty("level", level);
             return this;
         }
@@ -142,7 +141,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder logMask(Boolean logMask) {
+        default LogEndpointBuilder logMask(Boolean logMask) {
             setProperty("logMask", logMask);
             return this;
         }
@@ -153,7 +152,7 @@ public interface LogEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default LogEndpointBuilder logMask(String logMask) {
+        default LogEndpointBuilder logMask(String logMask) {
             setProperty("logMask", logMask);
             return this;
         }
@@ -162,7 +161,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LogEndpointBuilder marker(String marker) {
+        default LogEndpointBuilder marker(String marker) {
             setProperty("marker", marker);
             return this;
         }
@@ -171,7 +170,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder maxChars(int maxChars) {
+        default LogEndpointBuilder maxChars(int maxChars) {
             setProperty("maxChars", maxChars);
             return this;
         }
@@ -180,7 +179,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder maxChars(String maxChars) {
+        default LogEndpointBuilder maxChars(String maxChars) {
             setProperty("maxChars", maxChars);
             return this;
         }
@@ -189,7 +188,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder multiline(boolean multiline) {
+        default LogEndpointBuilder multiline(boolean multiline) {
             setProperty("multiline", multiline);
             return this;
         }
@@ -198,7 +197,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder multiline(String multiline) {
+        default LogEndpointBuilder multiline(String multiline) {
             setProperty("multiline", multiline);
             return this;
         }
@@ -208,7 +207,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showAll(boolean showAll) {
+        default LogEndpointBuilder showAll(boolean showAll) {
             setProperty("showAll", showAll);
             return this;
         }
@@ -218,7 +217,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showAll(String showAll) {
+        default LogEndpointBuilder showAll(String showAll) {
             setProperty("showAll", showAll);
             return this;
         }
@@ -227,7 +226,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showBody(boolean showBody) {
+        default LogEndpointBuilder showBody(boolean showBody) {
             setProperty("showBody", showBody);
             return this;
         }
@@ -236,7 +235,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showBody(String showBody) {
+        default LogEndpointBuilder showBody(String showBody) {
             setProperty("showBody", showBody);
             return this;
         }
@@ -245,7 +244,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showBodyType(boolean showBodyType) {
+        default LogEndpointBuilder showBodyType(boolean showBodyType) {
             setProperty("showBodyType", showBodyType);
             return this;
         }
@@ -254,7 +253,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showBodyType(String showBodyType) {
+        default LogEndpointBuilder showBodyType(String showBodyType) {
             setProperty("showBodyType", showBodyType);
             return this;
         }
@@ -266,7 +265,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showCaughtException(
+        default LogEndpointBuilder showCaughtException(
                 boolean showCaughtException) {
             setProperty("showCaughtException", showCaughtException);
             return this;
@@ -279,7 +278,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showCaughtException(
+        default LogEndpointBuilder showCaughtException(
                 String showCaughtException) {
             setProperty("showCaughtException", showCaughtException);
             return this;
@@ -290,7 +289,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showException(boolean showException) {
+        default LogEndpointBuilder showException(boolean showException) {
             setProperty("showException", showException);
             return this;
         }
@@ -300,7 +299,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showException(String showException) {
+        default LogEndpointBuilder showException(String showException) {
             setProperty("showException", showException);
             return this;
         }
@@ -309,7 +308,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
+        default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
             setProperty("showExchangeId", showExchangeId);
             return this;
         }
@@ -318,7 +317,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showExchangeId(String showExchangeId) {
+        default LogEndpointBuilder showExchangeId(String showExchangeId) {
             setProperty("showExchangeId", showExchangeId);
             return this;
         }
@@ -327,7 +326,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showExchangePattern(
+        default LogEndpointBuilder showExchangePattern(
                 boolean showExchangePattern) {
             setProperty("showExchangePattern", showExchangePattern);
             return this;
@@ -337,7 +336,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showExchangePattern(
+        default LogEndpointBuilder showExchangePattern(
                 String showExchangePattern) {
             setProperty("showExchangePattern", showExchangePattern);
             return this;
@@ -347,7 +346,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showFiles(boolean showFiles) {
+        default LogEndpointBuilder showFiles(boolean showFiles) {
             setProperty("showFiles", showFiles);
             return this;
         }
@@ -356,7 +355,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showFiles(String showFiles) {
+        default LogEndpointBuilder showFiles(String showFiles) {
             setProperty("showFiles", showFiles);
             return this;
         }
@@ -366,7 +365,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showFuture(boolean showFuture) {
+        default LogEndpointBuilder showFuture(boolean showFuture) {
             setProperty("showFuture", showFuture);
             return this;
         }
@@ -376,7 +375,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showFuture(String showFuture) {
+        default LogEndpointBuilder showFuture(String showFuture) {
             setProperty("showFuture", showFuture);
             return this;
         }
@@ -385,7 +384,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showHeaders(boolean showHeaders) {
+        default LogEndpointBuilder showHeaders(boolean showHeaders) {
             setProperty("showHeaders", showHeaders);
             return this;
         }
@@ -394,7 +393,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showHeaders(String showHeaders) {
+        default LogEndpointBuilder showHeaders(String showHeaders) {
             setProperty("showHeaders", showHeaders);
             return this;
         }
@@ -403,7 +402,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showOut(boolean showOut) {
+        default LogEndpointBuilder showOut(boolean showOut) {
             setProperty("showOut", showOut);
             return this;
         }
@@ -412,7 +411,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showOut(String showOut) {
+        default LogEndpointBuilder showOut(String showOut) {
             setProperty("showOut", showOut);
             return this;
         }
@@ -421,7 +420,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showProperties(boolean showProperties) {
+        default LogEndpointBuilder showProperties(boolean showProperties) {
             setProperty("showProperties", showProperties);
             return this;
         }
@@ -430,7 +429,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showProperties(String showProperties) {
+        default LogEndpointBuilder showProperties(String showProperties) {
             setProperty("showProperties", showProperties);
             return this;
         }
@@ -440,7 +439,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
+        default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
             setProperty("showStackTrace", showStackTrace);
             return this;
         }
@@ -450,7 +449,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showStackTrace(String showStackTrace) {
+        default LogEndpointBuilder showStackTrace(String showStackTrace) {
             setProperty("showStackTrace", showStackTrace);
             return this;
         }
@@ -463,7 +462,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showStreams(boolean showStreams) {
+        default LogEndpointBuilder showStreams(boolean showStreams) {
             setProperty("showStreams", showStreams);
             return this;
         }
@@ -476,7 +475,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder showStreams(String showStreams) {
+        default LogEndpointBuilder showStreams(String showStreams) {
             setProperty("showStreams", showStreams);
             return this;
         }
@@ -488,7 +487,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder skipBodyLineSeparator(
+        default LogEndpointBuilder skipBodyLineSeparator(
                 boolean skipBodyLineSeparator) {
             setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
@@ -501,7 +500,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder skipBodyLineSeparator(
+        default LogEndpointBuilder skipBodyLineSeparator(
                 String skipBodyLineSeparator) {
             setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
@@ -512,7 +511,7 @@ public interface LogEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder style(OutputStyle style) {
+        default LogEndpointBuilder style(OutputStyle style) {
             setProperty("style", style);
             return this;
         }
@@ -522,7 +521,7 @@ public interface LogEndpointBuilderFactory {
          * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
          * @group formatting
          */
-        public default LogEndpointBuilder style(String style) {
+        default LogEndpointBuilder style(String style) {
             setProperty("style", style);
             return this;
         }
@@ -534,7 +533,7 @@ public interface LogEndpointBuilderFactory {
     public static interface AdvancedLogEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LogEndpointBuilder basic() {
+        default LogEndpointBuilder basic() {
             return (LogEndpointBuilder) this;
         }
         /**
@@ -543,7 +542,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLogEndpointBuilder basicPropertyBinding(
+        default AdvancedLogEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -554,7 +553,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLogEndpointBuilder basicPropertyBinding(
+        default AdvancedLogEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -565,8 +564,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLogEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -576,7 +574,7 @@ public interface LogEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLogEndpointBuilder synchronous(String synchronous) {
+        default AdvancedLogEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -593,7 +591,7 @@ public interface LogEndpointBuilderFactory {
      * The log component logs message exchanges to the underlying logging
      * mechanism. Creates a builder to build endpoints for the Log component.
      */
-    public default LogEndpointBuilder log(String path) {
+    default LogEndpointBuilder log(String path) {
         class LogEndpointBuilderImpl extends AbstractEndpointBuilder implements LogEndpointBuilder, AdvancedLogEndpointBuilder {
             public LogEndpointBuilderImpl(String path) {
                 super("log", path);

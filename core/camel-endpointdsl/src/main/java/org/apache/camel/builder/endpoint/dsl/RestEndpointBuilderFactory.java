@@ -39,7 +39,7 @@ public interface RestEndpointBuilderFactory {
     public interface RestEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedRestEndpointConsumerBuilder advanced() {
+        default AdvancedRestEndpointConsumerBuilder advanced() {
             return (AdvancedRestEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder method(String method) {
+        default RestEndpointConsumerBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -56,7 +56,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder path(String path) {
+        default RestEndpointConsumerBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -65,8 +65,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder uriTemplate(
-                String uriTemplate) {
+        default RestEndpointConsumerBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
             return this;
         }
@@ -76,7 +75,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder consumes(String consumes) {
+        default RestEndpointConsumerBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
             return this;
         }
@@ -85,7 +84,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder inType(String inType) {
+        default RestEndpointConsumerBuilder inType(String inType) {
             setProperty("inType", inType);
             return this;
         }
@@ -94,7 +93,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder outType(String outType) {
+        default RestEndpointConsumerBuilder outType(String outType) {
             setProperty("outType", outType);
             return this;
         }
@@ -104,7 +103,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder produces(String produces) {
+        default RestEndpointConsumerBuilder produces(String produces) {
             setProperty("produces", produces);
             return this;
         }
@@ -113,7 +112,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointConsumerBuilder routeId(String routeId) {
+        default RestEndpointConsumerBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
             return this;
         }
@@ -128,7 +127,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default RestEndpointConsumerBuilder bridgeErrorHandler(
+        default RestEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -144,7 +143,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default RestEndpointConsumerBuilder bridgeErrorHandler(
+        default RestEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -159,7 +158,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestEndpointConsumerBuilder consumerComponentName(
+        default RestEndpointConsumerBuilder consumerComponentName(
                 String consumerComponentName) {
             setProperty("consumerComponentName", consumerComponentName);
             return this;
@@ -169,8 +168,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestEndpointConsumerBuilder description(
-                String description) {
+        default RestEndpointConsumerBuilder description(String description) {
             setProperty("description", description);
             return this;
         }
@@ -182,7 +180,7 @@ public interface RestEndpointBuilderFactory {
     public interface AdvancedRestEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default RestEndpointConsumerBuilder basic() {
+        default RestEndpointConsumerBuilder basic() {
             return (RestEndpointConsumerBuilder) this;
         }
         /**
@@ -194,7 +192,7 @@ public interface RestEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -208,7 +206,7 @@ public interface RestEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestEndpointConsumerBuilder exceptionHandler(
+        default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -218,7 +216,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestEndpointConsumerBuilder exchangePattern(
+        default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -229,7 +227,7 @@ public interface RestEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedRestEndpointConsumerBuilder exchangePattern(
+        default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -240,7 +238,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -251,7 +249,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -262,7 +260,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointConsumerBuilder synchronous(
+        default AdvancedRestEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -273,7 +271,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointConsumerBuilder synchronous(
+        default AdvancedRestEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -286,7 +284,7 @@ public interface RestEndpointBuilderFactory {
     public static interface RestEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedRestEndpointProducerBuilder advanced() {
+        default AdvancedRestEndpointProducerBuilder advanced() {
             return (AdvancedRestEndpointProducerBuilder) this;
         }
         /**
@@ -294,7 +292,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder method(String method) {
+        default RestEndpointProducerBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -303,7 +301,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder path(String path) {
+        default RestEndpointProducerBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -312,8 +310,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder uriTemplate(
-                String uriTemplate) {
+        default RestEndpointProducerBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
             return this;
         }
@@ -323,7 +320,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder consumes(String consumes) {
+        default RestEndpointProducerBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
             return this;
         }
@@ -332,7 +329,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder inType(String inType) {
+        default RestEndpointProducerBuilder inType(String inType) {
             setProperty("inType", inType);
             return this;
         }
@@ -341,7 +338,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder outType(String outType) {
+        default RestEndpointProducerBuilder outType(String outType) {
             setProperty("outType", outType);
             return this;
         }
@@ -351,7 +348,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder produces(String produces) {
+        default RestEndpointProducerBuilder produces(String produces) {
             setProperty("produces", produces);
             return this;
         }
@@ -360,7 +357,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointProducerBuilder routeId(String routeId) {
+        default RestEndpointProducerBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
             return this;
         }
@@ -370,7 +367,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder apiDoc(String apiDoc) {
+        default RestEndpointProducerBuilder apiDoc(String apiDoc) {
             setProperty("apiDoc", apiDoc);
             return this;
         }
@@ -384,7 +381,7 @@ public interface RestEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder bindingMode(
+        default RestEndpointProducerBuilder bindingMode(
                 RestBindingMode bindingMode) {
             setProperty("bindingMode", bindingMode);
             return this;
@@ -399,8 +396,7 @@ public interface RestEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder bindingMode(
-                String bindingMode) {
+        default RestEndpointProducerBuilder bindingMode(String bindingMode) {
             setProperty("bindingMode", bindingMode);
             return this;
         }
@@ -410,7 +406,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder host(String host) {
+        default RestEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -427,7 +423,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder lazyStartProducer(
+        default RestEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -445,7 +441,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder lazyStartProducer(
+        default RestEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -460,7 +456,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder producerComponentName(
+        default RestEndpointProducerBuilder producerComponentName(
                 String producerComponentName) {
             setProperty("producerComponentName", producerComponentName);
             return this;
@@ -470,7 +466,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default RestEndpointProducerBuilder queryParameters(
+        default RestEndpointProducerBuilder queryParameters(
                 String queryParameters) {
             setProperty("queryParameters", queryParameters);
             return this;
@@ -483,7 +479,7 @@ public interface RestEndpointBuilderFactory {
     public interface AdvancedRestEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default RestEndpointProducerBuilder basic() {
+        default RestEndpointProducerBuilder basic() {
             return (RestEndpointProducerBuilder) this;
         }
         /**
@@ -492,7 +488,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -503,7 +499,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -514,7 +510,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointProducerBuilder synchronous(
+        default AdvancedRestEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -525,7 +521,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointProducerBuilder synchronous(
+        default AdvancedRestEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -538,7 +534,7 @@ public interface RestEndpointBuilderFactory {
     public static interface RestEndpointBuilder
             extends
                 RestEndpointConsumerBuilder, RestEndpointProducerBuilder {
-        public default AdvancedRestEndpointBuilder advanced() {
+        default AdvancedRestEndpointBuilder advanced() {
             return (AdvancedRestEndpointBuilder) this;
         }
         /**
@@ -546,7 +542,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder method(String method) {
+        default RestEndpointBuilder method(String method) {
             setProperty("method", method);
             return this;
         }
@@ -555,7 +551,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder path(String path) {
+        default RestEndpointBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -564,7 +560,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder uriTemplate(String uriTemplate) {
+        default RestEndpointBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
             return this;
         }
@@ -574,7 +570,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder consumes(String consumes) {
+        default RestEndpointBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
             return this;
         }
@@ -583,7 +579,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder inType(String inType) {
+        default RestEndpointBuilder inType(String inType) {
             setProperty("inType", inType);
             return this;
         }
@@ -592,7 +588,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder outType(String outType) {
+        default RestEndpointBuilder outType(String outType) {
             setProperty("outType", outType);
             return this;
         }
@@ -602,7 +598,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder produces(String produces) {
+        default RestEndpointBuilder produces(String produces) {
             setProperty("produces", produces);
             return this;
         }
@@ -611,7 +607,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default RestEndpointBuilder routeId(String routeId) {
+        default RestEndpointBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
             return this;
         }
@@ -623,7 +619,7 @@ public interface RestEndpointBuilderFactory {
     public static interface AdvancedRestEndpointBuilder
             extends
                 AdvancedRestEndpointConsumerBuilder, AdvancedRestEndpointProducerBuilder {
-        public default RestEndpointBuilder basic() {
+        default RestEndpointBuilder basic() {
             return (RestEndpointBuilder) this;
         }
         /**
@@ -632,7 +628,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointBuilder basicPropertyBinding(
+        default AdvancedRestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -643,7 +639,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointBuilder basicPropertyBinding(
+        default AdvancedRestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -654,8 +650,7 @@ public interface RestEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedRestEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -665,8 +660,7 @@ public interface RestEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedRestEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -684,7 +678,7 @@ public interface RestEndpointBuilderFactory {
      * calling external REST services (producer). Creates a builder to build
      * endpoints for the REST component.
      */
-    public default RestEndpointBuilder restEndpoint(String path) {
+    default RestEndpointBuilder restEndpoint(String path) {
         class RestEndpointBuilderImpl extends AbstractEndpointBuilder implements RestEndpointBuilder, AdvancedRestEndpointBuilder {
             public RestEndpointBuilderImpl(String path) {
                 super("rest", path);

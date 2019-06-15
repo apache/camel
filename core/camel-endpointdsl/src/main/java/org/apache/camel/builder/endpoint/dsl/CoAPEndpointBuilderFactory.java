@@ -42,7 +42,7 @@ public interface CoAPEndpointBuilderFactory {
     public interface CoAPEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedCoAPEndpointConsumerBuilder advanced() {
+        default AdvancedCoAPEndpointConsumerBuilder advanced() {
             return (AdvancedCoAPEndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder uri(URI uri) {
+        default CoAPEndpointConsumerBuilder uri(URI uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -59,7 +59,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder uri(String uri) {
+        default CoAPEndpointConsumerBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -75,7 +75,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder alias(String alias) {
+        default CoAPEndpointConsumerBuilder alias(String alias) {
             setProperty("alias", alias);
             return this;
         }
@@ -86,8 +86,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder cipherSuites(
-                String cipherSuites) {
+        default CoAPEndpointConsumerBuilder cipherSuites(String cipherSuites) {
             setProperty("cipherSuites", cipherSuites);
             return this;
         }
@@ -100,7 +99,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder clientAuthentication(
+        default CoAPEndpointConsumerBuilder clientAuthentication(
                 String clientAuthentication) {
             setProperty("clientAuthentication", clientAuthentication);
             return this;
@@ -110,8 +109,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder privateKey(
-                PrivateKey privateKey) {
+        default CoAPEndpointConsumerBuilder privateKey(PrivateKey privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -121,7 +119,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
+        default CoAPEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -132,7 +130,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
+        default CoAPEndpointConsumerBuilder pskStore(Object pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -143,7 +141,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
+        default CoAPEndpointConsumerBuilder pskStore(String pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -152,7 +150,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointConsumerBuilder publicKey(PublicKey publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -162,7 +160,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
+        default CoAPEndpointConsumerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -174,7 +172,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder sslContextParameters(
+        default CoAPEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -187,7 +185,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder sslContextParameters(
+        default CoAPEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -198,7 +196,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder trustedRpkStore(
+        default CoAPEndpointConsumerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
@@ -209,7 +207,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointConsumerBuilder trustedRpkStore(
+        default CoAPEndpointConsumerBuilder trustedRpkStore(
                 String trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
@@ -225,7 +223,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CoAPEndpointConsumerBuilder bridgeErrorHandler(
+        default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -241,7 +239,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CoAPEndpointConsumerBuilder bridgeErrorHandler(
+        default CoAPEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -252,7 +250,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CoAPEndpointConsumerBuilder coapMethodRestrict(
+        default CoAPEndpointConsumerBuilder coapMethodRestrict(
                 String coapMethodRestrict) {
             setProperty("coapMethodRestrict", coapMethodRestrict);
             return this;
@@ -265,7 +263,7 @@ public interface CoAPEndpointBuilderFactory {
     public interface AdvancedCoAPEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default CoAPEndpointConsumerBuilder basic() {
+        default CoAPEndpointConsumerBuilder basic() {
             return (CoAPEndpointConsumerBuilder) this;
         }
         /**
@@ -277,7 +275,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -291,7 +289,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCoAPEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -301,7 +299,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
+        default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -312,7 +310,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
+        default AdvancedCoAPEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -323,7 +321,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -334,7 +332,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -345,7 +343,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointConsumerBuilder synchronous(
+        default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -356,7 +354,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointConsumerBuilder synchronous(
+        default AdvancedCoAPEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -369,7 +367,7 @@ public interface CoAPEndpointBuilderFactory {
     public static interface CoAPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCoAPEndpointProducerBuilder advanced() {
+        default AdvancedCoAPEndpointProducerBuilder advanced() {
             return (AdvancedCoAPEndpointProducerBuilder) this;
         }
         /**
@@ -377,7 +375,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder uri(URI uri) {
+        default CoAPEndpointProducerBuilder uri(URI uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -386,7 +384,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder uri(String uri) {
+        default CoAPEndpointProducerBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -402,7 +400,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder alias(String alias) {
+        default CoAPEndpointProducerBuilder alias(String alias) {
             setProperty("alias", alias);
             return this;
         }
@@ -413,8 +411,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder cipherSuites(
-                String cipherSuites) {
+        default CoAPEndpointProducerBuilder cipherSuites(String cipherSuites) {
             setProperty("cipherSuites", cipherSuites);
             return this;
         }
@@ -427,7 +424,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder clientAuthentication(
+        default CoAPEndpointProducerBuilder clientAuthentication(
                 String clientAuthentication) {
             setProperty("clientAuthentication", clientAuthentication);
             return this;
@@ -437,8 +434,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder privateKey(
-                PrivateKey privateKey) {
+        default CoAPEndpointProducerBuilder privateKey(PrivateKey privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -448,7 +444,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder privateKey(String privateKey) {
+        default CoAPEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -459,7 +455,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
+        default CoAPEndpointProducerBuilder pskStore(Object pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -470,7 +466,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder pskStore(String pskStore) {
+        default CoAPEndpointProducerBuilder pskStore(String pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -479,7 +475,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointProducerBuilder publicKey(PublicKey publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -489,7 +485,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder publicKey(String publicKey) {
+        default CoAPEndpointProducerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -501,7 +497,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder sslContextParameters(
+        default CoAPEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -514,7 +510,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder sslContextParameters(
+        default CoAPEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -525,7 +521,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder trustedRpkStore(
+        default CoAPEndpointProducerBuilder trustedRpkStore(
                 Object trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
@@ -536,7 +532,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointProducerBuilder trustedRpkStore(
+        default CoAPEndpointProducerBuilder trustedRpkStore(
                 String trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
@@ -554,7 +550,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CoAPEndpointProducerBuilder lazyStartProducer(
+        default CoAPEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -572,7 +568,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CoAPEndpointProducerBuilder lazyStartProducer(
+        default CoAPEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -585,7 +581,7 @@ public interface CoAPEndpointBuilderFactory {
     public interface AdvancedCoAPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default CoAPEndpointProducerBuilder basic() {
+        default CoAPEndpointProducerBuilder basic() {
             return (CoAPEndpointProducerBuilder) this;
         }
         /**
@@ -594,7 +590,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -605,7 +601,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -616,7 +612,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointProducerBuilder synchronous(
+        default AdvancedCoAPEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -627,7 +623,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointProducerBuilder synchronous(
+        default AdvancedCoAPEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -640,7 +636,7 @@ public interface CoAPEndpointBuilderFactory {
     public static interface CoAPEndpointBuilder
             extends
                 CoAPEndpointConsumerBuilder, CoAPEndpointProducerBuilder {
-        public default AdvancedCoAPEndpointBuilder advanced() {
+        default AdvancedCoAPEndpointBuilder advanced() {
             return (AdvancedCoAPEndpointBuilder) this;
         }
         /**
@@ -648,7 +644,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder uri(URI uri) {
+        default CoAPEndpointBuilder uri(URI uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -657,7 +653,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder uri(String uri) {
+        default CoAPEndpointBuilder uri(String uri) {
             setProperty("uri", uri);
             return this;
         }
@@ -673,7 +669,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder alias(String alias) {
+        default CoAPEndpointBuilder alias(String alias) {
             setProperty("alias", alias);
             return this;
         }
@@ -684,7 +680,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder cipherSuites(String cipherSuites) {
+        default CoAPEndpointBuilder cipherSuites(String cipherSuites) {
             setProperty("cipherSuites", cipherSuites);
             return this;
         }
@@ -697,7 +693,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder clientAuthentication(
+        default CoAPEndpointBuilder clientAuthentication(
                 String clientAuthentication) {
             setProperty("clientAuthentication", clientAuthentication);
             return this;
@@ -707,7 +703,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
+        default CoAPEndpointBuilder privateKey(PrivateKey privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -717,7 +713,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PrivateKey</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder privateKey(String privateKey) {
+        default CoAPEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -728,7 +724,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointBuilder pskStore(Object pskStore) {
+        default CoAPEndpointBuilder pskStore(Object pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -739,7 +735,7 @@ public interface CoAPEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default CoAPEndpointBuilder pskStore(String pskStore) {
+        default CoAPEndpointBuilder pskStore(String pskStore) {
             setProperty("pskStore", pskStore);
             return this;
         }
@@ -748,7 +744,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
+        default CoAPEndpointBuilder publicKey(PublicKey publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -758,7 +754,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>java.security.PublicKey</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder publicKey(String publicKey) {
+        default CoAPEndpointBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
             return this;
         }
@@ -770,7 +766,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder sslContextParameters(
+        default CoAPEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -783,7 +779,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder sslContextParameters(
+        default CoAPEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -794,8 +790,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder trustedRpkStore(
-                Object trustedRpkStore) {
+        default CoAPEndpointBuilder trustedRpkStore(Object trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
@@ -805,8 +800,7 @@ public interface CoAPEndpointBuilderFactory {
          * <code>org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore</code> type.
          * @group common
          */
-        public default CoAPEndpointBuilder trustedRpkStore(
-                String trustedRpkStore) {
+        default CoAPEndpointBuilder trustedRpkStore(String trustedRpkStore) {
             setProperty("trustedRpkStore", trustedRpkStore);
             return this;
         }
@@ -818,7 +812,7 @@ public interface CoAPEndpointBuilderFactory {
     public static interface AdvancedCoAPEndpointBuilder
             extends
                 AdvancedCoAPEndpointConsumerBuilder, AdvancedCoAPEndpointProducerBuilder {
-        public default CoAPEndpointBuilder basic() {
+        default CoAPEndpointBuilder basic() {
             return (CoAPEndpointBuilder) this;
         }
         /**
@@ -827,7 +821,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -838,7 +832,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointBuilder basicPropertyBinding(
+        default AdvancedCoAPEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -849,8 +843,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCoAPEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -860,8 +853,7 @@ public interface CoAPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCoAPEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCoAPEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -871,7 +863,7 @@ public interface CoAPEndpointBuilderFactory {
      * capable devices. Creates a builder to build endpoints for the CoAP
      * component.
      */
-    public default CoAPEndpointBuilder coAP(String path) {
+    default CoAPEndpointBuilder coAP(String path) {
         class CoAPEndpointBuilderImpl extends AbstractEndpointBuilder implements CoAPEndpointBuilder, AdvancedCoAPEndpointBuilder {
             public CoAPEndpointBuilderImpl(String path) {
                 super("coap", path);

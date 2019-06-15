@@ -36,7 +36,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
     public static interface GoogleBigQuerySQLEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGoogleBigQuerySQLEndpointBuilder advanced() {
+        default AdvancedGoogleBigQuerySQLEndpointBuilder advanced() {
             return (AdvancedGoogleBigQuerySQLEndpointBuilder) this;
         }
         /**
@@ -44,8 +44,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleBigQuerySQLEndpointBuilder projectId(
-                String projectId) {
+        default GoogleBigQuerySQLEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -54,7 +53,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GoogleBigQuerySQLEndpointBuilder query(String query) {
+        default GoogleBigQuerySQLEndpointBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -65,7 +64,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * @group producer
          */
-        public default GoogleBigQuerySQLEndpointBuilder connectionFactory(
+        default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -77,7 +76,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
          * @group producer
          */
-        public default GoogleBigQuerySQLEndpointBuilder connectionFactory(
+        default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -91,7 +90,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
     public static interface AdvancedGoogleBigQuerySQLEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default GoogleBigQuerySQLEndpointBuilder basic() {
+        default GoogleBigQuerySQLEndpointBuilder basic() {
             return (GoogleBigQuerySQLEndpointBuilder) this;
         }
         /**
@@ -100,7 +99,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -111,7 +110,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -122,7 +121,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -133,7 +132,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
+        default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -144,8 +143,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * a builder to build endpoints for the Google BigQuery Standard SQL
      * component.
      */
-    public default GoogleBigQuerySQLEndpointBuilder googleBigQuerySQL(
-            String path) {
+    default GoogleBigQuerySQLEndpointBuilder googleBigQuerySQL(String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
             public GoogleBigQuerySQLEndpointBuilderImpl(String path) {
                 super("google-bigquery-sql", path);

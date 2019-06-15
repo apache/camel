@@ -38,7 +38,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public interface GooglePubsubEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGooglePubsubEndpointConsumerBuilder advanced() {
+        default AdvancedGooglePubsubEndpointConsumerBuilder advanced() {
             return (AdvancedGooglePubsubEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder projectId(
-                String projectId) {
+        default GooglePubsubEndpointConsumerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -56,7 +55,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder destinationName(
+        default GooglePubsubEndpointConsumerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -68,8 +67,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder ackMode(
-                AckMode ackMode) {
+        default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -80,8 +78,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder ackMode(
-                String ackMode) {
+        default GooglePubsubEndpointConsumerBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -90,7 +87,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
+        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -101,7 +98,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
+        default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -113,7 +110,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder connectionFactory(
+        default GooglePubsubEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -125,7 +122,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder connectionFactory(
+        default GooglePubsubEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -135,8 +132,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder loggerId(
-                String loggerId) {
+        default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
             return this;
         }
@@ -146,7 +142,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -158,7 +154,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -174,7 +170,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
+        default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -190,7 +186,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
+        default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -203,7 +199,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public interface AdvancedGooglePubsubEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GooglePubsubEndpointConsumerBuilder basic() {
+        default GooglePubsubEndpointConsumerBuilder basic() {
             return (GooglePubsubEndpointConsumerBuilder) this;
         }
         /**
@@ -215,7 +211,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -229,7 +225,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -239,7 +235,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
+        default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -250,7 +246,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
+        default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -261,7 +257,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -272,7 +268,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -283,7 +279,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
+        default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -294,7 +290,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
+        default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -307,7 +303,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public static interface GooglePubsubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGooglePubsubEndpointProducerBuilder advanced() {
+        default AdvancedGooglePubsubEndpointProducerBuilder advanced() {
             return (AdvancedGooglePubsubEndpointProducerBuilder) this;
         }
         /**
@@ -315,8 +311,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder projectId(
-                String projectId) {
+        default GooglePubsubEndpointProducerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -325,7 +320,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder destinationName(
+        default GooglePubsubEndpointProducerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -337,8 +332,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder ackMode(
-                AckMode ackMode) {
+        default GooglePubsubEndpointProducerBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -349,8 +343,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder ackMode(
-                String ackMode) {
+        default GooglePubsubEndpointProducerBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -359,7 +352,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder concurrentConsumers(
+        default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -370,7 +363,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder concurrentConsumers(
+        default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -382,7 +375,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder connectionFactory(
+        default GooglePubsubEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -394,7 +387,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder connectionFactory(
+        default GooglePubsubEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -404,8 +397,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder loggerId(
-                String loggerId) {
+        default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
             return this;
         }
@@ -415,7 +407,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -427,7 +419,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -445,7 +437,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GooglePubsubEndpointProducerBuilder lazyStartProducer(
+        default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -463,7 +455,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GooglePubsubEndpointProducerBuilder lazyStartProducer(
+        default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -476,7 +468,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public interface AdvancedGooglePubsubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GooglePubsubEndpointProducerBuilder basic() {
+        default GooglePubsubEndpointProducerBuilder basic() {
             return (GooglePubsubEndpointProducerBuilder) this;
         }
         /**
@@ -485,7 +477,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -496,7 +488,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -507,7 +499,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
+        default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -518,7 +510,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
+        default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -531,7 +523,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public static interface GooglePubsubEndpointBuilder
             extends
                 GooglePubsubEndpointConsumerBuilder, GooglePubsubEndpointProducerBuilder {
-        public default AdvancedGooglePubsubEndpointBuilder advanced() {
+        default AdvancedGooglePubsubEndpointBuilder advanced() {
             return (AdvancedGooglePubsubEndpointBuilder) this;
         }
         /**
@@ -539,7 +531,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder projectId(String projectId) {
+        default GooglePubsubEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
             return this;
         }
@@ -548,7 +540,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder destinationName(
+        default GooglePubsubEndpointBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -560,7 +552,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
+        default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -571,7 +563,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder ackMode(String ackMode) {
+        default GooglePubsubEndpointBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
             return this;
         }
@@ -580,7 +572,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder concurrentConsumers(
+        default GooglePubsubEndpointBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -591,7 +583,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder concurrentConsumers(
+        default GooglePubsubEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -603,7 +595,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder connectionFactory(
+        default GooglePubsubEndpointBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -615,7 +607,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder connectionFactory(
+        default GooglePubsubEndpointBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -625,7 +617,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder loggerId(String loggerId) {
+        default GooglePubsubEndpointBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
             return this;
         }
@@ -635,7 +627,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -647,7 +639,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default GooglePubsubEndpointBuilder maxMessagesPerPoll(
+        default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
             setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
@@ -660,7 +652,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     public static interface AdvancedGooglePubsubEndpointBuilder
             extends
                 AdvancedGooglePubsubEndpointConsumerBuilder, AdvancedGooglePubsubEndpointProducerBuilder {
-        public default GooglePubsubEndpointBuilder basic() {
+        default GooglePubsubEndpointBuilder basic() {
             return (GooglePubsubEndpointBuilder) this;
         }
         /**
@@ -669,7 +661,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -680,7 +672,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
+        default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -691,7 +683,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointBuilder synchronous(
+        default AdvancedGooglePubsubEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -702,7 +694,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGooglePubsubEndpointBuilder synchronous(
+        default AdvancedGooglePubsubEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -720,7 +712,7 @@ public interface GooglePubsubEndpointBuilderFactory {
      * Messaging client for Google Cloud Platform PubSub Service Creates a
      * builder to build endpoints for the Google Pubsub component.
      */
-    public default GooglePubsubEndpointBuilder googlePubsub(String path) {
+    default GooglePubsubEndpointBuilder googlePubsub(String path) {
         class GooglePubsubEndpointBuilderImpl extends AbstractEndpointBuilder implements GooglePubsubEndpointBuilder, AdvancedGooglePubsubEndpointBuilder {
             public GooglePubsubEndpointBuilderImpl(String path) {
                 super("google-pubsub", path);

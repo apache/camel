@@ -37,7 +37,7 @@ public interface GlanceEndpointBuilderFactory {
     public static interface GlanceEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGlanceEndpointBuilder advanced() {
+        default AdvancedGlanceEndpointBuilder advanced() {
             return (AdvancedGlanceEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder host(String host) {
+        default GlanceEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder apiVersion(String apiVersion) {
+        default GlanceEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -64,7 +64,7 @@ public interface GlanceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default GlanceEndpointBuilder config(Object config) {
+        default GlanceEndpointBuilder config(Object config) {
             setProperty("config", config);
             return this;
         }
@@ -74,7 +74,7 @@ public interface GlanceEndpointBuilderFactory {
          * <code>org.openstack4j.core.transport.Config</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder config(String config) {
+        default GlanceEndpointBuilder config(String config) {
             setProperty("config", config);
             return this;
         }
@@ -83,7 +83,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder domain(String domain) {
+        default GlanceEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
             return this;
         }
@@ -92,7 +92,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder operation(String operation) {
+        default GlanceEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -101,7 +101,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder password(String password) {
+        default GlanceEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -110,7 +110,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder project(String project) {
+        default GlanceEndpointBuilder project(String project) {
             setProperty("project", project);
             return this;
         }
@@ -119,7 +119,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GlanceEndpointBuilder username(String username) {
+        default GlanceEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -131,7 +131,7 @@ public interface GlanceEndpointBuilderFactory {
     public static interface AdvancedGlanceEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default GlanceEndpointBuilder basic() {
+        default GlanceEndpointBuilder basic() {
             return (GlanceEndpointBuilder) this;
         }
         /**
@@ -140,7 +140,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGlanceEndpointBuilder basicPropertyBinding(
+        default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,7 +151,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGlanceEndpointBuilder basicPropertyBinding(
+        default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -162,8 +162,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGlanceEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -173,8 +172,7 @@ public interface GlanceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGlanceEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -184,7 +182,7 @@ public interface GlanceEndpointBuilderFactory {
      * image services. Creates a builder to build endpoints for the OpenStack
      * Glance component.
      */
-    public default GlanceEndpointBuilder glance(String path) {
+    default GlanceEndpointBuilder glance(String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super("openstack-glance", path);

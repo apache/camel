@@ -42,7 +42,7 @@ public interface NettyEndpointBuilderFactory {
     public interface NettyEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedNettyEndpointConsumerBuilder advanced() {
+        default AdvancedNettyEndpointConsumerBuilder advanced() {
             return (AdvancedNettyEndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder protocol(String protocol) {
+        default NettyEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -60,7 +60,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder host(String host) {
+        default NettyEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -69,7 +69,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder port(int port) {
+        default NettyEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -78,7 +78,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder port(String port) {
+        default NettyEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -88,8 +88,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder disconnect(
-                boolean disconnect) {
+        default NettyEndpointConsumerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -99,7 +98,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder disconnect(String disconnect) {
+        default NettyEndpointConsumerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -108,7 +107,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder keepAlive(boolean keepAlive) {
+        default NettyEndpointConsumerBuilder keepAlive(boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -117,7 +116,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder keepAlive(String keepAlive) {
+        default NettyEndpointConsumerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -126,8 +125,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder reuseAddress(
-                boolean reuseAddress) {
+        default NettyEndpointConsumerBuilder reuseAddress(boolean reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -136,8 +134,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder reuseAddress(
-                String reuseAddress) {
+        default NettyEndpointConsumerBuilder reuseAddress(String reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -154,8 +151,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder reuseChannel(
-                boolean reuseChannel) {
+        default NettyEndpointConsumerBuilder reuseChannel(boolean reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -172,8 +168,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder reuseChannel(
-                String reuseChannel) {
+        default NettyEndpointConsumerBuilder reuseChannel(String reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -182,7 +177,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder sync(boolean sync) {
+        default NettyEndpointConsumerBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -191,7 +186,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder sync(String sync) {
+        default NettyEndpointConsumerBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -200,8 +195,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder tcpNoDelay(
-                boolean tcpNoDelay) {
+        default NettyEndpointConsumerBuilder tcpNoDelay(boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -210,7 +204,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
+        default NettyEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -225,7 +219,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder bridgeErrorHandler(
+        default NettyEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -241,7 +235,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder bridgeErrorHandler(
+        default NettyEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -251,7 +245,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder broadcast(boolean broadcast) {
+        default NettyEndpointConsumerBuilder broadcast(boolean broadcast) {
             setProperty("broadcast", broadcast);
             return this;
         }
@@ -260,7 +254,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder broadcast(String broadcast) {
+        default NettyEndpointConsumerBuilder broadcast(String broadcast) {
             setProperty("broadcast", broadcast);
             return this;
         }
@@ -270,8 +264,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder clientMode(
-                boolean clientMode) {
+        default NettyEndpointConsumerBuilder clientMode(boolean clientMode) {
             setProperty("clientMode", clientMode);
             return this;
         }
@@ -281,7 +274,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder clientMode(String clientMode) {
+        default NettyEndpointConsumerBuilder clientMode(String clientMode) {
             setProperty("clientMode", clientMode);
             return this;
         }
@@ -291,7 +284,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder reconnect(boolean reconnect) {
+        default NettyEndpointConsumerBuilder reconnect(boolean reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -301,7 +294,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder reconnect(String reconnect) {
+        default NettyEndpointConsumerBuilder reconnect(String reconnect) {
             setProperty("reconnect", reconnect);
             return this;
         }
@@ -311,7 +304,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder reconnectInterval(
+        default NettyEndpointConsumerBuilder reconnectInterval(
                 int reconnectInterval) {
             setProperty("reconnectInterval", reconnectInterval);
             return this;
@@ -322,7 +315,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default NettyEndpointConsumerBuilder reconnectInterval(
+        default NettyEndpointConsumerBuilder reconnectInterval(
                 String reconnectInterval) {
             setProperty("reconnectInterval", reconnectInterval);
             return this;
@@ -335,7 +328,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder allowDefaultCodec(
+        default NettyEndpointConsumerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -348,7 +341,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder allowDefaultCodec(
+        default NettyEndpointConsumerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -359,7 +352,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder autoAppendDelimiter(
+        default NettyEndpointConsumerBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -370,7 +363,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder autoAppendDelimiter(
+        default NettyEndpointConsumerBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -382,7 +375,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointConsumerBuilder decoder(Object decoder) {
+        default NettyEndpointConsumerBuilder decoder(Object decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -394,7 +387,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointConsumerBuilder decoder(String decoder) {
+        default NettyEndpointConsumerBuilder decoder(String decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -403,7 +396,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder decoderMaxLineLength(
+        default NettyEndpointConsumerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -413,7 +406,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder decoderMaxLineLength(
+        default NettyEndpointConsumerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -428,8 +421,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder decoders(
-                List<Object> decoders) {
+        default NettyEndpointConsumerBuilder decoders(List<Object> decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -443,7 +435,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder decoders(String decoders) {
+        default NettyEndpointConsumerBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -455,7 +447,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder delimiter(
+        default NettyEndpointConsumerBuilder delimiter(
                 TextLineDelimiter delimiter) {
             setProperty("delimiter", delimiter);
             return this;
@@ -468,7 +460,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder delimiter(String delimiter) {
+        default NettyEndpointConsumerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -479,7 +471,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointConsumerBuilder encoder(Object encoder) {
+        default NettyEndpointConsumerBuilder encoder(Object encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -491,7 +483,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointConsumerBuilder encoder(String encoder) {
+        default NettyEndpointConsumerBuilder encoder(String encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -505,8 +497,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder encoders(
-                List<Object> encoders) {
+        default NettyEndpointConsumerBuilder encoders(List<Object> encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -520,7 +511,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder encoders(String encoders) {
+        default NettyEndpointConsumerBuilder encoders(String encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -530,7 +521,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder encoding(String encoding) {
+        default NettyEndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -541,7 +532,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder textline(boolean textline) {
+        default NettyEndpointConsumerBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -552,7 +543,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointConsumerBuilder textline(String textline) {
+        default NettyEndpointConsumerBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -561,7 +552,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder enabledProtocols(
+        default NettyEndpointConsumerBuilder enabledProtocols(
                 String enabledProtocols) {
             setProperty("enabledProtocols", enabledProtocols);
             return this;
@@ -571,8 +562,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder keyStoreFile(
-                File keyStoreFile) {
+        default NettyEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -581,8 +571,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder keyStoreFile(
-                String keyStoreFile) {
+        default NettyEndpointConsumerBuilder keyStoreFile(String keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -592,7 +581,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder keyStoreFormat(
+        default NettyEndpointConsumerBuilder keyStoreFormat(
                 String keyStoreFormat) {
             setProperty("keyStoreFormat", keyStoreFormat);
             return this;
@@ -604,7 +593,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder keyStoreResource(
+        default NettyEndpointConsumerBuilder keyStoreResource(
                 String keyStoreResource) {
             setProperty("keyStoreResource", keyStoreResource);
             return this;
@@ -615,7 +604,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder needClientAuth(
+        default NettyEndpointConsumerBuilder needClientAuth(
                 boolean needClientAuth) {
             setProperty("needClientAuth", needClientAuth);
             return this;
@@ -626,7 +615,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder needClientAuth(
+        default NettyEndpointConsumerBuilder needClientAuth(
                 String needClientAuth) {
             setProperty("needClientAuth", needClientAuth);
             return this;
@@ -637,7 +626,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder passphrase(String passphrase) {
+        default NettyEndpointConsumerBuilder passphrase(String passphrase) {
             setProperty("passphrase", passphrase);
             return this;
         }
@@ -647,7 +636,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder securityProvider(
+        default NettyEndpointConsumerBuilder securityProvider(
                 String securityProvider) {
             setProperty("securityProvider", securityProvider);
             return this;
@@ -658,7 +647,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder ssl(boolean ssl) {
+        default NettyEndpointConsumerBuilder ssl(boolean ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -668,7 +657,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder ssl(String ssl) {
+        default NettyEndpointConsumerBuilder ssl(String ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -680,7 +669,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslClientCertHeaders(
+        default NettyEndpointConsumerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -693,7 +682,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslClientCertHeaders(
+        default NettyEndpointConsumerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -704,7 +693,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslContextParameters(
+        default NettyEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -715,7 +704,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslContextParameters(
+        default NettyEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -725,7 +714,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslHandler(Object sslHandler) {
+        default NettyEndpointConsumerBuilder sslHandler(Object sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -735,7 +724,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder sslHandler(String sslHandler) {
+        default NettyEndpointConsumerBuilder sslHandler(String sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -744,8 +733,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder trustStoreFile(
-                File trustStoreFile) {
+        default NettyEndpointConsumerBuilder trustStoreFile(File trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -754,7 +742,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder trustStoreFile(
+        default NettyEndpointConsumerBuilder trustStoreFile(
                 String trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -766,7 +754,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointConsumerBuilder trustStoreResource(
+        default NettyEndpointConsumerBuilder trustStoreResource(
                 String trustStoreResource) {
             setProperty("trustStoreResource", trustStoreResource);
             return this;
@@ -779,7 +767,7 @@ public interface NettyEndpointBuilderFactory {
     public interface AdvancedNettyEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default NettyEndpointConsumerBuilder basic() {
+        default NettyEndpointConsumerBuilder basic() {
             return (NettyEndpointConsumerBuilder) this;
         }
         /**
@@ -791,7 +779,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder backlog(int backlog) {
+        default AdvancedNettyEndpointConsumerBuilder backlog(int backlog) {
             setProperty("backlog", backlog);
             return this;
         }
@@ -804,8 +792,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder backlog(
-                String backlog) {
+        default AdvancedNettyEndpointConsumerBuilder backlog(String backlog) {
             setProperty("backlog", backlog);
             return this;
         }
@@ -816,8 +803,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder bossCount(
-                int bossCount) {
+        default AdvancedNettyEndpointConsumerBuilder bossCount(int bossCount) {
             setProperty("bossCount", bossCount);
             return this;
         }
@@ -828,8 +814,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder bossCount(
-                String bossCount) {
+        default AdvancedNettyEndpointConsumerBuilder bossCount(String bossCount) {
             setProperty("bossCount", bossCount);
             return this;
         }
@@ -839,8 +824,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.channel.EventLoopGroup</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder bossGroup(
-                Object bossGroup) {
+        default AdvancedNettyEndpointConsumerBuilder bossGroup(Object bossGroup) {
             setProperty("bossGroup", bossGroup);
             return this;
         }
@@ -851,8 +835,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder bossGroup(
-                String bossGroup) {
+        default AdvancedNettyEndpointConsumerBuilder bossGroup(String bossGroup) {
             setProperty("bossGroup", bossGroup);
             return this;
         }
@@ -862,7 +845,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
+        default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
             setProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
@@ -873,7 +856,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
+        default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
             setProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
@@ -887,7 +870,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -901,7 +884,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
+        default AdvancedNettyEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -911,7 +894,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder exchangePattern(
+        default AdvancedNettyEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -922,7 +905,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder exchangePattern(
+        default AdvancedNettyEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -933,7 +916,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
+        default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
                 Object nettyServerBootstrapFactory) {
             setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
@@ -944,7 +927,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
+        default AdvancedNettyEndpointConsumerBuilder nettyServerBootstrapFactory(
                 String nettyServerBootstrapFactory) {
             setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
@@ -955,7 +938,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder networkInterface(
+        default AdvancedNettyEndpointConsumerBuilder networkInterface(
                 String networkInterface) {
             setProperty("networkInterface", networkInterface);
             return this;
@@ -966,7 +949,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
             setProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
@@ -978,7 +961,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
             setProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
@@ -992,7 +975,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
             setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
@@ -1007,7 +990,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 String serverClosedChannelExceptionCaughtLogLevel) {
             setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
@@ -1018,7 +1001,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 LoggingLevel serverExceptionCaughtLogLevel) {
             setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
@@ -1030,7 +1013,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
+        default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 String serverExceptionCaughtLogLevel) {
             setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
@@ -1041,7 +1024,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
+        default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
                 Object serverInitializerFactory) {
             setProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
@@ -1052,7 +1035,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
+        default AdvancedNettyEndpointConsumerBuilder serverInitializerFactory(
                 String serverInitializerFactory) {
             setProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
@@ -1063,7 +1046,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
+        default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
                 boolean usingExecutorService) {
             setProperty("usingExecutorService", usingExecutorService);
             return this;
@@ -1074,7 +1057,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
+        default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
                 String usingExecutorService) {
             setProperty("usingExecutorService", usingExecutorService);
             return this;
@@ -1087,7 +1070,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -1100,7 +1083,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -1111,7 +1094,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1122,7 +1105,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1133,7 +1116,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
                 Object bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -1144,7 +1127,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointConsumerBuilder bootstrapConfiguration(
                 String bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -1155,7 +1138,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder channelGroup(
+        default AdvancedNettyEndpointConsumerBuilder channelGroup(
                 Object channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
@@ -1166,7 +1149,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder channelGroup(
+        default AdvancedNettyEndpointConsumerBuilder channelGroup(
                 String channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
@@ -1180,7 +1163,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder nativeTransport(
+        default AdvancedNettyEndpointConsumerBuilder nativeTransport(
                 boolean nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -1194,7 +1177,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder nativeTransport(
+        default AdvancedNettyEndpointConsumerBuilder nativeTransport(
                 String nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -1208,7 +1191,7 @@ public interface NettyEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder options(
+        default AdvancedNettyEndpointConsumerBuilder options(
                 Map<String, Object> options) {
             setProperty("options", options);
             return this;
@@ -1223,8 +1206,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder options(
-                String options) {
+        default AdvancedNettyEndpointConsumerBuilder options(String options) {
             setProperty("options", options);
             return this;
         }
@@ -1234,7 +1216,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
+        default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1245,7 +1227,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
+        default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1256,7 +1238,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -1267,7 +1249,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointConsumerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -1278,7 +1260,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
+        default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
                 int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -1289,7 +1271,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
+        default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -1300,7 +1282,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder synchronous(
+        default AdvancedNettyEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1311,7 +1293,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder synchronous(
+        default AdvancedNettyEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1326,7 +1308,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder transferExchange(
+        default AdvancedNettyEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1341,7 +1323,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder transferExchange(
+        default AdvancedNettyEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1352,7 +1334,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -1363,7 +1345,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -1375,8 +1357,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder workerCount(
-                int workerCount) {
+        default AdvancedNettyEndpointConsumerBuilder workerCount(int workerCount) {
             setProperty("workerCount", workerCount);
             return this;
         }
@@ -1387,7 +1368,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder workerCount(
+        default AdvancedNettyEndpointConsumerBuilder workerCount(
                 String workerCount) {
             setProperty("workerCount", workerCount);
             return this;
@@ -1400,7 +1381,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder workerGroup(
+        default AdvancedNettyEndpointConsumerBuilder workerGroup(
                 Object workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
@@ -1414,7 +1395,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointConsumerBuilder workerGroup(
+        default AdvancedNettyEndpointConsumerBuilder workerGroup(
                 String workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
@@ -1427,7 +1408,7 @@ public interface NettyEndpointBuilderFactory {
     public static interface NettyEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNettyEndpointProducerBuilder advanced() {
+        default AdvancedNettyEndpointProducerBuilder advanced() {
             return (AdvancedNettyEndpointProducerBuilder) this;
         }
         /**
@@ -1435,7 +1416,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder protocol(String protocol) {
+        default NettyEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -1445,7 +1426,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder host(String host) {
+        default NettyEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1454,7 +1435,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder port(int port) {
+        default NettyEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1463,7 +1444,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder port(String port) {
+        default NettyEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1473,8 +1454,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder disconnect(
-                boolean disconnect) {
+        default NettyEndpointProducerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -1484,7 +1464,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder disconnect(String disconnect) {
+        default NettyEndpointProducerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -1493,7 +1473,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder keepAlive(boolean keepAlive) {
+        default NettyEndpointProducerBuilder keepAlive(boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1502,7 +1482,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder keepAlive(String keepAlive) {
+        default NettyEndpointProducerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1511,8 +1491,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder reuseAddress(
-                boolean reuseAddress) {
+        default NettyEndpointProducerBuilder reuseAddress(boolean reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -1521,8 +1500,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder reuseAddress(
-                String reuseAddress) {
+        default NettyEndpointProducerBuilder reuseAddress(String reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -1539,8 +1517,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder reuseChannel(
-                boolean reuseChannel) {
+        default NettyEndpointProducerBuilder reuseChannel(boolean reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -1557,8 +1534,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder reuseChannel(
-                String reuseChannel) {
+        default NettyEndpointProducerBuilder reuseChannel(String reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -1567,7 +1543,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder sync(boolean sync) {
+        default NettyEndpointProducerBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -1576,7 +1552,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder sync(String sync) {
+        default NettyEndpointProducerBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -1585,8 +1561,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder tcpNoDelay(
-                boolean tcpNoDelay) {
+        default NettyEndpointProducerBuilder tcpNoDelay(boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -1595,7 +1570,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
+        default NettyEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -1605,8 +1580,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder connectTimeout(
-                int connectTimeout) {
+        default NettyEndpointProducerBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
         }
@@ -1616,7 +1590,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder connectTimeout(
+        default NettyEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
             return this;
@@ -1634,7 +1608,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder lazyStartProducer(
+        default NettyEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1652,7 +1626,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder lazyStartProducer(
+        default NettyEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1665,8 +1639,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder requestTimeout(
-                long requestTimeout) {
+        default NettyEndpointProducerBuilder requestTimeout(long requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -1678,7 +1651,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default NettyEndpointProducerBuilder requestTimeout(
+        default NettyEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
@@ -1691,7 +1664,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder allowDefaultCodec(
+        default NettyEndpointProducerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -1704,7 +1677,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder allowDefaultCodec(
+        default NettyEndpointProducerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
@@ -1715,7 +1688,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder autoAppendDelimiter(
+        default NettyEndpointProducerBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -1726,7 +1699,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder autoAppendDelimiter(
+        default NettyEndpointProducerBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -1738,7 +1711,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointProducerBuilder decoder(Object decoder) {
+        default NettyEndpointProducerBuilder decoder(Object decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -1750,7 +1723,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointProducerBuilder decoder(String decoder) {
+        default NettyEndpointProducerBuilder decoder(String decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -1759,7 +1732,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder decoderMaxLineLength(
+        default NettyEndpointProducerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -1769,7 +1742,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder decoderMaxLineLength(
+        default NettyEndpointProducerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -1784,8 +1757,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder decoders(
-                List<Object> decoders) {
+        default NettyEndpointProducerBuilder decoders(List<Object> decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -1799,7 +1771,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder decoders(String decoders) {
+        default NettyEndpointProducerBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -1811,7 +1783,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder delimiter(
+        default NettyEndpointProducerBuilder delimiter(
                 TextLineDelimiter delimiter) {
             setProperty("delimiter", delimiter);
             return this;
@@ -1824,7 +1796,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder delimiter(String delimiter) {
+        default NettyEndpointProducerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -1835,7 +1807,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointProducerBuilder encoder(Object encoder) {
+        default NettyEndpointProducerBuilder encoder(Object encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -1847,7 +1819,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointProducerBuilder encoder(String encoder) {
+        default NettyEndpointProducerBuilder encoder(String encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -1861,8 +1833,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder encoders(
-                List<Object> encoders) {
+        default NettyEndpointProducerBuilder encoders(List<Object> encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -1876,7 +1847,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder encoders(String encoders) {
+        default NettyEndpointProducerBuilder encoders(String encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -1886,7 +1857,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder encoding(String encoding) {
+        default NettyEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -1897,7 +1868,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder textline(boolean textline) {
+        default NettyEndpointProducerBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1908,7 +1879,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointProducerBuilder textline(String textline) {
+        default NettyEndpointProducerBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -1917,7 +1888,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder enabledProtocols(
+        default NettyEndpointProducerBuilder enabledProtocols(
                 String enabledProtocols) {
             setProperty("enabledProtocols", enabledProtocols);
             return this;
@@ -1927,8 +1898,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder keyStoreFile(
-                File keyStoreFile) {
+        default NettyEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -1937,8 +1907,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder keyStoreFile(
-                String keyStoreFile) {
+        default NettyEndpointProducerBuilder keyStoreFile(String keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -1948,7 +1917,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder keyStoreFormat(
+        default NettyEndpointProducerBuilder keyStoreFormat(
                 String keyStoreFormat) {
             setProperty("keyStoreFormat", keyStoreFormat);
             return this;
@@ -1960,7 +1929,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder keyStoreResource(
+        default NettyEndpointProducerBuilder keyStoreResource(
                 String keyStoreResource) {
             setProperty("keyStoreResource", keyStoreResource);
             return this;
@@ -1971,7 +1940,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder passphrase(String passphrase) {
+        default NettyEndpointProducerBuilder passphrase(String passphrase) {
             setProperty("passphrase", passphrase);
             return this;
         }
@@ -1981,7 +1950,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder securityProvider(
+        default NettyEndpointProducerBuilder securityProvider(
                 String securityProvider) {
             setProperty("securityProvider", securityProvider);
             return this;
@@ -1992,7 +1961,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder ssl(boolean ssl) {
+        default NettyEndpointProducerBuilder ssl(boolean ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -2002,7 +1971,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder ssl(String ssl) {
+        default NettyEndpointProducerBuilder ssl(String ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -2014,7 +1983,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslClientCertHeaders(
+        default NettyEndpointProducerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -2027,7 +1996,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslClientCertHeaders(
+        default NettyEndpointProducerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -2038,7 +2007,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslContextParameters(
+        default NettyEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2049,7 +2018,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslContextParameters(
+        default NettyEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -2059,7 +2028,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslHandler(Object sslHandler) {
+        default NettyEndpointProducerBuilder sslHandler(Object sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -2069,7 +2038,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder sslHandler(String sslHandler) {
+        default NettyEndpointProducerBuilder sslHandler(String sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -2078,8 +2047,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder trustStoreFile(
-                File trustStoreFile) {
+        default NettyEndpointProducerBuilder trustStoreFile(File trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -2088,7 +2056,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder trustStoreFile(
+        default NettyEndpointProducerBuilder trustStoreFile(
                 String trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
@@ -2100,7 +2068,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointProducerBuilder trustStoreResource(
+        default NettyEndpointProducerBuilder trustStoreResource(
                 String trustStoreResource) {
             setProperty("trustStoreResource", trustStoreResource);
             return this;
@@ -2113,7 +2081,7 @@ public interface NettyEndpointBuilderFactory {
     public interface AdvancedNettyEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default NettyEndpointProducerBuilder basic() {
+        default NettyEndpointProducerBuilder basic() {
             return (NettyEndpointProducerBuilder) this;
         }
         /**
@@ -2122,7 +2090,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
+        default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
                 Object clientInitializerFactory) {
             setProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
@@ -2133,7 +2101,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
+        default AdvancedNettyEndpointProducerBuilder clientInitializerFactory(
                 String clientInitializerFactory) {
             setProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
@@ -2156,7 +2124,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.NettyCamelStateCorrelationManager</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder correlationManager(
+        default AdvancedNettyEndpointProducerBuilder correlationManager(
                 Object correlationManager) {
             setProperty("correlationManager", correlationManager);
             return this;
@@ -2179,7 +2147,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.component.netty4.NettyCamelStateCorrelationManager</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder correlationManager(
+        default AdvancedNettyEndpointProducerBuilder correlationManager(
                 String correlationManager) {
             setProperty("correlationManager", correlationManager);
             return this;
@@ -2190,7 +2158,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
+        default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
                 boolean lazyChannelCreation) {
             setProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
@@ -2201,7 +2169,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
+        default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
                 String lazyChannelCreation) {
             setProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
@@ -2221,7 +2189,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
+        default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
                 boolean producerPoolEnabled) {
             setProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
@@ -2241,7 +2209,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
+        default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
                 String producerPoolEnabled) {
             setProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
@@ -2253,7 +2221,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
                 int producerPoolMaxActive) {
             setProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
@@ -2265,7 +2233,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
                 String producerPoolMaxActive) {
             setProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
@@ -2275,7 +2243,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
             setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
@@ -2285,7 +2253,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
             setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
@@ -2297,7 +2265,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
                 long producerPoolMinEvictableIdle) {
             setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
@@ -2309,7 +2277,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
                 String producerPoolMinEvictableIdle) {
             setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
@@ -2320,7 +2288,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
                 int producerPoolMinIdle) {
             setProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
@@ -2331,7 +2299,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
+        default AdvancedNettyEndpointProducerBuilder producerPoolMinIdle(
                 String producerPoolMinIdle) {
             setProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
@@ -2343,7 +2311,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
+        default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
                 boolean udpConnectionlessSending) {
             setProperty("udpConnectionlessSending", udpConnectionlessSending);
             return this;
@@ -2355,7 +2323,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
+        default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
                 String udpConnectionlessSending) {
             setProperty("udpConnectionlessSending", udpConnectionlessSending);
             return this;
@@ -2366,7 +2334,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder useByteBuf(
+        default AdvancedNettyEndpointProducerBuilder useByteBuf(
                 boolean useByteBuf) {
             setProperty("useByteBuf", useByteBuf);
             return this;
@@ -2377,7 +2345,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedNettyEndpointProducerBuilder useByteBuf(
+        default AdvancedNettyEndpointProducerBuilder useByteBuf(
                 String useByteBuf) {
             setProperty("useByteBuf", useByteBuf);
             return this;
@@ -2390,7 +2358,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2403,7 +2371,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2414,7 +2382,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2425,7 +2393,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2436,7 +2404,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
                 Object bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -2447,7 +2415,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointProducerBuilder bootstrapConfiguration(
                 String bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -2458,7 +2426,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder channelGroup(
+        default AdvancedNettyEndpointProducerBuilder channelGroup(
                 Object channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
@@ -2469,7 +2437,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder channelGroup(
+        default AdvancedNettyEndpointProducerBuilder channelGroup(
                 String channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
@@ -2483,7 +2451,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder nativeTransport(
+        default AdvancedNettyEndpointProducerBuilder nativeTransport(
                 boolean nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -2497,7 +2465,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder nativeTransport(
+        default AdvancedNettyEndpointProducerBuilder nativeTransport(
                 String nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -2511,7 +2479,7 @@ public interface NettyEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder options(
+        default AdvancedNettyEndpointProducerBuilder options(
                 Map<String, Object> options) {
             setProperty("options", options);
             return this;
@@ -2526,8 +2494,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder options(
-                String options) {
+        default AdvancedNettyEndpointProducerBuilder options(String options) {
             setProperty("options", options);
             return this;
         }
@@ -2537,7 +2504,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
+        default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -2548,7 +2515,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
+        default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -2559,7 +2526,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -2570,7 +2537,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointProducerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -2581,7 +2548,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder sendBufferSize(
+        default AdvancedNettyEndpointProducerBuilder sendBufferSize(
                 int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -2592,7 +2559,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder sendBufferSize(
+        default AdvancedNettyEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -2603,7 +2570,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder synchronous(
+        default AdvancedNettyEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2614,7 +2581,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder synchronous(
+        default AdvancedNettyEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -2629,7 +2596,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder transferExchange(
+        default AdvancedNettyEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -2644,7 +2611,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder transferExchange(
+        default AdvancedNettyEndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -2655,7 +2622,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -2666,7 +2633,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -2678,8 +2645,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder workerCount(
-                int workerCount) {
+        default AdvancedNettyEndpointProducerBuilder workerCount(int workerCount) {
             setProperty("workerCount", workerCount);
             return this;
         }
@@ -2690,7 +2656,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder workerCount(
+        default AdvancedNettyEndpointProducerBuilder workerCount(
                 String workerCount) {
             setProperty("workerCount", workerCount);
             return this;
@@ -2703,7 +2669,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder workerGroup(
+        default AdvancedNettyEndpointProducerBuilder workerGroup(
                 Object workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
@@ -2717,7 +2683,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointProducerBuilder workerGroup(
+        default AdvancedNettyEndpointProducerBuilder workerGroup(
                 String workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
@@ -2730,7 +2696,7 @@ public interface NettyEndpointBuilderFactory {
     public static interface NettyEndpointBuilder
             extends
                 NettyEndpointConsumerBuilder, NettyEndpointProducerBuilder {
-        public default AdvancedNettyEndpointBuilder advanced() {
+        default AdvancedNettyEndpointBuilder advanced() {
             return (AdvancedNettyEndpointBuilder) this;
         }
         /**
@@ -2738,7 +2704,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder protocol(String protocol) {
+        default NettyEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -2748,7 +2714,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder host(String host) {
+        default NettyEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -2757,7 +2723,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder port(int port) {
+        default NettyEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -2766,7 +2732,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder port(String port) {
+        default NettyEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -2776,7 +2742,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder disconnect(boolean disconnect) {
+        default NettyEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -2786,7 +2752,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder disconnect(String disconnect) {
+        default NettyEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
             return this;
         }
@@ -2795,7 +2761,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder keepAlive(boolean keepAlive) {
+        default NettyEndpointBuilder keepAlive(boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -2804,7 +2770,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder keepAlive(String keepAlive) {
+        default NettyEndpointBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -2813,7 +2779,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder reuseAddress(boolean reuseAddress) {
+        default NettyEndpointBuilder reuseAddress(boolean reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -2822,7 +2788,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder reuseAddress(String reuseAddress) {
+        default NettyEndpointBuilder reuseAddress(String reuseAddress) {
             setProperty("reuseAddress", reuseAddress);
             return this;
         }
@@ -2839,7 +2805,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder reuseChannel(boolean reuseChannel) {
+        default NettyEndpointBuilder reuseChannel(boolean reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -2856,7 +2822,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder reuseChannel(String reuseChannel) {
+        default NettyEndpointBuilder reuseChannel(String reuseChannel) {
             setProperty("reuseChannel", reuseChannel);
             return this;
         }
@@ -2865,7 +2831,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder sync(boolean sync) {
+        default NettyEndpointBuilder sync(boolean sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -2874,7 +2840,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder sync(String sync) {
+        default NettyEndpointBuilder sync(String sync) {
             setProperty("sync", sync);
             return this;
         }
@@ -2883,7 +2849,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
+        default NettyEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -2892,7 +2858,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default NettyEndpointBuilder tcpNoDelay(String tcpNoDelay) {
+        default NettyEndpointBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
@@ -2904,8 +2870,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder allowDefaultCodec(
-                boolean allowDefaultCodec) {
+        default NettyEndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
@@ -2917,8 +2882,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder allowDefaultCodec(
-                String allowDefaultCodec) {
+        default NettyEndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
             setProperty("allowDefaultCodec", allowDefaultCodec);
             return this;
         }
@@ -2928,7 +2892,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder autoAppendDelimiter(
+        default NettyEndpointBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -2939,7 +2903,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder autoAppendDelimiter(
+        default NettyEndpointBuilder autoAppendDelimiter(
                 String autoAppendDelimiter) {
             setProperty("autoAppendDelimiter", autoAppendDelimiter);
             return this;
@@ -2951,7 +2915,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointBuilder decoder(Object decoder) {
+        default NettyEndpointBuilder decoder(Object decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -2963,7 +2927,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointBuilder decoder(String decoder) {
+        default NettyEndpointBuilder decoder(String decoder) {
             setProperty("decoder", decoder);
             return this;
         }
@@ -2972,7 +2936,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder decoderMaxLineLength(
+        default NettyEndpointBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -2982,7 +2946,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder decoderMaxLineLength(
+        default NettyEndpointBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
             setProperty("decoderMaxLineLength", decoderMaxLineLength);
             return this;
@@ -2997,7 +2961,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder decoders(List<Object> decoders) {
+        default NettyEndpointBuilder decoders(List<Object> decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -3011,7 +2975,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder decoders(String decoders) {
+        default NettyEndpointBuilder decoders(String decoders) {
             setProperty("decoders", decoders);
             return this;
         }
@@ -3023,8 +2987,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder delimiter(
-                TextLineDelimiter delimiter) {
+        default NettyEndpointBuilder delimiter(TextLineDelimiter delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -3036,7 +2999,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder delimiter(String delimiter) {
+        default NettyEndpointBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
             return this;
         }
@@ -3047,7 +3010,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointBuilder encoder(Object encoder) {
+        default NettyEndpointBuilder encoder(Object encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -3059,7 +3022,7 @@ public interface NettyEndpointBuilderFactory {
          * @group codec
          */
         @Deprecated
-        public default NettyEndpointBuilder encoder(String encoder) {
+        default NettyEndpointBuilder encoder(String encoder) {
             setProperty("encoder", encoder);
             return this;
         }
@@ -3073,7 +3036,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder encoders(List<Object> encoders) {
+        default NettyEndpointBuilder encoders(List<Object> encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -3087,7 +3050,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group codec
          */
-        public default NettyEndpointBuilder encoders(String encoders) {
+        default NettyEndpointBuilder encoders(String encoders) {
             setProperty("encoders", encoders);
             return this;
         }
@@ -3097,7 +3060,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder encoding(String encoding) {
+        default NettyEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
             return this;
         }
@@ -3108,7 +3071,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder textline(boolean textline) {
+        default NettyEndpointBuilder textline(boolean textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -3119,7 +3082,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group codec
          */
-        public default NettyEndpointBuilder textline(String textline) {
+        default NettyEndpointBuilder textline(String textline) {
             setProperty("textline", textline);
             return this;
         }
@@ -3128,8 +3091,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder enabledProtocols(
-                String enabledProtocols) {
+        default NettyEndpointBuilder enabledProtocols(String enabledProtocols) {
             setProperty("enabledProtocols", enabledProtocols);
             return this;
         }
@@ -3138,7 +3100,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder keyStoreFile(File keyStoreFile) {
+        default NettyEndpointBuilder keyStoreFile(File keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -3147,7 +3109,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder keyStoreFile(String keyStoreFile) {
+        default NettyEndpointBuilder keyStoreFile(String keyStoreFile) {
             setProperty("keyStoreFile", keyStoreFile);
             return this;
         }
@@ -3157,7 +3119,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder keyStoreFormat(String keyStoreFormat) {
+        default NettyEndpointBuilder keyStoreFormat(String keyStoreFormat) {
             setProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
@@ -3168,8 +3130,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder keyStoreResource(
-                String keyStoreResource) {
+        default NettyEndpointBuilder keyStoreResource(String keyStoreResource) {
             setProperty("keyStoreResource", keyStoreResource);
             return this;
         }
@@ -3179,7 +3140,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder passphrase(String passphrase) {
+        default NettyEndpointBuilder passphrase(String passphrase) {
             setProperty("passphrase", passphrase);
             return this;
         }
@@ -3189,8 +3150,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder securityProvider(
-                String securityProvider) {
+        default NettyEndpointBuilder securityProvider(String securityProvider) {
             setProperty("securityProvider", securityProvider);
             return this;
         }
@@ -3200,7 +3160,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder ssl(boolean ssl) {
+        default NettyEndpointBuilder ssl(boolean ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -3210,7 +3170,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder ssl(String ssl) {
+        default NettyEndpointBuilder ssl(String ssl) {
             setProperty("ssl", ssl);
             return this;
         }
@@ -3222,7 +3182,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslClientCertHeaders(
+        default NettyEndpointBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -3235,7 +3195,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslClientCertHeaders(
+        default NettyEndpointBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
             setProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
@@ -3246,7 +3206,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslContextParameters(
+        default NettyEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -3257,7 +3217,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslContextParameters(
+        default NettyEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -3267,7 +3227,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslHandler(Object sslHandler) {
+        default NettyEndpointBuilder sslHandler(Object sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -3277,7 +3237,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.handler.ssl.SslHandler</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder sslHandler(String sslHandler) {
+        default NettyEndpointBuilder sslHandler(String sslHandler) {
             setProperty("sslHandler", sslHandler);
             return this;
         }
@@ -3286,7 +3246,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder trustStoreFile(File trustStoreFile) {
+        default NettyEndpointBuilder trustStoreFile(File trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -3295,7 +3255,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.io.File</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder trustStoreFile(String trustStoreFile) {
+        default NettyEndpointBuilder trustStoreFile(String trustStoreFile) {
             setProperty("trustStoreFile", trustStoreFile);
             return this;
         }
@@ -3306,7 +3266,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default NettyEndpointBuilder trustStoreResource(
+        default NettyEndpointBuilder trustStoreResource(
                 String trustStoreResource) {
             setProperty("trustStoreResource", trustStoreResource);
             return this;
@@ -3319,7 +3279,7 @@ public interface NettyEndpointBuilderFactory {
     public static interface AdvancedNettyEndpointBuilder
             extends
                 AdvancedNettyEndpointConsumerBuilder, AdvancedNettyEndpointProducerBuilder {
-        public default NettyEndpointBuilder basic() {
+        default NettyEndpointBuilder basic() {
             return (NettyEndpointBuilder) this;
         }
         /**
@@ -3330,7 +3290,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3343,7 +3303,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder allowSerializedHeaders(
+        default AdvancedNettyEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3354,7 +3314,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3365,7 +3325,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder basicPropertyBinding(
+        default AdvancedNettyEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3376,7 +3336,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointBuilder bootstrapConfiguration(
                 Object bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -3387,7 +3347,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Object</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder bootstrapConfiguration(
+        default AdvancedNettyEndpointBuilder bootstrapConfiguration(
                 String bootstrapConfiguration) {
             setProperty("bootstrapConfiguration", bootstrapConfiguration);
             return this;
@@ -3398,8 +3358,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder channelGroup(
-                Object channelGroup) {
+        default AdvancedNettyEndpointBuilder channelGroup(Object channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
         }
@@ -3409,8 +3368,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.group.ChannelGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder channelGroup(
-                String channelGroup) {
+        default AdvancedNettyEndpointBuilder channelGroup(String channelGroup) {
             setProperty("channelGroup", channelGroup);
             return this;
         }
@@ -3423,7 +3381,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder nativeTransport(
+        default AdvancedNettyEndpointBuilder nativeTransport(
                 boolean nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -3437,7 +3395,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder nativeTransport(
+        default AdvancedNettyEndpointBuilder nativeTransport(
                 String nativeTransport) {
             setProperty("nativeTransport", nativeTransport);
             return this;
@@ -3451,8 +3409,7 @@ public interface NettyEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder options(
-                Map<String, Object> options) {
+        default AdvancedNettyEndpointBuilder options(Map<String, Object> options) {
             setProperty("options", options);
             return this;
         }
@@ -3466,7 +3423,7 @@ public interface NettyEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder options(String options) {
+        default AdvancedNettyEndpointBuilder options(String options) {
             setProperty("options", options);
             return this;
         }
@@ -3476,7 +3433,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder receiveBufferSize(
+        default AdvancedNettyEndpointBuilder receiveBufferSize(
                 int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -3487,7 +3444,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder receiveBufferSize(
+        default AdvancedNettyEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -3498,7 +3455,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -3509,7 +3466,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
+        default AdvancedNettyEndpointBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
             setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
@@ -3520,8 +3477,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder sendBufferSize(
-                int sendBufferSize) {
+        default AdvancedNettyEndpointBuilder sendBufferSize(int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -3531,7 +3487,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder sendBufferSize(
+        default AdvancedNettyEndpointBuilder sendBufferSize(
                 String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
@@ -3542,8 +3498,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNettyEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -3553,8 +3508,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNettyEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -3568,7 +3522,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder transferExchange(
+        default AdvancedNettyEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3583,7 +3537,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder transferExchange(
+        default AdvancedNettyEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3594,7 +3548,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -3605,7 +3559,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder udpByteArrayCodec(
+        default AdvancedNettyEndpointBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
             setProperty("udpByteArrayCodec", udpByteArrayCodec);
             return this;
@@ -3617,7 +3571,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder workerCount(int workerCount) {
+        default AdvancedNettyEndpointBuilder workerCount(int workerCount) {
             setProperty("workerCount", workerCount);
             return this;
         }
@@ -3628,8 +3582,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder workerCount(
-                String workerCount) {
+        default AdvancedNettyEndpointBuilder workerCount(String workerCount) {
             setProperty("workerCount", workerCount);
             return this;
         }
@@ -3641,8 +3594,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder workerGroup(
-                Object workerGroup) {
+        default AdvancedNettyEndpointBuilder workerGroup(Object workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
         }
@@ -3655,8 +3607,7 @@ public interface NettyEndpointBuilderFactory {
          * <code>io.netty.channel.EventLoopGroup</code> type.
          * @group advanced
          */
-        public default AdvancedNettyEndpointBuilder workerGroup(
-                String workerGroup) {
+        default AdvancedNettyEndpointBuilder workerGroup(String workerGroup) {
             setProperty("workerGroup", workerGroup);
             return this;
         }
@@ -3673,7 +3624,7 @@ public interface NettyEndpointBuilderFactory {
      * Socket level networking using TCP or UDP with the Netty 4.x library.
      * Creates a builder to build endpoints for the Netty4 component.
      */
-    public default NettyEndpointBuilder netty(String path) {
+    default NettyEndpointBuilder netty(String path) {
         class NettyEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyEndpointBuilder, AdvancedNettyEndpointBuilder {
             public NettyEndpointBuilderImpl(String path) {
                 super("netty", path);

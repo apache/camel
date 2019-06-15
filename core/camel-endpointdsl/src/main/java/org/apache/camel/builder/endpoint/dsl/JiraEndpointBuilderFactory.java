@@ -38,7 +38,7 @@ public interface JiraEndpointBuilderFactory {
     public interface JiraEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJiraEndpointConsumerBuilder advanced() {
+        default AdvancedJiraEndpointConsumerBuilder advanced() {
             return (AdvancedJiraEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointConsumerBuilder type(JiraType type) {
+        default JiraEndpointConsumerBuilder type(JiraType type) {
             setProperty("type", type);
             return this;
         }
@@ -61,7 +61,7 @@ public interface JiraEndpointBuilderFactory {
          * <code>org.apache.camel.component.jira.JiraType</code> type.
          * @group common
          */
-        public default JiraEndpointConsumerBuilder type(String type) {
+        default JiraEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -70,7 +70,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JiraEndpointConsumerBuilder delay(Integer delay) {
+        default JiraEndpointConsumerBuilder delay(Integer delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -80,7 +80,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointConsumerBuilder delay(String delay) {
+        default JiraEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -89,7 +89,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JiraEndpointConsumerBuilder jiraUrl(String jiraUrl) {
+        default JiraEndpointConsumerBuilder jiraUrl(String jiraUrl) {
             setProperty("jiraUrl", jiraUrl);
             return this;
         }
@@ -104,7 +104,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JiraEndpointConsumerBuilder bridgeErrorHandler(
+        default JiraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -120,7 +120,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JiraEndpointConsumerBuilder bridgeErrorHandler(
+        default JiraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -134,7 +134,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default JiraEndpointConsumerBuilder jql(String jql) {
+        default JiraEndpointConsumerBuilder jql(String jql) {
             setProperty("jql", jql);
             return this;
         }
@@ -143,7 +143,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default JiraEndpointConsumerBuilder maxResults(Integer maxResults) {
+        default JiraEndpointConsumerBuilder maxResults(Integer maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -153,7 +153,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default JiraEndpointConsumerBuilder maxResults(String maxResults) {
+        default JiraEndpointConsumerBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
             return this;
         }
@@ -162,8 +162,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder accessToken(
-                String accessToken) {
+        default JiraEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -172,8 +171,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder consumerKey(
-                String consumerKey) {
+        default JiraEndpointConsumerBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -183,7 +181,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder password(String password) {
+        default JiraEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -193,7 +191,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder privateKey(String privateKey) {
+        default JiraEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -205,7 +203,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder username(String username) {
+        default JiraEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -215,7 +213,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointConsumerBuilder verificationCode(
+        default JiraEndpointConsumerBuilder verificationCode(
                 String verificationCode) {
             setProperty("verificationCode", verificationCode);
             return this;
@@ -228,7 +226,7 @@ public interface JiraEndpointBuilderFactory {
     public interface AdvancedJiraEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JiraEndpointConsumerBuilder basic() {
+        default JiraEndpointConsumerBuilder basic() {
             return (JiraEndpointConsumerBuilder) this;
         }
         /**
@@ -240,7 +238,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -254,7 +252,7 @@ public interface JiraEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJiraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -264,7 +262,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJiraEndpointConsumerBuilder exchangePattern(
+        default AdvancedJiraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -275,7 +273,7 @@ public interface JiraEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJiraEndpointConsumerBuilder exchangePattern(
+        default AdvancedJiraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -286,7 +284,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -297,7 +295,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -308,7 +306,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointConsumerBuilder synchronous(
+        default AdvancedJiraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -319,7 +317,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointConsumerBuilder synchronous(
+        default AdvancedJiraEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -332,7 +330,7 @@ public interface JiraEndpointBuilderFactory {
     public static interface JiraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJiraEndpointProducerBuilder advanced() {
+        default AdvancedJiraEndpointProducerBuilder advanced() {
             return (AdvancedJiraEndpointProducerBuilder) this;
         }
         /**
@@ -343,7 +341,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointProducerBuilder type(JiraType type) {
+        default JiraEndpointProducerBuilder type(JiraType type) {
             setProperty("type", type);
             return this;
         }
@@ -355,7 +353,7 @@ public interface JiraEndpointBuilderFactory {
          * <code>org.apache.camel.component.jira.JiraType</code> type.
          * @group common
          */
-        public default JiraEndpointProducerBuilder type(String type) {
+        default JiraEndpointProducerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -364,7 +362,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JiraEndpointProducerBuilder delay(Integer delay) {
+        default JiraEndpointProducerBuilder delay(Integer delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -374,7 +372,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointProducerBuilder delay(String delay) {
+        default JiraEndpointProducerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -383,7 +381,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JiraEndpointProducerBuilder jiraUrl(String jiraUrl) {
+        default JiraEndpointProducerBuilder jiraUrl(String jiraUrl) {
             setProperty("jiraUrl", jiraUrl);
             return this;
         }
@@ -400,7 +398,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JiraEndpointProducerBuilder lazyStartProducer(
+        default JiraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -418,7 +416,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JiraEndpointProducerBuilder lazyStartProducer(
+        default JiraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -428,8 +426,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder accessToken(
-                String accessToken) {
+        default JiraEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -438,8 +435,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder consumerKey(
-                String consumerKey) {
+        default JiraEndpointProducerBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -449,7 +445,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder password(String password) {
+        default JiraEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -459,7 +455,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder privateKey(String privateKey) {
+        default JiraEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -471,7 +467,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder username(String username) {
+        default JiraEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -481,7 +477,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointProducerBuilder verificationCode(
+        default JiraEndpointProducerBuilder verificationCode(
                 String verificationCode) {
             setProperty("verificationCode", verificationCode);
             return this;
@@ -494,7 +490,7 @@ public interface JiraEndpointBuilderFactory {
     public interface AdvancedJiraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JiraEndpointProducerBuilder basic() {
+        default JiraEndpointProducerBuilder basic() {
             return (JiraEndpointProducerBuilder) this;
         }
         /**
@@ -503,7 +499,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -514,7 +510,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -525,7 +521,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointProducerBuilder synchronous(
+        default AdvancedJiraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -536,7 +532,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointProducerBuilder synchronous(
+        default AdvancedJiraEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -549,7 +545,7 @@ public interface JiraEndpointBuilderFactory {
     public static interface JiraEndpointBuilder
             extends
                 JiraEndpointConsumerBuilder, JiraEndpointProducerBuilder {
-        public default AdvancedJiraEndpointBuilder advanced() {
+        default AdvancedJiraEndpointBuilder advanced() {
             return (AdvancedJiraEndpointBuilder) this;
         }
         /**
@@ -560,7 +556,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointBuilder type(JiraType type) {
+        default JiraEndpointBuilder type(JiraType type) {
             setProperty("type", type);
             return this;
         }
@@ -572,7 +568,7 @@ public interface JiraEndpointBuilderFactory {
          * <code>org.apache.camel.component.jira.JiraType</code> type.
          * @group common
          */
-        public default JiraEndpointBuilder type(String type) {
+        default JiraEndpointBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -581,7 +577,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group common
          */
-        public default JiraEndpointBuilder delay(Integer delay) {
+        default JiraEndpointBuilder delay(Integer delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -591,7 +587,7 @@ public interface JiraEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default JiraEndpointBuilder delay(String delay) {
+        default JiraEndpointBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -600,7 +596,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JiraEndpointBuilder jiraUrl(String jiraUrl) {
+        default JiraEndpointBuilder jiraUrl(String jiraUrl) {
             setProperty("jiraUrl", jiraUrl);
             return this;
         }
@@ -609,7 +605,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder accessToken(String accessToken) {
+        default JiraEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -618,7 +614,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder consumerKey(String consumerKey) {
+        default JiraEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -628,7 +624,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder password(String password) {
+        default JiraEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -638,7 +634,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder privateKey(String privateKey) {
+        default JiraEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
             return this;
         }
@@ -650,7 +646,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder username(String username) {
+        default JiraEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -660,8 +656,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default JiraEndpointBuilder verificationCode(
-                String verificationCode) {
+        default JiraEndpointBuilder verificationCode(String verificationCode) {
             setProperty("verificationCode", verificationCode);
             return this;
         }
@@ -673,7 +668,7 @@ public interface JiraEndpointBuilderFactory {
     public static interface AdvancedJiraEndpointBuilder
             extends
                 AdvancedJiraEndpointConsumerBuilder, AdvancedJiraEndpointProducerBuilder {
-        public default JiraEndpointBuilder basic() {
+        default JiraEndpointBuilder basic() {
             return (JiraEndpointBuilder) this;
         }
         /**
@@ -682,7 +677,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -693,7 +688,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointBuilder basicPropertyBinding(
+        default AdvancedJiraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -704,8 +699,7 @@ public interface JiraEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedJiraEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -715,8 +709,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJiraEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedJiraEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -733,7 +726,7 @@ public interface JiraEndpointBuilderFactory {
      * The jira component interacts with the JIRA issue tracker. Creates a
      * builder to build endpoints for the Jira component.
      */
-    public default JiraEndpointBuilder jira(String path) {
+    default JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {
             public JiraEndpointBuilderImpl(String path) {
                 super("jira", path);

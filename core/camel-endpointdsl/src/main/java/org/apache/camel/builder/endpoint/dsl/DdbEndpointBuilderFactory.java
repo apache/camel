@@ -37,7 +37,7 @@ public interface DdbEndpointBuilderFactory {
     public static interface DdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDdbEndpointBuilder advanced() {
+        default AdvancedDdbEndpointBuilder advanced() {
             return (AdvancedDdbEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder tableName(String tableName) {
+        default DdbEndpointBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
             return this;
         }
@@ -55,7 +55,7 @@ public interface DdbEndpointBuilderFactory {
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
+        default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
             setProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
@@ -65,7 +65,7 @@ public interface DdbEndpointBuilderFactory {
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
+        default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
             setProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
@@ -75,7 +75,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder consistentRead(boolean consistentRead) {
+        default DdbEndpointBuilder consistentRead(boolean consistentRead) {
             setProperty("consistentRead", consistentRead);
             return this;
         }
@@ -85,7 +85,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder consistentRead(String consistentRead) {
+        default DdbEndpointBuilder consistentRead(String consistentRead) {
             setProperty("consistentRead", consistentRead);
             return this;
         }
@@ -94,8 +94,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder keyAttributeName(
-                String keyAttributeName) {
+        default DdbEndpointBuilder keyAttributeName(String keyAttributeName) {
             setProperty("keyAttributeName", keyAttributeName);
             return this;
         }
@@ -104,8 +103,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder keyAttributeType(
-                String keyAttributeType) {
+        default DdbEndpointBuilder keyAttributeType(String keyAttributeType) {
             setProperty("keyAttributeType", keyAttributeType);
             return this;
         }
@@ -115,7 +113,7 @@ public interface DdbEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder operation(DdbOperations operation) {
+        default DdbEndpointBuilder operation(DdbOperations operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -125,7 +123,7 @@ public interface DdbEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder operation(String operation) {
+        default DdbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -134,7 +132,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder proxyHost(String proxyHost) {
+        default DdbEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -143,7 +141,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder proxyPort(Integer proxyPort) {
+        default DdbEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -153,7 +151,7 @@ public interface DdbEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default DdbEndpointBuilder proxyPort(String proxyPort) {
+        default DdbEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -163,7 +161,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder readCapacity(Long readCapacity) {
+        default DdbEndpointBuilder readCapacity(Long readCapacity) {
             setProperty("readCapacity", readCapacity);
             return this;
         }
@@ -173,7 +171,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder readCapacity(String readCapacity) {
+        default DdbEndpointBuilder readCapacity(String readCapacity) {
             setProperty("readCapacity", readCapacity);
             return this;
         }
@@ -182,7 +180,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder region(String region) {
+        default DdbEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -192,7 +190,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
+        default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
             setProperty("writeCapacity", writeCapacity);
             return this;
         }
@@ -202,7 +200,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Long</code> type.
          * @group producer
          */
-        public default DdbEndpointBuilder writeCapacity(String writeCapacity) {
+        default DdbEndpointBuilder writeCapacity(String writeCapacity) {
             setProperty("writeCapacity", writeCapacity);
             return this;
         }
@@ -211,7 +209,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DdbEndpointBuilder accessKey(String accessKey) {
+        default DdbEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -220,7 +218,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default DdbEndpointBuilder secretKey(String secretKey) {
+        default DdbEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -232,7 +230,7 @@ public interface DdbEndpointBuilderFactory {
     public static interface AdvancedDdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DdbEndpointBuilder basic() {
+        default DdbEndpointBuilder basic() {
             return (DdbEndpointBuilder) this;
         }
         /**
@@ -241,7 +239,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbEndpointBuilder basicPropertyBinding(
+        default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -252,7 +250,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbEndpointBuilder basicPropertyBinding(
+        default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -263,8 +261,7 @@ public interface DdbEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDdbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -274,7 +271,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDdbEndpointBuilder synchronous(String synchronous) {
+        default AdvancedDdbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -292,7 +289,7 @@ public interface DdbEndpointBuilderFactory {
      * Amazon's DynamoDB service. Creates a builder to build endpoints for the
      * AWS DynamoDB component.
      */
-    public default DdbEndpointBuilder ddb(String path) {
+    default DdbEndpointBuilder ddb(String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {
                 super("aws-ddb", path);

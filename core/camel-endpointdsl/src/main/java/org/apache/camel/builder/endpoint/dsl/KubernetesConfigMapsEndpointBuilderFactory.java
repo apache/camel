@@ -37,7 +37,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
     public static interface KubernetesConfigMapsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesConfigMapsEndpointBuilder advanced() {
+        default AdvancedKubernetesConfigMapsEndpointBuilder advanced() {
             return (AdvancedKubernetesConfigMapsEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesConfigMapsEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -55,8 +54,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder apiVersion(
-                String apiVersion) {
+        default KubernetesConfigMapsEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -65,8 +63,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesConfigMapsEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -76,7 +73,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder kubernetesClient(
+        default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -87,7 +84,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder kubernetesClient(
+        default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -97,8 +94,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder portName(
-                String portName) {
+        default KubernetesConfigMapsEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -107,7 +103,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesConfigMapsEndpointBuilder portProtocol(
+        default KubernetesConfigMapsEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -117,8 +113,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder caCertData(
-                String caCertData) {
+        default KubernetesConfigMapsEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
         }
@@ -127,8 +122,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder caCertFile(
-                String caCertFile) {
+        default KubernetesConfigMapsEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
         }
@@ -137,7 +131,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientCertData(
+        default KubernetesConfigMapsEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -147,7 +141,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientCertFile(
+        default KubernetesConfigMapsEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -157,7 +151,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientKeyAlgo(
+        default KubernetesConfigMapsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -167,7 +161,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientKeyData(
+        default KubernetesConfigMapsEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -177,7 +171,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientKeyFile(
+        default KubernetesConfigMapsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -187,7 +181,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder clientKeyPassphrase(
+        default KubernetesConfigMapsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -197,8 +191,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder oauthToken(
-                String oauthToken) {
+        default KubernetesConfigMapsEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -207,8 +200,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder password(
-                String password) {
+        default KubernetesConfigMapsEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -217,7 +209,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder trustCerts(
+        default KubernetesConfigMapsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -228,8 +220,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder trustCerts(
-                String trustCerts) {
+        default KubernetesConfigMapsEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -238,8 +229,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesConfigMapsEndpointBuilder username(
-                String username) {
+        default KubernetesConfigMapsEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -251,7 +241,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
     public static interface AdvancedKubernetesConfigMapsEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesConfigMapsEndpointBuilder basic() {
+        default KubernetesConfigMapsEndpointBuilder basic() {
             return (KubernetesConfigMapsEndpointBuilder) this;
         }
         /**
@@ -260,7 +250,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -271,7 +261,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -282,7 +272,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -294,7 +284,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -305,7 +295,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
+        default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -316,7 +306,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
+        default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -327,8 +317,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
      * kubernetes configmap operations. Creates a builder to build endpoints for
      * the Kubernetes ConfigMap component.
      */
-    public default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
-            String path) {
+    default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
         class KubernetesConfigMapsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesConfigMapsEndpointBuilder, AdvancedKubernetesConfigMapsEndpointBuilder {
             public KubernetesConfigMapsEndpointBuilderImpl(String path) {
                 super("kubernetes-config-maps", path);

@@ -38,7 +38,7 @@ public interface GridFsEndpointBuilderFactory {
     public interface GridFsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedGridFsEndpointConsumerBuilder advanced() {
+        default AdvancedGridFsEndpointConsumerBuilder advanced() {
             return (AdvancedGridFsEndpointConsumerBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder connectionBean(
+        default GridFsEndpointConsumerBuilder connectionBean(
                 String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
@@ -57,7 +57,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder bucket(String bucket) {
+        default GridFsEndpointConsumerBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -66,7 +66,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder database(String database) {
+        default GridFsEndpointConsumerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -80,7 +80,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder readPreference(
+        default GridFsEndpointConsumerBuilder readPreference(
                 Object readPreference) {
             setProperty("readPreference", readPreference);
             return this;
@@ -96,7 +96,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder readPreference(
+        default GridFsEndpointConsumerBuilder readPreference(
                 String readPreference) {
             setProperty("readPreference", readPreference);
             return this;
@@ -108,8 +108,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder writeConcern(
-                Object writeConcern) {
+        default GridFsEndpointConsumerBuilder writeConcern(Object writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -121,8 +120,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder writeConcern(
-                String writeConcern) {
+        default GridFsEndpointConsumerBuilder writeConcern(String writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -134,7 +132,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder writeConcernRef(
+        default GridFsEndpointConsumerBuilder writeConcernRef(
                 Object writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
@@ -148,7 +146,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointConsumerBuilder writeConcernRef(
+        default GridFsEndpointConsumerBuilder writeConcernRef(
                 String writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
@@ -164,7 +162,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder bridgeErrorHandler(
+        default GridFsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -180,7 +178,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder bridgeErrorHandler(
+        default GridFsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -190,7 +188,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder delay(long delay) {
+        default GridFsEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -199,7 +197,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder delay(String delay) {
+        default GridFsEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -209,7 +207,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder fileAttributeName(
+        default GridFsEndpointConsumerBuilder fileAttributeName(
                 String fileAttributeName) {
             setProperty("fileAttributeName", fileAttributeName);
             return this;
@@ -220,8 +218,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default GridFsEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -231,8 +228,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder initialDelay(
-                String initialDelay) {
+        default GridFsEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -242,7 +238,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder persistentTSCollection(
+        default GridFsEndpointConsumerBuilder persistentTSCollection(
                 String persistentTSCollection) {
             setProperty("persistentTSCollection", persistentTSCollection);
             return this;
@@ -253,7 +249,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder persistentTSObject(
+        default GridFsEndpointConsumerBuilder persistentTSObject(
                 String persistentTSObject) {
             setProperty("persistentTSObject", persistentTSObject);
             return this;
@@ -264,7 +260,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder query(String query) {
+        default GridFsEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
             return this;
         }
@@ -276,7 +272,7 @@ public interface GridFsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder queryStrategy(
+        default GridFsEndpointConsumerBuilder queryStrategy(
                 QueryStrategy queryStrategy) {
             setProperty("queryStrategy", queryStrategy);
             return this;
@@ -289,8 +285,7 @@ public interface GridFsEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default GridFsEndpointConsumerBuilder queryStrategy(
-                String queryStrategy) {
+        default GridFsEndpointConsumerBuilder queryStrategy(String queryStrategy) {
             setProperty("queryStrategy", queryStrategy);
             return this;
         }
@@ -302,7 +297,7 @@ public interface GridFsEndpointBuilderFactory {
     public interface AdvancedGridFsEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default GridFsEndpointConsumerBuilder basic() {
+        default GridFsEndpointConsumerBuilder basic() {
             return (GridFsEndpointConsumerBuilder) this;
         }
         /**
@@ -314,7 +309,7 @@ public interface GridFsEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -328,7 +323,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
+        default AdvancedGridFsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -338,7 +333,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
+        default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -349,7 +344,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
+        default AdvancedGridFsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -360,7 +355,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -371,7 +366,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -382,7 +377,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointConsumerBuilder synchronous(
+        default AdvancedGridFsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -393,7 +388,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointConsumerBuilder synchronous(
+        default AdvancedGridFsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -406,7 +401,7 @@ public interface GridFsEndpointBuilderFactory {
     public static interface GridFsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGridFsEndpointProducerBuilder advanced() {
+        default AdvancedGridFsEndpointProducerBuilder advanced() {
             return (AdvancedGridFsEndpointProducerBuilder) this;
         }
         /**
@@ -414,7 +409,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder connectionBean(
+        default GridFsEndpointProducerBuilder connectionBean(
                 String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
@@ -425,7 +420,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder bucket(String bucket) {
+        default GridFsEndpointProducerBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -434,7 +429,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder database(String database) {
+        default GridFsEndpointProducerBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -448,7 +443,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder readPreference(
+        default GridFsEndpointProducerBuilder readPreference(
                 Object readPreference) {
             setProperty("readPreference", readPreference);
             return this;
@@ -464,7 +459,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder readPreference(
+        default GridFsEndpointProducerBuilder readPreference(
                 String readPreference) {
             setProperty("readPreference", readPreference);
             return this;
@@ -476,8 +471,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder writeConcern(
-                Object writeConcern) {
+        default GridFsEndpointProducerBuilder writeConcern(Object writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -489,8 +483,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder writeConcern(
-                String writeConcern) {
+        default GridFsEndpointProducerBuilder writeConcern(String writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -502,7 +495,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder writeConcernRef(
+        default GridFsEndpointProducerBuilder writeConcernRef(
                 Object writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
@@ -516,7 +509,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointProducerBuilder writeConcernRef(
+        default GridFsEndpointProducerBuilder writeConcernRef(
                 String writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
@@ -534,7 +527,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GridFsEndpointProducerBuilder lazyStartProducer(
+        default GridFsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -552,7 +545,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GridFsEndpointProducerBuilder lazyStartProducer(
+        default GridFsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -562,7 +555,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GridFsEndpointProducerBuilder operation(String operation) {
+        default GridFsEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -574,7 +567,7 @@ public interface GridFsEndpointBuilderFactory {
     public interface AdvancedGridFsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default GridFsEndpointProducerBuilder basic() {
+        default GridFsEndpointProducerBuilder basic() {
             return (GridFsEndpointProducerBuilder) this;
         }
         /**
@@ -583,7 +576,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -594,7 +587,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -605,7 +598,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointProducerBuilder synchronous(
+        default AdvancedGridFsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -616,7 +609,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointProducerBuilder synchronous(
+        default AdvancedGridFsEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -629,7 +622,7 @@ public interface GridFsEndpointBuilderFactory {
     public static interface GridFsEndpointBuilder
             extends
                 GridFsEndpointConsumerBuilder, GridFsEndpointProducerBuilder {
-        public default AdvancedGridFsEndpointBuilder advanced() {
+        default AdvancedGridFsEndpointBuilder advanced() {
             return (AdvancedGridFsEndpointBuilder) this;
         }
         /**
@@ -637,8 +630,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder connectionBean(
-                String connectionBean) {
+        default GridFsEndpointBuilder connectionBean(String connectionBean) {
             setProperty("connectionBean", connectionBean);
             return this;
         }
@@ -648,7 +640,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder bucket(String bucket) {
+        default GridFsEndpointBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -657,7 +649,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder database(String database) {
+        default GridFsEndpointBuilder database(String database) {
             setProperty("database", database);
             return this;
         }
@@ -671,8 +663,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder readPreference(
-                Object readPreference) {
+        default GridFsEndpointBuilder readPreference(Object readPreference) {
             setProperty("readPreference", readPreference);
             return this;
         }
@@ -687,8 +678,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.ReadPreference</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder readPreference(
-                String readPreference) {
+        default GridFsEndpointBuilder readPreference(String readPreference) {
             setProperty("readPreference", readPreference);
             return this;
         }
@@ -699,7 +689,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder writeConcern(Object writeConcern) {
+        default GridFsEndpointBuilder writeConcern(Object writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -711,7 +701,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder writeConcern(String writeConcern) {
+        default GridFsEndpointBuilder writeConcern(String writeConcern) {
             setProperty("writeConcern", writeConcern);
             return this;
         }
@@ -723,8 +713,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder writeConcernRef(
-                Object writeConcernRef) {
+        default GridFsEndpointBuilder writeConcernRef(Object writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
         }
@@ -737,8 +726,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>com.mongodb.WriteConcern</code> type.
          * @group common
          */
-        public default GridFsEndpointBuilder writeConcernRef(
-                String writeConcernRef) {
+        default GridFsEndpointBuilder writeConcernRef(String writeConcernRef) {
             setProperty("writeConcernRef", writeConcernRef);
             return this;
         }
@@ -750,7 +738,7 @@ public interface GridFsEndpointBuilderFactory {
     public static interface AdvancedGridFsEndpointBuilder
             extends
                 AdvancedGridFsEndpointConsumerBuilder, AdvancedGridFsEndpointProducerBuilder {
-        public default GridFsEndpointBuilder basic() {
+        default GridFsEndpointBuilder basic() {
             return (GridFsEndpointBuilder) this;
         }
         /**
@@ -759,7 +747,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -770,7 +758,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointBuilder basicPropertyBinding(
+        default AdvancedGridFsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -781,8 +769,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGridFsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -792,8 +779,7 @@ public interface GridFsEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGridFsEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGridFsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -811,7 +797,7 @@ public interface GridFsEndpointBuilderFactory {
      * Component for working with MongoDB GridFS. Creates a builder to build
      * endpoints for the MongoDB GridFS component.
      */
-    public default GridFsEndpointBuilder gridFs(String path) {
+    default GridFsEndpointBuilder gridFs(String path) {
         class GridFsEndpointBuilderImpl extends AbstractEndpointBuilder implements GridFsEndpointBuilder, AdvancedGridFsEndpointBuilder {
             public GridFsEndpointBuilderImpl(String path) {
                 super("mongodb-gridfs", path);

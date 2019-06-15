@@ -38,7 +38,7 @@ public interface WebhookEndpointBuilderFactory {
     public static interface WebhookEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedWebhookEndpointBuilder advanced() {
+        default AdvancedWebhookEndpointBuilder advanced() {
             return (AdvancedWebhookEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default WebhookEndpointBuilder endpointUri(String endpointUri) {
+        default WebhookEndpointBuilder endpointUri(String endpointUri) {
             setProperty("endpointUri", endpointUri);
             return this;
         }
@@ -56,7 +56,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookAutoRegister(
+        default WebhookEndpointBuilder webhookAutoRegister(
                 boolean webhookAutoRegister) {
             setProperty("webhookAutoRegister", webhookAutoRegister);
             return this;
@@ -67,7 +67,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookAutoRegister(
+        default WebhookEndpointBuilder webhookAutoRegister(
                 String webhookAutoRegister) {
             setProperty("webhookAutoRegister", webhookAutoRegister);
             return this;
@@ -79,8 +79,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookBasePath(
-                String webhookBasePath) {
+        default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
             setProperty("webhookBasePath", webhookBasePath);
             return this;
         }
@@ -90,7 +89,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookComponentName(
+        default WebhookEndpointBuilder webhookComponentName(
                 String webhookComponentName) {
             setProperty("webhookComponentName", webhookComponentName);
             return this;
@@ -100,7 +99,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookExternalUrl(
+        default WebhookEndpointBuilder webhookExternalUrl(
                 String webhookExternalUrl) {
             setProperty("webhookExternalUrl", webhookExternalUrl);
             return this;
@@ -111,7 +110,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default WebhookEndpointBuilder webhookPath(String webhookPath) {
+        default WebhookEndpointBuilder webhookPath(String webhookPath) {
             setProperty("webhookPath", webhookPath);
             return this;
         }
@@ -123,7 +122,7 @@ public interface WebhookEndpointBuilderFactory {
     public static interface AdvancedWebhookEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default WebhookEndpointBuilder basic() {
+        default WebhookEndpointBuilder basic() {
             return (WebhookEndpointBuilder) this;
         }
         /**
@@ -132,7 +131,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebhookEndpointBuilder basicPropertyBinding(
+        default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -143,7 +142,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebhookEndpointBuilder basicPropertyBinding(
+        default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -154,8 +153,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebhookEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedWebhookEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -165,8 +163,7 @@ public interface WebhookEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedWebhookEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedWebhookEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -177,7 +174,7 @@ public interface WebhookEndpointBuilderFactory {
      * with their own webhook provider. Creates a builder to build endpoints for
      * the Webhook component.
      */
-    public default WebhookEndpointBuilder webhook(String path) {
+    default WebhookEndpointBuilder webhook(String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {
             public WebhookEndpointBuilderImpl(String path) {
                 super("webhook", path);

@@ -37,7 +37,7 @@ public interface NetWeaverEndpointBuilderFactory {
     public static interface NetWeaverEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedNetWeaverEndpointBuilder advanced() {
+        default AdvancedNetWeaverEndpointBuilder advanced() {
             return (AdvancedNetWeaverEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder url(String url) {
+        default NetWeaverEndpointBuilder url(String url) {
             setProperty("url", url);
             return this;
         }
@@ -55,7 +55,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
+        default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
             setProperty("flatternMap", flatternMap);
             return this;
         }
@@ -65,7 +65,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
+        default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
             setProperty("flatternMap", flatternMap);
             return this;
         }
@@ -75,7 +75,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder json(boolean json) {
+        default NetWeaverEndpointBuilder json(boolean json) {
             setProperty("json", json);
             return this;
         }
@@ -85,7 +85,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder json(String json) {
+        default NetWeaverEndpointBuilder json(String json) {
             setProperty("json", json);
             return this;
         }
@@ -94,7 +94,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
+        default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
             setProperty("jsonAsMap", jsonAsMap);
             return this;
         }
@@ -103,7 +103,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
+        default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
             setProperty("jsonAsMap", jsonAsMap);
             return this;
         }
@@ -112,7 +112,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder password(String password) {
+        default NetWeaverEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -121,7 +121,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default NetWeaverEndpointBuilder username(String username) {
+        default NetWeaverEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -133,7 +133,7 @@ public interface NetWeaverEndpointBuilderFactory {
     public static interface AdvancedNetWeaverEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default NetWeaverEndpointBuilder basic() {
+        default NetWeaverEndpointBuilder basic() {
             return (NetWeaverEndpointBuilder) this;
         }
         /**
@@ -142,7 +142,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
+        default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -153,7 +153,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
+        default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -164,8 +164,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNetWeaverEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -175,8 +174,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedNetWeaverEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -186,7 +184,7 @@ public interface NetWeaverEndpointBuilderFactory {
      * using HTTP transports. Creates a builder to build endpoints for the SAP
      * NetWeaver component.
      */
-    public default NetWeaverEndpointBuilder netWeaver(String path) {
+    default NetWeaverEndpointBuilder netWeaver(String path) {
         class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder, AdvancedNetWeaverEndpointBuilder {
             public NetWeaverEndpointBuilderImpl(String path) {
                 super("sap-netweaver", path);

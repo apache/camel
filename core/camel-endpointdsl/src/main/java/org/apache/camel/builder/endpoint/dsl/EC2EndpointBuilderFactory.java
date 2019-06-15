@@ -36,7 +36,7 @@ public interface EC2EndpointBuilderFactory {
     public static interface EC2EndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedEC2EndpointBuilder advanced() {
+        default AdvancedEC2EndpointBuilder advanced() {
             return (AdvancedEC2EndpointBuilder) this;
         }
         /**
@@ -44,7 +44,7 @@ public interface EC2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default EC2EndpointBuilder label(String label) {
+        default EC2EndpointBuilder label(String label) {
             setProperty("label", label);
             return this;
         }
@@ -53,7 +53,7 @@ public interface EC2EndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default EC2EndpointBuilder region(String region) {
+        default EC2EndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -65,7 +65,7 @@ public interface EC2EndpointBuilderFactory {
     public static interface AdvancedEC2EndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default EC2EndpointBuilder basic() {
+        default EC2EndpointBuilder basic() {
             return (EC2EndpointBuilder) this;
         }
         /**
@@ -74,7 +74,7 @@ public interface EC2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEC2EndpointBuilder basicPropertyBinding(
+        default AdvancedEC2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -85,7 +85,7 @@ public interface EC2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEC2EndpointBuilder basicPropertyBinding(
+        default AdvancedEC2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -96,8 +96,7 @@ public interface EC2EndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEC2EndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedEC2EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -107,7 +106,7 @@ public interface EC2EndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedEC2EndpointBuilder synchronous(String synchronous) {
+        default AdvancedEC2EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -124,7 +123,7 @@ public interface EC2EndpointBuilderFactory {
      * The aws-ec2 is used for managing Amazon EC2 instances. Creates a builder
      * to build endpoints for the AWS EC2 component.
      */
-    public default EC2EndpointBuilder eC2(String path) {
+    default EC2EndpointBuilder eC2(String path) {
         class EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements EC2EndpointBuilder, AdvancedEC2EndpointBuilder {
             public EC2EndpointBuilderImpl(String path) {
                 super("aws-ec2", path);

@@ -45,7 +45,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public interface CouchbaseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedCouchbaseEndpointConsumerBuilder advanced() {
+        default AdvancedCouchbaseEndpointConsumerBuilder advanced() {
             return (AdvancedCouchbaseEndpointConsumerBuilder) this;
         }
         /**
@@ -53,7 +53,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder protocol(String protocol) {
+        default CouchbaseEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -62,7 +62,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder hostname(String hostname) {
+        default CouchbaseEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -71,7 +71,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder port(int port) {
+        default CouchbaseEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -80,7 +80,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder port(String port) {
+        default CouchbaseEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -89,7 +89,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
+        default CouchbaseEndpointConsumerBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -98,7 +98,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointConsumerBuilder key(String key) {
+        default CouchbaseEndpointConsumerBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -113,7 +113,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
+        default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -129,7 +129,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
+        default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -139,7 +139,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder consumerProcessedStrategy(
+        default CouchbaseEndpointConsumerBuilder consumerProcessedStrategy(
                 String consumerProcessedStrategy) {
             setProperty("consumerProcessedStrategy", consumerProcessedStrategy);
             return this;
@@ -149,8 +149,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder descending(
-                boolean descending) {
+        default CouchbaseEndpointConsumerBuilder descending(boolean descending) {
             setProperty("descending", descending);
             return this;
         }
@@ -159,8 +158,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder descending(
-                String descending) {
+        default CouchbaseEndpointConsumerBuilder descending(String descending) {
             setProperty("descending", descending);
             return this;
         }
@@ -169,7 +167,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder designDocumentName(
+        default CouchbaseEndpointConsumerBuilder designDocumentName(
                 String designDocumentName) {
             setProperty("designDocumentName", designDocumentName);
             return this;
@@ -179,7 +177,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder limit(int limit) {
+        default CouchbaseEndpointConsumerBuilder limit(int limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -188,7 +186,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder limit(String limit) {
+        default CouchbaseEndpointConsumerBuilder limit(String limit) {
             setProperty("limit", limit);
             return this;
         }
@@ -197,8 +195,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder rangeEndKey(
-                String rangeEndKey) {
+        default CouchbaseEndpointConsumerBuilder rangeEndKey(String rangeEndKey) {
             setProperty("rangeEndKey", rangeEndKey);
             return this;
         }
@@ -207,7 +204,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder rangeStartKey(
+        default CouchbaseEndpointConsumerBuilder rangeStartKey(
                 String rangeStartKey) {
             setProperty("rangeStartKey", rangeStartKey);
             return this;
@@ -218,7 +215,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -229,7 +226,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+        default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
             setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
@@ -239,7 +236,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder skip(int skip) {
+        default CouchbaseEndpointConsumerBuilder skip(int skip) {
             setProperty("skip", skip);
             return this;
         }
@@ -248,7 +245,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder skip(String skip) {
+        default CouchbaseEndpointConsumerBuilder skip(String skip) {
             setProperty("skip", skip);
             return this;
         }
@@ -257,7 +254,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default CouchbaseEndpointConsumerBuilder viewName(String viewName) {
+        default CouchbaseEndpointConsumerBuilder viewName(String viewName) {
             setProperty("viewName", viewName);
             return this;
         }
@@ -267,7 +264,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
+        default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -278,7 +275,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
+        default CouchbaseEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
             setProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
@@ -289,7 +286,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
+        default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -300,7 +297,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
+        default CouchbaseEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
             setProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
@@ -315,7 +312,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffMultiplier(
+        default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -330,7 +327,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder backoffMultiplier(
+        default CouchbaseEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
             setProperty("backoffMultiplier", backoffMultiplier);
             return this;
@@ -342,7 +339,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder delay(long delay) {
+        default CouchbaseEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -353,7 +350,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder delay(String delay) {
+        default CouchbaseEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
             return this;
         }
@@ -363,7 +360,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder greedy(boolean greedy) {
+        default CouchbaseEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -373,7 +370,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder greedy(String greedy) {
+        default CouchbaseEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
             return this;
         }
@@ -384,8 +381,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder initialDelay(
-                long initialDelay) {
+        default CouchbaseEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
         }
@@ -396,7 +392,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder initialDelay(
+        default CouchbaseEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
             setProperty("initialDelay", initialDelay);
             return this;
@@ -407,7 +403,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder runLoggingLevel(
+        default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -419,7 +415,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder runLoggingLevel(
+        default CouchbaseEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
             return this;
@@ -432,7 +428,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
+        default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -445,7 +441,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
+        default CouchbaseEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
             setProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
@@ -458,7 +454,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder scheduler(
+        default CouchbaseEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
             setProperty("scheduler", scheduler);
             return this;
@@ -471,8 +467,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder scheduler(
-                String scheduler) {
+        default CouchbaseEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
             return this;
         }
@@ -483,7 +478,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder schedulerProperties(
+        default CouchbaseEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -496,7 +491,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder schedulerProperties(
+        default CouchbaseEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
             setProperty("schedulerProperties", schedulerProperties);
             return this;
@@ -506,7 +501,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder startScheduler(
+        default CouchbaseEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -516,7 +511,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder startScheduler(
+        default CouchbaseEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
             setProperty("startScheduler", startScheduler);
             return this;
@@ -526,8 +521,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder timeUnit(
-                TimeUnit timeUnit) {
+        default CouchbaseEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -537,7 +531,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>java.util.concurrent.TimeUnit</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {
+        default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
             return this;
         }
@@ -547,7 +541,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder useFixedDelay(
+        default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -558,7 +552,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group scheduler
          */
-        public default CouchbaseEndpointConsumerBuilder useFixedDelay(
+        default CouchbaseEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
             return this;
@@ -568,7 +562,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointConsumerBuilder password(String password) {
+        default CouchbaseEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -577,7 +571,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointConsumerBuilder username(String username) {
+        default CouchbaseEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -589,7 +583,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public interface AdvancedCouchbaseEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default CouchbaseEndpointConsumerBuilder basic() {
+        default CouchbaseEndpointConsumerBuilder basic() {
             return (CouchbaseEndpointConsumerBuilder) this;
         }
         /**
@@ -601,7 +595,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -615,7 +609,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
+        default AdvancedCouchbaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -625,7 +619,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
+        default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -636,7 +630,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
+        default AdvancedCouchbaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -650,7 +644,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
+        default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -664,7 +658,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
+        default AdvancedCouchbaseEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             setProperty("pollStrategy", pollStrategy);
             return this;
@@ -674,7 +668,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder additionalHosts(
+        default AdvancedCouchbaseEndpointConsumerBuilder additionalHosts(
                 String additionalHosts) {
             setProperty("additionalHosts", additionalHosts);
             return this;
@@ -685,7 +679,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -696,7 +690,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -706,7 +700,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -716,7 +710,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -726,7 +720,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
                 long obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -736,7 +730,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
                 String obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -746,7 +740,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
+        default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
                 long obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
@@ -756,7 +750,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
+        default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
                 String obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
@@ -766,7 +760,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -776,7 +770,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -786,7 +780,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
+        default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
                 long opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
@@ -796,7 +790,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
+        default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
                 String opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
@@ -806,7 +800,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
                 int readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -816,7 +810,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
                 String readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -826,7 +820,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
                 boolean shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -836,7 +830,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
                 String shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -847,7 +841,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
+        default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -858,7 +852,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
+        default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -868,7 +862,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -878,7 +872,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -891,7 +885,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public static interface CouchbaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedCouchbaseEndpointProducerBuilder advanced() {
+        default AdvancedCouchbaseEndpointProducerBuilder advanced() {
             return (AdvancedCouchbaseEndpointProducerBuilder) this;
         }
         /**
@@ -899,7 +893,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder protocol(String protocol) {
+        default CouchbaseEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -908,7 +902,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder hostname(String hostname) {
+        default CouchbaseEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -917,7 +911,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder port(int port) {
+        default CouchbaseEndpointProducerBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -926,7 +920,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder port(String port) {
+        default CouchbaseEndpointProducerBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -935,7 +929,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder bucket(String bucket) {
+        default CouchbaseEndpointProducerBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -944,7 +938,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointProducerBuilder key(String key) {
+        default CouchbaseEndpointProducerBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -954,7 +948,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
+        default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 boolean autoStartIdForInserts) {
             setProperty("autoStartIdForInserts", autoStartIdForInserts);
             return this;
@@ -965,7 +959,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
+        default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
                 String autoStartIdForInserts) {
             setProperty("autoStartIdForInserts", autoStartIdForInserts);
             return this;
@@ -983,7 +977,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder lazyStartProducer(
+        default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1001,7 +995,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder lazyStartProducer(
+        default CouchbaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1011,8 +1005,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder operation(
-                String operation) {
+        default CouchbaseEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -1021,7 +1014,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder persistTo(int persistTo) {
+        default CouchbaseEndpointProducerBuilder persistTo(int persistTo) {
             setProperty("persistTo", persistTo);
             return this;
         }
@@ -1030,8 +1023,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder persistTo(
-                String persistTo) {
+        default CouchbaseEndpointProducerBuilder persistTo(String persistTo) {
             setProperty("persistTo", persistTo);
             return this;
         }
@@ -1040,7 +1032,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder producerRetryAttempts(
+        default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 int producerRetryAttempts) {
             setProperty("producerRetryAttempts", producerRetryAttempts);
             return this;
@@ -1050,7 +1042,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder producerRetryAttempts(
+        default CouchbaseEndpointProducerBuilder producerRetryAttempts(
                 String producerRetryAttempts) {
             setProperty("producerRetryAttempts", producerRetryAttempts);
             return this;
@@ -1060,7 +1052,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder producerRetryPause(
+        default CouchbaseEndpointProducerBuilder producerRetryPause(
                 int producerRetryPause) {
             setProperty("producerRetryPause", producerRetryPause);
             return this;
@@ -1070,7 +1062,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder producerRetryPause(
+        default CouchbaseEndpointProducerBuilder producerRetryPause(
                 String producerRetryPause) {
             setProperty("producerRetryPause", producerRetryPause);
             return this;
@@ -1080,8 +1072,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder replicateTo(
-                int replicateTo) {
+        default CouchbaseEndpointProducerBuilder replicateTo(int replicateTo) {
             setProperty("replicateTo", replicateTo);
             return this;
         }
@@ -1090,8 +1081,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder replicateTo(
-                String replicateTo) {
+        default CouchbaseEndpointProducerBuilder replicateTo(String replicateTo) {
             setProperty("replicateTo", replicateTo);
             return this;
         }
@@ -1100,7 +1090,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
+        default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 long startingIdForInsertsFrom) {
             setProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
             return this;
@@ -1110,7 +1100,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
+        default CouchbaseEndpointProducerBuilder startingIdForInsertsFrom(
                 String startingIdForInsertsFrom) {
             setProperty("startingIdForInsertsFrom", startingIdForInsertsFrom);
             return this;
@@ -1120,7 +1110,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointProducerBuilder password(String password) {
+        default CouchbaseEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1129,7 +1119,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointProducerBuilder username(String username) {
+        default CouchbaseEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1141,7 +1131,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public interface AdvancedCouchbaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default CouchbaseEndpointProducerBuilder basic() {
+        default CouchbaseEndpointProducerBuilder basic() {
             return (CouchbaseEndpointProducerBuilder) this;
         }
         /**
@@ -1149,7 +1139,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder additionalHosts(
+        default AdvancedCouchbaseEndpointProducerBuilder additionalHosts(
                 String additionalHosts) {
             setProperty("additionalHosts", additionalHosts);
             return this;
@@ -1160,7 +1150,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1171,7 +1161,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1181,7 +1171,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -1191,7 +1181,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -1201,7 +1191,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
                 long obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -1211,7 +1201,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
                 String obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -1221,7 +1211,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
+        default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
                 long obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
@@ -1231,7 +1221,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
+        default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
                 String obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
@@ -1241,7 +1231,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -1251,7 +1241,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -1261,7 +1251,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
+        default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
                 long opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
@@ -1271,7 +1261,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
+        default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
                 String opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
@@ -1281,7 +1271,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
                 int readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -1291,7 +1281,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
                 String readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -1301,7 +1291,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
                 boolean shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -1311,7 +1301,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
                 String shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -1322,7 +1312,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder synchronous(
+        default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1333,7 +1323,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder synchronous(
+        default AdvancedCouchbaseEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1343,7 +1333,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -1353,7 +1343,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -1366,7 +1356,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public static interface CouchbaseEndpointBuilder
             extends
                 CouchbaseEndpointConsumerBuilder, CouchbaseEndpointProducerBuilder {
-        public default AdvancedCouchbaseEndpointBuilder advanced() {
+        default AdvancedCouchbaseEndpointBuilder advanced() {
             return (AdvancedCouchbaseEndpointBuilder) this;
         }
         /**
@@ -1374,7 +1364,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder protocol(String protocol) {
+        default CouchbaseEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -1383,7 +1373,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder hostname(String hostname) {
+        default CouchbaseEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
             return this;
         }
@@ -1392,7 +1382,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder port(int port) {
+        default CouchbaseEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -1401,7 +1391,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder port(String port) {
+        default CouchbaseEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -1410,7 +1400,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder bucket(String bucket) {
+        default CouchbaseEndpointBuilder bucket(String bucket) {
             setProperty("bucket", bucket);
             return this;
         }
@@ -1419,7 +1409,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default CouchbaseEndpointBuilder key(String key) {
+        default CouchbaseEndpointBuilder key(String key) {
             setProperty("key", key);
             return this;
         }
@@ -1428,7 +1418,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointBuilder password(String password) {
+        default CouchbaseEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -1437,7 +1427,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CouchbaseEndpointBuilder username(String username) {
+        default CouchbaseEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1449,7 +1439,7 @@ public interface CouchbaseEndpointBuilderFactory {
     public static interface AdvancedCouchbaseEndpointBuilder
             extends
                 AdvancedCouchbaseEndpointConsumerBuilder, AdvancedCouchbaseEndpointProducerBuilder {
-        public default CouchbaseEndpointBuilder basic() {
+        default CouchbaseEndpointBuilder basic() {
             return (CouchbaseEndpointBuilder) this;
         }
         /**
@@ -1457,7 +1447,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder additionalHosts(
+        default AdvancedCouchbaseEndpointBuilder additionalHosts(
                 String additionalHosts) {
             setProperty("additionalHosts", additionalHosts);
             return this;
@@ -1468,7 +1458,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1479,7 +1469,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
+        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1489,7 +1479,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
                 long maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -1499,7 +1489,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
+        default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
             setProperty("maxReconnectDelay", maxReconnectDelay);
             return this;
@@ -1509,7 +1499,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointBuilder obsPollInterval(
                 long obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -1519,7 +1509,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder obsPollInterval(
+        default AdvancedCouchbaseEndpointBuilder obsPollInterval(
                 String obsPollInterval) {
             setProperty("obsPollInterval", obsPollInterval);
             return this;
@@ -1529,8 +1519,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder obsTimeout(
-                long obsTimeout) {
+        default AdvancedCouchbaseEndpointBuilder obsTimeout(long obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
         }
@@ -1539,8 +1528,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder obsTimeout(
-                String obsTimeout) {
+        default AdvancedCouchbaseEndpointBuilder obsTimeout(String obsTimeout) {
             setProperty("obsTimeout", obsTimeout);
             return this;
         }
@@ -1549,7 +1537,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
                 long opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -1559,7 +1547,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
+        default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
                 String opQueueMaxBlockTime) {
             setProperty("opQueueMaxBlockTime", opQueueMaxBlockTime);
             return this;
@@ -1569,7 +1557,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder opTimeOut(long opTimeOut) {
+        default AdvancedCouchbaseEndpointBuilder opTimeOut(long opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
         }
@@ -1578,8 +1566,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder opTimeOut(
-                String opTimeOut) {
+        default AdvancedCouchbaseEndpointBuilder opTimeOut(String opTimeOut) {
             setProperty("opTimeOut", opTimeOut);
             return this;
         }
@@ -1588,7 +1575,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointBuilder readBufferSize(
                 int readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -1598,7 +1585,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder readBufferSize(
+        default AdvancedCouchbaseEndpointBuilder readBufferSize(
                 String readBufferSize) {
             setProperty("readBufferSize", readBufferSize);
             return this;
@@ -1608,7 +1595,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointBuilder shouldOptimize(
                 boolean shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -1618,7 +1605,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder shouldOptimize(
+        default AdvancedCouchbaseEndpointBuilder shouldOptimize(
                 String shouldOptimize) {
             setProperty("shouldOptimize", shouldOptimize);
             return this;
@@ -1629,8 +1616,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedCouchbaseEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1640,8 +1626,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedCouchbaseEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1650,7 +1635,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
                 int timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -1660,7 +1645,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
+        default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(
                 String timeoutExceptionThreshold) {
             setProperty("timeoutExceptionThreshold", timeoutExceptionThreshold);
             return this;
@@ -1671,7 +1656,7 @@ public interface CouchbaseEndpointBuilderFactory {
      * and/or produce various type of operations. Creates a builder to build
      * endpoints for the Couchbase component.
      */
-    public default CouchbaseEndpointBuilder couchbase(String path) {
+    default CouchbaseEndpointBuilder couchbase(String path) {
         class CouchbaseEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchbaseEndpointBuilder, AdvancedCouchbaseEndpointBuilder {
             public CouchbaseEndpointBuilderImpl(String path) {
                 super("couchbase", path);

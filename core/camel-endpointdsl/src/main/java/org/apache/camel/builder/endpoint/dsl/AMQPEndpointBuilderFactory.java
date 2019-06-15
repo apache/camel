@@ -40,7 +40,7 @@ public interface AMQPEndpointBuilderFactory {
     public interface AMQPEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAMQPEndpointConsumerBuilder advanced() {
+        default AdvancedAMQPEndpointConsumerBuilder advanced() {
             return (AdvancedAMQPEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder destinationType(
+        default AMQPEndpointConsumerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -58,7 +58,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder destinationName(
+        default AMQPEndpointConsumerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -72,7 +72,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder clientId(String clientId) {
+        default AMQPEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -84,7 +84,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder connectionFactory(
+        default AMQPEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -98,7 +98,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder connectionFactory(
+        default AMQPEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -115,7 +115,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder disableReplyTo(
+        default AMQPEndpointConsumerBuilder disableReplyTo(
                 boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -132,8 +132,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder disableReplyTo(
-                String disableReplyTo) {
+        default AMQPEndpointConsumerBuilder disableReplyTo(String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -143,7 +142,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder durableSubscriptionName(
+        default AMQPEndpointConsumerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -158,7 +157,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder jmsMessageType(
+        default AMQPEndpointConsumerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -173,8 +172,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder jmsMessageType(
-                String jmsMessageType) {
+        default AMQPEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -187,7 +185,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder testConnectionOnStartup(
+        default AMQPEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -201,7 +199,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointConsumerBuilder testConnectionOnStartup(
+        default AMQPEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -212,7 +210,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder acknowledgementModeName(
+        default AMQPEndpointConsumerBuilder acknowledgementModeName(
                 String acknowledgementModeName) {
             setProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
@@ -231,8 +229,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder asyncConsumer(
-                boolean asyncConsumer) {
+        default AMQPEndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
             setProperty("asyncConsumer", asyncConsumer);
             return this;
         }
@@ -250,8 +247,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder asyncConsumer(
-                String asyncConsumer) {
+        default AMQPEndpointConsumerBuilder asyncConsumer(String asyncConsumer) {
             setProperty("asyncConsumer", asyncConsumer);
             return this;
         }
@@ -260,8 +256,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder autoStartup(
-                boolean autoStartup) {
+        default AMQPEndpointConsumerBuilder autoStartup(boolean autoStartup) {
             setProperty("autoStartup", autoStartup);
             return this;
         }
@@ -270,8 +265,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder autoStartup(
-                String autoStartup) {
+        default AMQPEndpointConsumerBuilder autoStartup(String autoStartup) {
             setProperty("autoStartup", autoStartup);
             return this;
         }
@@ -286,7 +280,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder bridgeErrorHandler(
+        default AMQPEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -302,7 +296,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder bridgeErrorHandler(
+        default AMQPEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -313,7 +307,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder cacheLevel(int cacheLevel) {
+        default AMQPEndpointConsumerBuilder cacheLevel(int cacheLevel) {
             setProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -323,7 +317,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder cacheLevel(String cacheLevel) {
+        default AMQPEndpointConsumerBuilder cacheLevel(String cacheLevel) {
             setProperty("cacheLevel", cacheLevel);
             return this;
         }
@@ -336,8 +330,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder cacheLevelName(
-                String cacheLevelName) {
+        default AMQPEndpointConsumerBuilder cacheLevelName(String cacheLevelName) {
             setProperty("cacheLevelName", cacheLevelName);
             return this;
         }
@@ -351,7 +344,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder concurrentConsumers(
+        default AMQPEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -366,7 +359,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder concurrentConsumers(
+        default AMQPEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
@@ -381,7 +374,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
+        default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -396,7 +389,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
+        default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
             setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
@@ -407,7 +400,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder replyTo(String replyTo) {
+        default AMQPEndpointConsumerBuilder replyTo(String replyTo) {
             setProperty("replyTo", replyTo);
             return this;
         }
@@ -416,7 +409,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
+        default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
                 boolean replyToDeliveryPersistent) {
             setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
@@ -426,7 +419,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
+        default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
                 String replyToDeliveryPersistent) {
             setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
@@ -436,7 +429,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder selector(String selector) {
+        default AMQPEndpointConsumerBuilder selector(String selector) {
             setProperty("selector", selector);
             return this;
         }
@@ -452,7 +445,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder subscriptionDurable(
+        default AMQPEndpointConsumerBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
             setProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -469,7 +462,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder subscriptionDurable(
+        default AMQPEndpointConsumerBuilder subscriptionDurable(
                 String subscriptionDurable) {
             setProperty("subscriptionDurable", subscriptionDurable);
             return this;
@@ -485,7 +478,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder subscriptionName(
+        default AMQPEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
             setProperty("subscriptionName", subscriptionName);
             return this;
@@ -505,7 +498,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder subscriptionShared(
+        default AMQPEndpointConsumerBuilder subscriptionShared(
                 boolean subscriptionShared) {
             setProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -525,7 +518,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AMQPEndpointConsumerBuilder subscriptionShared(
+        default AMQPEndpointConsumerBuilder subscriptionShared(
                 String subscriptionShared) {
             setProperty("subscriptionShared", subscriptionShared);
             return this;
@@ -536,7 +529,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
+        default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -548,7 +541,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.LoggingLevel</code> type.
          * @group logging
          */
-        public default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
+        default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
             setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
@@ -559,7 +552,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group logging
          */
-        public default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
+        default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -570,7 +563,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group logging
          */
-        public default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
+        default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
             setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
@@ -581,7 +574,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointConsumerBuilder password(String password) {
+        default AMQPEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -591,7 +584,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointConsumerBuilder username(String username) {
+        default AMQPEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -600,7 +593,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointConsumerBuilder transacted(boolean transacted) {
+        default AMQPEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -609,7 +602,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointConsumerBuilder transacted(String transacted) {
+        default AMQPEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -621,7 +614,7 @@ public interface AMQPEndpointBuilderFactory {
     public interface AdvancedAMQPEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AMQPEndpointConsumerBuilder basic() {
+        default AMQPEndpointConsumerBuilder basic() {
             return (AMQPEndpointConsumerBuilder) this;
         }
         /**
@@ -636,7 +629,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
+        default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
             setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -653,7 +646,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
+        default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
                 String acceptMessagesWhileStopping) {
             setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
@@ -669,7 +662,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
+        default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
             setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -685,7 +678,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
+        default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
                 String allowReplyManagerQuickStop) {
             setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
@@ -705,7 +698,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder consumerType(
+        default AdvancedAMQPEndpointConsumerBuilder consumerType(
                 ConsumerType consumerType) {
             setProperty("consumerType", consumerType);
             return this;
@@ -725,7 +718,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder consumerType(
+        default AdvancedAMQPEndpointConsumerBuilder consumerType(
                 String consumerType) {
             setProperty("consumerType", consumerType);
             return this;
@@ -746,7 +739,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
+        default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
                 DefaultTaskExecutorType defaultTaskExecutorType) {
             setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -767,7 +760,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
+        default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
                 String defaultTaskExecutorType) {
             setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
@@ -781,7 +774,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
+        default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
             setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -795,7 +788,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
+        default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
                 String eagerLoadingOfProperties) {
             setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
@@ -809,7 +802,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -823,7 +816,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -833,7 +826,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
+        default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -844,7 +837,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
+        default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -855,7 +848,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
+        default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
             setProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -866,7 +859,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
+        default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
                 String exposeListenerSession) {
             setProperty("exposeListenerSession", exposeListenerSession);
             return this;
@@ -879,7 +872,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
+        default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
                 boolean replyToSameDestinationAllowed) {
             setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
@@ -892,7 +885,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
+        default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
                 String replyToSameDestinationAllowed) {
             setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
@@ -903,7 +896,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
+        default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
                 Object taskExecutor) {
             setProperty("taskExecutor", taskExecutor);
             return this;
@@ -914,7 +907,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.core.task.TaskExecutor</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
+        default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
                 String taskExecutor) {
             setProperty("taskExecutor", taskExecutor);
             return this;
@@ -927,7 +920,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -940,7 +933,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -959,7 +952,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
+        default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -978,7 +971,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
+        default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -989,7 +982,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
+        default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1000,7 +993,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
+        default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -1011,7 +1004,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1022,7 +1015,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1036,7 +1029,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
+        default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -1050,7 +1043,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
+        default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -1067,7 +1060,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder errorHandler(
+        default AdvancedAMQPEndpointConsumerBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -1084,7 +1077,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder errorHandler(
+        default AdvancedAMQPEndpointConsumerBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -1095,7 +1088,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
+        default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1107,7 +1100,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
+        default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -1119,7 +1112,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1131,7 +1124,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1142,7 +1135,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -1153,7 +1146,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -1167,7 +1160,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -1181,7 +1174,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -1194,7 +1187,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1207,7 +1200,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -1227,7 +1220,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1247,7 +1240,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -1258,7 +1251,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
+        default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1269,7 +1262,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
+        default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -1282,7 +1275,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -1295,7 +1288,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -1308,7 +1301,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageConverter(
+        default AdvancedAMQPEndpointConsumerBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -1321,7 +1314,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageConverter(
+        default AdvancedAMQPEndpointConsumerBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -1335,7 +1328,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1349,7 +1342,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -1363,7 +1356,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -1377,7 +1370,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -1392,7 +1385,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -1407,7 +1400,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -1421,7 +1414,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -1435,7 +1428,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -1446,7 +1439,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
+        default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -1457,7 +1450,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
+        default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -1467,7 +1460,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
+        default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
                 long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1477,7 +1470,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
+        default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -1489,7 +1482,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
+        default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -1501,7 +1494,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
+        default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -1515,7 +1508,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -1529,7 +1522,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -1540,7 +1533,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder synchronous(
+        default AdvancedAMQPEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1551,7 +1544,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder synchronous(
+        default AdvancedAMQPEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1570,7 +1563,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferException(
+        default AdvancedAMQPEndpointConsumerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1589,7 +1582,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferException(
+        default AdvancedAMQPEndpointConsumerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1606,7 +1599,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferExchange(
+        default AdvancedAMQPEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1623,7 +1616,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferExchange(
+        default AdvancedAMQPEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -1641,7 +1634,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferFault(
+        default AdvancedAMQPEndpointConsumerBuilder transferFault(
                 boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -1659,7 +1652,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transferFault(
+        default AdvancedAMQPEndpointConsumerBuilder transferFault(
                 String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -1670,7 +1663,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -1681,7 +1674,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -1693,7 +1686,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1705,7 +1698,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -1716,7 +1709,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1727,7 +1720,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -1738,7 +1731,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -1749,7 +1742,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -1760,7 +1753,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transactionManager(
+        default AdvancedAMQPEndpointConsumerBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -1771,7 +1764,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transactionManager(
+        default AdvancedAMQPEndpointConsumerBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -1781,7 +1774,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transactionName(
+        default AdvancedAMQPEndpointConsumerBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -1792,7 +1785,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
+        default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -1803,7 +1796,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
+        default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -1816,7 +1809,7 @@ public interface AMQPEndpointBuilderFactory {
     public static interface AMQPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAMQPEndpointProducerBuilder advanced() {
+        default AdvancedAMQPEndpointProducerBuilder advanced() {
             return (AdvancedAMQPEndpointProducerBuilder) this;
         }
         /**
@@ -1824,7 +1817,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder destinationType(
+        default AMQPEndpointProducerBuilder destinationType(
                 String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
@@ -1834,7 +1827,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder destinationName(
+        default AMQPEndpointProducerBuilder destinationName(
                 String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
@@ -1848,7 +1841,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder clientId(String clientId) {
+        default AMQPEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -1860,7 +1853,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder connectionFactory(
+        default AMQPEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1874,7 +1867,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder connectionFactory(
+        default AMQPEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
@@ -1891,7 +1884,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder disableReplyTo(
+        default AMQPEndpointProducerBuilder disableReplyTo(
                 boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
@@ -1908,8 +1901,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder disableReplyTo(
-                String disableReplyTo) {
+        default AMQPEndpointProducerBuilder disableReplyTo(String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -1919,7 +1911,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder durableSubscriptionName(
+        default AMQPEndpointProducerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -1934,7 +1926,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder jmsMessageType(
+        default AMQPEndpointProducerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
@@ -1949,8 +1941,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder jmsMessageType(
-                String jmsMessageType) {
+        default AMQPEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -1963,7 +1954,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder testConnectionOnStartup(
+        default AMQPEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -1977,7 +1968,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointProducerBuilder testConnectionOnStartup(
+        default AMQPEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -1989,8 +1980,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder deliveryMode(
-                Integer deliveryMode) {
+        default AMQPEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
             setProperty("deliveryMode", deliveryMode);
             return this;
         }
@@ -2002,8 +1992,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder deliveryMode(
-                String deliveryMode) {
+        default AMQPEndpointProducerBuilder deliveryMode(String deliveryMode) {
             setProperty("deliveryMode", deliveryMode);
             return this;
         }
@@ -2012,7 +2001,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder deliveryPersistent(
+        default AMQPEndpointProducerBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
             setProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -2022,7 +2011,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder deliveryPersistent(
+        default AMQPEndpointProducerBuilder deliveryPersistent(
                 String deliveryPersistent) {
             setProperty("deliveryPersistent", deliveryPersistent);
             return this;
@@ -2037,7 +2026,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder explicitQosEnabled(
+        default AMQPEndpointProducerBuilder explicitQosEnabled(
                 Boolean explicitQosEnabled) {
             setProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -2053,7 +2042,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder explicitQosEnabled(
+        default AMQPEndpointProducerBuilder explicitQosEnabled(
                 String explicitQosEnabled) {
             setProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
@@ -2064,7 +2053,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
+        default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
             setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -2075,7 +2064,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
+        default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
                 String formatDateHeadersToIso8601) {
             setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
@@ -2093,7 +2082,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder lazyStartProducer(
+        default AMQPEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2111,7 +2100,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder lazyStartProducer(
+        default AMQPEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -2129,7 +2118,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder preserveMessageQos(
+        default AMQPEndpointProducerBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
             setProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -2147,7 +2136,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder preserveMessageQos(
+        default AMQPEndpointProducerBuilder preserveMessageQos(
                 String preserveMessageQos) {
             setProperty("preserveMessageQos", preserveMessageQos);
             return this;
@@ -2160,7 +2149,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder priority(int priority) {
+        default AMQPEndpointProducerBuilder priority(int priority) {
             setProperty("priority", priority);
             return this;
         }
@@ -2172,7 +2161,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder priority(String priority) {
+        default AMQPEndpointProducerBuilder priority(String priority) {
             setProperty("priority", priority);
             return this;
         }
@@ -2183,7 +2172,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
             setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -2195,7 +2184,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
                 String replyToConcurrentConsumers) {
             setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
@@ -2207,7 +2196,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
             setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -2219,7 +2208,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 String replyToMaxConcurrentConsumers) {
             setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
@@ -2230,7 +2219,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 int replyToOnTimeoutMaxConcurrentConsumers) {
             setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
@@ -2241,7 +2230,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
+        default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 String replyToOnTimeoutMaxConcurrentConsumers) {
             setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
@@ -2254,7 +2243,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToOverride(
+        default AMQPEndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
             setProperty("replyToOverride", replyToOverride);
             return this;
@@ -2273,8 +2262,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToType(
-                ReplyToType replyToType) {
+        default AMQPEndpointProducerBuilder replyToType(ReplyToType replyToType) {
             setProperty("replyToType", replyToType);
             return this;
         }
@@ -2292,8 +2280,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.ReplyToType</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder replyToType(
-                String replyToType) {
+        default AMQPEndpointProducerBuilder replyToType(String replyToType) {
             setProperty("replyToType", replyToType);
             return this;
         }
@@ -2306,8 +2293,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder requestTimeout(
-                long requestTimeout) {
+        default AMQPEndpointProducerBuilder requestTimeout(long requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -2320,8 +2306,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder requestTimeout(
-                String requestTimeout) {
+        default AMQPEndpointProducerBuilder requestTimeout(String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
             return this;
         }
@@ -2331,7 +2316,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder timeToLive(long timeToLive) {
+        default AMQPEndpointProducerBuilder timeToLive(long timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -2341,7 +2326,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group producer
          */
-        public default AMQPEndpointProducerBuilder timeToLive(String timeToLive) {
+        default AMQPEndpointProducerBuilder timeToLive(String timeToLive) {
             setProperty("timeToLive", timeToLive);
             return this;
         }
@@ -2351,7 +2336,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointProducerBuilder password(String password) {
+        default AMQPEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -2361,7 +2346,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointProducerBuilder username(String username) {
+        default AMQPEndpointProducerBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -2370,7 +2355,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointProducerBuilder transacted(boolean transacted) {
+        default AMQPEndpointProducerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -2379,7 +2364,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointProducerBuilder transacted(String transacted) {
+        default AMQPEndpointProducerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -2391,7 +2376,7 @@ public interface AMQPEndpointBuilderFactory {
     public interface AdvancedAMQPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AMQPEndpointProducerBuilder basic() {
+        default AMQPEndpointProducerBuilder basic() {
             return (AMQPEndpointProducerBuilder) this;
         }
         /**
@@ -2404,7 +2389,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder allowAdditionalHeaders(
+        default AdvancedAMQPEndpointProducerBuilder allowAdditionalHeaders(
                 String allowAdditionalHeaders) {
             setProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
@@ -2415,7 +2400,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder allowNullBody(
+        default AdvancedAMQPEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2426,7 +2411,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder allowNullBody(
+        default AdvancedAMQPEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             setProperty("allowNullBody", allowNullBody);
             return this;
@@ -2441,7 +2426,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
+        default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
                 boolean alwaysCopyMessage) {
             setProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
@@ -2456,7 +2441,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
+        default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
                 String alwaysCopyMessage) {
             setProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
@@ -2472,7 +2457,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder correlationProperty(
+        default AdvancedAMQPEndpointProducerBuilder correlationProperty(
                 String correlationProperty) {
             setProperty("correlationProperty", correlationProperty);
             return this;
@@ -2490,7 +2475,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
+        default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
                 boolean disableTimeToLive) {
             setProperty("disableTimeToLive", disableTimeToLive);
             return this;
@@ -2508,7 +2493,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
+        default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
                 String disableTimeToLive) {
             setProperty("disableTimeToLive", disableTimeToLive);
             return this;
@@ -2521,7 +2506,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
+        default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
             setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -2534,7 +2519,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
+        default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
                 String forceSendOriginalMessage) {
             setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
@@ -2547,7 +2532,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
+        default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
             setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -2560,7 +2545,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
+        default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
                 String includeSentJMSMessageID) {
             setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
@@ -2578,7 +2563,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder replyToCacheLevelName(
+        default AdvancedAMQPEndpointProducerBuilder replyToCacheLevelName(
                 String replyToCacheLevelName) {
             setProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
@@ -2590,7 +2575,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder replyToDestinationSelectorName(
+        default AdvancedAMQPEndpointProducerBuilder replyToDestinationSelectorName(
                 String replyToDestinationSelectorName) {
             setProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
             return this;
@@ -2606,7 +2591,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
+        default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
             setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -2622,7 +2607,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
+        default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
                 String streamMessageTypeEnabled) {
             setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
@@ -2635,7 +2620,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2648,7 +2633,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -2667,7 +2652,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
+        default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -2686,7 +2671,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
+        default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -2697,7 +2682,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
+        default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -2708,7 +2693,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
+        default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -2719,7 +2704,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2730,7 +2715,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2744,7 +2729,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder destinationResolver(
+        default AdvancedAMQPEndpointProducerBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -2758,7 +2743,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder destinationResolver(
+        default AdvancedAMQPEndpointProducerBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -2775,7 +2760,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder errorHandler(
+        default AdvancedAMQPEndpointProducerBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -2792,7 +2777,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder errorHandler(
+        default AdvancedAMQPEndpointProducerBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -2803,7 +2788,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder exceptionListener(
+        default AdvancedAMQPEndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -2815,7 +2800,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder exceptionListener(
+        default AdvancedAMQPEndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -2827,7 +2812,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2839,7 +2824,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -2850,7 +2835,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -2861,7 +2846,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -2875,7 +2860,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -2889,7 +2874,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -2902,7 +2887,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -2915,7 +2900,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -2935,7 +2920,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -2955,7 +2940,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -2966,7 +2951,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
+        default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -2977,7 +2962,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
+        default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
@@ -2990,7 +2975,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -3003,7 +2988,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -3016,7 +3001,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageConverter(
+        default AdvancedAMQPEndpointProducerBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -3029,7 +3014,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageConverter(
+        default AdvancedAMQPEndpointProducerBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -3043,7 +3028,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -3057,7 +3042,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -3071,7 +3056,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -3085,7 +3070,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -3100,7 +3085,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -3115,7 +3100,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -3129,7 +3114,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -3143,7 +3128,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -3154,7 +3139,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
+        default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -3165,7 +3150,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
+        default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
@@ -3175,7 +3160,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
+        default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
                 long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -3185,7 +3170,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
+        default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
@@ -3197,7 +3182,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
+        default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -3209,7 +3194,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
+        default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -3223,7 +3208,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -3237,7 +3222,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -3248,7 +3233,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder synchronous(
+        default AdvancedAMQPEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3259,7 +3244,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder synchronous(
+        default AdvancedAMQPEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -3278,7 +3263,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferException(
+        default AdvancedAMQPEndpointProducerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -3297,7 +3282,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferException(
+        default AdvancedAMQPEndpointProducerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -3314,7 +3299,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferExchange(
+        default AdvancedAMQPEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3331,7 +3316,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferExchange(
+        default AdvancedAMQPEndpointProducerBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -3349,7 +3334,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferFault(
+        default AdvancedAMQPEndpointProducerBuilder transferFault(
                 boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -3367,7 +3352,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder transferFault(
+        default AdvancedAMQPEndpointProducerBuilder transferFault(
                 String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
@@ -3378,7 +3363,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -3389,7 +3374,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -3401,7 +3386,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -3413,7 +3398,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -3424,7 +3409,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -3435,7 +3420,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -3446,7 +3431,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -3457,7 +3442,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -3468,7 +3453,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder transactionManager(
+        default AdvancedAMQPEndpointProducerBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -3479,7 +3464,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder transactionManager(
+        default AdvancedAMQPEndpointProducerBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -3489,7 +3474,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder transactionName(
+        default AdvancedAMQPEndpointProducerBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -3500,7 +3485,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
+        default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -3511,7 +3496,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
+        default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -3524,7 +3509,7 @@ public interface AMQPEndpointBuilderFactory {
     public static interface AMQPEndpointBuilder
             extends
                 AMQPEndpointConsumerBuilder, AMQPEndpointProducerBuilder {
-        public default AdvancedAMQPEndpointBuilder advanced() {
+        default AdvancedAMQPEndpointBuilder advanced() {
             return (AdvancedAMQPEndpointBuilder) this;
         }
         /**
@@ -3532,8 +3517,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder destinationType(
-                String destinationType) {
+        default AMQPEndpointBuilder destinationType(String destinationType) {
             setProperty("destinationType", destinationType);
             return this;
         }
@@ -3542,8 +3526,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder destinationName(
-                String destinationName) {
+        default AMQPEndpointBuilder destinationName(String destinationName) {
             setProperty("destinationName", destinationName);
             return this;
         }
@@ -3556,7 +3539,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder clientId(String clientId) {
+        default AMQPEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -3568,8 +3551,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder connectionFactory(
-                Object connectionFactory) {
+        default AMQPEndpointBuilder connectionFactory(Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -3582,8 +3564,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ConnectionFactory</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder connectionFactory(
-                String connectionFactory) {
+        default AMQPEndpointBuilder connectionFactory(String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -3599,7 +3580,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder disableReplyTo(boolean disableReplyTo) {
+        default AMQPEndpointBuilder disableReplyTo(boolean disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -3615,7 +3596,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder disableReplyTo(String disableReplyTo) {
+        default AMQPEndpointBuilder disableReplyTo(String disableReplyTo) {
             setProperty("disableReplyTo", disableReplyTo);
             return this;
         }
@@ -3625,7 +3606,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder durableSubscriptionName(
+        default AMQPEndpointBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
             setProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
@@ -3640,8 +3621,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder jmsMessageType(
-                JmsMessageType jmsMessageType) {
+        default AMQPEndpointBuilder jmsMessageType(JmsMessageType jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -3655,7 +3635,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder jmsMessageType(String jmsMessageType) {
+        default AMQPEndpointBuilder jmsMessageType(String jmsMessageType) {
             setProperty("jmsMessageType", jmsMessageType);
             return this;
         }
@@ -3668,7 +3648,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder testConnectionOnStartup(
+        default AMQPEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -3682,7 +3662,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AMQPEndpointBuilder testConnectionOnStartup(
+        default AMQPEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -3693,7 +3673,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointBuilder password(String password) {
+        default AMQPEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -3703,7 +3683,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default AMQPEndpointBuilder username(String username) {
+        default AMQPEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -3712,7 +3692,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointBuilder transacted(boolean transacted) {
+        default AMQPEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -3721,7 +3701,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction
          */
-        public default AMQPEndpointBuilder transacted(String transacted) {
+        default AMQPEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
             return this;
         }
@@ -3733,7 +3713,7 @@ public interface AMQPEndpointBuilderFactory {
     public static interface AdvancedAMQPEndpointBuilder
             extends
                 AdvancedAMQPEndpointConsumerBuilder, AdvancedAMQPEndpointProducerBuilder {
-        public default AMQPEndpointBuilder basic() {
+        default AMQPEndpointBuilder basic() {
             return (AMQPEndpointBuilder) this;
         }
         /**
@@ -3744,7 +3724,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3757,7 +3737,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
+        default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
             setProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
@@ -3776,7 +3756,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder asyncStartListener(
+        default AdvancedAMQPEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -3795,7 +3775,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder asyncStartListener(
+        default AdvancedAMQPEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
             setProperty("asyncStartListener", asyncStartListener);
             return this;
@@ -3806,7 +3786,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder asyncStopListener(
+        default AdvancedAMQPEndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -3817,7 +3797,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder asyncStopListener(
+        default AdvancedAMQPEndpointBuilder asyncStopListener(
                 String asyncStopListener) {
             setProperty("asyncStopListener", asyncStopListener);
             return this;
@@ -3828,7 +3808,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3839,7 +3819,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder basicPropertyBinding(
+        default AdvancedAMQPEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -3853,7 +3833,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder destinationResolver(
+        default AdvancedAMQPEndpointBuilder destinationResolver(
                 Object destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -3867,7 +3847,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder destinationResolver(
+        default AdvancedAMQPEndpointBuilder destinationResolver(
                 String destinationResolver) {
             setProperty("destinationResolver", destinationResolver);
             return this;
@@ -3884,8 +3864,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder errorHandler(
-                Object errorHandler) {
+        default AdvancedAMQPEndpointBuilder errorHandler(Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -3901,8 +3880,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.util.ErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder errorHandler(
-                String errorHandler) {
+        default AdvancedAMQPEndpointBuilder errorHandler(String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
         }
@@ -3912,7 +3890,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder exceptionListener(
+        default AdvancedAMQPEndpointBuilder exceptionListener(
                 Object exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -3924,7 +3902,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>javax.jms.ExceptionListener</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder exceptionListener(
+        default AdvancedAMQPEndpointBuilder exceptionListener(
                 String exceptionListener) {
             setProperty("exceptionListener", exceptionListener);
             return this;
@@ -3936,7 +3914,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -3948,7 +3926,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder headerFilterStrategy(
+        default AdvancedAMQPEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -3959,7 +3937,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -3970,7 +3948,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder idleConsumerLimit(
+        default AdvancedAMQPEndpointBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
             setProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
@@ -3984,7 +3962,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -3998,7 +3976,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
+        default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
             setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
@@ -4011,7 +3989,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -4024,7 +4002,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
+        default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
             setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
@@ -4044,7 +4022,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -4064,7 +4042,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
+        default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
             setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
@@ -4075,8 +4053,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder mapJmsMessage(
-                boolean mapJmsMessage) {
+        default AdvancedAMQPEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -4086,8 +4063,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder mapJmsMessage(
-                String mapJmsMessage) {
+        default AdvancedAMQPEndpointBuilder mapJmsMessage(String mapJmsMessage) {
             setProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
@@ -4099,7 +4075,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -4112,7 +4088,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
+        default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
             setProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
@@ -4125,7 +4101,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageConverter(
+        default AdvancedAMQPEndpointBuilder messageConverter(
                 Object messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -4138,7 +4114,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageConverter(
+        default AdvancedAMQPEndpointBuilder messageConverter(
                 String messageConverter) {
             setProperty("messageConverter", messageConverter);
             return this;
@@ -4152,7 +4128,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -4166,7 +4142,7 @@ public interface AMQPEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
+        default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
             setProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
@@ -4180,7 +4156,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -4194,7 +4170,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageIdEnabled(
+        default AdvancedAMQPEndpointBuilder messageIdEnabled(
                 String messageIdEnabled) {
             setProperty("messageIdEnabled", messageIdEnabled);
             return this;
@@ -4209,7 +4185,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -4224,7 +4200,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
+        default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
             setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
@@ -4238,7 +4214,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -4252,7 +4228,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
+        default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
             setProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
@@ -4263,8 +4239,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder pubSubNoLocal(
-                boolean pubSubNoLocal) {
+        default AdvancedAMQPEndpointBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
@@ -4274,8 +4249,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder pubSubNoLocal(
-                String pubSubNoLocal) {
+        default AdvancedAMQPEndpointBuilder pubSubNoLocal(String pubSubNoLocal) {
             setProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
@@ -4284,8 +4258,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder receiveTimeout(
-                long receiveTimeout) {
+        default AdvancedAMQPEndpointBuilder receiveTimeout(long receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -4294,8 +4267,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder receiveTimeout(
-                String receiveTimeout) {
+        default AdvancedAMQPEndpointBuilder receiveTimeout(String receiveTimeout) {
             setProperty("receiveTimeout", receiveTimeout);
             return this;
         }
@@ -4306,7 +4278,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder recoveryInterval(
+        default AdvancedAMQPEndpointBuilder recoveryInterval(
                 long recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -4318,7 +4290,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder recoveryInterval(
+        default AdvancedAMQPEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
             setProperty("recoveryInterval", recoveryInterval);
             return this;
@@ -4332,7 +4304,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -4346,7 +4318,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
+        default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
             setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
@@ -4357,8 +4329,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAMQPEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4368,8 +4339,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedAMQPEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -4387,7 +4357,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferException(
+        default AdvancedAMQPEndpointBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -4406,7 +4376,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferException(
+        default AdvancedAMQPEndpointBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -4423,7 +4393,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferExchange(
+        default AdvancedAMQPEndpointBuilder transferExchange(
                 boolean transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -4440,7 +4410,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferExchange(
+        default AdvancedAMQPEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
             return this;
@@ -4458,8 +4428,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferFault(
-                boolean transferFault) {
+        default AdvancedAMQPEndpointBuilder transferFault(boolean transferFault) {
             setProperty("transferFault", transferFault);
             return this;
         }
@@ -4476,8 +4445,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder transferFault(
-                String transferFault) {
+        default AdvancedAMQPEndpointBuilder transferFault(String transferFault) {
             setProperty("transferFault", transferFault);
             return this;
         }
@@ -4487,7 +4455,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -4498,7 +4466,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
+        default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
             setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
@@ -4510,7 +4478,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -4522,7 +4490,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
+        default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
             setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
@@ -4533,7 +4501,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -4544,7 +4512,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group advanced
          */
-        public default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
+        default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
             setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
@@ -4555,7 +4523,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -4566,7 +4534,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
+        default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
             setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
@@ -4577,7 +4545,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder transactionManager(
+        default AdvancedAMQPEndpointBuilder transactionManager(
                 Object transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -4588,7 +4556,7 @@ public interface AMQPEndpointBuilderFactory {
          * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder transactionManager(
+        default AdvancedAMQPEndpointBuilder transactionManager(
                 String transactionManager) {
             setProperty("transactionManager", transactionManager);
             return this;
@@ -4598,7 +4566,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder transactionName(
+        default AdvancedAMQPEndpointBuilder transactionName(
                 String transactionName) {
             setProperty("transactionName", transactionName);
             return this;
@@ -4609,7 +4577,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder transactionTimeout(
+        default AdvancedAMQPEndpointBuilder transactionTimeout(
                 int transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -4620,7 +4588,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group transaction (advanced)
          */
-        public default AdvancedAMQPEndpointBuilder transactionTimeout(
+        default AdvancedAMQPEndpointBuilder transactionTimeout(
                 String transactionTimeout) {
             setProperty("transactionTimeout", transactionTimeout);
             return this;
@@ -4662,7 +4630,7 @@ public interface AMQPEndpointBuilderFactory {
      * Messaging with AMQP protocol using Apache QPid Client. Creates a builder
      * to build endpoints for the AMQP component.
      */
-    public default AMQPEndpointBuilder aMQP(String path) {
+    default AMQPEndpointBuilder aMQP(String path) {
         class AMQPEndpointBuilderImpl extends AbstractEndpointBuilder implements AMQPEndpointBuilder, AdvancedAMQPEndpointBuilder {
             public AMQPEndpointBuilderImpl(String path) {
                 super("amqp", path);

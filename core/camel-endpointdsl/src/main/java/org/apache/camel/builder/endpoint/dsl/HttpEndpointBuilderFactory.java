@@ -39,7 +39,7 @@ public interface HttpEndpointBuilderFactory {
     public static interface HttpEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedHttpEndpointBuilder advanced() {
+        default AdvancedHttpEndpointBuilder advanced() {
             return (AdvancedHttpEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder httpUri(URI httpUri) {
+        default HttpEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -56,7 +56,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder httpUri(String httpUri) {
+        default HttpEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -80,7 +80,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder disableStreamCache(
+        default HttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -105,8 +105,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder disableStreamCache(
-                String disableStreamCache) {
+        default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
         }
@@ -117,7 +116,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder headerFilterStrategy(
+        default HttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -129,7 +128,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default HttpEndpointBuilder headerFilterStrategy(
+        default HttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -140,7 +139,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HttpEndpointBuilder chunked(boolean chunked) {
+        default HttpEndpointBuilder chunked(boolean chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -150,7 +149,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HttpEndpointBuilder chunked(String chunked) {
+        default HttpEndpointBuilder chunked(String chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -167,8 +166,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default HttpEndpointBuilder transferException(
-                boolean transferException) {
+        default HttpEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -185,8 +183,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default HttpEndpointBuilder transferException(
-                String transferException) {
+        default HttpEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -200,7 +197,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default HttpEndpointBuilder sslContextParameters(
+        default HttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -215,7 +212,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default HttpEndpointBuilder sslContextParameters(
+        default HttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -226,7 +223,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>javax.net.ssl.HostnameVerifier</code> type.
          * @group security
          */
-        public default HttpEndpointBuilder x509HostnameVerifier(
+        default HttpEndpointBuilder x509HostnameVerifier(
                 Object x509HostnameVerifier) {
             setProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
@@ -238,7 +235,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>javax.net.ssl.HostnameVerifier</code> type.
          * @group security
          */
-        public default HttpEndpointBuilder x509HostnameVerifier(
+        default HttpEndpointBuilder x509HostnameVerifier(
                 String x509HostnameVerifier) {
             setProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
@@ -251,7 +248,7 @@ public interface HttpEndpointBuilderFactory {
     public static interface AdvancedHttpEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default HttpEndpointBuilder basic() {
+        default HttpEndpointBuilder basic() {
             return (HttpEndpointBuilder) this;
         }
         /**
@@ -261,8 +258,7 @@ public interface HttpEndpointBuilderFactory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedHttpEndpointBuilder httpBinding(
-                Object httpBinding) {
+        default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -273,8 +269,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedHttpEndpointBuilder httpBinding(
-                String httpBinding) {
+        default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -284,7 +279,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder basicPropertyBinding(
+        default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -295,7 +290,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder basicPropertyBinding(
+        default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -308,8 +303,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder clientBuilder(
-                Object clientBuilder) {
+        default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
             setProperty("clientBuilder", clientBuilder);
             return this;
         }
@@ -321,8 +315,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder clientBuilder(
-                String clientBuilder) {
+        default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
             setProperty("clientBuilder", clientBuilder);
             return this;
         }
@@ -332,7 +325,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder clientConnectionManager(
+        default AdvancedHttpEndpointBuilder clientConnectionManager(
                 Object clientConnectionManager) {
             setProperty("clientConnectionManager", clientConnectionManager);
             return this;
@@ -343,7 +336,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder clientConnectionManager(
+        default AdvancedHttpEndpointBuilder clientConnectionManager(
                 String clientConnectionManager) {
             setProperty("clientConnectionManager", clientConnectionManager);
             return this;
@@ -353,7 +346,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder connectionsPerRoute(
+        default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 int connectionsPerRoute) {
             setProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
@@ -363,7 +356,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder connectionsPerRoute(
+        default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 String connectionsPerRoute) {
             setProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
@@ -373,7 +366,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>org.apache.http.client.HttpClient</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
+        default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -383,7 +376,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.client.HttpClient</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
+        default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
             return this;
         }
@@ -396,7 +389,7 @@ public interface HttpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClientConfigurer(
+        default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 Object httpClientConfigurer) {
             setProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
@@ -410,7 +403,7 @@ public interface HttpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClientConfigurer(
+        default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 String httpClientConfigurer) {
             setProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
@@ -421,7 +414,7 @@ public interface HttpEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClientOptions(
+        default AdvancedHttpEndpointBuilder httpClientOptions(
                 Map<String, Object> httpClientOptions) {
             setProperty("httpClientOptions", httpClientOptions);
             return this;
@@ -433,7 +426,7 @@ public interface HttpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpClientOptions(
+        default AdvancedHttpEndpointBuilder httpClientOptions(
                 String httpClientOptions) {
             setProperty("httpClientOptions", httpClientOptions);
             return this;
@@ -444,8 +437,7 @@ public interface HttpEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpContext(
-                Object httpContext) {
+        default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
             setProperty("httpContext", httpContext);
             return this;
         }
@@ -455,8 +447,7 @@ public interface HttpEndpointBuilderFactory {
          * <code>org.apache.http.protocol.HttpContext</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder httpContext(
-                String httpContext) {
+        default AdvancedHttpEndpointBuilder httpContext(String httpContext) {
             setProperty("httpContext", httpContext);
             return this;
         }
@@ -467,7 +458,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageBody(
+        default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -479,7 +470,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageBody(
+        default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -491,7 +482,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -503,7 +494,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -515,7 +506,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -527,7 +518,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -537,7 +528,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder maxTotalConnections(
+        default AdvancedHttpEndpointBuilder maxTotalConnections(
                 int maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -547,7 +538,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder maxTotalConnections(
+        default AdvancedHttpEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
             setProperty("maxTotalConnections", maxTotalConnections);
             return this;
@@ -558,8 +549,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -569,8 +559,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -579,7 +568,7 @@ public interface HttpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder useSystemProperties(
+        default AdvancedHttpEndpointBuilder useSystemProperties(
                 boolean useSystemProperties) {
             setProperty("useSystemProperties", useSystemProperties);
             return this;
@@ -589,7 +578,7 @@ public interface HttpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedHttpEndpointBuilder useSystemProperties(
+        default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {
             setProperty("useSystemProperties", useSystemProperties);
             return this;
@@ -607,7 +596,7 @@ public interface HttpEndpointBuilderFactory {
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * Creates a builder to build endpoints for the HTTP4 component.
      */
-    public default HttpEndpointBuilder http(String path) {
+    default HttpEndpointBuilder http(String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {
             public HttpEndpointBuilderImpl(String path) {
                 super("http", path);

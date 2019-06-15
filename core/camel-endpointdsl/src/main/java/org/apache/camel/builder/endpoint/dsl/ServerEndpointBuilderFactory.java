@@ -41,7 +41,7 @@ public interface ServerEndpointBuilderFactory {
     public interface ServerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedServerEndpointConsumerBuilder advanced() {
+        default AdvancedServerEndpointConsumerBuilder advanced() {
             return (AdvancedServerEndpointConsumerBuilder) this;
         }
         /**
@@ -50,7 +50,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder uriPath(Object uriPath) {
+        default ServerEndpointConsumerBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -60,7 +60,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder uriPath(String uriPath) {
+        default ServerEndpointConsumerBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -70,7 +70,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder dataModuleOptions(
+        default ServerEndpointConsumerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
@@ -81,7 +81,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder dataModuleOptions(
+        default ServerEndpointConsumerBuilder dataModuleOptions(
                 String dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
@@ -91,7 +91,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder filterNonExecute(
+        default ServerEndpointConsumerBuilder filterNonExecute(
                 boolean filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
@@ -101,7 +101,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder filterNonExecute(
+        default ServerEndpointConsumerBuilder filterNonExecute(
                 String filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
@@ -113,7 +113,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder protocolOptions(
+        default ServerEndpointConsumerBuilder protocolOptions(
                 Object protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
@@ -125,7 +125,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointConsumerBuilder protocolOptions(
+        default ServerEndpointConsumerBuilder protocolOptions(
                 String protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
@@ -141,7 +141,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServerEndpointConsumerBuilder bridgeErrorHandler(
+        default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -157,7 +157,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default ServerEndpointConsumerBuilder bridgeErrorHandler(
+        default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -167,7 +167,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder acknowledgeWindow(
+        default ServerEndpointConsumerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
@@ -177,7 +177,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder acknowledgeWindow(
+        default ServerEndpointConsumerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
@@ -189,7 +189,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder adsuAddressType(
+        default ServerEndpointConsumerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
@@ -201,7 +201,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder adsuAddressType(
+        default ServerEndpointConsumerBuilder adsuAddressType(
                 String adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
@@ -212,7 +212,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder causeOfTransmissionType(
+        default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -223,7 +223,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder causeOfTransmissionType(
+        default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -234,7 +234,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder informationObjectAddressType(
+        default ServerEndpointConsumerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -245,7 +245,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder informationObjectAddressType(
+        default ServerEndpointConsumerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -255,7 +255,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder maxUnacknowledged(
+        default ServerEndpointConsumerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
@@ -265,7 +265,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder maxUnacknowledged(
+        default ServerEndpointConsumerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
@@ -275,7 +275,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout1(int timeout1) {
+        default ServerEndpointConsumerBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -284,7 +284,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout1(String timeout1) {
+        default ServerEndpointConsumerBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -293,7 +293,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout2(int timeout2) {
+        default ServerEndpointConsumerBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -302,7 +302,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout2(String timeout2) {
+        default ServerEndpointConsumerBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -311,7 +311,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout3(int timeout3) {
+        default ServerEndpointConsumerBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -320,7 +320,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointConsumerBuilder timeout3(String timeout3) {
+        default ServerEndpointConsumerBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -329,7 +329,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder causeSourceAddress(
+        default ServerEndpointConsumerBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -339,7 +339,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder causeSourceAddress(
+        default ServerEndpointConsumerBuilder causeSourceAddress(
                 String causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -349,7 +349,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder ignoreBackgroundScan(
+        default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -359,7 +359,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder ignoreBackgroundScan(
+        default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -369,7 +369,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
+        default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -379,7 +379,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
+        default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -389,7 +389,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.util.TimeZone</code> type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
+        default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -399,7 +399,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group data
          */
-        public default ServerEndpointConsumerBuilder timeZone(String timeZone) {
+        default ServerEndpointConsumerBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -408,8 +408,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group id
          */
-        public default ServerEndpointConsumerBuilder connectionId(
-                String connectionId) {
+        default ServerEndpointConsumerBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
             return this;
         }
@@ -422,7 +421,7 @@ public interface ServerEndpointBuilderFactory {
     public interface AdvancedServerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default ServerEndpointConsumerBuilder basic() {
+        default ServerEndpointConsumerBuilder basic() {
             return (ServerEndpointConsumerBuilder) this;
         }
         /**
@@ -434,7 +433,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedServerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -448,7 +447,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedServerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -458,7 +457,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedServerEndpointConsumerBuilder exchangePattern(
+        default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -469,7 +468,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedServerEndpointConsumerBuilder exchangePattern(
+        default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -480,7 +479,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -491,7 +490,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -502,7 +501,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointConsumerBuilder synchronous(
+        default AdvancedServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -513,7 +512,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointConsumerBuilder synchronous(
+        default AdvancedServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -526,7 +525,7 @@ public interface ServerEndpointBuilderFactory {
     public static interface ServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedServerEndpointProducerBuilder advanced() {
+        default AdvancedServerEndpointProducerBuilder advanced() {
             return (AdvancedServerEndpointProducerBuilder) this;
         }
         /**
@@ -535,7 +534,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder uriPath(Object uriPath) {
+        default ServerEndpointProducerBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -545,7 +544,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder uriPath(String uriPath) {
+        default ServerEndpointProducerBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -555,7 +554,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder dataModuleOptions(
+        default ServerEndpointProducerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
@@ -566,7 +565,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder dataModuleOptions(
+        default ServerEndpointProducerBuilder dataModuleOptions(
                 String dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
@@ -576,7 +575,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder filterNonExecute(
+        default ServerEndpointProducerBuilder filterNonExecute(
                 boolean filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
@@ -586,7 +585,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder filterNonExecute(
+        default ServerEndpointProducerBuilder filterNonExecute(
                 String filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
@@ -598,7 +597,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder protocolOptions(
+        default ServerEndpointProducerBuilder protocolOptions(
                 Object protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
@@ -610,7 +609,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointProducerBuilder protocolOptions(
+        default ServerEndpointProducerBuilder protocolOptions(
                 String protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
@@ -628,7 +627,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default ServerEndpointProducerBuilder lazyStartProducer(
+        default ServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -646,7 +645,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default ServerEndpointProducerBuilder lazyStartProducer(
+        default ServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -656,7 +655,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder acknowledgeWindow(
+        default ServerEndpointProducerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
@@ -666,7 +665,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder acknowledgeWindow(
+        default ServerEndpointProducerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
@@ -678,7 +677,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder adsuAddressType(
+        default ServerEndpointProducerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
@@ -690,7 +689,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder adsuAddressType(
+        default ServerEndpointProducerBuilder adsuAddressType(
                 String adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
@@ -701,7 +700,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder causeOfTransmissionType(
+        default ServerEndpointProducerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -712,7 +711,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder causeOfTransmissionType(
+        default ServerEndpointProducerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -723,7 +722,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder informationObjectAddressType(
+        default ServerEndpointProducerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -734,7 +733,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder informationObjectAddressType(
+        default ServerEndpointProducerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -744,7 +743,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder maxUnacknowledged(
+        default ServerEndpointProducerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
@@ -754,7 +753,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder maxUnacknowledged(
+        default ServerEndpointProducerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
@@ -764,7 +763,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout1(int timeout1) {
+        default ServerEndpointProducerBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -773,7 +772,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout1(String timeout1) {
+        default ServerEndpointProducerBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -782,7 +781,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout2(int timeout2) {
+        default ServerEndpointProducerBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -791,7 +790,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout2(String timeout2) {
+        default ServerEndpointProducerBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -800,7 +799,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout3(int timeout3) {
+        default ServerEndpointProducerBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -809,7 +808,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointProducerBuilder timeout3(String timeout3) {
+        default ServerEndpointProducerBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -818,7 +817,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder causeSourceAddress(
+        default ServerEndpointProducerBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -828,7 +827,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder causeSourceAddress(
+        default ServerEndpointProducerBuilder causeSourceAddress(
                 String causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -838,7 +837,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder ignoreBackgroundScan(
+        default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -848,7 +847,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder ignoreBackgroundScan(
+        default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -858,7 +857,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
+        default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -868,7 +867,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
+        default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -878,7 +877,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.util.TimeZone</code> type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
+        default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -888,7 +887,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group data
          */
-        public default ServerEndpointProducerBuilder timeZone(String timeZone) {
+        default ServerEndpointProducerBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -897,8 +896,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group id
          */
-        public default ServerEndpointProducerBuilder connectionId(
-                String connectionId) {
+        default ServerEndpointProducerBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
             return this;
         }
@@ -911,7 +909,7 @@ public interface ServerEndpointBuilderFactory {
     public interface AdvancedServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default ServerEndpointProducerBuilder basic() {
+        default ServerEndpointProducerBuilder basic() {
             return (ServerEndpointProducerBuilder) this;
         }
         /**
@@ -920,7 +918,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -931,7 +929,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -942,7 +940,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointProducerBuilder synchronous(
+        default AdvancedServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -953,7 +951,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointProducerBuilder synchronous(
+        default AdvancedServerEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -966,7 +964,7 @@ public interface ServerEndpointBuilderFactory {
     public static interface ServerEndpointBuilder
             extends
                 ServerEndpointConsumerBuilder, ServerEndpointProducerBuilder {
-        public default AdvancedServerEndpointBuilder advanced() {
+        default AdvancedServerEndpointBuilder advanced() {
             return (AdvancedServerEndpointBuilder) this;
         }
         /**
@@ -975,7 +973,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder uriPath(Object uriPath) {
+        default ServerEndpointBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -985,7 +983,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder uriPath(String uriPath) {
+        default ServerEndpointBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
             return this;
         }
@@ -995,8 +993,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder dataModuleOptions(
-                Object dataModuleOptions) {
+        default ServerEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
@@ -1006,8 +1003,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder dataModuleOptions(
-                String dataModuleOptions) {
+        default ServerEndpointBuilder dataModuleOptions(String dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
             return this;
         }
@@ -1016,8 +1012,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder filterNonExecute(
-                boolean filterNonExecute) {
+        default ServerEndpointBuilder filterNonExecute(boolean filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
         }
@@ -1026,8 +1021,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default ServerEndpointBuilder filterNonExecute(
-                String filterNonExecute) {
+        default ServerEndpointBuilder filterNonExecute(String filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
             return this;
         }
@@ -1038,8 +1032,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointBuilder protocolOptions(
-                Object protocolOptions) {
+        default ServerEndpointBuilder protocolOptions(Object protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
         }
@@ -1050,8 +1043,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default ServerEndpointBuilder protocolOptions(
-                String protocolOptions) {
+        default ServerEndpointBuilder protocolOptions(String protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
             return this;
         }
@@ -1060,8 +1052,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder acknowledgeWindow(
-                short acknowledgeWindow) {
+        default ServerEndpointBuilder acknowledgeWindow(short acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
@@ -1070,8 +1061,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder acknowledgeWindow(
-                String acknowledgeWindow) {
+        default ServerEndpointBuilder acknowledgeWindow(String acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
             return this;
         }
@@ -1082,7 +1072,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointBuilder adsuAddressType(
+        default ServerEndpointBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
@@ -1094,8 +1084,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group connection
          */
-        public default ServerEndpointBuilder adsuAddressType(
-                String adsuAddressType) {
+        default ServerEndpointBuilder adsuAddressType(String adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
             return this;
         }
@@ -1105,7 +1094,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder causeOfTransmissionType(
+        default ServerEndpointBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -1116,7 +1105,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder causeOfTransmissionType(
+        default ServerEndpointBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
             setProperty("causeOfTransmissionType", causeOfTransmissionType);
             return this;
@@ -1127,7 +1116,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder informationObjectAddressType(
+        default ServerEndpointBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -1138,7 +1127,7 @@ public interface ServerEndpointBuilderFactory {
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder informationObjectAddressType(
+        default ServerEndpointBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
             setProperty("informationObjectAddressType", informationObjectAddressType);
             return this;
@@ -1148,8 +1137,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder maxUnacknowledged(
-                short maxUnacknowledged) {
+        default ServerEndpointBuilder maxUnacknowledged(short maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
@@ -1158,8 +1146,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder maxUnacknowledged(
-                String maxUnacknowledged) {
+        default ServerEndpointBuilder maxUnacknowledged(String maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
             return this;
         }
@@ -1168,7 +1155,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout1(int timeout1) {
+        default ServerEndpointBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -1177,7 +1164,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout1(String timeout1) {
+        default ServerEndpointBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
             return this;
         }
@@ -1186,7 +1173,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout2(int timeout2) {
+        default ServerEndpointBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -1195,7 +1182,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout2(String timeout2) {
+        default ServerEndpointBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
             return this;
         }
@@ -1204,7 +1191,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout3(int timeout3) {
+        default ServerEndpointBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -1213,7 +1200,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group connection
          */
-        public default ServerEndpointBuilder timeout3(String timeout3) {
+        default ServerEndpointBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
             return this;
         }
@@ -1222,7 +1209,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder causeSourceAddress(
+        default ServerEndpointBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -1232,7 +1219,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder causeSourceAddress(
+        default ServerEndpointBuilder causeSourceAddress(
                 String causeSourceAddress) {
             setProperty("causeSourceAddress", causeSourceAddress);
             return this;
@@ -1242,7 +1229,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder ignoreBackgroundScan(
+        default ServerEndpointBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -1252,7 +1239,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder ignoreBackgroundScan(
+        default ServerEndpointBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
             setProperty("ignoreBackgroundScan", ignoreBackgroundScan);
             return this;
@@ -1262,7 +1249,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder ignoreDaylightSavingTime(
+        default ServerEndpointBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -1272,7 +1259,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder ignoreDaylightSavingTime(
+        default ServerEndpointBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
             setProperty("ignoreDaylightSavingTime", ignoreDaylightSavingTime);
             return this;
@@ -1282,7 +1269,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.util.TimeZone</code> type.
          * @group data
          */
-        public default ServerEndpointBuilder timeZone(TimeZone timeZone) {
+        default ServerEndpointBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -1292,7 +1279,7 @@ public interface ServerEndpointBuilderFactory {
          * type.
          * @group data
          */
-        public default ServerEndpointBuilder timeZone(String timeZone) {
+        default ServerEndpointBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
             return this;
         }
@@ -1301,7 +1288,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group id
          */
-        public default ServerEndpointBuilder connectionId(String connectionId) {
+        default ServerEndpointBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
             return this;
         }
@@ -1313,7 +1300,7 @@ public interface ServerEndpointBuilderFactory {
     public static interface AdvancedServerEndpointBuilder
             extends
                 AdvancedServerEndpointConsumerBuilder, AdvancedServerEndpointProducerBuilder {
-        public default ServerEndpointBuilder basic() {
+        default ServerEndpointBuilder basic() {
             return (ServerEndpointBuilder) this;
         }
         /**
@@ -1322,7 +1309,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointBuilder basicPropertyBinding(
+        default AdvancedServerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1333,7 +1320,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointBuilder basicPropertyBinding(
+        default AdvancedServerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1344,8 +1331,7 @@ public interface ServerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedServerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1355,8 +1341,7 @@ public interface ServerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedServerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedServerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1391,7 +1376,7 @@ public interface ServerEndpointBuilderFactory {
      * other geographically widespread control systems. Creates a builder to
      * build endpoints for the IEC 60870 Server component.
      */
-    public default ServerEndpointBuilder server(String path) {
+    default ServerEndpointBuilder server(String path) {
         class ServerEndpointBuilderImpl extends AbstractEndpointBuilder implements ServerEndpointBuilder, AdvancedServerEndpointBuilder {
             public ServerEndpointBuilderImpl(String path) {
                 super("iec60870-server", path);

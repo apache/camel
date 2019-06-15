@@ -39,7 +39,7 @@ public interface JettyHttpEndpointBuilder9Factory {
     public static interface JettyHttpEndpointBuilder9
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJettyHttpEndpointBuilder9 advanced() {
+        default AdvancedJettyHttpEndpointBuilder9 advanced() {
             return (AdvancedJettyHttpEndpointBuilder9) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 httpUri(URI httpUri) {
+        default JettyHttpEndpointBuilder9 httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -56,7 +56,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 httpUri(String httpUri) {
+        default JettyHttpEndpointBuilder9 httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -80,7 +80,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 disableStreamCache(
+        default JettyHttpEndpointBuilder9 disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -105,7 +105,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 disableStreamCache(
+        default JettyHttpEndpointBuilder9 disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -117,7 +117,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 headerFilterStrategy(
+        default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -129,7 +129,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default JettyHttpEndpointBuilder9 headerFilterStrategy(
+        default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -140,7 +140,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 chunked(boolean chunked) {
+        default JettyHttpEndpointBuilder9 chunked(boolean chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -150,7 +150,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 chunked(String chunked) {
+        default JettyHttpEndpointBuilder9 chunked(String chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -161,7 +161,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 enableMultipartFilter(
+        default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 boolean enableMultipartFilter) {
             setProperty("enableMultipartFilter", enableMultipartFilter);
             return this;
@@ -173,7 +173,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 enableMultipartFilter(
+        default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 String enableMultipartFilter) {
             setProperty("enableMultipartFilter", enableMultipartFilter);
             return this;
@@ -191,7 +191,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 transferException(
+        default JettyHttpEndpointBuilder9 transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -209,7 +209,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JettyHttpEndpointBuilder9 transferException(
+        default JettyHttpEndpointBuilder9 transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -220,7 +220,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default JettyHttpEndpointBuilder9 sslContextParameters(
+        default JettyHttpEndpointBuilder9 sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -231,7 +231,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default JettyHttpEndpointBuilder9 sslContextParameters(
+        default JettyHttpEndpointBuilder9 sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -244,7 +244,7 @@ public interface JettyHttpEndpointBuilder9Factory {
     public static interface AdvancedJettyHttpEndpointBuilder9
             extends
                 EndpointConsumerBuilder {
-        public default JettyHttpEndpointBuilder9 basic() {
+        default JettyHttpEndpointBuilder9 basic() {
             return (JettyHttpEndpointBuilder9) this;
         }
         /**
@@ -254,8 +254,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedJettyHttpEndpointBuilder9 httpBinding(
-                Object httpBinding) {
+        default AdvancedJettyHttpEndpointBuilder9 httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -266,8 +265,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedJettyHttpEndpointBuilder9 httpBinding(
-                String httpBinding) {
+        default AdvancedJettyHttpEndpointBuilder9 httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
         }
@@ -277,7 +275,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
+        default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -288,7 +286,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
+        default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -300,7 +298,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -312,7 +310,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -324,7 +322,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -336,7 +334,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -348,7 +346,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -360,7 +358,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
+        default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -371,7 +369,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 synchronous(
+        default AdvancedJettyHttpEndpointBuilder9 synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -382,8 +380,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJettyHttpEndpointBuilder9 synchronous(
-                String synchronous) {
+        default AdvancedJettyHttpEndpointBuilder9 synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -393,7 +390,7 @@ public interface JettyHttpEndpointBuilder9Factory {
      * producing HTTP requests. Creates a builder to build endpoints for the
      * Jetty component.
      */
-    public default JettyHttpEndpointBuilder9 jettyHttp9(String path) {
+    default JettyHttpEndpointBuilder9 jettyHttp9(String path) {
         class JettyHttpEndpointBuilder9Impl extends AbstractEndpointBuilder implements JettyHttpEndpointBuilder9, AdvancedJettyHttpEndpointBuilder9 {
             public JettyHttpEndpointBuilder9Impl(String path) {
                 super("jetty", path);

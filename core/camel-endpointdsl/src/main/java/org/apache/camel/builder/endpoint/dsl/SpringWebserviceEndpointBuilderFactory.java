@@ -40,7 +40,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public interface SpringWebserviceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder advanced() {
+        default AdvancedSpringWebserviceEndpointConsumerBuilder advanced() {
             return (AdvancedSpringWebserviceEndpointConsumerBuilder) this;
         }
         /**
@@ -60,7 +60,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder type(
+        default SpringWebserviceEndpointConsumerBuilder type(
                 EndpointMappingType type) {
             setProperty("type", type);
             return this;
@@ -82,7 +82,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder type(String type) {
+        default SpringWebserviceEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -91,7 +91,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder lookupKey(
+        default SpringWebserviceEndpointConsumerBuilder lookupKey(
                 String lookupKey) {
             setProperty("lookupKey", lookupKey);
             return this;
@@ -103,7 +103,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointConsumerBuilder messageFilter(
+        default SpringWebserviceEndpointConsumerBuilder messageFilter(
                 Object messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -115,7 +115,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointConsumerBuilder messageFilter(
+        default SpringWebserviceEndpointConsumerBuilder messageFilter(
                 String messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -131,7 +131,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
+        default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -147,7 +147,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
+        default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -161,7 +161,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
+        default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
                 Object endpointDispatcher) {
             setProperty("endpointDispatcher", endpointDispatcher);
             return this;
@@ -175,7 +175,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
+        default SpringWebserviceEndpointConsumerBuilder endpointDispatcher(
                 String endpointDispatcher) {
             setProperty("endpointDispatcher", endpointDispatcher);
             return this;
@@ -192,7 +192,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder endpointMapping(
+        default SpringWebserviceEndpointConsumerBuilder endpointMapping(
                 Object endpointMapping) {
             setProperty("endpointMapping", endpointMapping);
             return this;
@@ -209,7 +209,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder endpointMapping(
+        default SpringWebserviceEndpointConsumerBuilder endpointMapping(
                 String endpointMapping) {
             setProperty("endpointMapping", endpointMapping);
             return this;
@@ -220,7 +220,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SpringWebserviceEndpointConsumerBuilder expression(
+        default SpringWebserviceEndpointConsumerBuilder expression(
                 String expression) {
             setProperty("expression", expression);
             return this;
@@ -231,7 +231,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
+        default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -242,7 +242,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
+        default SpringWebserviceEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -256,7 +256,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public interface AdvancedSpringWebserviceEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SpringWebserviceEndpointConsumerBuilder basic() {
+        default SpringWebserviceEndpointConsumerBuilder basic() {
             return (SpringWebserviceEndpointConsumerBuilder) this;
         }
         /**
@@ -268,7 +268,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -282,7 +282,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -292,7 +292,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -303,7 +303,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -314,7 +314,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -325,7 +325,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -336,7 +336,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -347,7 +347,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -360,7 +360,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public static interface SpringWebserviceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSpringWebserviceEndpointProducerBuilder advanced() {
+        default AdvancedSpringWebserviceEndpointProducerBuilder advanced() {
             return (AdvancedSpringWebserviceEndpointProducerBuilder) this;
         }
         /**
@@ -368,7 +368,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder webServiceEndpointUri(
+        default SpringWebserviceEndpointProducerBuilder webServiceEndpointUri(
                 String webServiceEndpointUri) {
             setProperty("webServiceEndpointUri", webServiceEndpointUri);
             return this;
@@ -380,7 +380,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointProducerBuilder messageFilter(
+        default SpringWebserviceEndpointProducerBuilder messageFilter(
                 Object messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -392,7 +392,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointProducerBuilder messageFilter(
+        default SpringWebserviceEndpointProducerBuilder messageFilter(
                 String messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -406,7 +406,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
+        default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
                 boolean allowResponseAttachmentOverride) {
             setProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
             return this;
@@ -420,7 +420,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
+        default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
                 String allowResponseAttachmentOverride) {
             setProperty("allowResponseAttachmentOverride", allowResponseAttachmentOverride);
             return this;
@@ -434,7 +434,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
+        default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
                 boolean allowResponseHeaderOverride) {
             setProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
             return this;
@@ -448,7 +448,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
+        default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
                 String allowResponseHeaderOverride) {
             setProperty("allowResponseHeaderOverride", allowResponseHeaderOverride);
             return this;
@@ -459,7 +459,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder faultAction(
+        default SpringWebserviceEndpointProducerBuilder faultAction(
                 URI faultAction) {
             setProperty("faultAction", faultAction);
             return this;
@@ -470,7 +470,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder faultAction(
+        default SpringWebserviceEndpointProducerBuilder faultAction(
                 String faultAction) {
             setProperty("faultAction", faultAction);
             return this;
@@ -481,8 +481,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder faultTo(
-                URI faultTo) {
+        default SpringWebserviceEndpointProducerBuilder faultTo(URI faultTo) {
             setProperty("faultTo", faultTo);
             return this;
         }
@@ -492,8 +491,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder faultTo(
-                String faultTo) {
+        default SpringWebserviceEndpointProducerBuilder faultTo(String faultTo) {
             setProperty("faultTo", faultTo);
             return this;
         }
@@ -510,7 +508,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
+        default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -528,7 +526,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
+        default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -540,7 +538,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageFactory(
+        default SpringWebserviceEndpointProducerBuilder messageFactory(
                 Object messageFactory) {
             setProperty("messageFactory", messageFactory);
             return this;
@@ -552,7 +550,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.WebServiceMessageFactory</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageFactory(
+        default SpringWebserviceEndpointProducerBuilder messageFactory(
                 String messageFactory) {
             setProperty("messageFactory", messageFactory);
             return this;
@@ -564,7 +562,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
+        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
                 Object messageIdStrategy) {
             setProperty("messageIdStrategy", messageIdStrategy);
             return this;
@@ -576,7 +574,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
+        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
                 String messageIdStrategy) {
             setProperty("messageIdStrategy", messageIdStrategy);
             return this;
@@ -589,7 +587,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageSender(
+        default SpringWebserviceEndpointProducerBuilder messageSender(
                 Object messageSender) {
             setProperty("messageSender", messageSender);
             return this;
@@ -602,7 +600,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder messageSender(
+        default SpringWebserviceEndpointProducerBuilder messageSender(
                 String messageSender) {
             setProperty("messageSender", messageSender);
             return this;
@@ -613,7 +611,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder outputAction(
+        default SpringWebserviceEndpointProducerBuilder outputAction(
                 URI outputAction) {
             setProperty("outputAction", outputAction);
             return this;
@@ -624,7 +622,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder outputAction(
+        default SpringWebserviceEndpointProducerBuilder outputAction(
                 String outputAction) {
             setProperty("outputAction", outputAction);
             return this;
@@ -635,8 +633,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder replyTo(
-                URI replyTo) {
+        default SpringWebserviceEndpointProducerBuilder replyTo(URI replyTo) {
             setProperty("replyTo", replyTo);
             return this;
         }
@@ -646,8 +643,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder replyTo(
-                String replyTo) {
+        default SpringWebserviceEndpointProducerBuilder replyTo(String replyTo) {
             setProperty("replyTo", replyTo);
             return this;
         }
@@ -657,7 +653,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder soapAction(
+        default SpringWebserviceEndpointProducerBuilder soapAction(
                 String soapAction) {
             setProperty("soapAction", soapAction);
             return this;
@@ -678,8 +674,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder timeout(
-                int timeout) {
+        default SpringWebserviceEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -699,8 +694,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder timeout(
-                String timeout) {
+        default SpringWebserviceEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -714,7 +708,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
+        default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
                 Object webServiceTemplate) {
             setProperty("webServiceTemplate", webServiceTemplate);
             return this;
@@ -729,7 +723,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
+        default SpringWebserviceEndpointProducerBuilder webServiceTemplate(
                 String webServiceTemplate) {
             setProperty("webServiceTemplate", webServiceTemplate);
             return this;
@@ -741,7 +735,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
+        default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
                 URI wsAddressingAction) {
             setProperty("wsAddressingAction", wsAddressingAction);
             return this;
@@ -753,7 +747,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
+        default SpringWebserviceEndpointProducerBuilder wsAddressingAction(
                 String wsAddressingAction) {
             setProperty("wsAddressingAction", wsAddressingAction);
             return this;
@@ -764,7 +758,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointProducerBuilder sslContextParameters(
+        default SpringWebserviceEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -775,7 +769,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointProducerBuilder sslContextParameters(
+        default SpringWebserviceEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -789,7 +783,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public interface AdvancedSpringWebserviceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SpringWebserviceEndpointProducerBuilder basic() {
+        default SpringWebserviceEndpointProducerBuilder basic() {
             return (SpringWebserviceEndpointProducerBuilder) this;
         }
         /**
@@ -798,7 +792,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -809,7 +803,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -820,7 +814,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -831,7 +825,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -844,7 +838,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public static interface SpringWebserviceEndpointBuilder
             extends
                 SpringWebserviceEndpointConsumerBuilder, SpringWebserviceEndpointProducerBuilder {
-        public default AdvancedSpringWebserviceEndpointBuilder advanced() {
+        default AdvancedSpringWebserviceEndpointBuilder advanced() {
             return (AdvancedSpringWebserviceEndpointBuilder) this;
         }
         /**
@@ -854,7 +848,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointBuilder messageFilter(
+        default SpringWebserviceEndpointBuilder messageFilter(
                 Object messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -866,7 +860,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.component.spring.ws.filter.MessageFilter</code> type.
          * @group common
          */
-        public default SpringWebserviceEndpointBuilder messageFilter(
+        default SpringWebserviceEndpointBuilder messageFilter(
                 String messageFilter) {
             setProperty("messageFilter", messageFilter);
             return this;
@@ -877,7 +871,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointBuilder sslContextParameters(
+        default SpringWebserviceEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -888,7 +882,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default SpringWebserviceEndpointBuilder sslContextParameters(
+        default SpringWebserviceEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -901,7 +895,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     public static interface AdvancedSpringWebserviceEndpointBuilder
             extends
                 AdvancedSpringWebserviceEndpointConsumerBuilder, AdvancedSpringWebserviceEndpointProducerBuilder {
-        public default SpringWebserviceEndpointBuilder basic() {
+        default SpringWebserviceEndpointBuilder basic() {
             return (SpringWebserviceEndpointBuilder) this;
         }
         /**
@@ -910,7 +904,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -921,7 +915,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -932,7 +926,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -943,7 +937,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringWebserviceEndpointBuilder synchronous(
+        default AdvancedSpringWebserviceEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -962,7 +956,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * WebServices. Creates a builder to build endpoints for the Spring
      * WebService component.
      */
-    public default SpringWebserviceEndpointBuilder springWebservice(String path) {
+    default SpringWebserviceEndpointBuilder springWebservice(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {
             public SpringWebserviceEndpointBuilderImpl(String path) {
                 super("spring-ws", path);

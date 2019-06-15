@@ -39,7 +39,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public interface KubernetesNamespacesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder advanced() {
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder advanced() {
             return (AdvancedKubernetesNamespacesEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder masterUrl(
+        default KubernetesNamespacesEndpointConsumerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -57,7 +57,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder apiVersion(
+        default KubernetesNamespacesEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -67,7 +67,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder dnsDomain(
+        default KubernetesNamespacesEndpointConsumerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -78,7 +78,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -89,7 +89,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -99,7 +99,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder portName(
+        default KubernetesNamespacesEndpointConsumerBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -109,7 +109,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder portProtocol(
+        default KubernetesNamespacesEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -125,7 +125,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesNamespacesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -141,7 +141,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder bridgeErrorHandler(
+        default KubernetesNamespacesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -151,7 +151,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder labelKey(
+        default KubernetesNamespacesEndpointConsumerBuilder labelKey(
                 String labelKey) {
             setProperty("labelKey", labelKey);
             return this;
@@ -161,7 +161,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder labelValue(
+        default KubernetesNamespacesEndpointConsumerBuilder labelValue(
                 String labelValue) {
             setProperty("labelValue", labelValue);
             return this;
@@ -171,7 +171,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder namespace(
+        default KubernetesNamespacesEndpointConsumerBuilder namespace(
                 String namespace) {
             setProperty("namespace", namespace);
             return this;
@@ -181,7 +181,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder poolSize(
+        default KubernetesNamespacesEndpointConsumerBuilder poolSize(
                 int poolSize) {
             setProperty("poolSize", poolSize);
             return this;
@@ -191,7 +191,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder poolSize(
+        default KubernetesNamespacesEndpointConsumerBuilder poolSize(
                 String poolSize) {
             setProperty("poolSize", poolSize);
             return this;
@@ -201,7 +201,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder resourceName(
+        default KubernetesNamespacesEndpointConsumerBuilder resourceName(
                 String resourceName) {
             setProperty("resourceName", resourceName);
             return this;
@@ -211,7 +211,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder caCertData(
+        default KubernetesNamespacesEndpointConsumerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -221,7 +221,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder caCertFile(
+        default KubernetesNamespacesEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -231,7 +231,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientCertData(
+        default KubernetesNamespacesEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -241,7 +241,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientCertFile(
+        default KubernetesNamespacesEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -251,7 +251,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientKeyAlgo(
+        default KubernetesNamespacesEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -261,7 +261,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientKeyData(
+        default KubernetesNamespacesEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -271,7 +271,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientKeyFile(
+        default KubernetesNamespacesEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -281,7 +281,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder clientKeyPassphrase(
+        default KubernetesNamespacesEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -291,7 +291,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder oauthToken(
+        default KubernetesNamespacesEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -301,7 +301,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder password(
+        default KubernetesNamespacesEndpointConsumerBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -311,7 +311,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
+        default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -322,7 +322,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
+        default KubernetesNamespacesEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -332,7 +332,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointConsumerBuilder username(
+        default KubernetesNamespacesEndpointConsumerBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -346,7 +346,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public interface AdvancedKubernetesNamespacesEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default KubernetesNamespacesEndpointConsumerBuilder basic() {
+        default KubernetesNamespacesEndpointConsumerBuilder basic() {
             return (KubernetesNamespacesEndpointConsumerBuilder) this;
         }
         /**
@@ -358,7 +358,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -372,7 +372,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -382,7 +382,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -393,7 +393,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -404,7 +404,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -415,7 +415,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -426,7 +426,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -438,7 +438,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -449,7 +449,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -460,7 +460,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointConsumerBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +473,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public static interface KubernetesNamespacesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder advanced() {
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder advanced() {
             return (AdvancedKubernetesNamespacesEndpointProducerBuilder) this;
         }
         /**
@@ -481,7 +481,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder masterUrl(
+        default KubernetesNamespacesEndpointProducerBuilder masterUrl(
                 String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
@@ -491,7 +491,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder apiVersion(
+        default KubernetesNamespacesEndpointProducerBuilder apiVersion(
                 String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
@@ -501,7 +501,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder dnsDomain(
+        default KubernetesNamespacesEndpointProducerBuilder dnsDomain(
                 String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
@@ -512,7 +512,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -523,7 +523,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -533,7 +533,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder portName(
+        default KubernetesNamespacesEndpointProducerBuilder portName(
                 String portName) {
             setProperty("portName", portName);
             return this;
@@ -543,7 +543,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointProducerBuilder portProtocol(
+        default KubernetesNamespacesEndpointProducerBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -561,7 +561,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesNamespacesEndpointProducerBuilder lazyStartProducer(
+        default KubernetesNamespacesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -579,7 +579,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default KubernetesNamespacesEndpointProducerBuilder lazyStartProducer(
+        default KubernetesNamespacesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -589,7 +589,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KubernetesNamespacesEndpointProducerBuilder operation(
+        default KubernetesNamespacesEndpointProducerBuilder operation(
                 String operation) {
             setProperty("operation", operation);
             return this;
@@ -599,7 +599,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder caCertData(
+        default KubernetesNamespacesEndpointProducerBuilder caCertData(
                 String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
@@ -609,7 +609,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder caCertFile(
+        default KubernetesNamespacesEndpointProducerBuilder caCertFile(
                 String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
@@ -619,7 +619,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientCertData(
+        default KubernetesNamespacesEndpointProducerBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -629,7 +629,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientCertFile(
+        default KubernetesNamespacesEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -639,7 +639,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientKeyAlgo(
+        default KubernetesNamespacesEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -649,7 +649,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientKeyData(
+        default KubernetesNamespacesEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -659,7 +659,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientKeyFile(
+        default KubernetesNamespacesEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -669,7 +669,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder clientKeyPassphrase(
+        default KubernetesNamespacesEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -679,7 +679,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder oauthToken(
+        default KubernetesNamespacesEndpointProducerBuilder oauthToken(
                 String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
@@ -689,7 +689,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder password(
+        default KubernetesNamespacesEndpointProducerBuilder password(
                 String password) {
             setProperty("password", password);
             return this;
@@ -699,7 +699,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder trustCerts(
+        default KubernetesNamespacesEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -710,7 +710,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder trustCerts(
+        default KubernetesNamespacesEndpointProducerBuilder trustCerts(
                 String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -720,7 +720,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointProducerBuilder username(
+        default KubernetesNamespacesEndpointProducerBuilder username(
                 String username) {
             setProperty("username", username);
             return this;
@@ -734,7 +734,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public interface AdvancedKubernetesNamespacesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default KubernetesNamespacesEndpointProducerBuilder basic() {
+        default KubernetesNamespacesEndpointProducerBuilder basic() {
             return (KubernetesNamespacesEndpointProducerBuilder) this;
         }
         /**
@@ -743,7 +743,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -754,7 +754,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -765,7 +765,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -777,7 +777,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -788,7 +788,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -799,7 +799,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointProducerBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -812,7 +812,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public static interface KubernetesNamespacesEndpointBuilder
             extends
                 KubernetesNamespacesEndpointConsumerBuilder, KubernetesNamespacesEndpointProducerBuilder {
-        public default AdvancedKubernetesNamespacesEndpointBuilder advanced() {
+        default AdvancedKubernetesNamespacesEndpointBuilder advanced() {
             return (AdvancedKubernetesNamespacesEndpointBuilder) this;
         }
         /**
@@ -820,8 +820,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder masterUrl(
-                String masterUrl) {
+        default KubernetesNamespacesEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
             return this;
         }
@@ -830,8 +829,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder apiVersion(
-                String apiVersion) {
+        default KubernetesNamespacesEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
             return this;
         }
@@ -840,8 +838,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder dnsDomain(
-                String dnsDomain) {
+        default KubernetesNamespacesEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
             return this;
         }
@@ -851,7 +848,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -862,7 +859,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder kubernetesClient(
+        default KubernetesNamespacesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
             setProperty("kubernetesClient", kubernetesClient);
             return this;
@@ -872,8 +869,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder portName(
-                String portName) {
+        default KubernetesNamespacesEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
             return this;
         }
@@ -882,7 +878,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default KubernetesNamespacesEndpointBuilder portProtocol(
+        default KubernetesNamespacesEndpointBuilder portProtocol(
                 String portProtocol) {
             setProperty("portProtocol", portProtocol);
             return this;
@@ -892,8 +888,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder caCertData(
-                String caCertData) {
+        default KubernetesNamespacesEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
             return this;
         }
@@ -902,8 +897,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder caCertFile(
-                String caCertFile) {
+        default KubernetesNamespacesEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
             return this;
         }
@@ -912,7 +906,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientCertData(
+        default KubernetesNamespacesEndpointBuilder clientCertData(
                 String clientCertData) {
             setProperty("clientCertData", clientCertData);
             return this;
@@ -922,7 +916,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientCertFile(
+        default KubernetesNamespacesEndpointBuilder clientCertFile(
                 String clientCertFile) {
             setProperty("clientCertFile", clientCertFile);
             return this;
@@ -932,7 +926,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientKeyAlgo(
+        default KubernetesNamespacesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
@@ -942,7 +936,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientKeyData(
+        default KubernetesNamespacesEndpointBuilder clientKeyData(
                 String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
             return this;
@@ -952,7 +946,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientKeyFile(
+        default KubernetesNamespacesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
             return this;
@@ -962,7 +956,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder clientKeyPassphrase(
+        default KubernetesNamespacesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
             setProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
@@ -972,8 +966,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder oauthToken(
-                String oauthToken) {
+        default KubernetesNamespacesEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
             return this;
         }
@@ -982,8 +975,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder password(
-                String password) {
+        default KubernetesNamespacesEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -992,7 +984,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Boolean</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder trustCerts(
+        default KubernetesNamespacesEndpointBuilder trustCerts(
                 Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
@@ -1003,8 +995,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder trustCerts(
-                String trustCerts) {
+        default KubernetesNamespacesEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
             return this;
         }
@@ -1013,8 +1004,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KubernetesNamespacesEndpointBuilder username(
-                String username) {
+        default KubernetesNamespacesEndpointBuilder username(String username) {
             setProperty("username", username);
             return this;
         }
@@ -1026,7 +1016,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     public static interface AdvancedKubernetesNamespacesEndpointBuilder
             extends
                 AdvancedKubernetesNamespacesEndpointConsumerBuilder, AdvancedKubernetesNamespacesEndpointProducerBuilder {
-        public default KubernetesNamespacesEndpointBuilder basic() {
+        default KubernetesNamespacesEndpointBuilder basic() {
             return (KubernetesNamespacesEndpointBuilder) this;
         }
         /**
@@ -1035,7 +1025,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1046,7 +1036,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder basicPropertyBinding(
+        default AdvancedKubernetesNamespacesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1057,7 +1047,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1069,7 +1059,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(
+        default AdvancedKubernetesNamespacesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
@@ -1080,7 +1070,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1091,7 +1081,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKubernetesNamespacesEndpointBuilder synchronous(
+        default AdvancedKubernetesNamespacesEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1103,8 +1093,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      * events. Creates a builder to build endpoints for the Kubernetes
      * Namespaces component.
      */
-    public default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
-            String path) {
+    default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {
             public KubernetesNamespacesEndpointBuilderImpl(String path) {
                 super("kubernetes-namespaces", path);

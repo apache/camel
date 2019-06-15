@@ -38,7 +38,7 @@ public interface PulsarEndpointBuilderFactory {
     public interface PulsarEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedPulsarEndpointConsumerBuilder advanced() {
+        default AdvancedPulsarEndpointConsumerBuilder advanced() {
             return (AdvancedPulsarEndpointConsumerBuilder) this;
         }
         /**
@@ -52,7 +52,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder bridgeErrorHandler(
+        default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -68,7 +68,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder bridgeErrorHandler(
+        default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -78,8 +78,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder consumerName(
-                String consumerName) {
+        default PulsarEndpointConsumerBuilder consumerName(String consumerName) {
             setProperty("consumerName", consumerName);
             return this;
         }
@@ -89,7 +88,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder consumerNamePrefix(
+        default PulsarEndpointConsumerBuilder consumerNamePrefix(
                 String consumerNamePrefix) {
             setProperty("consumerNamePrefix", consumerNamePrefix);
             return this;
@@ -99,7 +98,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder consumerQueueSize(
+        default PulsarEndpointConsumerBuilder consumerQueueSize(
                 int consumerQueueSize) {
             setProperty("consumerQueueSize", consumerQueueSize);
             return this;
@@ -109,7 +108,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder consumerQueueSize(
+        default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
             setProperty("consumerQueueSize", consumerQueueSize);
             return this;
@@ -119,7 +118,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder numberOfConsumers(
+        default PulsarEndpointConsumerBuilder numberOfConsumers(
                 int numberOfConsumers) {
             setProperty("numberOfConsumers", numberOfConsumers);
             return this;
@@ -129,7 +128,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder numberOfConsumers(
+        default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
             setProperty("numberOfConsumers", numberOfConsumers);
             return this;
@@ -139,7 +138,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder subscriptionName(
+        default PulsarEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
             setProperty("subscriptionName", subscriptionName);
             return this;
@@ -151,7 +150,7 @@ public interface PulsarEndpointBuilderFactory {
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder subscriptionType(
+        default PulsarEndpointConsumerBuilder subscriptionType(
                 SubscriptionType subscriptionType) {
             setProperty("subscriptionType", subscriptionType);
             return this;
@@ -163,7 +162,7 @@ public interface PulsarEndpointBuilderFactory {
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * @group consumer
          */
-        public default PulsarEndpointConsumerBuilder subscriptionType(
+        default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
             setProperty("subscriptionType", subscriptionType);
             return this;
@@ -176,7 +175,7 @@ public interface PulsarEndpointBuilderFactory {
     public interface AdvancedPulsarEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default PulsarEndpointConsumerBuilder basic() {
+        default PulsarEndpointConsumerBuilder basic() {
             return (PulsarEndpointConsumerBuilder) this;
         }
         /**
@@ -188,7 +187,7 @@ public interface PulsarEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -202,7 +201,7 @@ public interface PulsarEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -212,7 +211,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
+        default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -223,7 +222,7 @@ public interface PulsarEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
+        default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -234,7 +233,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -245,7 +244,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -256,7 +255,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointConsumerBuilder synchronous(
+        default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -267,7 +266,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointConsumerBuilder synchronous(
+        default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -280,7 +279,7 @@ public interface PulsarEndpointBuilderFactory {
     public static interface PulsarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedPulsarEndpointProducerBuilder advanced() {
+        default AdvancedPulsarEndpointProducerBuilder advanced() {
             return (AdvancedPulsarEndpointProducerBuilder) this;
         }
         /**
@@ -288,7 +287,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default PulsarEndpointProducerBuilder topic(String topic) {
+        default PulsarEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -305,7 +304,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default PulsarEndpointProducerBuilder lazyStartProducer(
+        default PulsarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -323,7 +322,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default PulsarEndpointProducerBuilder lazyStartProducer(
+        default PulsarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -333,8 +332,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default PulsarEndpointProducerBuilder producerName(
-                String producerName) {
+        default PulsarEndpointProducerBuilder producerName(String producerName) {
             setProperty("producerName", producerName);
             return this;
         }
@@ -346,7 +344,7 @@ public interface PulsarEndpointBuilderFactory {
     public interface AdvancedPulsarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default PulsarEndpointProducerBuilder basic() {
+        default PulsarEndpointProducerBuilder basic() {
             return (PulsarEndpointProducerBuilder) this;
         }
         /**
@@ -355,7 +353,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -366,7 +364,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -377,7 +375,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointProducerBuilder synchronous(
+        default AdvancedPulsarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -388,7 +386,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointProducerBuilder synchronous(
+        default AdvancedPulsarEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -401,7 +399,7 @@ public interface PulsarEndpointBuilderFactory {
     public static interface PulsarEndpointBuilder
             extends
                 PulsarEndpointConsumerBuilder, PulsarEndpointProducerBuilder {
-        public default AdvancedPulsarEndpointBuilder advanced() {
+        default AdvancedPulsarEndpointBuilder advanced() {
             return (AdvancedPulsarEndpointBuilder) this;
         }
     }
@@ -412,7 +410,7 @@ public interface PulsarEndpointBuilderFactory {
     public static interface AdvancedPulsarEndpointBuilder
             extends
                 AdvancedPulsarEndpointConsumerBuilder, AdvancedPulsarEndpointProducerBuilder {
-        public default PulsarEndpointBuilder basic() {
+        default PulsarEndpointBuilder basic() {
             return (PulsarEndpointBuilder) this;
         }
         /**
@@ -421,7 +419,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -432,7 +430,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointBuilder basicPropertyBinding(
+        default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -443,8 +441,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -454,8 +451,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPulsarEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -472,7 +468,7 @@ public interface PulsarEndpointBuilderFactory {
      * Camel Apache Pulsar Component Creates a builder to build endpoints for
      * the Apache Pulsar component.
      */
-    public default PulsarEndpointBuilder pulsar(String path) {
+    default PulsarEndpointBuilder pulsar(String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {
             public PulsarEndpointBuilderImpl(String path) {
                 super("pulsar", path);

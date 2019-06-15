@@ -36,7 +36,7 @@ public interface JsonValidatorEndpointBuilderFactory {
     public static interface JsonValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJsonValidatorEndpointBuilder advanced() {
+        default AdvancedJsonValidatorEndpointBuilder advanced() {
             return (AdvancedJsonValidatorEndpointBuilder) this;
         }
         /**
@@ -49,8 +49,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder resourceUri(
-                String resourceUri) {
+        default JsonValidatorEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
             return this;
         }
@@ -59,8 +58,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder contentCache(
-                boolean contentCache) {
+        default JsonValidatorEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -69,8 +67,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder contentCache(
-                String contentCache) {
+        default JsonValidatorEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
             return this;
         }
@@ -79,7 +76,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder failOnNullBody(
+        default JsonValidatorEndpointBuilder failOnNullBody(
                 boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
@@ -89,7 +86,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder failOnNullBody(
+        default JsonValidatorEndpointBuilder failOnNullBody(
                 String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
             return this;
@@ -99,7 +96,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder failOnNullHeader(
+        default JsonValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
@@ -109,7 +106,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder failOnNullHeader(
+        default JsonValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
             return this;
@@ -119,7 +116,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default JsonValidatorEndpointBuilder headerName(String headerName) {
+        default JsonValidatorEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
             return this;
         }
@@ -131,7 +128,7 @@ public interface JsonValidatorEndpointBuilderFactory {
     public static interface AdvancedJsonValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default JsonValidatorEndpointBuilder basic() {
+        default JsonValidatorEndpointBuilder basic() {
             return (JsonValidatorEndpointBuilder) this;
         }
         /**
@@ -140,7 +137,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -151,7 +148,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
+        default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -163,7 +160,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder errorHandler(
+        default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -175,7 +172,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder errorHandler(
+        default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
             setProperty("errorHandler", errorHandler);
             return this;
@@ -188,7 +185,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder schemaLoader(
+        default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 Object schemaLoader) {
             setProperty("schemaLoader", schemaLoader);
             return this;
@@ -201,7 +198,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder schemaLoader(
+        default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 String schemaLoader) {
             setProperty("schemaLoader", schemaLoader);
             return this;
@@ -212,7 +209,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder synchronous(
+        default AdvancedJsonValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -223,7 +220,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJsonValidatorEndpointBuilder synchronous(
+        default AdvancedJsonValidatorEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -234,7 +231,7 @@ public interface JsonValidatorEndpointBuilderFactory {
      * Creates a builder to build endpoints for the JSON Schema Validator
      * component.
      */
-    public default JsonValidatorEndpointBuilder jsonValidator(String path) {
+    default JsonValidatorEndpointBuilder jsonValidator(String path) {
         class JsonValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonValidatorEndpointBuilder, AdvancedJsonValidatorEndpointBuilder {
             public JsonValidatorEndpointBuilderImpl(String path) {
                 super("json-validator", path);

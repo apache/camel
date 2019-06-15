@@ -38,7 +38,7 @@ public interface IPFSEndpointBuilderFactory {
     public static interface IPFSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedIPFSEndpointBuilder advanced() {
+        default AdvancedIPFSEndpointBuilder advanced() {
             return (AdvancedIPFSEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default IPFSEndpointBuilder ipfsCmd(String ipfsCmd) {
+        default IPFSEndpointBuilder ipfsCmd(String ipfsCmd) {
             setProperty("ipfsCmd", ipfsCmd);
             return this;
         }
@@ -55,7 +55,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option is a <code>java.nio.file.Path</code> type.
          * @group producer
          */
-        public default IPFSEndpointBuilder outdir(Path outdir) {
+        default IPFSEndpointBuilder outdir(Path outdir) {
             setProperty("outdir", outdir);
             return this;
         }
@@ -65,7 +65,7 @@ public interface IPFSEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default IPFSEndpointBuilder outdir(String outdir) {
+        default IPFSEndpointBuilder outdir(String outdir) {
             setProperty("outdir", outdir);
             return this;
         }
@@ -77,7 +77,7 @@ public interface IPFSEndpointBuilderFactory {
     public static interface AdvancedIPFSEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default IPFSEndpointBuilder basic() {
+        default IPFSEndpointBuilder basic() {
             return (IPFSEndpointBuilder) this;
         }
         /**
@@ -86,7 +86,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIPFSEndpointBuilder basicPropertyBinding(
+        default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -97,7 +97,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIPFSEndpointBuilder basicPropertyBinding(
+        default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -108,8 +108,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIPFSEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -119,8 +118,7 @@ public interface IPFSEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedIPFSEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -130,7 +128,7 @@ public interface IPFSEndpointBuilderFactory {
      * System (IPFS). Creates a builder to build endpoints for the IPFS
      * component.
      */
-    public default IPFSEndpointBuilder iPFS(String path) {
+    default IPFSEndpointBuilder iPFS(String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
                 super("ipfs", path);

@@ -37,7 +37,7 @@ public interface RestApiEndpointBuilderFactory {
     public static interface RestApiEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedRestApiEndpointBuilder advanced() {
+        default AdvancedRestApiEndpointBuilder advanced() {
             return (AdvancedRestApiEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestApiEndpointBuilder path(String path) {
+        default RestApiEndpointBuilder path(String path) {
             setProperty("path", path);
             return this;
         }
@@ -55,8 +55,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestApiEndpointBuilder contextIdPattern(
-                String contextIdPattern) {
+        default RestApiEndpointBuilder contextIdPattern(String contextIdPattern) {
             setProperty("contextIdPattern", contextIdPattern);
             return this;
         }
@@ -66,8 +65,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestApiEndpointBuilder apiComponentName(
-                String apiComponentName) {
+        default RestApiEndpointBuilder apiComponentName(String apiComponentName) {
             setProperty("apiComponentName", apiComponentName);
             return this;
         }
@@ -81,7 +79,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default RestApiEndpointBuilder consumerComponentName(
+        default RestApiEndpointBuilder consumerComponentName(
                 String consumerComponentName) {
             setProperty("consumerComponentName", consumerComponentName);
             return this;
@@ -94,7 +92,7 @@ public interface RestApiEndpointBuilderFactory {
     public static interface AdvancedRestApiEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default RestApiEndpointBuilder basic() {
+        default RestApiEndpointBuilder basic() {
             return (RestApiEndpointBuilder) this;
         }
         /**
@@ -103,7 +101,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestApiEndpointBuilder basicPropertyBinding(
+        default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -114,7 +112,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestApiEndpointBuilder basicPropertyBinding(
+        default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -125,8 +123,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestApiEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedRestApiEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -136,8 +133,7 @@ public interface RestApiEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestApiEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedRestApiEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -147,7 +143,7 @@ public interface RestApiEndpointBuilderFactory {
      * services which has been defined using the rest-dsl in Camel. Creates a
      * builder to build endpoints for the REST API component.
      */
-    public default RestApiEndpointBuilder restApi(String path) {
+    default RestApiEndpointBuilder restApi(String path) {
         class RestApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestApiEndpointBuilder, AdvancedRestApiEndpointBuilder {
             public RestApiEndpointBuilderImpl(String path) {
                 super("rest-api", path);

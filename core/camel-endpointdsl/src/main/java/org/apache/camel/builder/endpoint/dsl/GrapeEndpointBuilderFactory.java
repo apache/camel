@@ -37,7 +37,7 @@ public interface GrapeEndpointBuilderFactory {
     public static interface GrapeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGrapeEndpointBuilder advanced() {
+        default AdvancedGrapeEndpointBuilder advanced() {
             return (AdvancedGrapeEndpointBuilder) this;
         }
         /**
@@ -46,7 +46,7 @@ public interface GrapeEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GrapeEndpointBuilder defaultCoordinates(
+        default GrapeEndpointBuilder defaultCoordinates(
                 String defaultCoordinates) {
             setProperty("defaultCoordinates", defaultCoordinates);
             return this;
@@ -59,7 +59,7 @@ public interface GrapeEndpointBuilderFactory {
     public static interface AdvancedGrapeEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default GrapeEndpointBuilder basic() {
+        default GrapeEndpointBuilder basic() {
             return (GrapeEndpointBuilder) this;
         }
         /**
@@ -68,7 +68,7 @@ public interface GrapeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrapeEndpointBuilder basicPropertyBinding(
+        default AdvancedGrapeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -79,7 +79,7 @@ public interface GrapeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrapeEndpointBuilder basicPropertyBinding(
+        default AdvancedGrapeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -90,8 +90,7 @@ public interface GrapeEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrapeEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGrapeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -101,8 +100,7 @@ public interface GrapeEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGrapeEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGrapeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -112,7 +110,7 @@ public interface GrapeEndpointBuilderFactory {
      * when CamelContext is running. Creates a builder to build endpoints for
      * the Grape component.
      */
-    public default GrapeEndpointBuilder grape(String path) {
+    default GrapeEndpointBuilder grape(String path) {
         class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
                 super("grape", path);

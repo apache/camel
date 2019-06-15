@@ -37,7 +37,7 @@ public interface FopEndpointBuilderFactory {
     public static interface FopEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedFopEndpointBuilder advanced() {
+        default AdvancedFopEndpointBuilder advanced() {
             return (AdvancedFopEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface FopEndpointBuilderFactory {
          * <code>org.apache.camel.component.fop.FopOutputType</code> type.
          * @group producer
          */
-        public default FopEndpointBuilder outputType(FopOutputType outputType) {
+        default FopEndpointBuilder outputType(FopOutputType outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -58,7 +58,7 @@ public interface FopEndpointBuilderFactory {
          * <code>org.apache.camel.component.fop.FopOutputType</code> type.
          * @group producer
          */
-        public default FopEndpointBuilder outputType(String outputType) {
+        default FopEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
             return this;
         }
@@ -68,7 +68,7 @@ public interface FopEndpointBuilderFactory {
          * The option is a <code>org.apache.fop.apps.FopFactory</code> type.
          * @group producer
          */
-        public default FopEndpointBuilder fopFactory(Object fopFactory) {
+        default FopEndpointBuilder fopFactory(Object fopFactory) {
             setProperty("fopFactory", fopFactory);
             return this;
         }
@@ -79,7 +79,7 @@ public interface FopEndpointBuilderFactory {
          * <code>org.apache.fop.apps.FopFactory</code> type.
          * @group producer
          */
-        public default FopEndpointBuilder fopFactory(String fopFactory) {
+        default FopEndpointBuilder fopFactory(String fopFactory) {
             setProperty("fopFactory", fopFactory);
             return this;
         }
@@ -89,7 +89,7 @@ public interface FopEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default FopEndpointBuilder userConfigURL(String userConfigURL) {
+        default FopEndpointBuilder userConfigURL(String userConfigURL) {
             setProperty("userConfigURL", userConfigURL);
             return this;
         }
@@ -101,7 +101,7 @@ public interface FopEndpointBuilderFactory {
     public static interface AdvancedFopEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default FopEndpointBuilder basic() {
+        default FopEndpointBuilder basic() {
             return (FopEndpointBuilder) this;
         }
         /**
@@ -110,7 +110,7 @@ public interface FopEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFopEndpointBuilder basicPropertyBinding(
+        default AdvancedFopEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -121,7 +121,7 @@ public interface FopEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFopEndpointBuilder basicPropertyBinding(
+        default AdvancedFopEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -132,8 +132,7 @@ public interface FopEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFopEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -143,7 +142,7 @@ public interface FopEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedFopEndpointBuilder synchronous(String synchronous) {
+        default AdvancedFopEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -161,7 +160,7 @@ public interface FopEndpointBuilderFactory {
      * formats using Apache FOP. Creates a builder to build endpoints for the
      * FOP component.
      */
-    public default FopEndpointBuilder fop(String path) {
+    default FopEndpointBuilder fop(String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {
             public FopEndpointBuilderImpl(String path) {
                 super("fop", path);

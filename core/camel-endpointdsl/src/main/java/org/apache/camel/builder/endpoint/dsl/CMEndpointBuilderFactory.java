@@ -34,7 +34,7 @@ public interface CMEndpointBuilderFactory {
      * Builder for endpoint for the CM SMS Gateway component.
      */
     public static interface CMEndpointBuilder extends EndpointProducerBuilder {
-        public default AdvancedCMEndpointBuilder advanced() {
+        default AdvancedCMEndpointBuilder advanced() {
             return (AdvancedCMEndpointBuilder) this;
         }
         /**
@@ -42,7 +42,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder host(String host) {
+        default CMEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -51,7 +51,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder defaultFrom(String defaultFrom) {
+        default CMEndpointBuilder defaultFrom(String defaultFrom) {
             setProperty("defaultFrom", defaultFrom);
             return this;
         }
@@ -63,7 +63,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder defaultMaxNumberOfParts(
+        default CMEndpointBuilder defaultMaxNumberOfParts(
                 int defaultMaxNumberOfParts) {
             setProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
             return this;
@@ -76,7 +76,7 @@ public interface CMEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder defaultMaxNumberOfParts(
+        default CMEndpointBuilder defaultMaxNumberOfParts(
                 String defaultMaxNumberOfParts) {
             setProperty("defaultMaxNumberOfParts", defaultMaxNumberOfParts);
             return this;
@@ -86,7 +86,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder productToken(String productToken) {
+        default CMEndpointBuilder productToken(String productToken) {
             setProperty("productToken", productToken);
             return this;
         }
@@ -95,7 +95,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder testConnectionOnStartup(
+        default CMEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -105,7 +105,7 @@ public interface CMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default CMEndpointBuilder testConnectionOnStartup(
+        default CMEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
             setProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
@@ -118,7 +118,7 @@ public interface CMEndpointBuilderFactory {
     public static interface AdvancedCMEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default CMEndpointBuilder basic() {
+        default CMEndpointBuilder basic() {
             return (CMEndpointBuilder) this;
         }
         /**
@@ -127,7 +127,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMEndpointBuilder basicPropertyBinding(
+        default AdvancedCMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -138,7 +138,7 @@ public interface CMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMEndpointBuilder basicPropertyBinding(
+        default AdvancedCMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -149,7 +149,7 @@ public interface CMEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
+        default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -159,7 +159,7 @@ public interface CMEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCMEndpointBuilder synchronous(String synchronous) {
+        default AdvancedCMEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -168,7 +168,7 @@ public interface CMEndpointBuilderFactory {
      * The cm-sms component allows to integrate with CM SMS Gateway. Creates a
      * builder to build endpoints for the CM SMS Gateway component.
      */
-    public default CMEndpointBuilder cM(String path) {
+    default CMEndpointBuilder cM(String path) {
         class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {
             public CMEndpointBuilderImpl(String path) {
                 super("cm-sms", path);

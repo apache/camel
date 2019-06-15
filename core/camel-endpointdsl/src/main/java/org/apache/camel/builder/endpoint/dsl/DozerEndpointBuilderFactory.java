@@ -37,7 +37,7 @@ public interface DozerEndpointBuilderFactory {
     public static interface DozerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedDozerEndpointBuilder advanced() {
+        default AdvancedDozerEndpointBuilder advanced() {
             return (AdvancedDozerEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder name(String name) {
+        default DozerEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -60,7 +60,7 @@ public interface DozerEndpointBuilderFactory {
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder mappingConfiguration(
+        default DozerEndpointBuilder mappingConfiguration(
                 Object mappingConfiguration) {
             setProperty("mappingConfiguration", mappingConfiguration);
             return this;
@@ -76,7 +76,7 @@ public interface DozerEndpointBuilderFactory {
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder mappingConfiguration(
+        default DozerEndpointBuilder mappingConfiguration(
                 String mappingConfiguration) {
             setProperty("mappingConfiguration", mappingConfiguration);
             return this;
@@ -88,7 +88,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder mappingFile(String mappingFile) {
+        default DozerEndpointBuilder mappingFile(String mappingFile) {
             setProperty("mappingFile", mappingFile);
             return this;
         }
@@ -98,7 +98,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder marshalId(String marshalId) {
+        default DozerEndpointBuilder marshalId(String marshalId) {
             setProperty("marshalId", marshalId);
             return this;
         }
@@ -109,7 +109,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder sourceModel(String sourceModel) {
+        default DozerEndpointBuilder sourceModel(String sourceModel) {
             setProperty("sourceModel", sourceModel);
             return this;
         }
@@ -118,7 +118,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder targetModel(String targetModel) {
+        default DozerEndpointBuilder targetModel(String targetModel) {
             setProperty("targetModel", targetModel);
             return this;
         }
@@ -128,7 +128,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default DozerEndpointBuilder unmarshalId(String unmarshalId) {
+        default DozerEndpointBuilder unmarshalId(String unmarshalId) {
             setProperty("unmarshalId", unmarshalId);
             return this;
         }
@@ -140,7 +140,7 @@ public interface DozerEndpointBuilderFactory {
     public static interface AdvancedDozerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default DozerEndpointBuilder basic() {
+        default DozerEndpointBuilder basic() {
             return (DozerEndpointBuilder) this;
         }
         /**
@@ -149,7 +149,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDozerEndpointBuilder basicPropertyBinding(
+        default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -160,7 +160,7 @@ public interface DozerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDozerEndpointBuilder basicPropertyBinding(
+        default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -171,8 +171,7 @@ public interface DozerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDozerEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -182,8 +181,7 @@ public interface DozerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedDozerEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -193,7 +191,7 @@ public interface DozerEndpointBuilderFactory {
      * the Dozer mapping library. Creates a builder to build endpoints for the
      * Dozer component.
      */
-    public default DozerEndpointBuilder dozer(String path) {
+    default DozerEndpointBuilder dozer(String path) {
         class DozerEndpointBuilderImpl extends AbstractEndpointBuilder implements DozerEndpointBuilder, AdvancedDozerEndpointBuilder {
             public DozerEndpointBuilderImpl(String path) {
                 super("dozer", path);

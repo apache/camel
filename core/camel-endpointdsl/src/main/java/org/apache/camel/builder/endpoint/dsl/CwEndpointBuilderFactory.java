@@ -35,7 +35,7 @@ public interface CwEndpointBuilderFactory {
      * Builder for endpoint for the AWS CloudWatch component.
      */
     public static interface CwEndpointBuilder extends EndpointProducerBuilder {
-        public default AdvancedCwEndpointBuilder advanced() {
+        default AdvancedCwEndpointBuilder advanced() {
             return (AdvancedCwEndpointBuilder) this;
         }
         /**
@@ -43,7 +43,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder namespace(String namespace) {
+        default CwEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
             return this;
         }
@@ -53,7 +53,7 @@ public interface CwEndpointBuilderFactory {
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
+        default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
             setProperty("amazonCwClient", amazonCwClient);
             return this;
         }
@@ -63,7 +63,7 @@ public interface CwEndpointBuilderFactory {
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
+        default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
             setProperty("amazonCwClient", amazonCwClient);
             return this;
         }
@@ -72,7 +72,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder name(String name) {
+        default CwEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -81,7 +81,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder proxyHost(String proxyHost) {
+        default CwEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -90,7 +90,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder proxyPort(Integer proxyPort) {
+        default CwEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -100,7 +100,7 @@ public interface CwEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default CwEndpointBuilder proxyPort(String proxyPort) {
+        default CwEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -109,7 +109,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder region(String region) {
+        default CwEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -118,7 +118,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.util.Date</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder timestamp(Date timestamp) {
+        default CwEndpointBuilder timestamp(Date timestamp) {
             setProperty("timestamp", timestamp);
             return this;
         }
@@ -127,7 +127,7 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.Date</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder timestamp(String timestamp) {
+        default CwEndpointBuilder timestamp(String timestamp) {
             setProperty("timestamp", timestamp);
             return this;
         }
@@ -136,7 +136,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder unit(String unit) {
+        default CwEndpointBuilder unit(String unit) {
             setProperty("unit", unit);
             return this;
         }
@@ -145,7 +145,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.Double</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder value(Double value) {
+        default CwEndpointBuilder value(Double value) {
             setProperty("value", value);
             return this;
         }
@@ -154,7 +154,7 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Double</code> type.
          * @group producer
          */
-        public default CwEndpointBuilder value(String value) {
+        default CwEndpointBuilder value(String value) {
             setProperty("value", value);
             return this;
         }
@@ -163,7 +163,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CwEndpointBuilder accessKey(String accessKey) {
+        default CwEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -172,7 +172,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default CwEndpointBuilder secretKey(String secretKey) {
+        default CwEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -184,7 +184,7 @@ public interface CwEndpointBuilderFactory {
     public static interface AdvancedCwEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default CwEndpointBuilder basic() {
+        default CwEndpointBuilder basic() {
             return (CwEndpointBuilder) this;
         }
         /**
@@ -193,7 +193,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCwEndpointBuilder basicPropertyBinding(
+        default AdvancedCwEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -204,7 +204,7 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCwEndpointBuilder basicPropertyBinding(
+        default AdvancedCwEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -215,7 +215,7 @@ public interface CwEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
+        default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -225,7 +225,7 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedCwEndpointBuilder synchronous(String synchronous) {
+        default AdvancedCwEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -234,7 +234,7 @@ public interface CwEndpointBuilderFactory {
      * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
      * Creates a builder to build endpoints for the AWS CloudWatch component.
      */
-    public default CwEndpointBuilder cw(String path) {
+    default CwEndpointBuilder cw(String path) {
         class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder, AdvancedCwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {
                 super("aws-cw", path);

@@ -41,7 +41,7 @@ public interface MQTTEndpointBuilderFactory {
     public interface MQTTEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedMQTTEndpointConsumerBuilder advanced() {
+        default AdvancedMQTTEndpointConsumerBuilder advanced() {
             return (AdvancedMQTTEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder name(String name) {
+        default MQTTEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -60,7 +60,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder blockingExecutor(
+        default MQTTEndpointConsumerBuilder blockingExecutor(
                 Executor blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
@@ -73,7 +73,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder blockingExecutor(
+        default MQTTEndpointConsumerBuilder blockingExecutor(
                 String blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
@@ -84,7 +84,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder byDefaultRetain(
+        default MQTTEndpointConsumerBuilder byDefaultRetain(
                 boolean byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
@@ -95,7 +95,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder byDefaultRetain(
+        default MQTTEndpointConsumerBuilder byDefaultRetain(
                 String byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
@@ -107,8 +107,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder cleanSession(
-                boolean cleanSession) {
+        default MQTTEndpointConsumerBuilder cleanSession(boolean cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -119,8 +118,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder cleanSession(
-                String cleanSession) {
+        default MQTTEndpointConsumerBuilder cleanSession(String cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -132,7 +130,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder clientId(String clientId) {
+        default MQTTEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -143,7 +141,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder connectAttemptsMax(
+        default MQTTEndpointConsumerBuilder connectAttemptsMax(
                 long connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
@@ -155,7 +153,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder connectAttemptsMax(
+        default MQTTEndpointConsumerBuilder connectAttemptsMax(
                 String connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
@@ -166,7 +164,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder connectWaitInSeconds(
+        default MQTTEndpointConsumerBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -177,7 +175,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder connectWaitInSeconds(
+        default MQTTEndpointConsumerBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -188,7 +186,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
+        default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -199,7 +197,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
+        default MQTTEndpointConsumerBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -214,8 +212,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder dispatchQueue(
-                Object dispatchQueue) {
+        default MQTTEndpointConsumerBuilder dispatchQueue(Object dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -229,8 +226,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder dispatchQueue(
-                String dispatchQueue) {
+        default MQTTEndpointConsumerBuilder dispatchQueue(String dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -240,7 +236,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder host(String host) {
+        default MQTTEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -252,7 +248,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder keepAlive(short keepAlive) {
+        default MQTTEndpointConsumerBuilder keepAlive(short keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -264,7 +260,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder keepAlive(String keepAlive) {
+        default MQTTEndpointConsumerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -273,7 +269,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder localAddress(URI localAddress) {
+        default MQTTEndpointConsumerBuilder localAddress(URI localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -282,8 +278,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder localAddress(
-                String localAddress) {
+        default MQTTEndpointConsumerBuilder localAddress(String localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -294,7 +289,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder maxReadRate(int maxReadRate) {
+        default MQTTEndpointConsumerBuilder maxReadRate(int maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -305,8 +300,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder maxReadRate(
-                String maxReadRate) {
+        default MQTTEndpointConsumerBuilder maxReadRate(String maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -317,7 +311,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder maxWriteRate(int maxWriteRate) {
+        default MQTTEndpointConsumerBuilder maxWriteRate(int maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -328,8 +322,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder maxWriteRate(
-                String maxWriteRate) {
+        default MQTTEndpointConsumerBuilder maxWriteRate(String maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -341,7 +334,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder mqttQosPropertyName(
+        default MQTTEndpointConsumerBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
             setProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
@@ -354,7 +347,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder mqttRetainPropertyName(
+        default MQTTEndpointConsumerBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
             setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
@@ -365,7 +358,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder mqttTopicPropertyName(
+        default MQTTEndpointConsumerBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
             setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
@@ -375,7 +368,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder publishTopicName(
+        default MQTTEndpointConsumerBuilder publishTopicName(
                 String publishTopicName) {
             setProperty("publishTopicName", publishTopicName);
             return this;
@@ -385,7 +378,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder qualityOfService(
+        default MQTTEndpointConsumerBuilder qualityOfService(
                 String qualityOfService) {
             setProperty("qualityOfService", qualityOfService);
             return this;
@@ -396,7 +389,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder receiveBufferSize(
+        default MQTTEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -407,7 +400,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder receiveBufferSize(
+        default MQTTEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -419,7 +412,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
+        default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -431,7 +424,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
+        default MQTTEndpointConsumerBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -442,7 +435,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -453,7 +446,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointConsumerBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -464,8 +457,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectDelay(
-                long reconnectDelay) {
+        default MQTTEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -475,8 +467,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectDelay(
-                String reconnectDelay) {
+        default MQTTEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -486,7 +477,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectDelayMax(
+        default MQTTEndpointConsumerBuilder reconnectDelayMax(
                 long reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
@@ -497,7 +488,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder reconnectDelayMax(
+        default MQTTEndpointConsumerBuilder reconnectDelayMax(
                 String reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
@@ -508,8 +499,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sendBufferSize(
-                int sendBufferSize) {
+        default MQTTEndpointConsumerBuilder sendBufferSize(int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -519,8 +509,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sendBufferSize(
-                String sendBufferSize) {
+        default MQTTEndpointConsumerBuilder sendBufferSize(String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -531,7 +520,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sendWaitInSeconds(
+        default MQTTEndpointConsumerBuilder sendWaitInSeconds(
                 int sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
@@ -543,7 +532,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sendWaitInSeconds(
+        default MQTTEndpointConsumerBuilder sendWaitInSeconds(
                 String sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
@@ -553,7 +542,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sslContext(Object sslContext) {
+        default MQTTEndpointConsumerBuilder sslContext(Object sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -563,7 +552,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder sslContext(String sslContext) {
+        default MQTTEndpointConsumerBuilder sslContext(String sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -574,7 +563,7 @@ public interface MQTTEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MQTTEndpointConsumerBuilder subscribeTopicName(
+        default MQTTEndpointConsumerBuilder subscribeTopicName(
                 String subscribeTopicName) {
             setProperty("subscribeTopicName", subscribeTopicName);
             return this;
@@ -591,7 +580,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder subscribeTopicNames(
+        default MQTTEndpointConsumerBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
             setProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
@@ -603,7 +592,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder trafficClass(int trafficClass) {
+        default MQTTEndpointConsumerBuilder trafficClass(int trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -614,8 +603,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder trafficClass(
-                String trafficClass) {
+        default MQTTEndpointConsumerBuilder trafficClass(String trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -625,7 +613,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder version(String version) {
+        default MQTTEndpointConsumerBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -634,8 +622,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willMessage(
-                String willMessage) {
+        default MQTTEndpointConsumerBuilder willMessage(String willMessage) {
             setProperty("willMessage", willMessage);
             return this;
         }
@@ -645,7 +632,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willQos(QoS willQos) {
+        default MQTTEndpointConsumerBuilder willQos(QoS willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -656,7 +643,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willQos(String willQos) {
+        default MQTTEndpointConsumerBuilder willQos(String willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -666,7 +653,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointConsumerBuilder willRetain(QoS willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -677,7 +664,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willRetain(String willRetain) {
+        default MQTTEndpointConsumerBuilder willRetain(String willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -687,7 +674,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointConsumerBuilder willTopic(String willTopic) {
+        default MQTTEndpointConsumerBuilder willTopic(String willTopic) {
             setProperty("willTopic", willTopic);
             return this;
         }
@@ -702,7 +689,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default MQTTEndpointConsumerBuilder bridgeErrorHandler(
+        default MQTTEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -718,7 +705,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default MQTTEndpointConsumerBuilder bridgeErrorHandler(
+        default MQTTEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -731,7 +718,7 @@ public interface MQTTEndpointBuilderFactory {
     public interface AdvancedMQTTEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default MQTTEndpointConsumerBuilder basic() {
+        default MQTTEndpointConsumerBuilder basic() {
             return (MQTTEndpointConsumerBuilder) this;
         }
         /**
@@ -743,7 +730,7 @@ public interface MQTTEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -757,7 +744,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
+        default AdvancedMQTTEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -767,7 +754,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
+        default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -778,7 +765,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
+        default AdvancedMQTTEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -789,7 +776,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -800,7 +787,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -811,7 +798,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointConsumerBuilder synchronous(
+        default AdvancedMQTTEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -822,7 +809,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointConsumerBuilder synchronous(
+        default AdvancedMQTTEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -835,7 +822,7 @@ public interface MQTTEndpointBuilderFactory {
     public static interface MQTTEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedMQTTEndpointProducerBuilder advanced() {
+        default AdvancedMQTTEndpointProducerBuilder advanced() {
             return (AdvancedMQTTEndpointProducerBuilder) this;
         }
         /**
@@ -843,7 +830,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder name(String name) {
+        default MQTTEndpointProducerBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -854,7 +841,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder blockingExecutor(
+        default MQTTEndpointProducerBuilder blockingExecutor(
                 Executor blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
@@ -867,7 +854,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder blockingExecutor(
+        default MQTTEndpointProducerBuilder blockingExecutor(
                 String blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
@@ -878,7 +865,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder byDefaultRetain(
+        default MQTTEndpointProducerBuilder byDefaultRetain(
                 boolean byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
@@ -889,7 +876,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder byDefaultRetain(
+        default MQTTEndpointProducerBuilder byDefaultRetain(
                 String byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
@@ -901,8 +888,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder cleanSession(
-                boolean cleanSession) {
+        default MQTTEndpointProducerBuilder cleanSession(boolean cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -913,8 +899,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder cleanSession(
-                String cleanSession) {
+        default MQTTEndpointProducerBuilder cleanSession(String cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -926,7 +911,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder clientId(String clientId) {
+        default MQTTEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -937,7 +922,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder connectAttemptsMax(
+        default MQTTEndpointProducerBuilder connectAttemptsMax(
                 long connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
@@ -949,7 +934,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder connectAttemptsMax(
+        default MQTTEndpointProducerBuilder connectAttemptsMax(
                 String connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
@@ -960,7 +945,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder connectWaitInSeconds(
+        default MQTTEndpointProducerBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -971,7 +956,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder connectWaitInSeconds(
+        default MQTTEndpointProducerBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -982,7 +967,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
+        default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -993,7 +978,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
+        default MQTTEndpointProducerBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -1008,8 +993,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder dispatchQueue(
-                Object dispatchQueue) {
+        default MQTTEndpointProducerBuilder dispatchQueue(Object dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -1023,8 +1007,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder dispatchQueue(
-                String dispatchQueue) {
+        default MQTTEndpointProducerBuilder dispatchQueue(String dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -1034,7 +1017,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder host(String host) {
+        default MQTTEndpointProducerBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1046,7 +1029,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder keepAlive(short keepAlive) {
+        default MQTTEndpointProducerBuilder keepAlive(short keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1058,7 +1041,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder keepAlive(String keepAlive) {
+        default MQTTEndpointProducerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1067,7 +1050,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder localAddress(URI localAddress) {
+        default MQTTEndpointProducerBuilder localAddress(URI localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -1076,8 +1059,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder localAddress(
-                String localAddress) {
+        default MQTTEndpointProducerBuilder localAddress(String localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -1088,7 +1070,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder maxReadRate(int maxReadRate) {
+        default MQTTEndpointProducerBuilder maxReadRate(int maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -1099,8 +1081,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder maxReadRate(
-                String maxReadRate) {
+        default MQTTEndpointProducerBuilder maxReadRate(String maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -1111,7 +1092,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder maxWriteRate(int maxWriteRate) {
+        default MQTTEndpointProducerBuilder maxWriteRate(int maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -1122,8 +1103,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder maxWriteRate(
-                String maxWriteRate) {
+        default MQTTEndpointProducerBuilder maxWriteRate(String maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -1135,7 +1115,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder mqttQosPropertyName(
+        default MQTTEndpointProducerBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
             setProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
@@ -1148,7 +1128,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder mqttRetainPropertyName(
+        default MQTTEndpointProducerBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
             setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
@@ -1159,7 +1139,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder mqttTopicPropertyName(
+        default MQTTEndpointProducerBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
             setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
@@ -1169,7 +1149,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder publishTopicName(
+        default MQTTEndpointProducerBuilder publishTopicName(
                 String publishTopicName) {
             setProperty("publishTopicName", publishTopicName);
             return this;
@@ -1179,7 +1159,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder qualityOfService(
+        default MQTTEndpointProducerBuilder qualityOfService(
                 String qualityOfService) {
             setProperty("qualityOfService", qualityOfService);
             return this;
@@ -1190,7 +1170,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder receiveBufferSize(
+        default MQTTEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1201,7 +1181,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder receiveBufferSize(
+        default MQTTEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
@@ -1213,7 +1193,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectAttemptsMax(
+        default MQTTEndpointProducerBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -1225,7 +1205,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectAttemptsMax(
+        default MQTTEndpointProducerBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -1236,7 +1216,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -1247,7 +1227,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointProducerBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -1258,8 +1238,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectDelay(
-                long reconnectDelay) {
+        default MQTTEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -1269,8 +1248,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectDelay(
-                String reconnectDelay) {
+        default MQTTEndpointProducerBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -1280,7 +1258,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectDelayMax(
+        default MQTTEndpointProducerBuilder reconnectDelayMax(
                 long reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
@@ -1291,7 +1269,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder reconnectDelayMax(
+        default MQTTEndpointProducerBuilder reconnectDelayMax(
                 String reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
@@ -1302,8 +1280,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sendBufferSize(
-                int sendBufferSize) {
+        default MQTTEndpointProducerBuilder sendBufferSize(int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -1313,8 +1290,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sendBufferSize(
-                String sendBufferSize) {
+        default MQTTEndpointProducerBuilder sendBufferSize(String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -1325,7 +1301,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sendWaitInSeconds(
+        default MQTTEndpointProducerBuilder sendWaitInSeconds(
                 int sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
@@ -1337,7 +1313,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sendWaitInSeconds(
+        default MQTTEndpointProducerBuilder sendWaitInSeconds(
                 String sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
@@ -1347,7 +1323,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sslContext(Object sslContext) {
+        default MQTTEndpointProducerBuilder sslContext(Object sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -1357,7 +1333,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder sslContext(String sslContext) {
+        default MQTTEndpointProducerBuilder sslContext(String sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -1368,7 +1344,7 @@ public interface MQTTEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MQTTEndpointProducerBuilder subscribeTopicName(
+        default MQTTEndpointProducerBuilder subscribeTopicName(
                 String subscribeTopicName) {
             setProperty("subscribeTopicName", subscribeTopicName);
             return this;
@@ -1385,7 +1361,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder subscribeTopicNames(
+        default MQTTEndpointProducerBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
             setProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
@@ -1397,7 +1373,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder trafficClass(int trafficClass) {
+        default MQTTEndpointProducerBuilder trafficClass(int trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -1408,8 +1384,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder trafficClass(
-                String trafficClass) {
+        default MQTTEndpointProducerBuilder trafficClass(String trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -1419,7 +1394,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder version(String version) {
+        default MQTTEndpointProducerBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -1428,8 +1403,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willMessage(
-                String willMessage) {
+        default MQTTEndpointProducerBuilder willMessage(String willMessage) {
             setProperty("willMessage", willMessage);
             return this;
         }
@@ -1439,7 +1413,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willQos(QoS willQos) {
+        default MQTTEndpointProducerBuilder willQos(QoS willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -1450,7 +1424,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willQos(String willQos) {
+        default MQTTEndpointProducerBuilder willQos(String willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -1460,7 +1434,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointProducerBuilder willRetain(QoS willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -1471,7 +1445,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willRetain(String willRetain) {
+        default MQTTEndpointProducerBuilder willRetain(String willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -1481,7 +1455,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointProducerBuilder willTopic(String willTopic) {
+        default MQTTEndpointProducerBuilder willTopic(String willTopic) {
             setProperty("willTopic", willTopic);
             return this;
         }
@@ -1498,7 +1472,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default MQTTEndpointProducerBuilder lazyStartProducer(
+        default MQTTEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1516,7 +1490,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default MQTTEndpointProducerBuilder lazyStartProducer(
+        default MQTTEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -1529,7 +1503,7 @@ public interface MQTTEndpointBuilderFactory {
     public interface AdvancedMQTTEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default MQTTEndpointProducerBuilder basic() {
+        default MQTTEndpointProducerBuilder basic() {
             return (MQTTEndpointProducerBuilder) this;
         }
         /**
@@ -1538,7 +1512,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
+        default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -1549,7 +1523,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer (advanced)
          */
-        public default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
+        default AdvancedMQTTEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
             setProperty("lazySessionCreation", lazySessionCreation);
             return this;
@@ -1560,7 +1534,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1571,7 +1545,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1582,7 +1556,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointProducerBuilder synchronous(
+        default AdvancedMQTTEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1593,7 +1567,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointProducerBuilder synchronous(
+        default AdvancedMQTTEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1606,7 +1580,7 @@ public interface MQTTEndpointBuilderFactory {
     public static interface MQTTEndpointBuilder
             extends
                 MQTTEndpointConsumerBuilder, MQTTEndpointProducerBuilder {
-        public default AdvancedMQTTEndpointBuilder advanced() {
+        default AdvancedMQTTEndpointBuilder advanced() {
             return (AdvancedMQTTEndpointBuilder) this;
         }
         /**
@@ -1614,7 +1588,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder name(String name) {
+        default MQTTEndpointBuilder name(String name) {
             setProperty("name", name);
             return this;
         }
@@ -1625,8 +1599,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder blockingExecutor(
-                Executor blockingExecutor) {
+        default MQTTEndpointBuilder blockingExecutor(Executor blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
         }
@@ -1638,8 +1611,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>java.util.concurrent.Executor</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder blockingExecutor(
-                String blockingExecutor) {
+        default MQTTEndpointBuilder blockingExecutor(String blockingExecutor) {
             setProperty("blockingExecutor", blockingExecutor);
             return this;
         }
@@ -1649,8 +1621,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder byDefaultRetain(
-                boolean byDefaultRetain) {
+        default MQTTEndpointBuilder byDefaultRetain(boolean byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
@@ -1660,8 +1631,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder byDefaultRetain(
-                String byDefaultRetain) {
+        default MQTTEndpointBuilder byDefaultRetain(String byDefaultRetain) {
             setProperty("byDefaultRetain", byDefaultRetain);
             return this;
         }
@@ -1672,7 +1642,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder cleanSession(boolean cleanSession) {
+        default MQTTEndpointBuilder cleanSession(boolean cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -1683,7 +1653,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder cleanSession(String cleanSession) {
+        default MQTTEndpointBuilder cleanSession(String cleanSession) {
             setProperty("cleanSession", cleanSession);
             return this;
         }
@@ -1695,7 +1665,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder clientId(String clientId) {
+        default MQTTEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -1706,8 +1676,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder connectAttemptsMax(
-                long connectAttemptsMax) {
+        default MQTTEndpointBuilder connectAttemptsMax(long connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
@@ -1718,8 +1687,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder connectAttemptsMax(
-                String connectAttemptsMax) {
+        default MQTTEndpointBuilder connectAttemptsMax(String connectAttemptsMax) {
             setProperty("connectAttemptsMax", connectAttemptsMax);
             return this;
         }
@@ -1729,7 +1697,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder connectWaitInSeconds(
+        default MQTTEndpointBuilder connectWaitInSeconds(
                 int connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -1740,7 +1708,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder connectWaitInSeconds(
+        default MQTTEndpointBuilder connectWaitInSeconds(
                 String connectWaitInSeconds) {
             setProperty("connectWaitInSeconds", connectWaitInSeconds);
             return this;
@@ -1751,7 +1719,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder disconnectWaitInSeconds(
+        default MQTTEndpointBuilder disconnectWaitInSeconds(
                 int disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -1762,7 +1730,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder disconnectWaitInSeconds(
+        default MQTTEndpointBuilder disconnectWaitInSeconds(
                 String disconnectWaitInSeconds) {
             setProperty("disconnectWaitInSeconds", disconnectWaitInSeconds);
             return this;
@@ -1777,7 +1745,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder dispatchQueue(Object dispatchQueue) {
+        default MQTTEndpointBuilder dispatchQueue(Object dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -1791,7 +1759,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.hawtdispatch.DispatchQueue</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder dispatchQueue(String dispatchQueue) {
+        default MQTTEndpointBuilder dispatchQueue(String dispatchQueue) {
             setProperty("dispatchQueue", dispatchQueue);
             return this;
         }
@@ -1801,7 +1769,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder host(String host) {
+        default MQTTEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -1813,7 +1781,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder keepAlive(short keepAlive) {
+        default MQTTEndpointBuilder keepAlive(short keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1825,7 +1793,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>short</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder keepAlive(String keepAlive) {
+        default MQTTEndpointBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
             return this;
         }
@@ -1834,7 +1802,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder localAddress(URI localAddress) {
+        default MQTTEndpointBuilder localAddress(URI localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -1843,7 +1811,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder localAddress(String localAddress) {
+        default MQTTEndpointBuilder localAddress(String localAddress) {
             setProperty("localAddress", localAddress);
             return this;
         }
@@ -1854,7 +1822,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder maxReadRate(int maxReadRate) {
+        default MQTTEndpointBuilder maxReadRate(int maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -1865,7 +1833,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder maxReadRate(String maxReadRate) {
+        default MQTTEndpointBuilder maxReadRate(String maxReadRate) {
             setProperty("maxReadRate", maxReadRate);
             return this;
         }
@@ -1876,7 +1844,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder maxWriteRate(int maxWriteRate) {
+        default MQTTEndpointBuilder maxWriteRate(int maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -1887,7 +1855,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder maxWriteRate(String maxWriteRate) {
+        default MQTTEndpointBuilder maxWriteRate(String maxWriteRate) {
             setProperty("maxWriteRate", maxWriteRate);
             return this;
         }
@@ -1899,7 +1867,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder mqttQosPropertyName(
+        default MQTTEndpointBuilder mqttQosPropertyName(
                 String mqttQosPropertyName) {
             setProperty("mqttQosPropertyName", mqttQosPropertyName);
             return this;
@@ -1912,7 +1880,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder mqttRetainPropertyName(
+        default MQTTEndpointBuilder mqttRetainPropertyName(
                 String mqttRetainPropertyName) {
             setProperty("mqttRetainPropertyName", mqttRetainPropertyName);
             return this;
@@ -1923,7 +1891,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder mqttTopicPropertyName(
+        default MQTTEndpointBuilder mqttTopicPropertyName(
                 String mqttTopicPropertyName) {
             setProperty("mqttTopicPropertyName", mqttTopicPropertyName);
             return this;
@@ -1933,8 +1901,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder publishTopicName(
-                String publishTopicName) {
+        default MQTTEndpointBuilder publishTopicName(String publishTopicName) {
             setProperty("publishTopicName", publishTopicName);
             return this;
         }
@@ -1943,8 +1910,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder qualityOfService(
-                String qualityOfService) {
+        default MQTTEndpointBuilder qualityOfService(String qualityOfService) {
             setProperty("qualityOfService", qualityOfService);
             return this;
         }
@@ -1954,8 +1920,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder receiveBufferSize(
-                int receiveBufferSize) {
+        default MQTTEndpointBuilder receiveBufferSize(int receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
@@ -1965,8 +1930,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder receiveBufferSize(
-                String receiveBufferSize) {
+        default MQTTEndpointBuilder receiveBufferSize(String receiveBufferSize) {
             setProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
@@ -1977,7 +1941,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectAttemptsMax(
+        default MQTTEndpointBuilder reconnectAttemptsMax(
                 long reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -1989,7 +1953,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectAttemptsMax(
+        default MQTTEndpointBuilder reconnectAttemptsMax(
                 String reconnectAttemptsMax) {
             setProperty("reconnectAttemptsMax", reconnectAttemptsMax);
             return this;
@@ -2000,7 +1964,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointBuilder reconnectBackOffMultiplier(
                 double reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -2011,7 +1975,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>double</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectBackOffMultiplier(
+        default MQTTEndpointBuilder reconnectBackOffMultiplier(
                 String reconnectBackOffMultiplier) {
             setProperty("reconnectBackOffMultiplier", reconnectBackOffMultiplier);
             return this;
@@ -2022,7 +1986,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectDelay(long reconnectDelay) {
+        default MQTTEndpointBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -2032,7 +1996,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectDelay(String reconnectDelay) {
+        default MQTTEndpointBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
             return this;
         }
@@ -2042,8 +2006,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectDelayMax(
-                long reconnectDelayMax) {
+        default MQTTEndpointBuilder reconnectDelayMax(long reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
@@ -2053,8 +2016,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>long</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder reconnectDelayMax(
-                String reconnectDelayMax) {
+        default MQTTEndpointBuilder reconnectDelayMax(String reconnectDelayMax) {
             setProperty("reconnectDelayMax", reconnectDelayMax);
             return this;
         }
@@ -2064,7 +2026,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sendBufferSize(int sendBufferSize) {
+        default MQTTEndpointBuilder sendBufferSize(int sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -2074,7 +2036,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sendBufferSize(String sendBufferSize) {
+        default MQTTEndpointBuilder sendBufferSize(String sendBufferSize) {
             setProperty("sendBufferSize", sendBufferSize);
             return this;
         }
@@ -2085,8 +2047,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sendWaitInSeconds(
-                int sendWaitInSeconds) {
+        default MQTTEndpointBuilder sendWaitInSeconds(int sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
@@ -2097,8 +2058,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sendWaitInSeconds(
-                String sendWaitInSeconds) {
+        default MQTTEndpointBuilder sendWaitInSeconds(String sendWaitInSeconds) {
             setProperty("sendWaitInSeconds", sendWaitInSeconds);
             return this;
         }
@@ -2107,7 +2067,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sslContext(Object sslContext) {
+        default MQTTEndpointBuilder sslContext(Object sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -2117,7 +2077,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>javax.net.ssl.SSLContext</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder sslContext(String sslContext) {
+        default MQTTEndpointBuilder sslContext(String sslContext) {
             setProperty("sslContext", sslContext);
             return this;
         }
@@ -2128,8 +2088,7 @@ public interface MQTTEndpointBuilderFactory {
          * @group common
          */
         @Deprecated
-        public default MQTTEndpointBuilder subscribeTopicName(
-                String subscribeTopicName) {
+        default MQTTEndpointBuilder subscribeTopicName(String subscribeTopicName) {
             setProperty("subscribeTopicName", subscribeTopicName);
             return this;
         }
@@ -2145,7 +2104,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder subscribeTopicNames(
+        default MQTTEndpointBuilder subscribeTopicNames(
                 String subscribeTopicNames) {
             setProperty("subscribeTopicNames", subscribeTopicNames);
             return this;
@@ -2157,7 +2116,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder trafficClass(int trafficClass) {
+        default MQTTEndpointBuilder trafficClass(int trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -2168,7 +2127,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder trafficClass(String trafficClass) {
+        default MQTTEndpointBuilder trafficClass(String trafficClass) {
             setProperty("trafficClass", trafficClass);
             return this;
         }
@@ -2178,7 +2137,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder version(String version) {
+        default MQTTEndpointBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -2187,7 +2146,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willMessage(String willMessage) {
+        default MQTTEndpointBuilder willMessage(String willMessage) {
             setProperty("willMessage", willMessage);
             return this;
         }
@@ -2197,7 +2156,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willQos(QoS willQos) {
+        default MQTTEndpointBuilder willQos(QoS willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -2208,7 +2167,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willQos(String willQos) {
+        default MQTTEndpointBuilder willQos(String willQos) {
             setProperty("willQos", willQos);
             return this;
         }
@@ -2218,7 +2177,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willRetain(QoS willRetain) {
+        default MQTTEndpointBuilder willRetain(QoS willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -2229,7 +2188,7 @@ public interface MQTTEndpointBuilderFactory {
          * <code>org.fusesource.mqtt.client.QoS</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willRetain(String willRetain) {
+        default MQTTEndpointBuilder willRetain(String willRetain) {
             setProperty("willRetain", willRetain);
             return this;
         }
@@ -2239,7 +2198,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default MQTTEndpointBuilder willTopic(String willTopic) {
+        default MQTTEndpointBuilder willTopic(String willTopic) {
             setProperty("willTopic", willTopic);
             return this;
         }
@@ -2251,7 +2210,7 @@ public interface MQTTEndpointBuilderFactory {
     public static interface AdvancedMQTTEndpointBuilder
             extends
                 AdvancedMQTTEndpointConsumerBuilder, AdvancedMQTTEndpointProducerBuilder {
-        public default MQTTEndpointBuilder basic() {
+        default MQTTEndpointBuilder basic() {
             return (MQTTEndpointBuilder) this;
         }
         /**
@@ -2260,7 +2219,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2271,7 +2230,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointBuilder basicPropertyBinding(
+        default AdvancedMQTTEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -2282,8 +2241,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedMQTTEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2293,8 +2251,7 @@ public interface MQTTEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedMQTTEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedMQTTEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -2311,7 +2268,7 @@ public interface MQTTEndpointBuilderFactory {
      * FuseSource MQTT Client. Creates a builder to build endpoints for the MQTT
      * component.
      */
-    public default MQTTEndpointBuilder mQTT(String path) {
+    default MQTTEndpointBuilder mQTT(String path) {
         class MQTTEndpointBuilderImpl extends AbstractEndpointBuilder implements MQTTEndpointBuilder, AdvancedMQTTEndpointBuilder {
             public MQTTEndpointBuilderImpl(String path) {
                 super("mqtt", path);

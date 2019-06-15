@@ -37,7 +37,7 @@ public interface GangliaEndpointBuilderFactory {
     public static interface GangliaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedGangliaEndpointBuilder advanced() {
+        default AdvancedGangliaEndpointBuilder advanced() {
             return (AdvancedGangliaEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder host(String host) {
+        default GangliaEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder port(int port) {
+        default GangliaEndpointBuilder port(int port) {
             setProperty("port", port);
             return this;
         }
@@ -63,7 +63,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder port(String port) {
+        default GangliaEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -74,7 +74,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder dmax(int dmax) {
+        default GangliaEndpointBuilder dmax(int dmax) {
             setProperty("dmax", dmax);
             return this;
         }
@@ -85,7 +85,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder dmax(String dmax) {
+        default GangliaEndpointBuilder dmax(String dmax) {
             setProperty("dmax", dmax);
             return this;
         }
@@ -94,7 +94,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder groupName(String groupName) {
+        default GangliaEndpointBuilder groupName(String groupName) {
             setProperty("groupName", groupName);
             return this;
         }
@@ -103,7 +103,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder metricName(String metricName) {
+        default GangliaEndpointBuilder metricName(String metricName) {
             setProperty("metricName", metricName);
             return this;
         }
@@ -114,7 +114,7 @@ public interface GangliaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default GangliaEndpointBuilder mode(UDPAddressingMode mode) {
+        default GangliaEndpointBuilder mode(UDPAddressingMode mode) {
             setProperty("mode", mode);
             return this;
         }
@@ -125,7 +125,7 @@ public interface GangliaEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default GangliaEndpointBuilder mode(String mode) {
+        default GangliaEndpointBuilder mode(String mode) {
             setProperty("mode", mode);
             return this;
         }
@@ -134,7 +134,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder prefix(String prefix) {
+        default GangliaEndpointBuilder prefix(String prefix) {
             setProperty("prefix", prefix);
             return this;
         }
@@ -144,7 +144,7 @@ public interface GangliaEndpointBuilderFactory {
          * <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder slope(GMetricSlope slope) {
+        default GangliaEndpointBuilder slope(GMetricSlope slope) {
             setProperty("slope", slope);
             return this;
         }
@@ -154,7 +154,7 @@ public interface GangliaEndpointBuilderFactory {
          * <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder slope(String slope) {
+        default GangliaEndpointBuilder slope(String slope) {
             setProperty("slope", slope);
             return this;
         }
@@ -163,7 +163,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder spoofHostname(String spoofHostname) {
+        default GangliaEndpointBuilder spoofHostname(String spoofHostname) {
             setProperty("spoofHostname", spoofHostname);
             return this;
         }
@@ -173,7 +173,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder tmax(int tmax) {
+        default GangliaEndpointBuilder tmax(int tmax) {
             setProperty("tmax", tmax);
             return this;
         }
@@ -183,7 +183,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder tmax(String tmax) {
+        default GangliaEndpointBuilder tmax(String tmax) {
             setProperty("tmax", tmax);
             return this;
         }
@@ -192,7 +192,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder ttl(int ttl) {
+        default GangliaEndpointBuilder ttl(int ttl) {
             setProperty("ttl", ttl);
             return this;
         }
@@ -201,7 +201,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder ttl(String ttl) {
+        default GangliaEndpointBuilder ttl(String ttl) {
             setProperty("ttl", ttl);
             return this;
         }
@@ -211,7 +211,7 @@ public interface GangliaEndpointBuilderFactory {
          * <code>info.ganglia.gmetric4j.gmetric.GMetricType</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder type(GMetricType type) {
+        default GangliaEndpointBuilder type(GMetricType type) {
             setProperty("type", type);
             return this;
         }
@@ -221,7 +221,7 @@ public interface GangliaEndpointBuilderFactory {
          * <code>info.ganglia.gmetric4j.gmetric.GMetricType</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder type(String type) {
+        default GangliaEndpointBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -232,7 +232,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder units(String units) {
+        default GangliaEndpointBuilder units(String units) {
             setProperty("units", units);
             return this;
         }
@@ -242,8 +242,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder wireFormat31x(
-                boolean wireFormat31x) {
+        default GangliaEndpointBuilder wireFormat31x(boolean wireFormat31x) {
             setProperty("wireFormat31x", wireFormat31x);
             return this;
         }
@@ -253,7 +252,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default GangliaEndpointBuilder wireFormat31x(String wireFormat31x) {
+        default GangliaEndpointBuilder wireFormat31x(String wireFormat31x) {
             setProperty("wireFormat31x", wireFormat31x);
             return this;
         }
@@ -265,7 +264,7 @@ public interface GangliaEndpointBuilderFactory {
     public static interface AdvancedGangliaEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default GangliaEndpointBuilder basic() {
+        default GangliaEndpointBuilder basic() {
             return (GangliaEndpointBuilder) this;
         }
         /**
@@ -274,7 +273,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGangliaEndpointBuilder basicPropertyBinding(
+        default AdvancedGangliaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -285,7 +284,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGangliaEndpointBuilder basicPropertyBinding(
+        default AdvancedGangliaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -296,8 +295,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGangliaEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedGangliaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -307,8 +305,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedGangliaEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedGangliaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -343,7 +340,7 @@ public interface GangliaEndpointBuilderFactory {
      * monitoring system. Creates a builder to build endpoints for the Ganglia
      * component.
      */
-    public default GangliaEndpointBuilder ganglia(String path) {
+    default GangliaEndpointBuilder ganglia(String path) {
         class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {
             public GangliaEndpointBuilderImpl(String path) {
                 super("ganglia", path);

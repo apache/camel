@@ -38,7 +38,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public interface JSR356WebSocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder advanced() {
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointConsumerBuilder websocketPathOrUri(
+        default JSR356WebSocketEndpointConsumerBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
             setProperty("websocketPathOrUri", websocketPathOrUri);
             return this;
@@ -57,8 +57,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointConsumerBuilder context(
-                String context) {
+        default JSR356WebSocketEndpointConsumerBuilder context(String context) {
             setProperty("context", context);
             return this;
         }
@@ -68,7 +67,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointConsumerBuilder sessionCount(
+        default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 int sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
@@ -79,7 +78,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointConsumerBuilder sessionCount(
+        default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 String sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
@@ -95,7 +94,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
+        default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -111,7 +110,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
+        default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -125,7 +124,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public interface AdvancedJSR356WebSocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JSR356WebSocketEndpointConsumerBuilder basic() {
+        default JSR356WebSocketEndpointConsumerBuilder basic() {
             return (JSR356WebSocketEndpointConsumerBuilder) this;
         }
         /**
@@ -137,7 +136,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -151,7 +150,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -161,7 +160,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -172,7 +171,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -183,7 +182,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -194,7 +193,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -205,7 +204,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -216,7 +215,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -229,7 +228,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public static interface JSR356WebSocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJSR356WebSocketEndpointProducerBuilder advanced() {
+        default AdvancedJSR356WebSocketEndpointProducerBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointProducerBuilder) this;
         }
         /**
@@ -238,7 +237,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointProducerBuilder websocketPathOrUri(
+        default JSR356WebSocketEndpointProducerBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
             setProperty("websocketPathOrUri", websocketPathOrUri);
             return this;
@@ -248,8 +247,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointProducerBuilder context(
-                String context) {
+        default JSR356WebSocketEndpointProducerBuilder context(String context) {
             setProperty("context", context);
             return this;
         }
@@ -259,7 +257,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointProducerBuilder sessionCount(
+        default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 int sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
@@ -270,7 +268,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointProducerBuilder sessionCount(
+        default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 String sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
@@ -288,7 +286,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
+        default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -306,7 +304,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
+        default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -320,7 +318,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public interface AdvancedJSR356WebSocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JSR356WebSocketEndpointProducerBuilder basic() {
+        default JSR356WebSocketEndpointProducerBuilder basic() {
             return (JSR356WebSocketEndpointProducerBuilder) this;
         }
         /**
@@ -329,7 +327,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -340,7 +338,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -351,7 +349,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -362,7 +360,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -375,7 +373,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public static interface JSR356WebSocketEndpointBuilder
             extends
                 JSR356WebSocketEndpointConsumerBuilder, JSR356WebSocketEndpointProducerBuilder {
-        public default AdvancedJSR356WebSocketEndpointBuilder advanced() {
+        default AdvancedJSR356WebSocketEndpointBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointBuilder) this;
         }
         /**
@@ -384,7 +382,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointBuilder websocketPathOrUri(
+        default JSR356WebSocketEndpointBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
             setProperty("websocketPathOrUri", websocketPathOrUri);
             return this;
@@ -394,7 +392,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointBuilder context(String context) {
+        default JSR356WebSocketEndpointBuilder context(String context) {
             setProperty("context", context);
             return this;
         }
@@ -404,8 +402,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointBuilder sessionCount(
-                int sessionCount) {
+        default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
         }
@@ -415,8 +412,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default JSR356WebSocketEndpointBuilder sessionCount(
-                String sessionCount) {
+        default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
             setProperty("sessionCount", sessionCount);
             return this;
         }
@@ -428,7 +424,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     public static interface AdvancedJSR356WebSocketEndpointBuilder
             extends
                 AdvancedJSR356WebSocketEndpointConsumerBuilder, AdvancedJSR356WebSocketEndpointProducerBuilder {
-        public default JSR356WebSocketEndpointBuilder basic() {
+        default JSR356WebSocketEndpointBuilder basic() {
             return (JSR356WebSocketEndpointBuilder) this;
         }
         /**
@@ -437,7 +433,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -448,7 +444,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
+        default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -459,7 +455,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -470,7 +466,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJSR356WebSocketEndpointBuilder synchronous(
+        default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -480,7 +476,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * Camel WebSocket using JSR356 (javax) Creates a builder to build endpoints
      * for the Javax Websocket component.
      */
-    public default JSR356WebSocketEndpointBuilder jSR356WebSocket(String path) {
+    default JSR356WebSocketEndpointBuilder jSR356WebSocket(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {
             public JSR356WebSocketEndpointBuilderImpl(String path) {
                 super("websocket-jsr356", path);

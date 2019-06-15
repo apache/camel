@@ -39,7 +39,7 @@ public interface PahoEndpointBuilderFactory {
     public interface PahoEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedPahoEndpointConsumerBuilder advanced() {
+        default AdvancedPahoEndpointConsumerBuilder advanced() {
             return (AdvancedPahoEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder topic(String topic) {
+        default PahoEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -57,8 +57,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder autoReconnect(
-                boolean autoReconnect) {
+        default PahoEndpointConsumerBuilder autoReconnect(boolean autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -68,8 +67,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder autoReconnect(
-                String autoReconnect) {
+        default PahoEndpointConsumerBuilder autoReconnect(String autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -78,7 +76,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder brokerUrl(String brokerUrl) {
+        default PahoEndpointConsumerBuilder brokerUrl(String brokerUrl) {
             setProperty("brokerUrl", brokerUrl);
             return this;
         }
@@ -87,7 +85,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder clientId(String clientId) {
+        default PahoEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -97,8 +95,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder connectOptions(
-                Object connectOptions) {
+        default PahoEndpointConsumerBuilder connectOptions(Object connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -108,8 +105,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder connectOptions(
-                String connectOptions) {
+        default PahoEndpointConsumerBuilder connectOptions(String connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -118,7 +114,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder filePersistenceDirectory(
+        default PahoEndpointConsumerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             setProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
@@ -128,7 +124,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder password(String password) {
+        default PahoEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -138,7 +134,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder persistence(
+        default PahoEndpointConsumerBuilder persistence(
                 PahoPersistence persistence) {
             setProperty("persistence", persistence);
             return this;
@@ -149,8 +145,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder persistence(
-                String persistence) {
+        default PahoEndpointConsumerBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
             return this;
         }
@@ -159,7 +154,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder qos(int qos) {
+        default PahoEndpointConsumerBuilder qos(int qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -168,7 +163,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder qos(String qos) {
+        default PahoEndpointConsumerBuilder qos(String qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -178,7 +173,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
+        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -189,7 +184,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
+        default PahoEndpointConsumerBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -199,7 +194,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder retained(boolean retained) {
+        default PahoEndpointConsumerBuilder retained(boolean retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -208,7 +203,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder retained(String retained) {
+        default PahoEndpointConsumerBuilder retained(String retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -217,7 +212,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointConsumerBuilder userName(String userName) {
+        default PahoEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -232,7 +227,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default PahoEndpointConsumerBuilder bridgeErrorHandler(
+        default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -248,7 +243,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default PahoEndpointConsumerBuilder bridgeErrorHandler(
+        default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -261,7 +256,7 @@ public interface PahoEndpointBuilderFactory {
     public interface AdvancedPahoEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default PahoEndpointConsumerBuilder basic() {
+        default PahoEndpointConsumerBuilder basic() {
             return (PahoEndpointConsumerBuilder) this;
         }
         /**
@@ -273,7 +268,7 @@ public interface PahoEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -287,7 +282,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
+        default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -297,7 +292,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPahoEndpointConsumerBuilder exchangePattern(
+        default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -308,7 +303,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedPahoEndpointConsumerBuilder exchangePattern(
+        default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -319,7 +314,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -330,7 +325,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -341,7 +336,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointConsumerBuilder synchronous(
+        default AdvancedPahoEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,7 +347,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointConsumerBuilder synchronous(
+        default AdvancedPahoEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +360,7 @@ public interface PahoEndpointBuilderFactory {
     public static interface PahoEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedPahoEndpointProducerBuilder advanced() {
+        default AdvancedPahoEndpointProducerBuilder advanced() {
             return (AdvancedPahoEndpointProducerBuilder) this;
         }
         /**
@@ -373,7 +368,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder topic(String topic) {
+        default PahoEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -383,8 +378,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder autoReconnect(
-                boolean autoReconnect) {
+        default PahoEndpointProducerBuilder autoReconnect(boolean autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -394,8 +388,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder autoReconnect(
-                String autoReconnect) {
+        default PahoEndpointProducerBuilder autoReconnect(String autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -404,7 +397,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder brokerUrl(String brokerUrl) {
+        default PahoEndpointProducerBuilder brokerUrl(String brokerUrl) {
             setProperty("brokerUrl", brokerUrl);
             return this;
         }
@@ -413,7 +406,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder clientId(String clientId) {
+        default PahoEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -423,8 +416,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder connectOptions(
-                Object connectOptions) {
+        default PahoEndpointProducerBuilder connectOptions(Object connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -434,8 +426,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder connectOptions(
-                String connectOptions) {
+        default PahoEndpointProducerBuilder connectOptions(String connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -444,7 +435,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder filePersistenceDirectory(
+        default PahoEndpointProducerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             setProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
@@ -454,7 +445,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder password(String password) {
+        default PahoEndpointProducerBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -464,7 +455,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder persistence(
+        default PahoEndpointProducerBuilder persistence(
                 PahoPersistence persistence) {
             setProperty("persistence", persistence);
             return this;
@@ -475,8 +466,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder persistence(
-                String persistence) {
+        default PahoEndpointProducerBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
             return this;
         }
@@ -485,7 +475,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder qos(int qos) {
+        default PahoEndpointProducerBuilder qos(int qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -494,7 +484,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder qos(String qos) {
+        default PahoEndpointProducerBuilder qos(String qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -504,7 +494,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder resolveMqttConnectOptions(
+        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -515,7 +505,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder resolveMqttConnectOptions(
+        default PahoEndpointProducerBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -525,7 +515,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder retained(boolean retained) {
+        default PahoEndpointProducerBuilder retained(boolean retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -534,7 +524,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder retained(String retained) {
+        default PahoEndpointProducerBuilder retained(String retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -543,7 +533,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointProducerBuilder userName(String userName) {
+        default PahoEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -560,7 +550,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default PahoEndpointProducerBuilder lazyStartProducer(
+        default PahoEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -578,7 +568,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default PahoEndpointProducerBuilder lazyStartProducer(
+        default PahoEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -591,7 +581,7 @@ public interface PahoEndpointBuilderFactory {
     public interface AdvancedPahoEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default PahoEndpointProducerBuilder basic() {
+        default PahoEndpointProducerBuilder basic() {
             return (PahoEndpointProducerBuilder) this;
         }
         /**
@@ -600,7 +590,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -611,7 +601,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -622,7 +612,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointProducerBuilder synchronous(
+        default AdvancedPahoEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -633,7 +623,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointProducerBuilder synchronous(
+        default AdvancedPahoEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -646,7 +636,7 @@ public interface PahoEndpointBuilderFactory {
     public static interface PahoEndpointBuilder
             extends
                 PahoEndpointConsumerBuilder, PahoEndpointProducerBuilder {
-        public default AdvancedPahoEndpointBuilder advanced() {
+        default AdvancedPahoEndpointBuilder advanced() {
             return (AdvancedPahoEndpointBuilder) this;
         }
         /**
@@ -654,7 +644,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder topic(String topic) {
+        default PahoEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
             return this;
         }
@@ -664,7 +654,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder autoReconnect(boolean autoReconnect) {
+        default PahoEndpointBuilder autoReconnect(boolean autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -674,7 +664,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder autoReconnect(String autoReconnect) {
+        default PahoEndpointBuilder autoReconnect(String autoReconnect) {
             setProperty("autoReconnect", autoReconnect);
             return this;
         }
@@ -683,7 +673,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder brokerUrl(String brokerUrl) {
+        default PahoEndpointBuilder brokerUrl(String brokerUrl) {
             setProperty("brokerUrl", brokerUrl);
             return this;
         }
@@ -692,7 +682,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder clientId(String clientId) {
+        default PahoEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
             return this;
         }
@@ -702,7 +692,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder connectOptions(Object connectOptions) {
+        default PahoEndpointBuilder connectOptions(Object connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -712,7 +702,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.eclipse.paho.client.mqttv3.MqttConnectOptions</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder connectOptions(String connectOptions) {
+        default PahoEndpointBuilder connectOptions(String connectOptions) {
             setProperty("connectOptions", connectOptions);
             return this;
         }
@@ -721,7 +711,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder filePersistenceDirectory(
+        default PahoEndpointBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
             setProperty("filePersistenceDirectory", filePersistenceDirectory);
             return this;
@@ -731,7 +721,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder password(String password) {
+        default PahoEndpointBuilder password(String password) {
             setProperty("password", password);
             return this;
         }
@@ -741,8 +731,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder persistence(
-                PahoPersistence persistence) {
+        default PahoEndpointBuilder persistence(PahoPersistence persistence) {
             setProperty("persistence", persistence);
             return this;
         }
@@ -752,7 +741,7 @@ public interface PahoEndpointBuilderFactory {
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder persistence(String persistence) {
+        default PahoEndpointBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
             return this;
         }
@@ -761,7 +750,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder qos(int qos) {
+        default PahoEndpointBuilder qos(int qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -770,7 +759,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder qos(String qos) {
+        default PahoEndpointBuilder qos(String qos) {
             setProperty("qos", qos);
             return this;
         }
@@ -780,7 +769,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder resolveMqttConnectOptions(
+        default PahoEndpointBuilder resolveMqttConnectOptions(
                 boolean resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -791,7 +780,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder resolveMqttConnectOptions(
+        default PahoEndpointBuilder resolveMqttConnectOptions(
                 String resolveMqttConnectOptions) {
             setProperty("resolveMqttConnectOptions", resolveMqttConnectOptions);
             return this;
@@ -801,7 +790,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder retained(boolean retained) {
+        default PahoEndpointBuilder retained(boolean retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -810,7 +799,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder retained(String retained) {
+        default PahoEndpointBuilder retained(String retained) {
             setProperty("retained", retained);
             return this;
         }
@@ -819,7 +808,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default PahoEndpointBuilder userName(String userName) {
+        default PahoEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
             return this;
         }
@@ -831,7 +820,7 @@ public interface PahoEndpointBuilderFactory {
     public static interface AdvancedPahoEndpointBuilder
             extends
                 AdvancedPahoEndpointConsumerBuilder, AdvancedPahoEndpointProducerBuilder {
-        public default PahoEndpointBuilder basic() {
+        default PahoEndpointBuilder basic() {
             return (PahoEndpointBuilder) this;
         }
         /**
@@ -840,7 +829,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -851,7 +840,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointBuilder basicPropertyBinding(
+        default AdvancedPahoEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -862,8 +851,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedPahoEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -873,8 +861,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedPahoEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedPahoEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -892,7 +879,7 @@ public interface PahoEndpointBuilderFactory {
      * Paho MQTT Client. Creates a builder to build endpoints for the Paho
      * component.
      */
-    public default PahoEndpointBuilder paho(String path) {
+    default PahoEndpointBuilder paho(String path) {
         class PahoEndpointBuilderImpl extends AbstractEndpointBuilder implements PahoEndpointBuilder, AdvancedPahoEndpointBuilder {
             public PahoEndpointBuilderImpl(String path) {
                 super("paho", path);

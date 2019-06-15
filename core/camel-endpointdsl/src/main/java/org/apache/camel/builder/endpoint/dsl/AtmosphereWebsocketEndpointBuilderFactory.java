@@ -39,7 +39,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public interface AtmosphereWebsocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder advanced() {
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder advanced() {
             return (AdvancedAtmosphereWebsocketEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder servicePath(
+        default AtmosphereWebsocketEndpointConsumerBuilder servicePath(
                 String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
@@ -57,7 +57,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
+        default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
                 boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
@@ -67,7 +67,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
+        default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
                 String sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
@@ -77,7 +77,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
+        default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
                 boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -87,7 +87,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
+        default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
                 String useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -112,7 +112,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -137,7 +137,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -149,7 +149,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -161,7 +161,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -171,8 +171,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder async(
-                boolean async) {
+        default AtmosphereWebsocketEndpointConsumerBuilder async(boolean async) {
             setProperty("async", async);
             return this;
         }
@@ -181,8 +180,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder async(
-                String async) {
+        default AtmosphereWebsocketEndpointConsumerBuilder async(String async) {
             setProperty("async", async);
             return this;
         }
@@ -197,7 +195,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
+        default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -213,7 +211,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
+        default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -224,7 +222,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder chunked(
+        default AtmosphereWebsocketEndpointConsumerBuilder chunked(
                 boolean chunked) {
             setProperty("chunked", chunked);
             return this;
@@ -235,7 +233,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder chunked(
+        default AtmosphereWebsocketEndpointConsumerBuilder chunked(
                 String chunked) {
             setProperty("chunked", chunked);
             return this;
@@ -247,7 +245,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder httpMethodRestrict(
+        default AtmosphereWebsocketEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
             setProperty("httpMethodRestrict", httpMethodRestrict);
             return this;
@@ -258,7 +256,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
+        default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -269,7 +267,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
+        default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
             setProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
@@ -279,7 +277,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
+        default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
                 Integer responseBufferSize) {
             setProperty("responseBufferSize", responseBufferSize);
             return this;
@@ -290,7 +288,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
+        default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
                 String responseBufferSize) {
             setProperty("responseBufferSize", responseBufferSize);
             return this;
@@ -300,7 +298,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder servletName(
+        default AtmosphereWebsocketEndpointConsumerBuilder servletName(
                 String servletName) {
             setProperty("servletName", servletName);
             return this;
@@ -318,7 +316,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder transferException(
+        default AtmosphereWebsocketEndpointConsumerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -336,7 +334,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointConsumerBuilder transferException(
+        default AtmosphereWebsocketEndpointConsumerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -350,7 +348,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public interface AdvancedAtmosphereWebsocketEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AtmosphereWebsocketEndpointConsumerBuilder basic() {
+        default AtmosphereWebsocketEndpointConsumerBuilder basic() {
             return (AtmosphereWebsocketEndpointConsumerBuilder) this;
         }
         /**
@@ -360,7 +358,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
                 Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -372,7 +370,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
                 String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -387,7 +385,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
             setProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
@@ -402,7 +400,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
                 String attachmentMultipartBinding) {
             setProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
@@ -414,7 +412,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
                 boolean eagerCheckContentAvailable) {
             setProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
             return this;
@@ -426,7 +424,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
                 String eagerCheckContentAvailable) {
             setProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
             return this;
@@ -440,7 +438,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -454,7 +452,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -464,7 +462,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -475,7 +473,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -487,7 +485,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder fileNameExtWhitelist(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder fileNameExtWhitelist(
                 String fileNameExtWhitelist) {
             setProperty("fileNameExtWhitelist", fileNameExtWhitelist);
             return this;
@@ -498,7 +496,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
                 boolean optionsEnabled) {
             setProperty("optionsEnabled", optionsEnabled);
             return this;
@@ -509,7 +507,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
                 String optionsEnabled) {
             setProperty("optionsEnabled", optionsEnabled);
             return this;
@@ -520,7 +518,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
                 boolean traceEnabled) {
             setProperty("traceEnabled", traceEnabled);
             return this;
@@ -531,7 +529,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
                 String traceEnabled) {
             setProperty("traceEnabled", traceEnabled);
             return this;
@@ -542,7 +540,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -553,7 +551,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -565,7 +563,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -577,7 +575,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -589,7 +587,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -601,7 +599,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -613,7 +611,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -625,7 +623,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -636,7 +634,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -647,7 +645,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -660,7 +658,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public static interface AtmosphereWebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder advanced() {
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder advanced() {
             return (AdvancedAtmosphereWebsocketEndpointProducerBuilder) this;
         }
         /**
@@ -668,7 +666,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder servicePath(
+        default AtmosphereWebsocketEndpointProducerBuilder servicePath(
                 String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
@@ -678,7 +676,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
+        default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
                 boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
@@ -688,7 +686,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
+        default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
                 String sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
@@ -698,7 +696,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
+        default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
                 boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -708,7 +706,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
+        default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
                 String useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -733,7 +731,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -758,7 +756,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -770,7 +768,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -782,7 +780,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -793,7 +791,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder chunked(
+        default AtmosphereWebsocketEndpointProducerBuilder chunked(
                 boolean chunked) {
             setProperty("chunked", chunked);
             return this;
@@ -804,7 +802,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder chunked(
+        default AtmosphereWebsocketEndpointProducerBuilder chunked(
                 String chunked) {
             setProperty("chunked", chunked);
             return this;
@@ -822,7 +820,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder transferException(
+        default AtmosphereWebsocketEndpointProducerBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -840,7 +838,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointProducerBuilder transferException(
+        default AtmosphereWebsocketEndpointProducerBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -854,7 +852,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public interface AdvancedAtmosphereWebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AtmosphereWebsocketEndpointProducerBuilder basic() {
+        default AtmosphereWebsocketEndpointProducerBuilder basic() {
             return (AtmosphereWebsocketEndpointProducerBuilder) this;
         }
         /**
@@ -864,7 +862,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
                 Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -876,7 +874,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
                 String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -887,7 +885,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -898,7 +896,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -910,7 +908,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -922,7 +920,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -934,7 +932,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -946,7 +944,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -958,7 +956,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -970,7 +968,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -981,7 +979,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -992,7 +990,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1005,7 +1003,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public static interface AtmosphereWebsocketEndpointBuilder
             extends
                 AtmosphereWebsocketEndpointConsumerBuilder, AtmosphereWebsocketEndpointProducerBuilder {
-        public default AdvancedAtmosphereWebsocketEndpointBuilder advanced() {
+        default AdvancedAtmosphereWebsocketEndpointBuilder advanced() {
             return (AdvancedAtmosphereWebsocketEndpointBuilder) this;
         }
         /**
@@ -1013,7 +1011,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder servicePath(
+        default AtmosphereWebsocketEndpointBuilder servicePath(
                 String servicePath) {
             setProperty("servicePath", servicePath);
             return this;
@@ -1023,8 +1021,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder sendToAll(
-                boolean sendToAll) {
+        default AtmosphereWebsocketEndpointBuilder sendToAll(boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -1033,8 +1030,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder sendToAll(
-                String sendToAll) {
+        default AtmosphereWebsocketEndpointBuilder sendToAll(String sendToAll) {
             setProperty("sendToAll", sendToAll);
             return this;
         }
@@ -1043,7 +1039,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder useStreaming(
+        default AtmosphereWebsocketEndpointBuilder useStreaming(
                 boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -1053,7 +1049,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder useStreaming(
+        default AtmosphereWebsocketEndpointBuilder useStreaming(
                 String useStreaming) {
             setProperty("useStreaming", useStreaming);
             return this;
@@ -1078,7 +1074,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -1103,7 +1099,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder disableStreamCache(
+        default AtmosphereWebsocketEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
             return this;
@@ -1115,7 +1111,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1127,7 +1123,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group common
          */
-        public default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
+        default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -1138,8 +1134,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointBuilder chunked(
-                boolean chunked) {
+        default AtmosphereWebsocketEndpointBuilder chunked(boolean chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -1149,7 +1144,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointBuilder chunked(String chunked) {
+        default AtmosphereWebsocketEndpointBuilder chunked(String chunked) {
             setProperty("chunked", chunked);
             return this;
         }
@@ -1166,7 +1161,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointBuilder transferException(
+        default AtmosphereWebsocketEndpointBuilder transferException(
                 boolean transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1184,7 +1179,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default AtmosphereWebsocketEndpointBuilder transferException(
+        default AtmosphereWebsocketEndpointBuilder transferException(
                 String transferException) {
             setProperty("transferException", transferException);
             return this;
@@ -1197,7 +1192,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     public static interface AdvancedAtmosphereWebsocketEndpointBuilder
             extends
                 AdvancedAtmosphereWebsocketEndpointConsumerBuilder, AdvancedAtmosphereWebsocketEndpointProducerBuilder {
-        public default AtmosphereWebsocketEndpointBuilder basic() {
+        default AtmosphereWebsocketEndpointBuilder basic() {
             return (AtmosphereWebsocketEndpointBuilder) this;
         }
         /**
@@ -1207,7 +1202,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
                 Object httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -1219,7 +1214,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
          * @group common (advanced)
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
+        default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
                 String httpBinding) {
             setProperty("httpBinding", httpBinding);
             return this;
@@ -1230,7 +1225,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1241,7 +1236,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
+        default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1253,7 +1248,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -1265,7 +1260,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
             setProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
@@ -1277,7 +1272,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -1289,7 +1284,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
             setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
@@ -1301,7 +1296,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -1313,7 +1308,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
+        default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
             setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
@@ -1324,7 +1319,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1335,7 +1330,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
+        default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -1346,8 +1341,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      * Creates a builder to build endpoints for the Atmosphere Websocket
      * component.
      */
-    public default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
-            String path) {
+    default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
         class AtmosphereWebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosphereWebsocketEndpointBuilder, AdvancedAtmosphereWebsocketEndpointBuilder {
             public AtmosphereWebsocketEndpointBuilderImpl(String path) {
                 super("atmosphere-websocket", path);

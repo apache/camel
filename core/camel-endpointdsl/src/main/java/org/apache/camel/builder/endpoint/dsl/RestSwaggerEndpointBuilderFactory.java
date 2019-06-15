@@ -36,7 +36,7 @@ public interface RestSwaggerEndpointBuilderFactory {
     public static interface RestSwaggerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedRestSwaggerEndpointBuilder advanced() {
+        default AdvancedRestSwaggerEndpointBuilder advanced() {
             return (AdvancedRestSwaggerEndpointBuilder) this;
         }
     }
@@ -47,7 +47,7 @@ public interface RestSwaggerEndpointBuilderFactory {
     public static interface AdvancedRestSwaggerEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default RestSwaggerEndpointBuilder basic() {
+        default RestSwaggerEndpointBuilder basic() {
             return (RestSwaggerEndpointBuilder) this;
         }
         /**
@@ -56,7 +56,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
+        default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -67,7 +67,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
+        default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -78,7 +78,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestSwaggerEndpointBuilder synchronous(
+        default AdvancedRestSwaggerEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -89,7 +89,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedRestSwaggerEndpointBuilder synchronous(
+        default AdvancedRestSwaggerEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -99,7 +99,7 @@ public interface RestSwaggerEndpointBuilderFactory {
      * An awesome REST endpoint backed by Swagger specifications. Creates a
      * builder to build endpoints for the REST Swagger component.
      */
-    public default RestSwaggerEndpointBuilder restSwagger(String path) {
+    default RestSwaggerEndpointBuilder restSwagger(String path) {
         class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder, AdvancedRestSwaggerEndpointBuilder {
             public RestSwaggerEndpointBuilderImpl(String path) {
                 super("rest-swagger", path);

@@ -37,7 +37,7 @@ public interface SnmpEndpointBuilderFactory {
     public static interface SnmpEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSnmpEndpointBuilder advanced() {
+        default AdvancedSnmpEndpointBuilder advanced() {
             return (AdvancedSnmpEndpointBuilder) this;
         }
         /**
@@ -45,7 +45,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder host(String host) {
+        default SnmpEndpointBuilder host(String host) {
             setProperty("host", host);
             return this;
         }
@@ -54,7 +54,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder port(Integer port) {
+        default SnmpEndpointBuilder port(Integer port) {
             setProperty("port", port);
             return this;
         }
@@ -64,7 +64,7 @@ public interface SnmpEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder port(String port) {
+        default SnmpEndpointBuilder port(String port) {
             setProperty("port", port);
             return this;
         }
@@ -77,7 +77,7 @@ public interface SnmpEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder oids(Object oids) {
+        default SnmpEndpointBuilder oids(Object oids) {
             setProperty("oids", oids);
             return this;
         }
@@ -90,7 +90,7 @@ public interface SnmpEndpointBuilderFactory {
          * <code>org.apache.camel.component.snmp.OIDList</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder oids(String oids) {
+        default SnmpEndpointBuilder oids(String oids) {
             setProperty("oids", oids);
             return this;
         }
@@ -100,7 +100,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder protocol(String protocol) {
+        default SnmpEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
             return this;
         }
@@ -109,7 +109,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder retries(int retries) {
+        default SnmpEndpointBuilder retries(int retries) {
             setProperty("retries", retries);
             return this;
         }
@@ -118,7 +118,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder retries(String retries) {
+        default SnmpEndpointBuilder retries(String retries) {
             setProperty("retries", retries);
             return this;
         }
@@ -127,7 +127,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder snmpCommunity(String snmpCommunity) {
+        default SnmpEndpointBuilder snmpCommunity(String snmpCommunity) {
             setProperty("snmpCommunity", snmpCommunity);
             return this;
         }
@@ -136,7 +136,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder snmpContextEngineId(
+        default SnmpEndpointBuilder snmpContextEngineId(
                 String snmpContextEngineId) {
             setProperty("snmpContextEngineId", snmpContextEngineId);
             return this;
@@ -146,8 +146,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder snmpContextName(
-                String snmpContextName) {
+        default SnmpEndpointBuilder snmpContextName(String snmpContextName) {
             setProperty("snmpContextName", snmpContextName);
             return this;
         }
@@ -157,7 +156,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder snmpVersion(int snmpVersion) {
+        default SnmpEndpointBuilder snmpVersion(int snmpVersion) {
             setProperty("snmpVersion", snmpVersion);
             return this;
         }
@@ -167,7 +166,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder snmpVersion(String snmpVersion) {
+        default SnmpEndpointBuilder snmpVersion(String snmpVersion) {
             setProperty("snmpVersion", snmpVersion);
             return this;
         }
@@ -176,7 +175,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder timeout(int timeout) {
+        default SnmpEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -185,7 +184,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder timeout(String timeout) {
+        default SnmpEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
             return this;
         }
@@ -195,7 +194,7 @@ public interface SnmpEndpointBuilderFactory {
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder type(SnmpActionType type) {
+        default SnmpEndpointBuilder type(SnmpActionType type) {
             setProperty("type", type);
             return this;
         }
@@ -205,7 +204,7 @@ public interface SnmpEndpointBuilderFactory {
          * <code>org.apache.camel.component.snmp.SnmpActionType</code> type.
          * @group consumer
          */
-        public default SnmpEndpointBuilder type(String type) {
+        default SnmpEndpointBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -217,7 +216,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder authenticationPassphrase(
+        default SnmpEndpointBuilder authenticationPassphrase(
                 String authenticationPassphrase) {
             setProperty("authenticationPassphrase", authenticationPassphrase);
             return this;
@@ -228,7 +227,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder authenticationProtocol(
+        default SnmpEndpointBuilder authenticationProtocol(
                 String authenticationProtocol) {
             setProperty("authenticationProtocol", authenticationProtocol);
             return this;
@@ -241,8 +240,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder privacyPassphrase(
-                String privacyPassphrase) {
+        default SnmpEndpointBuilder privacyPassphrase(String privacyPassphrase) {
             setProperty("privacyPassphrase", privacyPassphrase);
             return this;
         }
@@ -252,8 +250,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder privacyProtocol(
-                String privacyProtocol) {
+        default SnmpEndpointBuilder privacyProtocol(String privacyProtocol) {
             setProperty("privacyProtocol", privacyProtocol);
             return this;
         }
@@ -273,7 +270,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder securityLevel(int securityLevel) {
+        default SnmpEndpointBuilder securityLevel(int securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -293,7 +290,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder securityLevel(String securityLevel) {
+        default SnmpEndpointBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
             return this;
         }
@@ -302,7 +299,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SnmpEndpointBuilder securityName(String securityName) {
+        default SnmpEndpointBuilder securityName(String securityName) {
             setProperty("securityName", securityName);
             return this;
         }
@@ -314,7 +311,7 @@ public interface SnmpEndpointBuilderFactory {
     public static interface AdvancedSnmpEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SnmpEndpointBuilder basic() {
+        default SnmpEndpointBuilder basic() {
             return (SnmpEndpointBuilder) this;
         }
         /**
@@ -323,7 +320,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnmpEndpointBuilder basicPropertyBinding(
+        default AdvancedSnmpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -334,7 +331,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnmpEndpointBuilder basicPropertyBinding(
+        default AdvancedSnmpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -345,8 +342,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnmpEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSnmpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -356,8 +352,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSnmpEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedSnmpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -375,7 +370,7 @@ public interface SnmpEndpointBuilderFactory {
      * receiving traps. Creates a builder to build endpoints for the SNMP
      * component.
      */
-    public default SnmpEndpointBuilder snmp(String path) {
+    default SnmpEndpointBuilder snmp(String path) {
         class SnmpEndpointBuilderImpl extends AbstractEndpointBuilder implements SnmpEndpointBuilder, AdvancedSnmpEndpointBuilder {
             public SnmpEndpointBuilderImpl(String path) {
                 super("snmp", path);

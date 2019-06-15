@@ -39,7 +39,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public interface JGroupsRaftEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder advanced() {
+        default AdvancedJGroupsRaftEndpointConsumerBuilder advanced() {
             return (AdvancedJGroupsRaftEndpointConsumerBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsRaftEndpointConsumerBuilder clusterName(
+        default JGroupsRaftEndpointConsumerBuilder clusterName(
                 String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
@@ -63,7 +63,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
+        default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -79,7 +79,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
+        default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -91,7 +91,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
+        default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 boolean enableRoleChangeEvents) {
             setProperty("enableRoleChangeEvents", enableRoleChangeEvents);
             return this;
@@ -103,7 +103,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
+        default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 String enableRoleChangeEvents) {
             setProperty("enableRoleChangeEvents", enableRoleChangeEvents);
             return this;
@@ -116,7 +116,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public interface AdvancedJGroupsRaftEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default JGroupsRaftEndpointConsumerBuilder basic() {
+        default JGroupsRaftEndpointConsumerBuilder basic() {
             return (JGroupsRaftEndpointConsumerBuilder) this;
         }
         /**
@@ -128,7 +128,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -142,7 +142,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -152,7 +152,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -163,7 +163,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -174,7 +174,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -185,7 +185,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -196,7 +196,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -207,7 +207,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -220,7 +220,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public static interface JGroupsRaftEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedJGroupsRaftEndpointProducerBuilder advanced() {
+        default AdvancedJGroupsRaftEndpointProducerBuilder advanced() {
             return (AdvancedJGroupsRaftEndpointProducerBuilder) this;
         }
         /**
@@ -228,7 +228,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsRaftEndpointProducerBuilder clusterName(
+        default JGroupsRaftEndpointProducerBuilder clusterName(
                 String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
@@ -246,7 +246,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
+        default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -264,7 +264,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
+        default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -277,7 +277,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public interface AdvancedJGroupsRaftEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default JGroupsRaftEndpointProducerBuilder basic() {
+        default JGroupsRaftEndpointProducerBuilder basic() {
             return (JGroupsRaftEndpointProducerBuilder) this;
         }
         /**
@@ -286,7 +286,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -297,7 +297,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -308,7 +308,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -319,7 +319,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -332,7 +332,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public static interface JGroupsRaftEndpointBuilder
             extends
                 JGroupsRaftEndpointConsumerBuilder, JGroupsRaftEndpointProducerBuilder {
-        public default AdvancedJGroupsRaftEndpointBuilder advanced() {
+        default AdvancedJGroupsRaftEndpointBuilder advanced() {
             return (AdvancedJGroupsRaftEndpointBuilder) this;
         }
         /**
@@ -340,7 +340,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default JGroupsRaftEndpointBuilder clusterName(String clusterName) {
+        default JGroupsRaftEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
             return this;
         }
@@ -352,7 +352,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     public static interface AdvancedJGroupsRaftEndpointBuilder
             extends
                 AdvancedJGroupsRaftEndpointConsumerBuilder, AdvancedJGroupsRaftEndpointProducerBuilder {
-        public default JGroupsRaftEndpointBuilder basic() {
+        default JGroupsRaftEndpointBuilder basic() {
             return (JGroupsRaftEndpointBuilder) this;
         }
         /**
@@ -361,7 +361,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -372,7 +372,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
+        default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -383,7 +383,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -394,7 +394,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedJGroupsRaftEndpointBuilder synchronous(
+        default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -405,7 +405,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
      * JGroups clusters. Creates a builder to build endpoints for the JGroups
      * raft component.
      */
-    public default JGroupsRaftEndpointBuilder jGroupsRaft(String path) {
+    default JGroupsRaftEndpointBuilder jGroupsRaft(String path) {
         class JGroupsRaftEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsRaftEndpointBuilder, AdvancedJGroupsRaftEndpointBuilder {
             public JGroupsRaftEndpointBuilderImpl(String path) {
                 super("jgroups-raft", path);

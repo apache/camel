@@ -37,7 +37,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
     public static interface TwitterStreamingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedTwitterStreamingEndpointBuilder advanced() {
+        default AdvancedTwitterStreamingEndpointBuilder advanced() {
             return (AdvancedTwitterStreamingEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterStreamingEndpointBuilder streamingType(
+        default TwitterStreamingEndpointBuilder streamingType(
                 StreamingType streamingType) {
             setProperty("streamingType", streamingType);
             return this;
@@ -59,7 +59,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * type.
          * @group consumer
          */
-        public default TwitterStreamingEndpointBuilder streamingType(
+        default TwitterStreamingEndpointBuilder streamingType(
                 String streamingType) {
             setProperty("streamingType", streamingType);
             return this;
@@ -70,7 +70,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterStreamingEndpointBuilder httpProxyHost(
+        default TwitterStreamingEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
             return this;
@@ -81,7 +81,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterStreamingEndpointBuilder httpProxyPassword(
+        default TwitterStreamingEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
             setProperty("httpProxyPassword", httpProxyPassword);
             return this;
@@ -92,7 +92,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group proxy
          */
-        public default TwitterStreamingEndpointBuilder httpProxyPort(
+        default TwitterStreamingEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -104,7 +104,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * type.
          * @group proxy
          */
-        public default TwitterStreamingEndpointBuilder httpProxyPort(
+        default TwitterStreamingEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
             return this;
@@ -115,7 +115,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group proxy
          */
-        public default TwitterStreamingEndpointBuilder httpProxyUser(
+        default TwitterStreamingEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
             return this;
@@ -126,8 +126,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterStreamingEndpointBuilder accessToken(
-                String accessToken) {
+        default TwitterStreamingEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
             return this;
         }
@@ -137,7 +136,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterStreamingEndpointBuilder accessTokenSecret(
+        default TwitterStreamingEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
             setProperty("accessTokenSecret", accessTokenSecret);
             return this;
@@ -148,8 +147,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterStreamingEndpointBuilder consumerKey(
-                String consumerKey) {
+        default TwitterStreamingEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
             return this;
         }
@@ -159,7 +157,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default TwitterStreamingEndpointBuilder consumerSecret(
+        default TwitterStreamingEndpointBuilder consumerSecret(
                 String consumerSecret) {
             setProperty("consumerSecret", consumerSecret);
             return this;
@@ -172,7 +170,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
     public static interface AdvancedTwitterStreamingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
-        public default TwitterStreamingEndpointBuilder basic() {
+        default TwitterStreamingEndpointBuilder basic() {
             return (TwitterStreamingEndpointBuilder) this;
         }
         /**
@@ -181,7 +179,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -192,7 +190,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
+        default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -203,7 +201,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterStreamingEndpointBuilder synchronous(
+        default AdvancedTwitterStreamingEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -214,7 +212,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedTwitterStreamingEndpointBuilder synchronous(
+        default AdvancedTwitterStreamingEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -241,7 +239,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * API. Creates a builder to build endpoints for the Twitter Streaming
      * component.
      */
-    public default TwitterStreamingEndpointBuilder twitterStreaming(String path) {
+    default TwitterStreamingEndpointBuilder twitterStreaming(String path) {
         class TwitterStreamingEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterStreamingEndpointBuilder, AdvancedTwitterStreamingEndpointBuilder {
             public TwitterStreamingEndpointBuilderImpl(String path) {
                 super("twitter-streaming", path);

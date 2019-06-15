@@ -38,7 +38,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public interface OptaPlannerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedOptaPlannerEndpointConsumerBuilder advanced() {
+        default AdvancedOptaPlannerEndpointConsumerBuilder advanced() {
             return (AdvancedOptaPlannerEndpointConsumerBuilder) this;
         }
         /**
@@ -46,8 +46,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointConsumerBuilder configFile(
-                String configFile) {
+        default OptaPlannerEndpointConsumerBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
             return this;
         }
@@ -56,8 +55,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointConsumerBuilder solverId(
-                String solverId) {
+        default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
             return this;
         }
@@ -72,7 +70,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
+        default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -88,7 +86,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
+        default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -101,7 +99,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public interface AdvancedOptaPlannerEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default OptaPlannerEndpointConsumerBuilder basic() {
+        default OptaPlannerEndpointConsumerBuilder basic() {
             return (OptaPlannerEndpointConsumerBuilder) this;
         }
         /**
@@ -113,7 +111,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -127,7 +125,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
+        default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -137,7 +135,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
+        default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -148,7 +146,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
+        default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -159,7 +157,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -170,7 +168,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -181,7 +179,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
+        default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -192,7 +190,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
+        default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -205,7 +203,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public static interface OptaPlannerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedOptaPlannerEndpointProducerBuilder advanced() {
+        default AdvancedOptaPlannerEndpointProducerBuilder advanced() {
             return (AdvancedOptaPlannerEndpointProducerBuilder) this;
         }
         /**
@@ -213,8 +211,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointProducerBuilder configFile(
-                String configFile) {
+        default OptaPlannerEndpointProducerBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
             return this;
         }
@@ -223,8 +220,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointProducerBuilder solverId(
-                String solverId) {
+        default OptaPlannerEndpointProducerBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
             return this;
         }
@@ -233,7 +229,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder async(boolean async) {
+        default OptaPlannerEndpointProducerBuilder async(boolean async) {
             setProperty("async", async);
             return this;
         }
@@ -242,7 +238,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder async(String async) {
+        default OptaPlannerEndpointProducerBuilder async(String async) {
             setProperty("async", async);
             return this;
         }
@@ -259,7 +255,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder lazyStartProducer(
+        default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -277,7 +273,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder lazyStartProducer(
+        default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -287,7 +283,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder threadPoolSize(
+        default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 int threadPoolSize) {
             setProperty("threadPoolSize", threadPoolSize);
             return this;
@@ -297,7 +293,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default OptaPlannerEndpointProducerBuilder threadPoolSize(
+        default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 String threadPoolSize) {
             setProperty("threadPoolSize", threadPoolSize);
             return this;
@@ -310,7 +306,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public interface AdvancedOptaPlannerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default OptaPlannerEndpointProducerBuilder basic() {
+        default OptaPlannerEndpointProducerBuilder basic() {
             return (OptaPlannerEndpointProducerBuilder) this;
         }
         /**
@@ -319,7 +315,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -330,7 +326,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -341,7 +337,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
+        default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -352,7 +348,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
+        default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -365,7 +361,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public static interface OptaPlannerEndpointBuilder
             extends
                 OptaPlannerEndpointConsumerBuilder, OptaPlannerEndpointProducerBuilder {
-        public default AdvancedOptaPlannerEndpointBuilder advanced() {
+        default AdvancedOptaPlannerEndpointBuilder advanced() {
             return (AdvancedOptaPlannerEndpointBuilder) this;
         }
         /**
@@ -373,7 +369,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointBuilder configFile(String configFile) {
+        default OptaPlannerEndpointBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
             return this;
         }
@@ -382,7 +378,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default OptaPlannerEndpointBuilder solverId(String solverId) {
+        default OptaPlannerEndpointBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
             return this;
         }
@@ -394,7 +390,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     public static interface AdvancedOptaPlannerEndpointBuilder
             extends
                 AdvancedOptaPlannerEndpointConsumerBuilder, AdvancedOptaPlannerEndpointProducerBuilder {
-        public default OptaPlannerEndpointBuilder basic() {
+        default OptaPlannerEndpointBuilder basic() {
             return (OptaPlannerEndpointBuilder) this;
         }
         /**
@@ -403,7 +399,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -414,7 +410,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
+        default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -425,7 +421,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointBuilder synchronous(
+        default AdvancedOptaPlannerEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -436,7 +432,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedOptaPlannerEndpointBuilder synchronous(
+        default AdvancedOptaPlannerEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -446,7 +442,7 @@ public interface OptaPlannerEndpointBuilderFactory {
      * Solves the planning problem contained in a message with OptaPlanner.
      * Creates a builder to build endpoints for the OptaPlanner component.
      */
-    public default OptaPlannerEndpointBuilder optaPlanner(String path) {
+    default OptaPlannerEndpointBuilder optaPlanner(String path) {
         class OptaPlannerEndpointBuilderImpl extends AbstractEndpointBuilder implements OptaPlannerEndpointBuilder, AdvancedOptaPlannerEndpointBuilder {
             public OptaPlannerEndpointBuilderImpl(String path) {
                 super("optaplanner", path);

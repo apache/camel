@@ -38,7 +38,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public interface SpringIntegrationEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder advanced() {
+        default AdvancedSpringIntegrationEndpointConsumerBuilder advanced() {
             return (AdvancedSpringIntegrationEndpointConsumerBuilder) this;
         }
         /**
@@ -49,7 +49,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointConsumerBuilder defaultChannel(
+        default SpringIntegrationEndpointConsumerBuilder defaultChannel(
                 String defaultChannel) {
             setProperty("defaultChannel", defaultChannel);
             return this;
@@ -61,8 +61,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointConsumerBuilder inOut(
-                boolean inOut) {
+        default SpringIntegrationEndpointConsumerBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -73,8 +72,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointConsumerBuilder inOut(
-                String inOut) {
+        default SpringIntegrationEndpointConsumerBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -89,7 +87,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
+        default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -105,7 +103,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
+        default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -116,7 +114,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group consumer
          */
-        public default SpringIntegrationEndpointConsumerBuilder inputChannel(
+        default SpringIntegrationEndpointConsumerBuilder inputChannel(
                 String inputChannel) {
             setProperty("inputChannel", inputChannel);
             return this;
@@ -130,7 +128,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public interface AdvancedSpringIntegrationEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SpringIntegrationEndpointConsumerBuilder basic() {
+        default SpringIntegrationEndpointConsumerBuilder basic() {
             return (SpringIntegrationEndpointConsumerBuilder) this;
         }
         /**
@@ -142,7 +140,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -156,7 +154,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -166,7 +164,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -177,7 +175,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -188,7 +186,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -199,7 +197,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -210,7 +208,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -221,7 +219,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -234,7 +232,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public static interface SpringIntegrationEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSpringIntegrationEndpointProducerBuilder advanced() {
+        default AdvancedSpringIntegrationEndpointProducerBuilder advanced() {
             return (AdvancedSpringIntegrationEndpointProducerBuilder) this;
         }
         /**
@@ -245,7 +243,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointProducerBuilder defaultChannel(
+        default SpringIntegrationEndpointProducerBuilder defaultChannel(
                 String defaultChannel) {
             setProperty("defaultChannel", defaultChannel);
             return this;
@@ -257,8 +255,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointProducerBuilder inOut(
-                boolean inOut) {
+        default SpringIntegrationEndpointProducerBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -269,8 +266,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointProducerBuilder inOut(
-                String inOut) {
+        default SpringIntegrationEndpointProducerBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -287,7 +283,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
+        default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -305,7 +301,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
+        default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -316,7 +312,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default SpringIntegrationEndpointProducerBuilder outputChannel(
+        default SpringIntegrationEndpointProducerBuilder outputChannel(
                 String outputChannel) {
             setProperty("outputChannel", outputChannel);
             return this;
@@ -330,7 +326,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public interface AdvancedSpringIntegrationEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SpringIntegrationEndpointProducerBuilder basic() {
+        default SpringIntegrationEndpointProducerBuilder basic() {
             return (SpringIntegrationEndpointProducerBuilder) this;
         }
         /**
@@ -339,7 +335,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -350,7 +346,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -361,7 +357,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -372,7 +368,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -385,7 +381,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public static interface SpringIntegrationEndpointBuilder
             extends
                 SpringIntegrationEndpointConsumerBuilder, SpringIntegrationEndpointProducerBuilder {
-        public default AdvancedSpringIntegrationEndpointBuilder advanced() {
+        default AdvancedSpringIntegrationEndpointBuilder advanced() {
             return (AdvancedSpringIntegrationEndpointBuilder) this;
         }
         /**
@@ -396,7 +392,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointBuilder defaultChannel(
+        default SpringIntegrationEndpointBuilder defaultChannel(
                 String defaultChannel) {
             setProperty("defaultChannel", defaultChannel);
             return this;
@@ -408,7 +404,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointBuilder inOut(boolean inOut) {
+        default SpringIntegrationEndpointBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -419,7 +415,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group common
          */
-        public default SpringIntegrationEndpointBuilder inOut(String inOut) {
+        default SpringIntegrationEndpointBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
             return this;
         }
@@ -431,7 +427,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     public static interface AdvancedSpringIntegrationEndpointBuilder
             extends
                 AdvancedSpringIntegrationEndpointConsumerBuilder, AdvancedSpringIntegrationEndpointProducerBuilder {
-        public default SpringIntegrationEndpointBuilder basic() {
+        default SpringIntegrationEndpointBuilder basic() {
             return (SpringIntegrationEndpointBuilder) this;
         }
         /**
@@ -440,7 +436,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -451,7 +447,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
+        default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -462,7 +458,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -473,7 +469,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSpringIntegrationEndpointBuilder synchronous(
+        default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -483,8 +479,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
      * Bridges Camel with Spring Integration. Creates a builder to build
      * endpoints for the Spring Integration component.
      */
-    public default SpringIntegrationEndpointBuilder springIntegration(
-            String path) {
+    default SpringIntegrationEndpointBuilder springIntegration(String path) {
         class SpringIntegrationEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringIntegrationEndpointBuilder, AdvancedSpringIntegrationEndpointBuilder {
             public SpringIntegrationEndpointBuilderImpl(String path) {
                 super("spring-integration", path);

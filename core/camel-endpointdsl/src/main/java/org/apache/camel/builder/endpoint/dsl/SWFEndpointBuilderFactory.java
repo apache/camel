@@ -40,7 +40,7 @@ public interface SWFEndpointBuilderFactory {
     public interface SWFEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default AdvancedSWFEndpointConsumerBuilder advanced() {
+        default AdvancedSWFEndpointConsumerBuilder advanced() {
             return (AdvancedSWFEndpointConsumerBuilder) this;
         }
         /**
@@ -48,7 +48,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder type(String type) {
+        default SWFEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -58,8 +58,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder amazonSWClient(
-                Object amazonSWClient) {
+        default SWFEndpointConsumerBuilder amazonSWClient(Object amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -69,8 +68,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder amazonSWClient(
-                String amazonSWClient) {
+        default SWFEndpointConsumerBuilder amazonSWClient(String amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -83,8 +81,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder dataConverter(
-                Object dataConverter) {
+        default SWFEndpointConsumerBuilder dataConverter(Object dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -97,8 +94,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder dataConverter(
-                String dataConverter) {
+        default SWFEndpointConsumerBuilder dataConverter(String dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -107,7 +103,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder domainName(String domainName) {
+        default SWFEndpointConsumerBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -116,7 +112,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder eventName(String eventName) {
+        default SWFEndpointConsumerBuilder eventName(String eventName) {
             setProperty("eventName", eventName);
             return this;
         }
@@ -125,7 +121,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder region(String region) {
+        default SWFEndpointConsumerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -134,7 +130,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointConsumerBuilder version(String version) {
+        default SWFEndpointConsumerBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -149,7 +145,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group consumer
          */
-        public default SWFEndpointConsumerBuilder bridgeErrorHandler(
+        default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -165,7 +161,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group consumer
          */
-        public default SWFEndpointConsumerBuilder bridgeErrorHandler(
+        default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             setProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
@@ -175,8 +171,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityList(
-                String activityList) {
+        default SWFEndpointConsumerBuilder activityList(String activityList) {
             setProperty("activityList", activityList);
             return this;
         }
@@ -185,7 +180,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityThreadPoolSize(
+        default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 int activityThreadPoolSize) {
             setProperty("activityThreadPoolSize", activityThreadPoolSize);
             return this;
@@ -195,7 +190,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityThreadPoolSize(
+        default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 String activityThreadPoolSize) {
             setProperty("activityThreadPoolSize", activityThreadPoolSize);
             return this;
@@ -206,7 +201,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
+        default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 Object activityTypeExecutionOptions) {
             setProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
             return this;
@@ -217,7 +212,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
+        default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 String activityTypeExecutionOptions) {
             setProperty("activityTypeExecutionOptions", activityTypeExecutionOptions);
             return this;
@@ -228,7 +223,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
+        default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 Object activityTypeRegistrationOptions) {
             setProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
             return this;
@@ -239,7 +234,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
+        default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 String activityTypeRegistrationOptions) {
             setProperty("activityTypeRegistrationOptions", activityTypeRegistrationOptions);
             return this;
@@ -249,8 +244,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointConsumerBuilder workflowList(
-                String workflowList) {
+        default SWFEndpointConsumerBuilder workflowList(String workflowList) {
             setProperty("workflowList", workflowList);
             return this;
         }
@@ -260,7 +254,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
          * @group workflow
          */
-        public default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
+        default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 Object workflowTypeRegistrationOptions) {
             setProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
             return this;
@@ -271,7 +265,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
          * @group workflow
          */
-        public default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
+        default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 String workflowTypeRegistrationOptions) {
             setProperty("workflowTypeRegistrationOptions", workflowTypeRegistrationOptions);
             return this;
@@ -281,7 +275,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointConsumerBuilder accessKey(String accessKey) {
+        default SWFEndpointConsumerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -290,7 +284,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointConsumerBuilder secretKey(String secretKey) {
+        default SWFEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -303,7 +297,7 @@ public interface SWFEndpointBuilderFactory {
     public interface AdvancedSWFEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
-        public default SWFEndpointConsumerBuilder basic() {
+        default SWFEndpointConsumerBuilder basic() {
             return (SWFEndpointConsumerBuilder) this;
         }
         /**
@@ -315,7 +309,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group consumer (advanced)
          */
-        public default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -329,7 +323,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
+        default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
             setProperty("exceptionHandler", exceptionHandler);
             return this;
@@ -339,7 +333,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSWFEndpointConsumerBuilder exchangePattern(
+        default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -350,7 +344,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>org.apache.camel.ExchangePattern</code> type.
          * @group consumer (advanced)
          */
-        public default AdvancedSWFEndpointConsumerBuilder exchangePattern(
+        default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             setProperty("exchangePattern", exchangePattern);
             return this;
@@ -361,7 +355,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -372,7 +366,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -384,7 +378,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -397,7 +391,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -409,7 +403,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -422,7 +416,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -434,7 +428,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
+        default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -447,7 +441,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
+        default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
                 String sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -458,7 +452,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder synchronous(
+        default AdvancedSWFEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -469,7 +463,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointConsumerBuilder synchronous(
+        default AdvancedSWFEndpointConsumerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -482,7 +476,7 @@ public interface SWFEndpointBuilderFactory {
     public static interface SWFEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedSWFEndpointProducerBuilder advanced() {
+        default AdvancedSWFEndpointProducerBuilder advanced() {
             return (AdvancedSWFEndpointProducerBuilder) this;
         }
         /**
@@ -490,7 +484,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder type(String type) {
+        default SWFEndpointProducerBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -500,8 +494,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder amazonSWClient(
-                Object amazonSWClient) {
+        default SWFEndpointProducerBuilder amazonSWClient(Object amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -511,8 +504,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder amazonSWClient(
-                String amazonSWClient) {
+        default SWFEndpointProducerBuilder amazonSWClient(String amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -525,8 +517,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder dataConverter(
-                Object dataConverter) {
+        default SWFEndpointProducerBuilder dataConverter(Object dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -539,8 +530,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder dataConverter(
-                String dataConverter) {
+        default SWFEndpointProducerBuilder dataConverter(String dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -549,7 +539,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder domainName(String domainName) {
+        default SWFEndpointProducerBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -558,7 +548,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder eventName(String eventName) {
+        default SWFEndpointProducerBuilder eventName(String eventName) {
             setProperty("eventName", eventName);
             return this;
         }
@@ -567,7 +557,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder region(String region) {
+        default SWFEndpointProducerBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -576,7 +566,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointProducerBuilder version(String version) {
+        default SWFEndpointProducerBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -593,7 +583,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default SWFEndpointProducerBuilder lazyStartProducer(
+        default SWFEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -611,7 +601,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default SWFEndpointProducerBuilder lazyStartProducer(
+        default SWFEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             setProperty("lazyStartProducer", lazyStartProducer);
             return this;
@@ -622,7 +612,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointProducerBuilder activitySchedulingOptions(
+        default SWFEndpointProducerBuilder activitySchedulingOptions(
                 Object activitySchedulingOptions) {
             setProperty("activitySchedulingOptions", activitySchedulingOptions);
             return this;
@@ -633,7 +623,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
          * @group activity
          */
-        public default SWFEndpointProducerBuilder activitySchedulingOptions(
+        default SWFEndpointProducerBuilder activitySchedulingOptions(
                 String activitySchedulingOptions) {
             setProperty("activitySchedulingOptions", activitySchedulingOptions);
             return this;
@@ -643,7 +633,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder childPolicy(String childPolicy) {
+        default SWFEndpointProducerBuilder childPolicy(String childPolicy) {
             setProperty("childPolicy", childPolicy);
             return this;
         }
@@ -652,7 +642,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder executionStartToCloseTimeout(
+        default SWFEndpointProducerBuilder executionStartToCloseTimeout(
                 String executionStartToCloseTimeout) {
             setProperty("executionStartToCloseTimeout", executionStartToCloseTimeout);
             return this;
@@ -662,7 +652,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder operation(String operation) {
+        default SWFEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
             return this;
         }
@@ -671,7 +661,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder signalName(String signalName) {
+        default SWFEndpointProducerBuilder signalName(String signalName) {
             setProperty("signalName", signalName);
             return this;
         }
@@ -680,7 +670,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder stateResultType(
+        default SWFEndpointProducerBuilder stateResultType(
                 String stateResultType) {
             setProperty("stateResultType", stateResultType);
             return this;
@@ -690,7 +680,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder taskStartToCloseTimeout(
+        default SWFEndpointProducerBuilder taskStartToCloseTimeout(
                 String taskStartToCloseTimeout) {
             setProperty("taskStartToCloseTimeout", taskStartToCloseTimeout);
             return this;
@@ -700,7 +690,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder terminationDetails(
+        default SWFEndpointProducerBuilder terminationDetails(
                 String terminationDetails) {
             setProperty("terminationDetails", terminationDetails);
             return this;
@@ -710,7 +700,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group workflow
          */
-        public default SWFEndpointProducerBuilder terminationReason(
+        default SWFEndpointProducerBuilder terminationReason(
                 String terminationReason) {
             setProperty("terminationReason", terminationReason);
             return this;
@@ -720,7 +710,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointProducerBuilder accessKey(String accessKey) {
+        default SWFEndpointProducerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -729,7 +719,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointProducerBuilder secretKey(String secretKey) {
+        default SWFEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -742,7 +732,7 @@ public interface SWFEndpointBuilderFactory {
     public interface AdvancedSWFEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
-        public default SWFEndpointProducerBuilder basic() {
+        default SWFEndpointProducerBuilder basic() {
             return (SWFEndpointProducerBuilder) this;
         }
         /**
@@ -751,7 +741,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -762,7 +752,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -774,7 +764,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -787,7 +777,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -799,7 +789,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -812,7 +802,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -824,7 +814,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder sWClientParameters(
+        default AdvancedSWFEndpointProducerBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -837,7 +827,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder sWClientParameters(
+        default AdvancedSWFEndpointProducerBuilder sWClientParameters(
                 String sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -848,7 +838,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder synchronous(
+        default AdvancedSWFEndpointProducerBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -859,7 +849,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointProducerBuilder synchronous(
+        default AdvancedSWFEndpointProducerBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -872,7 +862,7 @@ public interface SWFEndpointBuilderFactory {
     public static interface SWFEndpointBuilder
             extends
                 SWFEndpointConsumerBuilder, SWFEndpointProducerBuilder {
-        public default AdvancedSWFEndpointBuilder advanced() {
+        default AdvancedSWFEndpointBuilder advanced() {
             return (AdvancedSWFEndpointBuilder) this;
         }
         /**
@@ -880,7 +870,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder type(String type) {
+        default SWFEndpointBuilder type(String type) {
             setProperty("type", type);
             return this;
         }
@@ -890,7 +880,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder amazonSWClient(Object amazonSWClient) {
+        default SWFEndpointBuilder amazonSWClient(Object amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -900,7 +890,7 @@ public interface SWFEndpointBuilderFactory {
          * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder amazonSWClient(String amazonSWClient) {
+        default SWFEndpointBuilder amazonSWClient(String amazonSWClient) {
             setProperty("amazonSWClient", amazonSWClient);
             return this;
         }
@@ -913,7 +903,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointBuilder dataConverter(Object dataConverter) {
+        default SWFEndpointBuilder dataConverter(Object dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -926,7 +916,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group common
          */
-        public default SWFEndpointBuilder dataConverter(String dataConverter) {
+        default SWFEndpointBuilder dataConverter(String dataConverter) {
             setProperty("dataConverter", dataConverter);
             return this;
         }
@@ -935,7 +925,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder domainName(String domainName) {
+        default SWFEndpointBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
             return this;
         }
@@ -944,7 +934,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder eventName(String eventName) {
+        default SWFEndpointBuilder eventName(String eventName) {
             setProperty("eventName", eventName);
             return this;
         }
@@ -953,7 +943,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder region(String region) {
+        default SWFEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -962,7 +952,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group common
          */
-        public default SWFEndpointBuilder version(String version) {
+        default SWFEndpointBuilder version(String version) {
             setProperty("version", version);
             return this;
         }
@@ -971,7 +961,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointBuilder accessKey(String accessKey) {
+        default SWFEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -980,7 +970,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default SWFEndpointBuilder secretKey(String secretKey) {
+        default SWFEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -992,7 +982,7 @@ public interface SWFEndpointBuilderFactory {
     public static interface AdvancedSWFEndpointBuilder
             extends
                 AdvancedSWFEndpointConsumerBuilder, AdvancedSWFEndpointProducerBuilder {
-        public default SWFEndpointBuilder basic() {
+        default SWFEndpointBuilder basic() {
             return (SWFEndpointBuilder) this;
         }
         /**
@@ -1001,7 +991,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1012,7 +1002,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder basicPropertyBinding(
+        default AdvancedSWFEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -1024,7 +1014,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 Map<String, Object> clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -1037,7 +1027,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder clientConfigurationParameters(
+        default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 String clientConfigurationParameters) {
             setProperty("clientConfigurationParameters", clientConfigurationParameters);
             return this;
@@ -1049,7 +1039,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 Map<String, Object> startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -1062,7 +1052,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
+        default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 String startWorkflowOptionsParameters) {
             setProperty("startWorkflowOptionsParameters", startWorkflowOptionsParameters);
             return this;
@@ -1074,7 +1064,7 @@ public interface SWFEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder sWClientParameters(
+        default AdvancedSWFEndpointBuilder sWClientParameters(
                 Map<String, Object> sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -1087,7 +1077,7 @@ public interface SWFEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder sWClientParameters(
+        default AdvancedSWFEndpointBuilder sWClientParameters(
                 String sWClientParameters) {
             setProperty("sWClientParameters", sWClientParameters);
             return this;
@@ -1098,8 +1088,7 @@ public interface SWFEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedSWFEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1109,7 +1098,7 @@ public interface SWFEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedSWFEndpointBuilder synchronous(String synchronous) {
+        default AdvancedSWFEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -1119,7 +1108,7 @@ public interface SWFEndpointBuilderFactory {
      * Workflow. Creates a builder to build endpoints for the AWS Simple
      * Workflow component.
      */
-    public default SWFEndpointBuilder sWF(String path) {
+    default SWFEndpointBuilder sWF(String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {
             public SWFEndpointBuilderImpl(String path) {
                 super("aws-swf", path);

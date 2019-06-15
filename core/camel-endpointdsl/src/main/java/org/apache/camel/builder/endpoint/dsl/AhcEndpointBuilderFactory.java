@@ -39,7 +39,7 @@ public interface AhcEndpointBuilderFactory {
     public static interface AhcEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedAhcEndpointBuilder advanced() {
+        default AdvancedAhcEndpointBuilder advanced() {
             return (AdvancedAhcEndpointBuilder) this;
         }
         /**
@@ -47,7 +47,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder httpUri(URI httpUri) {
+        default AhcEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -56,7 +56,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>java.net.URI</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder httpUri(String httpUri) {
+        default AhcEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
             return this;
         }
@@ -68,7 +68,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
+        default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -80,7 +80,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
+        default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
@@ -90,7 +90,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>int</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder bufferSize(int bufferSize) {
+        default AhcEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -100,7 +100,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>int</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder bufferSize(String bufferSize) {
+        default AhcEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
             return this;
         }
@@ -111,7 +111,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder headerFilterStrategy(
+        default AhcEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -123,7 +123,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder headerFilterStrategy(
+        default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
             setProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
@@ -135,7 +135,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder throwExceptionOnFailure(
+        default AhcEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -147,7 +147,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder throwExceptionOnFailure(
+        default AhcEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
             setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
@@ -165,8 +165,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder transferException(
-                boolean transferException) {
+        default AhcEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -183,8 +182,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group producer
          */
-        public default AhcEndpointBuilder transferException(
-                String transferException) {
+        default AhcEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
             return this;
         }
@@ -199,7 +197,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default AhcEndpointBuilder sslContextParameters(
+        default AhcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -215,7 +213,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
          * @group security
          */
-        public default AhcEndpointBuilder sslContextParameters(
+        default AhcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
             setProperty("sslContextParameters", sslContextParameters);
             return this;
@@ -228,7 +226,7 @@ public interface AhcEndpointBuilderFactory {
     public static interface AdvancedAhcEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AhcEndpointBuilder basic() {
+        default AhcEndpointBuilder basic() {
             return (AhcEndpointBuilder) this;
         }
         /**
@@ -237,7 +235,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder basicPropertyBinding(
+        default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -248,7 +246,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder basicPropertyBinding(
+        default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -260,7 +258,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder binding(Object binding) {
+        default AdvancedAhcEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -271,7 +269,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder binding(String binding) {
+        default AdvancedAhcEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
             return this;
         }
@@ -282,8 +280,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder clientConfig(
-                Object clientConfig) {
+        default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
         }
@@ -294,8 +291,7 @@ public interface AhcEndpointBuilderFactory {
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder clientConfig(
-                String clientConfig) {
+        default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
             setProperty("clientConfig", clientConfig);
             return this;
         }
@@ -306,7 +302,7 @@ public interface AhcEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder clientConfigOptions(
+        default AdvancedAhcEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -319,7 +315,7 @@ public interface AhcEndpointBuilderFactory {
          * type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder clientConfigOptions(
+        default AdvancedAhcEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
             setProperty("clientConfigOptions", clientConfigOptions);
             return this;
@@ -330,8 +326,7 @@ public interface AhcEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -341,7 +336,7 @@ public interface AhcEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
+        default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -352,7 +347,7 @@ public interface AhcEndpointBuilderFactory {
          * java.lang.Object&gt;</code> type.
          * @group security
          */
-        public default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
+        default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -365,7 +360,7 @@ public interface AhcEndpointBuilderFactory {
          * type.
          * @group security
          */
-        public default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
+        default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
             setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
@@ -375,7 +370,7 @@ public interface AhcEndpointBuilderFactory {
      * To call external HTTP services using Async Http Client. Creates a builder
      * to build endpoints for the AHC component.
      */
-    public default AhcEndpointBuilder ahc(String path) {
+    default AhcEndpointBuilder ahc(String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {
             public AhcEndpointBuilderImpl(String path) {
                 super("ahc", path);

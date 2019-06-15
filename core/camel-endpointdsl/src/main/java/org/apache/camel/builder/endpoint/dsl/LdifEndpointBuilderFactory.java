@@ -37,7 +37,7 @@ public interface LdifEndpointBuilderFactory {
     public static interface LdifEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedLdifEndpointBuilder advanced() {
+        default AdvancedLdifEndpointBuilder advanced() {
             return (AdvancedLdifEndpointBuilder) this;
         }
         /**
@@ -47,8 +47,7 @@ public interface LdifEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default LdifEndpointBuilder ldapConnectionName(
-                String ldapConnectionName) {
+        default LdifEndpointBuilder ldapConnectionName(String ldapConnectionName) {
             setProperty("ldapConnectionName", ldapConnectionName);
             return this;
         }
@@ -60,7 +59,7 @@ public interface LdifEndpointBuilderFactory {
     public static interface AdvancedLdifEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default LdifEndpointBuilder basic() {
+        default LdifEndpointBuilder basic() {
             return (LdifEndpointBuilder) this;
         }
         /**
@@ -69,7 +68,7 @@ public interface LdifEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdifEndpointBuilder basicPropertyBinding(
+        default AdvancedLdifEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -80,7 +79,7 @@ public interface LdifEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdifEndpointBuilder basicPropertyBinding(
+        default AdvancedLdifEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -91,8 +90,7 @@ public interface LdifEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdifEndpointBuilder synchronous(
-                boolean synchronous) {
+        default AdvancedLdifEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -102,8 +100,7 @@ public interface LdifEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedLdifEndpointBuilder synchronous(
-                String synchronous) {
+        default AdvancedLdifEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
         }
@@ -113,7 +110,7 @@ public interface LdifEndpointBuilderFactory {
      * body content. Creates a builder to build endpoints for the LDIF
      * component.
      */
-    public default LdifEndpointBuilder ldif(String path) {
+    default LdifEndpointBuilder ldif(String path) {
         class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder, AdvancedLdifEndpointBuilder {
             public LdifEndpointBuilderImpl(String path) {
                 super("ldif", path);

@@ -37,7 +37,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     public static interface KinesisFirehoseEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default AdvancedKinesisFirehoseEndpointBuilder advanced() {
+        default AdvancedKinesisFirehoseEndpointBuilder advanced() {
             return (AdvancedKinesisFirehoseEndpointBuilder) this;
         }
         /**
@@ -45,8 +45,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder streamName(
-                String streamName) {
+        default KinesisFirehoseEndpointBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
             return this;
         }
@@ -57,7 +56,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
+        default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 Object amazonKinesisFirehoseClient) {
             setProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
@@ -69,7 +68,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
+        default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 String amazonKinesisFirehoseClient) {
             setProperty("amazonKinesisFirehoseClient", amazonKinesisFirehoseClient);
             return this;
@@ -79,7 +78,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
+        default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
             return this;
         }
@@ -88,8 +87,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.Integer</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder proxyPort(
-                Integer proxyPort) {
+        default KinesisFirehoseEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -99,7 +97,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
+        default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
             return this;
         }
@@ -108,7 +106,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        public default KinesisFirehoseEndpointBuilder region(String region) {
+        default KinesisFirehoseEndpointBuilder region(String region) {
             setProperty("region", region);
             return this;
         }
@@ -117,7 +115,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
+        default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
             return this;
         }
@@ -126,7 +124,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
-        public default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {
+        default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
             return this;
         }
@@ -138,7 +136,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     public static interface AdvancedKinesisFirehoseEndpointBuilder
             extends
                 EndpointProducerBuilder {
-        public default KinesisFirehoseEndpointBuilder basic() {
+        default KinesisFirehoseEndpointBuilder basic() {
             return (KinesisFirehoseEndpointBuilder) this;
         }
         /**
@@ -147,7 +145,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
+        default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -158,7 +156,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
+        default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
@@ -169,7 +167,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option is a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisFirehoseEndpointBuilder synchronous(
+        default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 boolean synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -180,7 +178,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * @group advanced
          */
-        public default AdvancedKinesisFirehoseEndpointBuilder synchronous(
+        default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 String synchronous) {
             setProperty("synchronous", synchronous);
             return this;
@@ -191,7 +189,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
      * Firehose streams. Creates a builder to build endpoints for the AWS
      * Kinesis Firehose component.
      */
-    public default KinesisFirehoseEndpointBuilder kinesisFirehose(String path) {
+    default KinesisFirehoseEndpointBuilder kinesisFirehose(String path) {
         class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {
             public KinesisFirehoseEndpointBuilderImpl(String path) {
                 super("aws-kinesis-firehose", path);
