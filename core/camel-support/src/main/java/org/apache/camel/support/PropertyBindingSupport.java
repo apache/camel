@@ -298,6 +298,7 @@ public final class PropertyBindingSupport {
      * @param callback      optional callback when a property was auto wired
      * @return              true if one ore more properties was auto wired
      */
+    @Deprecated
     public static boolean autowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target,
                                                                    boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) {
         try {
@@ -312,6 +313,7 @@ public final class PropertyBindingSupport {
         return false;
     }
 
+    @Deprecated
     private static boolean doAutowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target, Set<Object> parents,
                                                                       boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) throws Exception {
 

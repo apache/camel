@@ -1,0 +1,35 @@
+= Camel Main Maven Plugin
+
+The Camel Main Maven Plugin supports the following goals
+
+ - camel-main:autowire - To pre-scan your project and prepare autowiring by classpath scanning
+
+== camel:autowire
+
+To pre-scan your project and prepare autowiring by classpath scanning.
+
+----
+mvn camel-main:autowire
+----
+
+You can also enable the plugin to automatic run as part of the build to catch these errors.
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-main-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>autowire</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
+the compilation of the main source code.
+

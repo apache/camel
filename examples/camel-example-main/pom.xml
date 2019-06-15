@@ -51,6 +51,15 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-quartz2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-client</artifactId>
+            <version>2.9.0</version>
+        </dependency>
 
         <!-- logging -->
         <dependency>
@@ -87,6 +96,16 @@
                     <mainClass>org.apache.camel.example.MyApplication</mainClass>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-main-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <logClasspath>true</logClasspath>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
