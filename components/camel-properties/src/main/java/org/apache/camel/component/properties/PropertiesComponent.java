@@ -192,11 +192,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         if (locations != null) {
             return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
         }
-        return new Properties();
+        return new OrderedProperties();
     }
 
     protected Properties doLoadProperties(List<PropertiesLocation> paths) {
-        Properties prop = new Properties();
+        Properties prop = new OrderedProperties();
 
         // use initial properties
         if (initialProperties != null) {
@@ -224,7 +224,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         // use override properties
         if (overrideProperties != null) {
             // make a copy to avoid affecting the original properties
-            Properties override = new Properties();
+            Properties override = new OrderedProperties();
             override.putAll(prop);
             override.putAll(overrideProperties);
             prop = override;
