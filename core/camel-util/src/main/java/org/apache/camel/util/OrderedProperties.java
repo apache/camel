@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.properties;
+package org.apache.camel.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +33,6 @@ import java.util.Vector;
  * been designed to provide the needed functionality.
  */
 public final class OrderedProperties extends Properties {
-
-    // TODO: Move to camel-util
 
     private final Map<String, String> map = new LinkedHashMap<>();
 

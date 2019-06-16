@@ -37,6 +37,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedProperties;
 
 /**
  * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
