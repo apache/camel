@@ -18,6 +18,7 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -103,6 +104,10 @@ public class AutowireMojo extends AbstractExecMojo {
 
     private transient ClassLoader classLoader;
 
+    // TODO: Allow to configure known types in xml config, or refer to external file
+    // TODO: Allow to configure include/exclude names on components,names
+    // TODO: Skip some known types
+
     // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -159,7 +164,13 @@ public class AutowireMojo extends AbstractExecMojo {
                 .addClassLoader(classLoader)
                 .setScanners(new SubTypesScanner()));
 
-        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, components, reflections);
+        // load known types
+        Properties knownTypes = loadKnownTypes();
+        getLog().debug("Loaded known-types: " + knownTypes);
+
+        // find the autowire via classpath scanning
+        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, components, reflections, knownTypes);
+
         if (!autowires.isEmpty()) {
             outFolder.mkdirs();
             File file = new File(outFolder, "autowire.properties");
@@ -178,7 +189,21 @@ public class AutowireMojo extends AbstractExecMojo {
         }
     }
 
-    protected List<String> findAutowireComponentOptionsByClasspath(CamelCatalog catalog, Set<String> components, Reflections reflections) {
+    protected Properties loadKnownTypes() throws MojoFailureException {
+        Properties knownTypes = new Properties();
+        try {
+            InputStream is = AutowireMojo.class.getResourceAsStream("/known-types.properties");
+            if (is != null) {
+                knownTypes.load(is);
+            }
+        } catch (IOException e) {
+            throw new MojoFailureException("Cannot load known-types.properties from classpath");
+        }
+        return knownTypes;
+    }
+
+    protected List<String> findAutowireComponentOptionsByClasspath(CamelCatalog catalog, Set<String> components,
+                                                                   Reflections reflections, Properties knownTypes) {
         List<String> autowires = new ArrayList<>();
 
         for (String componentName : components) {
@@ -199,31 +224,55 @@ public class AutowireMojo extends AbstractExecMojo {
                 if ("object".equals(type)) {
                     try {
                         Class clazz = classLoader.loadClass(javaType);
-                        if (clazz.isInterface()) {
+                        if (clazz.isInterface() && isComplexUserType(clazz)) {
                             Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
                             // filter classes to not be interfaces or not a top level class
                             classes = classes.stream().filter(c -> !c.isInterface() && c.getEnclosingClass() == null).collect(Collectors.toSet());
-                            if (classes.size() == 1) {
-                                Class cls = classes.iterator().next();
-                                if (isValidAutowireClass(cls)) {
-                                    String line = "camel.component." + componentName + "." + name + "=#class:" + cls.getName();
-                                    getLog().debug(line);
-                                    autowires.add(line);
-                                }
-                            } else if (classes.size() > 1) {
-                                getLog().debug("Found " + classes.size() + " for autowire: " + componentName + "." + name + ". Cannot chose one class: " + classes);
+                            Class best = chooseBestKnownType(clazz, classes, knownTypes);
+                            if (isValidAutowireClass(best)) {
+                                String line = "camel.component." + componentName + "." + name + "=#class:" + best.getName();
+                                getLog().debug(line);
+                                autowires.add(line);
                             }
                         }
 
                     } catch (Exception e) {
-                        getLog().debug("Cannot load class: " + name, e);
                         // ignore
+                        getLog().debug("Cannot load class: " + name, e);
                     }
                 }
             }
         }
 
         return autowires;
+    }
+
+    protected Class chooseBestKnownType(Class type, Set<Class<?>> candidates, Properties knownTypes) {
+        String known = knownTypes.getProperty(type.getName());
+        if (known != null) {
+            for (String k : known.split(",")) {
+                // special as we should skip this option
+                if ("#skip#".equals(k)) {
+                    return null;
+                }
+                Class found = candidates.stream().filter(c -> c.getName().equals(k)).findFirst().orElse(null);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+
+        if (candidates.size() == 1) {
+            return candidates.iterator().next();
+        } else if (candidates.size() > 1) {
+            getLog().debug("Cannot chose best type: " + type.getName() + " among " + candidates.size() + " implementations: " + candidates);
+        }
+        return null;
+    }
+
+    private static boolean isComplexUserType(Class type) {
+        // lets consider all non java, as complex types
+        return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
     }
 
     protected boolean isValidAutowireClass(Class clazz) {
