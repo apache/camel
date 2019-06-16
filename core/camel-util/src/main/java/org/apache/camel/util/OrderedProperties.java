@@ -31,6 +31,7 @@ import java.util.Vector;
  * <p/>
  * Note: This implementation is only intended as implementation detail for the Camel properties component, and has only
  * been designed to provide the needed functionality.
+ * The complex logic for loading properties has been kept from the JDK {@link Properties} class.
  */
 public final class OrderedProperties extends Properties {
 
@@ -42,6 +43,26 @@ public final class OrderedProperties extends Properties {
     @Override
     public synchronized Object put(Object key, Object value) {
         return map.put(key.toString(), value.toString());
+    }
+
+    @Override
+    public synchronized Object get(Object key) {
+        return map.get(key);
+    }
+
+    @Override
+    public synchronized boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public synchronized Object remove(Object key) {
+        return map.remove(key);
+    }
+
+    @Override
+    public synchronized void clear() {
+        map.clear();
     }
 
     @Override
