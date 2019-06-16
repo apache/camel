@@ -279,6 +279,7 @@ public final class PropertyBindingSupport {
      * @param target        the target object
      * @return              true if one ore more properties was auto wired
      */
+    @Deprecated
     public static boolean autowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target) {
         return autowireInterfacePropertiesFromClasspath(camelContext, target, false, false, null);
     }
