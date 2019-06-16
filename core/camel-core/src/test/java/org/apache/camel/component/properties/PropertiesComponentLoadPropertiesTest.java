@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -55,6 +57,22 @@ public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
 
         assertEquals("World", prop.getProperty("hello"));
         assertEquals("2000", prop.getProperty("millisecs"));
+
+        // should be ordered keys
+        Iterator it = prop.keySet().iterator();
+        assertEquals("hello", it.next());
+        assertEquals("camel.component.seda.concurrent-consumers", it.next());
+        assertEquals("camel.component.seda.queueSize", it.next());
+        assertEquals("camel.component.direct.timeout", it.next());
+        assertEquals("millisecs", it.next());
+
+        // should be ordered values
+        it = prop.values().iterator();
+        assertEquals("World", it.next());
+        assertEquals("2", it.next());
+        assertEquals("500", it.next());
+        assertEquals("1234", it.next());
+        assertEquals("2000", it.next());
     }
 
     @Override
