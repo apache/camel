@@ -236,7 +236,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {
-                propVal = (String) properties.get(placeholderName);
+                propVal = properties.getProperty(placeholderName);
             }
             if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 propVal = resolveSystemProperty(placeholderName);
