@@ -46,6 +46,13 @@ public final class OrderedProperties extends Properties {
     }
 
     @Override
+    public synchronized void putAll(Map<?, ?> t) {
+        for (Map.Entry<?, ?> entry : t.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
     public synchronized Object get(Object key) {
         return map.get(key);
     }
