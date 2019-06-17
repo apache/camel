@@ -25,9 +25,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.URISupport;
 
 @XmlTransient
@@ -49,7 +53,7 @@ public class AbstractEndpointBuilder {
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
         }
-        return null;
+        return endpoint;
     }
 
     public String getUri() {
@@ -88,5 +92,13 @@ public class AbstractEndpointBuilder {
 
     public void setProperty(String key, Object value) {
         this.properties.put(key, value);
+    }
+
+    /**
+     * Builds an expression that can be used
+     * @return
+     */
+    public Expression expr() {
+        return new SimpleExpression(getUri());
     }
 }
