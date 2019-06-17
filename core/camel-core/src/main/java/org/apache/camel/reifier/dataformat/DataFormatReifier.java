@@ -74,9 +74,9 @@ import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 public abstract class DataFormatReifier<T extends DataFormatDefinition> {
 
-    private static final Map<Class<?>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
+    private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
-        Map<Class<?>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
+        Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
         map.put(BarcodeDataFormat.class, BarcodeDataFormatReifier::new);
@@ -126,6 +126,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
 
     public DataFormatReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+        DATAFORMATS.put(dataFormatClass, creator);
     }
 
     /**
