@@ -14,22 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.refier;
+package org.apache.camel.reifier;
 
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.reifier.dataformat.CustomDataFormatReifier;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+import static junit.framework.TestCase.fail;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataFormatReifierTest {
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldNotHandleCustomDataFormat() {
-        DataFormatReifier.reifier(new MyDataFormat());
-    }
-
     @Test
-    public void shouldHandleCustomDataFormat() {
+    public void testHandleCustomDataFormat() {
+        try {
+            DataFormatReifier.reifier(new MyDataFormat());
+
+            fail("Should throw IllegalStateException instead");
+        } catch (IllegalStateException e) {
+        }
+
         DataFormatReifier.registerReifier(MyDataFormat.class, CustomDataFormatReifier::new);
         DataFormatReifier.reifier(new MyDataFormat());
     }

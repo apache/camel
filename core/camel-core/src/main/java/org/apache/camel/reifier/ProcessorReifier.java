@@ -187,9 +187,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final T definition;
-    
+
     public ProcessorReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<?> processorClass, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+        PROCESSORS.put(processorClass, creator);
     }
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(ProcessorDefinition<?> definition) {
