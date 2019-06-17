@@ -1245,19 +1245,19 @@ public interface MongoDbEndpointBuilderFactory {
      */
     enum MongoDbOperation {
         findById,
-findOneByQuery,
-findAll,
-findDistinct,
-insert,
-save,
-update,
-remove,
-bulkWrite,
-aggregate,
-getDbStats,
-getColStats,
-count,
-command;
+        findOneByQuery,
+        findAll,
+        findDistinct,
+        insert,
+        save,
+        update,
+        remove,
+        bulkWrite,
+        aggregate,
+        getDbStats,
+        getColStats,
+        count,
+        command;
     }
 
     /**
@@ -1266,8 +1266,8 @@ command;
      */
     enum MongoDbOutputType {
         DocumentList,
-Document,
-MongoIterable;
+        Document,
+        MongoIterable;
     }
     /**
      * Component for working with documents stored in MongoDB database. Creates

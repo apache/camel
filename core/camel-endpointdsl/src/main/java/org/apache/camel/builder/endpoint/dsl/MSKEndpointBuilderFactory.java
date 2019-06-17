@@ -116,9 +116,9 @@ public interface MSKEndpointBuilderFactory {
      */
     enum MSKOperations {
         listClusters,
-createCluster,
-deleteCluster,
-describeCluster;
+        createCluster,
+        deleteCluster,
+        describeCluster;
     }
     /**
      * The aws-kms is used for managing Amazon KMS Creates a builder to build

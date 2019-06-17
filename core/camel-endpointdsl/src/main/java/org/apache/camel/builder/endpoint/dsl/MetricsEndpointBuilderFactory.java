@@ -240,10 +240,10 @@ public interface MetricsEndpointBuilderFactory {
      */
     enum MetricsType {
         gauge,
-counter,
-histogram,
-meter,
-timer;
+        counter,
+        histogram,
+        meter,
+        timer;
     }
 
     /**
@@ -252,7 +252,7 @@ timer;
      */
     enum MetricsTimerAction {
         start,
-stop;
+        stop;
     }
     /**
      * To collect various metrics directly from Camel routes using the

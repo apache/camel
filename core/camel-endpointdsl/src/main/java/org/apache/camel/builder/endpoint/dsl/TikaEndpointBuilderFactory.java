@@ -188,7 +188,7 @@ public interface TikaEndpointBuilderFactory {
      */
     enum TikaOperation {
         parse,
-detect;
+        detect;
     }
 
     /**
@@ -197,9 +197,9 @@ detect;
      */
     enum TikaParseOutputFormat {
         xml,
-html,
-text,
-textMain;
+        html,
+        text,
+        textMain;
     }
     /**
      * This component integrates with Apache Tika to extract content and

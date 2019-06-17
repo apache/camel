@@ -188,13 +188,13 @@ public interface XChangeEndpointBuilderFactory {
      */
     enum XChangeMethod {
         balances,
-fundingHistory,
-wallets,
-currencies,
-currencyMetaData,
-currencyPairs,
-currencyPairMetaData,
-ticker;
+        fundingHistory,
+        wallets,
+        currencies,
+        currencyMetaData,
+        currencyPairs,
+        currencyPairMetaData,
+        ticker;
     }
 
     /**
@@ -203,8 +203,8 @@ ticker;
      */
     enum XChangeService {
         marketdata,
-metadata,
-account;
+        metadata,
+        account;
     }
     /**
      * The camel-xchange component provide access to many bitcoin and altcoin

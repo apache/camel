@@ -1219,9 +1219,9 @@ public interface JCacheEndpointBuilderFactory {
      */
     enum EventType {
         CREATED,
-UPDATED,
-REMOVED,
-EXPIRED;
+        UPDATED,
+        REMOVED,
+        EXPIRED;
     }
     /**
      * The jcache component enables you to perform caching operations using

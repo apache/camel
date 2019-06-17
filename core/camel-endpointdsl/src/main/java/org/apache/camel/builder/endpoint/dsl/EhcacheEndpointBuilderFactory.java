@@ -963,7 +963,7 @@ public interface EhcacheEndpointBuilderFactory {
      */
     enum EventFiring {
         ASYNCHRONOUS,
-SYNCHRONOUS;
+        SYNCHRONOUS;
     }
 
     /**
@@ -971,7 +971,7 @@ SYNCHRONOUS;
      */
     enum EventOrdering {
         UNORDERED,
-ORDERED;
+        ORDERED;
     }
 
     /**
@@ -979,10 +979,10 @@ ORDERED;
      */
     enum EventType {
         EVICTED,
-EXPIRED,
-REMOVED,
-CREATED,
-UPDATED;
+        EXPIRED,
+        REMOVED,
+        CREATED,
+        UPDATED;
     }
     /**
      * The ehcache component enables you to perform caching operations using

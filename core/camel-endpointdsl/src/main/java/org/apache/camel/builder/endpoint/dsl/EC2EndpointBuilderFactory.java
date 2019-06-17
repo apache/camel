@@ -116,16 +116,16 @@ public interface EC2EndpointBuilderFactory {
      */
     enum EC2Operations {
         createAndRunInstances,
-startInstances,
-stopInstances,
-terminateInstances,
-describeInstances,
-describeInstancesStatus,
-rebootInstances,
-monitorInstances,
-unmonitorInstances,
-createTags,
-deleteTags;
+        startInstances,
+        stopInstances,
+        terminateInstances,
+        describeInstances,
+        describeInstancesStatus,
+        rebootInstances,
+        monitorInstances,
+        unmonitorInstances,
+        createTags,
+        deleteTags;
     }
     /**
      * The aws-ec2 is used for managing Amazon EC2 instances. Creates a builder

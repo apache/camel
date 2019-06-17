@@ -590,13 +590,13 @@ public interface QueueServiceEndpointBuilderFactory {
      */
     enum QueueServiceOperations {
         listQueues,
-createQueue,
-deleteQueue,
-addMessage,
-retrieveMessage,
-peekMessage,
-updateMessage,
-deleteMessage;
+        createQueue,
+        deleteQueue,
+        addMessage,
+        retrieveMessage,
+        peekMessage,
+        updateMessage,
+        deleteMessage;
     }
     /**
      * The azure-queue component is used for storing and retrieving messages

@@ -1882,8 +1882,8 @@ public interface SqsEndpointBuilderFactory {
      */
     enum SqsOperations {
         sendBatchMessage,
-deleteMessage,
-listQueues;
+        deleteMessage,
+        listQueues;
     }
     /**
      * The aws-sqs component is used for sending and receiving messages to

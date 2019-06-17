@@ -4434,11 +4434,11 @@ public interface FacebookEndpointBuilderFactory {
      */
     enum PictureSize {
         square,
-small,
-normal,
-large,
-thumbnail,
-album;
+        small,
+        normal,
+        large,
+        thumbnail,
+        album;
     }
     /**
      * The Facebook component provides access to all of the Facebook APIs

@@ -727,11 +727,11 @@ public interface IgniteCacheEndpointBuilderFactory {
      */
     enum CachePeekMode {
         ALL,
-NEAR,
-PRIMARY,
-BACKUP,
-ONHEAP,
-OFFHEAP;
+        NEAR,
+        PRIMARY,
+        BACKUP,
+        ONHEAP,
+        OFFHEAP;
     }
 
     /**
@@ -741,12 +741,12 @@ OFFHEAP;
      */
     enum IgniteCacheOperation {
         GET,
-PUT,
-REMOVE,
-SIZE,
-REBALANCE,
-QUERY,
-CLEAR;
+        PUT,
+        REMOVE,
+        SIZE,
+        REBALANCE,
+        QUERY,
+        CLEAR;
     }
     /**
      * The Ignite Cache endpoint is one of camel-ignite endpoints which allows

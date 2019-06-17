@@ -171,7 +171,7 @@ public interface DrillEndpointBuilderFactory {
      */
     enum DrillConnectionMode {
         ZK,
-DRILLBIT;
+        DRILLBIT;
     }
     /**
      * The drill component gives you the ability to quering into apache drill

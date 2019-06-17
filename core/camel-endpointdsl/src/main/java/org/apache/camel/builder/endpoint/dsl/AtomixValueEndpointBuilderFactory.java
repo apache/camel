@@ -1138,9 +1138,9 @@ public interface AtomixValueEndpointBuilderFactory {
      */
     enum Action {
         SET,
-GET,
-GET_AND_SET,
-COMPARE_AND_SET;
+        GET,
+        GET_AND_SET,
+        COMPARE_AND_SET;
     }
 
     /**
@@ -1148,9 +1148,9 @@ COMPARE_AND_SET;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-value component is used to access Atomix's distributed value.

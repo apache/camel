@@ -4601,11 +4601,11 @@ public interface AMQPEndpointBuilderFactory {
      */
     enum JmsMessageType {
         Bytes,
-Map,
-Object,
-Stream,
-Text,
-Blob;
+        Map,
+        Object,
+        Stream,
+        Text,
+        Blob;
     }
 
     /**
@@ -4614,8 +4614,8 @@ Blob;
      */
     enum ConsumerType {
         Simple,
-Default,
-Custom;
+        Default,
+        Custom;
     }
 
     /**
@@ -4624,7 +4624,7 @@ Custom;
      */
     enum DefaultTaskExecutorType {
         ThreadPool,
-SimpleAsync;
+        SimpleAsync;
     }
 
     /**
@@ -4633,8 +4633,8 @@ SimpleAsync;
      */
     enum ReplyToType {
         Temporary,
-Shared,
-Exclusive;
+        Shared,
+        Exclusive;
     }
     /**
      * Messaging with AMQP protocol using Apache QPid Client. Creates a builder

@@ -116,9 +116,9 @@ public interface EKSEndpointBuilderFactory {
      */
     enum EKSOperations {
         listClusters,
-describeCluster,
-createCluster,
-deleteCluster;
+        describeCluster,
+        createCluster,
+        deleteCluster;
     }
     /**
      * The aws-kms is used for managing Amazon EKS Creates a builder to build

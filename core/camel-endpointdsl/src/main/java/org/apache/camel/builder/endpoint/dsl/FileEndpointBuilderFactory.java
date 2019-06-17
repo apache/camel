@@ -2913,11 +2913,11 @@ public interface FileEndpointBuilderFactory {
      */
     enum GenericFileExist {
         Override,
-Append,
-Fail,
-Ignore,
-Move,
-TryRename;
+        Append,
+        Fail,
+        Ignore,
+        Move,
+        TryRename;
     }
     /**
      * The file component is used for reading or writing files. Creates a

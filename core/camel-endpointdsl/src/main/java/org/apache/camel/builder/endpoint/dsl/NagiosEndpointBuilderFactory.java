@@ -237,12 +237,12 @@ public interface NagiosEndpointBuilderFactory {
      */
     enum Encryption {
         NONE,
-TRIPLE_DES,
-XOR,
-RIJNDAEL128,
-RIJNDAEL192,
-RIJNDAEL256,
-BLOWFISH;
+        TRIPLE_DES,
+        XOR,
+        RIJNDAEL128,
+        RIJNDAEL192,
+        RIJNDAEL256,
+        BLOWFISH;
     }
 
     /**
@@ -252,8 +252,8 @@ BLOWFISH;
      */
     enum NagiosEncryptionMethod {
         No,
-Xor,
-TripleDes;
+        Xor,
+        TripleDes;
     }
     /**
      * To send passive checks to Nagios using JSendNSCA. Creates a builder to

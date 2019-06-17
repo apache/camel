@@ -1328,8 +1328,8 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      */
     enum EndpointType {
         POLLING,
-DIRECT,
-EVENT;
+        DIRECT,
+        EVENT;
     }
     /**
      * The Twitter Direct Message Component consumes/produces user's direct

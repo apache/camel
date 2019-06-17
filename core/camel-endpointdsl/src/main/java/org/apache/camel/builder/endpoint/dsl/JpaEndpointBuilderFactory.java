@@ -1629,13 +1629,13 @@ public interface JpaEndpointBuilderFactory {
      */
     enum LockModeType {
         READ,
-WRITE,
-OPTIMISTIC,
-OPTIMISTIC_FORCE_INCREMENT,
-PESSIMISTIC_READ,
-PESSIMISTIC_WRITE,
-PESSIMISTIC_FORCE_INCREMENT,
-NONE;
+        WRITE,
+        OPTIMISTIC,
+        OPTIMISTIC_FORCE_INCREMENT,
+        PESSIMISTIC_READ,
+        PESSIMISTIC_WRITE,
+        PESSIMISTIC_FORCE_INCREMENT,
+        NONE;
     }
     /**
      * The jpa component enables you to store and retrieve Java objects from

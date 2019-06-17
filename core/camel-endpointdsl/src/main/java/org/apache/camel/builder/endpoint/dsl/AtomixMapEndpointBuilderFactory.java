@@ -1196,17 +1196,17 @@ public interface AtomixMapEndpointBuilderFactory {
      */
     enum Action {
         PUT,
-PUT_IF_ABSENT,
-GET,
-CLEAR,
-SIZE,
-CONTAINS_KEY,
-CONTAINS_VALUE,
-IS_EMPTY,
-ENTRY_SET,
-REMOVE,
-REPLACE,
-VALUES;
+        PUT_IF_ABSENT,
+        GET,
+        CLEAR,
+        SIZE,
+        CONTAINS_KEY,
+        CONTAINS_VALUE,
+        IS_EMPTY,
+        ENTRY_SET,
+        REMOVE,
+        REPLACE,
+        VALUES;
     }
 
     /**
@@ -1214,9 +1214,9 @@ VALUES;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-map component is used to access Atomix's distributed map.

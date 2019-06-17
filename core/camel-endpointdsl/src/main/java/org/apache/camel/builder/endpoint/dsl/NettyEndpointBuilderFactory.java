@@ -3619,7 +3619,7 @@ public interface NettyEndpointBuilderFactory {
      */
     enum TextLineDelimiter {
         LINE,
-NULL;
+        NULL;
     }
     /**
      * Socket level networking using TCP or UDP with the Netty 4.x library.

@@ -2321,48 +2321,48 @@ public interface SalesforceEndpointBuilderFactory {
      */
     enum OperationName {
         GET_VERSIONS,
-GET_RESOURCES,
-GET_GLOBAL_OBJECTS,
-GET_BASIC_INFO,
-GET_DESCRIPTION,
-GET_SOBJECT,
-CREATE_SOBJECT,
-UPDATE_SOBJECT,
-DELETE_SOBJECT,
-GET_SOBJECT_WITH_ID,
-UPSERT_SOBJECT,
-DELETE_SOBJECT_WITH_ID,
-GET_BLOB_FIELD,
-QUERY,
-QUERY_MORE,
-QUERY_ALL,
-SEARCH,
-APEX_CALL,
-RECENT,
-CREATE_JOB,
-GET_JOB,
-CLOSE_JOB,
-ABORT_JOB,
-CREATE_BATCH,
-GET_BATCH,
-GET_ALL_BATCHES,
-GET_REQUEST,
-GET_RESULTS,
-CREATE_BATCH_QUERY,
-GET_QUERY_RESULT_IDS,
-GET_QUERY_RESULT,
-GET_RECENT_REPORTS,
-GET_REPORT_DESCRIPTION,
-EXECUTE_SYNCREPORT,
-EXECUTE_ASYNCREPORT,
-GET_REPORT_INSTANCES,
-GET_REPORT_RESULTS,
-LIMITS,
-APPROVAL,
-APPROVALS,
-COMPOSITE_TREE,
-COMPOSITE_BATCH,
-COMPOSITE;
+        GET_RESOURCES,
+        GET_GLOBAL_OBJECTS,
+        GET_BASIC_INFO,
+        GET_DESCRIPTION,
+        GET_SOBJECT,
+        CREATE_SOBJECT,
+        UPDATE_SOBJECT,
+        DELETE_SOBJECT,
+        GET_SOBJECT_WITH_ID,
+        UPSERT_SOBJECT,
+        DELETE_SOBJECT_WITH_ID,
+        GET_BLOB_FIELD,
+        QUERY,
+        QUERY_MORE,
+        QUERY_ALL,
+        SEARCH,
+        APEX_CALL,
+        RECENT,
+        CREATE_JOB,
+        GET_JOB,
+        CLOSE_JOB,
+        ABORT_JOB,
+        CREATE_BATCH,
+        GET_BATCH,
+        GET_ALL_BATCHES,
+        GET_REQUEST,
+        GET_RESULTS,
+        CREATE_BATCH_QUERY,
+        GET_QUERY_RESULT_IDS,
+        GET_QUERY_RESULT,
+        GET_RECENT_REPORTS,
+        GET_REPORT_DESCRIPTION,
+        EXECUTE_SYNCREPORT,
+        EXECUTE_ASYNCREPORT,
+        GET_REPORT_INSTANCES,
+        GET_REPORT_RESULTS,
+        LIMITS,
+        APPROVAL,
+        APPROVALS,
+        COMPOSITE_TREE,
+        COMPOSITE_BATCH,
+        COMPOSITE;
     }
 
     /**
@@ -2371,11 +2371,11 @@ COMPOSITE;
      */
     enum ContentType {
         XML,
-CSV,
-JSON,
-ZIP_XML,
-ZIP_CSV,
-ZIP_JSON;
+        CSV,
+        JSON,
+        ZIP_XML,
+        ZIP_CSV,
+        ZIP_JSON;
     }
 
     /**
@@ -2385,7 +2385,7 @@ ZIP_JSON;
      */
     enum PayloadFormat {
         JSON,
-XML;
+        XML;
     }
 
     /**
@@ -2395,7 +2395,7 @@ XML;
      */
     enum NotFoundBehaviour {
         EXCEPTION,
-NULL;
+        NULL;
     }
 
     /**
@@ -2404,9 +2404,9 @@ NULL;
      */
     enum NotifyForFieldsEnum {
         ALL,
-REFERENCED,
-SELECT,
-WHERE;
+        REFERENCED,
+        SELECT,
+        WHERE;
     }
 
     /**
@@ -2415,9 +2415,9 @@ WHERE;
      */
     enum NotifyForOperationsEnum {
         ALL,
-CREATE,
-EXTENDED,
-UPDATE;
+        CREATE,
+        EXTENDED,
+        UPDATE;
     }
     /**
      * The salesforce component is used for integrating Camel with the massive

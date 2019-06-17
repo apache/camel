@@ -266,7 +266,7 @@ public class JavaClass {
                 .append("enum ").append(name).append(" {\n")
                 .append(indent)
                 .append("    ")
-                .append(Strings.join(values, ",\n"))
+                .append(Strings.join(values, ",\n" + indent + "    "))
                 .append(";\n")
                 .append(indent)
                 .append("}");

@@ -362,8 +362,8 @@ public interface SnmpEndpointBuilderFactory {
      */
     enum SnmpActionType {
         TRAP,
-POLL,
-GET_NEXT;
+        POLL,
+        GET_NEXT;
     }
     /**
      * The snmp component gives you the ability to poll SNMP capable devices or

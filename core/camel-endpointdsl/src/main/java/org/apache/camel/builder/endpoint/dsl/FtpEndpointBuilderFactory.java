@@ -4250,8 +4250,8 @@ public interface FtpEndpointBuilderFactory {
      */
     enum PathSeparator {
         UNIX,
-Windows,
-Auto;
+        Windows,
+        Auto;
     }
 
     /**
@@ -4260,11 +4260,11 @@ Auto;
      */
     enum GenericFileExist {
         Override,
-Append,
-Fail,
-Ignore,
-Move,
-TryRename;
+        Append,
+        Fail,
+        Ignore,
+        Move,
+        TryRename;
     }
     /**
      * The ftp component is used for uploading or downloading files from FTP

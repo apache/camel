@@ -314,18 +314,18 @@ public interface ElasticsearchEndpointBuilderFactory {
      */
     enum ElasticsearchOperation {
         Index,
-Update,
-Bulk,
-BulkIndex,
-GetById,
-MultiGet,
-MultiSearch,
-Delete,
-DeleteIndex,
-Search,
-Exists,
-Ping,
-Info;
+        Update,
+        Bulk,
+        BulkIndex,
+        GetById,
+        MultiGet,
+        MultiSearch,
+        Delete,
+        DeleteIndex,
+        Search,
+        Exists,
+        Ping,
+        Info;
     }
     /**
      * The elasticsearch component is used for interfacing with ElasticSearch

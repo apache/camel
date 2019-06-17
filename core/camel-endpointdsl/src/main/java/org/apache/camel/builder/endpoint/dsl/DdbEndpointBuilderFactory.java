@@ -281,15 +281,15 @@ public interface DdbEndpointBuilderFactory {
      */
     enum DdbOperations {
         BatchGetItems,
-DeleteItem,
-DeleteTable,
-DescribeTable,
-GetItem,
-PutItem,
-Query,
-Scan,
-UpdateItem,
-UpdateTable;
+        DeleteItem,
+        DeleteTable,
+        DescribeTable,
+        GetItem,
+        PutItem,
+        Query,
+        Scan,
+        UpdateItem,
+        UpdateTable;
     }
     /**
      * The aws-ddb component is used for storing and retrieving data from

@@ -1797,8 +1797,8 @@ public interface SqlEndpointBuilderFactory {
      */
     enum SqlOutputType {
         SelectOne,
-SelectList,
-StreamList;
+        SelectList,
+        StreamList;
     }
     /**
      * The sql component allows you to work with databases using JDBC SQL

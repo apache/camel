@@ -1790,7 +1790,7 @@ public interface HdfsEndpointBuilderFactory {
      */
     enum HdfsFileSystemType {
         LOCAL,
-HDFS;
+        HDFS;
     }
 
     /**
@@ -1799,10 +1799,10 @@ HDFS;
      */
     enum HdfsFileType {
         NORMAL_FILE,
-SEQUENCE_FILE,
-MAP_FILE,
-BLOOMMAP_FILE,
-ARRAY_FILE;
+        SEQUENCE_FILE,
+        MAP_FILE,
+        BLOOMMAP_FILE,
+        ARRAY_FILE;
     }
 
     /**
@@ -1811,14 +1811,14 @@ ARRAY_FILE;
      */
     enum WritableType {
         NULL,
-BOOLEAN,
-BYTE,
-INT,
-FLOAT,
-LONG,
-DOUBLE,
-TEXT,
-BYTES;
+        BOOLEAN,
+        BYTE,
+        INT,
+        FLOAT,
+        LONG,
+        DOUBLE,
+        TEXT,
+        BYTES;
     }
 
     /**
@@ -1827,8 +1827,8 @@ BYTES;
      */
     enum HdfsCompressionCodec {
         DEFAULT,
-GZIP,
-BZIP2;
+        GZIP,
+        BZIP2;
     }
 
     /**
@@ -1837,8 +1837,8 @@ BZIP2;
      */
     enum CompressionType {
         NONE,
-RECORD,
-BLOCK;
+        RECORD,
+        BLOCK;
     }
     /**
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x. Creates

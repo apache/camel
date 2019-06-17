@@ -1016,8 +1016,8 @@ public interface BlobServiceEndpointBuilderFactory {
      */
     enum BlobType {
         blockblob,
-appendblob,
-pageblob;
+        appendblob,
+        pageblob;
     }
 
     /**
@@ -1027,19 +1027,19 @@ pageblob;
      */
     enum BlobServiceOperations {
         getBlob,
-deleteBlob,
-listBlobs,
-updateBlockBlob,
-uploadBlobBlocks,
-commitBlobBlockList,
-getBlobBlockList,
-createAppendBlob,
-updateAppendBlob,
-createPageBlob,
-updatePageBlob,
-resizePageBlob,
-clearPageBlob,
-getPageBlobRanges;
+        deleteBlob,
+        listBlobs,
+        updateBlockBlob,
+        uploadBlobBlocks,
+        commitBlobBlockList,
+        getBlobBlockList,
+        createAppendBlob,
+        updateAppendBlob,
+        createPageBlob,
+        updatePageBlob,
+        resizePageBlob,
+        clearPageBlob,
+        getPageBlobRanges;
     }
     /**
      * The azure-blob component is used for storing and retrieving blobs from

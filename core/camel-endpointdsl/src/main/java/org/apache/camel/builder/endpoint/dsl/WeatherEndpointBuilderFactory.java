@@ -1819,28 +1819,28 @@ public interface WeatherEndpointBuilderFactory {
      */
     enum WeatherLanguage {
         en,
-ru,
-it,
-es,
-sp,
-uk,
-ua,
-de,
-pt,
-ro,
-pl,
-fi,
-nl,
-fr,
-bg,
-sv,
-se,
-zh_tw,
-zh,
-zh_cn,
-tr,
-hr,
-ca;
+        ru,
+        it,
+        es,
+        sp,
+        uk,
+        ua,
+        de,
+        pt,
+        ro,
+        pl,
+        fi,
+        nl,
+        fr,
+        bg,
+        sv,
+        se,
+        zh_tw,
+        zh,
+        zh_cn,
+        tr,
+        hr,
+        ca;
     }
 
     /**
@@ -1849,8 +1849,8 @@ ca;
      */
     enum WeatherMode {
         HTML,
-JSON,
-XML;
+        JSON,
+        XML;
     }
 
     /**
@@ -1859,7 +1859,7 @@ XML;
      */
     enum WeatherUnits {
         IMPERIAL,
-METRIC;
+        METRIC;
     }
 
     /**
@@ -1868,9 +1868,9 @@ METRIC;
      */
     enum WeatherApi {
         Current,
-Station,
-Hourly,
-Daily;
+        Station,
+        Hourly,
+        Daily;
     }
     /**
      * Polls the weather information from Open Weather Map. Creates a builder to

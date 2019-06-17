@@ -197,7 +197,7 @@ public interface JoltEndpointBuilderFactory {
      */
     enum JoltInputOutputType {
         Hydrated,
-JsonString;
+        JsonString;
     }
 
     /**
@@ -206,10 +206,10 @@ JsonString;
      */
     enum JoltTransformType {
         Chainr,
-Shiftr,
-Defaultr,
-Removr,
-Sortr;
+        Shiftr,
+        Defaultr,
+        Removr,
+        Sortr;
     }
     /**
      * The jolt component allows you to process a JSON messages using an JOLT

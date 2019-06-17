@@ -157,10 +157,10 @@ public interface IgniteIdGenEndpointBuilderFactory {
      */
     enum IgniteIdGenOperation {
         ADD_AND_GET,
-GET,
-GET_AND_ADD,
-GET_AND_INCREMENT,
-INCREMENT_AND_GET;
+        GET,
+        GET_AND_ADD,
+        GET_AND_INCREMENT,
+        INCREMENT_AND_GET;
     }
     /**
      * The Ignite ID Generator endpoint is one of camel-ignite endpoints which

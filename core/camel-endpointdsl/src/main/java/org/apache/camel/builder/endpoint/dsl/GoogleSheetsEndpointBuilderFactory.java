@@ -625,7 +625,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      */
     enum GoogleSheetsApiName {
         SPREADSHEETS,
-DATA;
+        DATA;
     }
     /**
      * The google-sheets component provides access to Google Sheets. Creates a

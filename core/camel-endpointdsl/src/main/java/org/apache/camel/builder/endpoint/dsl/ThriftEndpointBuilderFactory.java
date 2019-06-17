@@ -806,7 +806,7 @@ public interface ThriftEndpointBuilderFactory {
      */
     enum ThriftCompressionType {
         NONE,
-ZLIB;
+        ZLIB;
     }
 
     /**
@@ -816,9 +816,9 @@ ZLIB;
      */
     enum ThriftExchangeProtocol {
         BINARY,
-JSON,
-SJSON,
-COMPACT;
+        JSON,
+        SJSON,
+        COMPACT;
     }
 
     /**
@@ -828,8 +828,8 @@ COMPACT;
      */
     enum ThriftNegotiationType {
         PLAINTEXT,
-SSL,
-SASL;
+        SSL,
+        SASL;
     }
     /**
      * The Thrift component allows to call and expose remote procedures (RPC)

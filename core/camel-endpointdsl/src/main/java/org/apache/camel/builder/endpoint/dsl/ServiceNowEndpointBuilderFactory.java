@@ -836,8 +836,8 @@ public interface ServiceNowEndpointBuilderFactory {
      */
     enum ServiceNowRelease {
         FUJI,
-GENEVA,
-HELSINKI;
+        GENEVA,
+        HELSINKI;
     }
     /**
      * The servicenow component is used to integrate Camel with ServiceNow cloud

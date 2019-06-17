@@ -121,8 +121,8 @@ public interface MyBatisBeanEndpointBuilderFactory {
      */
     enum ExecutorType {
         SIMPLE,
-REUSE,
-BATCH;
+        REUSE,
+        BATCH;
     }
     /**
      * Performs a query, insert, update or delete in a relational database using

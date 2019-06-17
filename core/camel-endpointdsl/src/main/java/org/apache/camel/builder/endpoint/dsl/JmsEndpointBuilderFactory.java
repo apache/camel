@@ -4600,11 +4600,11 @@ public interface JmsEndpointBuilderFactory {
      */
     enum JmsMessageType {
         Bytes,
-Map,
-Object,
-Stream,
-Text,
-Blob;
+        Map,
+        Object,
+        Stream,
+        Text,
+        Blob;
     }
 
     /**
@@ -4613,8 +4613,8 @@ Blob;
      */
     enum ConsumerType {
         Simple,
-Default,
-Custom;
+        Default,
+        Custom;
     }
 
     /**
@@ -4623,7 +4623,7 @@ Custom;
      */
     enum DefaultTaskExecutorType {
         ThreadPool,
-SimpleAsync;
+        SimpleAsync;
     }
 
     /**
@@ -4632,8 +4632,8 @@ SimpleAsync;
      */
     enum ReplyToType {
         Temporary,
-Shared,
-Exclusive;
+        Shared,
+        Exclusive;
     }
     /**
      * The jms component allows messages to be sent to (or consumed from) a JMS

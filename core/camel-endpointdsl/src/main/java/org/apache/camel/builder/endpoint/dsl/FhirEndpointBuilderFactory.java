@@ -1478,18 +1478,18 @@ public interface FhirEndpointBuilderFactory {
      */
     enum FhirApiName {
         CAPABILITIES,
-CREATE,
-DELETE,
-HISTORY,
-LOAD_PAGE,
-META,
-OPERATION,
-PATCH,
-READ,
-SEARCH,
-TRANSACTION,
-UPDATE,
-VALIDATE;
+        CREATE,
+        DELETE,
+        HISTORY,
+        LOAD_PAGE,
+        META,
+        OPERATION,
+        PATCH,
+        READ,
+        SEARCH,
+        TRANSACTION,
+        UPDATE,
+        VALIDATE;
     }
 
     /**
@@ -1497,7 +1497,7 @@ VALIDATE;
      */
     enum EncodingEnum {
         JSON,
-XML;
+        XML;
     }
 
     /**
@@ -1505,10 +1505,10 @@ XML;
      */
     enum FhirVersionEnum {
         DSTU2,
-DSTU2_HL7ORG,
-DSTU2_1,
-DSTU3,
-R4;
+        DSTU2_HL7ORG,
+        DSTU2_1,
+        DSTU3,
+        R4;
     }
 
     /**
@@ -1516,10 +1516,10 @@ R4;
      */
     enum SummaryEnum {
         COUNT,
-TEXT,
-DATA,
-TRUE,
-FALSE;
+        TEXT,
+        DATA,
+        TRUE,
+        FALSE;
     }
 
     /**
@@ -1528,7 +1528,7 @@ FALSE;
      */
     enum ServerValidationModeEnum {
         NEVER,
-ONCE;
+        ONCE;
     }
     /**
      * The fhir component is used for working with the FHIR protocol (health

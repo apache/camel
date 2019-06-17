@@ -1051,12 +1051,12 @@ public interface LinkedInEndpointBuilderFactory {
      */
     enum LinkedInApiName {
         COMMENTS,
-COMPANIES,
-GROUPS,
-JOBS,
-PEOPLE,
-POSTS,
-SEARCH;
+        COMPANIES,
+        GROUPS,
+        JOBS,
+        PEOPLE,
+        POSTS,
+        SEARCH;
     }
 
     /**
@@ -1065,15 +1065,15 @@ SEARCH;
      */
     enum OAuthScope {
         R_BASICPROFILE,
-R_FULLPROFILE,
-R_EMAILADDRESS,
-R_NETWORK,
-R_CONTACTINFO,
-RW_NUS,
-RW_COMPANY_ADMIN,
-RW_GROUPS,
-W_MESSAGES,
-W_SHARE;
+        R_FULLPROFILE,
+        R_EMAILADDRESS,
+        R_NETWORK,
+        R_CONTACTINFO,
+        RW_NUS,
+        RW_COMPANY_ADMIN,
+        RW_GROUPS,
+        W_MESSAGES,
+        W_SHARE;
     }
     /**
      * The linkedin component is used for retrieving LinkedIn user profiles,

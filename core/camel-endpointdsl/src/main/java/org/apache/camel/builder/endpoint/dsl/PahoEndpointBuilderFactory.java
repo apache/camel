@@ -873,7 +873,7 @@ public interface PahoEndpointBuilderFactory {
      */
     enum PahoPersistence {
         FILE,
-MEMORY;
+        MEMORY;
     }
     /**
      * Component for communicating with MQTT M2M message brokers using Eclipse

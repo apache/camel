@@ -214,7 +214,7 @@ public interface LuceneEndpointBuilderFactory {
      */
     enum LuceneOperation {
         insert,
-query;
+        query;
     }
     /**
      * To insert or query from Apache Lucene databases. Creates a builder to

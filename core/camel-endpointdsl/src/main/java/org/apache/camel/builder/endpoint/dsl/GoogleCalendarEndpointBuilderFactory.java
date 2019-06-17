@@ -757,13 +757,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
      */
     enum GoogleCalendarApiName {
         ACL,
-LIST,
-CALENDARS,
-CHANNELS,
-COLORS,
-FREEBUSY,
-EVENTS,
-SETTINGS;
+        LIST,
+        CALENDARS,
+        CHANNELS,
+        COLORS,
+        FREEBUSY,
+        EVENTS,
+        SETTINGS;
     }
     /**
      * The google-calendar component provides access to Google Calendar. Creates

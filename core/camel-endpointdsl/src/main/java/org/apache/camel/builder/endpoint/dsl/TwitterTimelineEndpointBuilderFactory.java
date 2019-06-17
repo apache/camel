@@ -1387,11 +1387,11 @@ public interface TwitterTimelineEndpointBuilderFactory {
      */
     enum TimelineType {
         PUBLIC,
-HOME,
-USER,
-MENTIONS,
-RETWEETSOFME,
-UNKNOWN;
+        HOME,
+        USER,
+        MENTIONS,
+        RETWEETSOFME,
+        UNKNOWN;
     }
 
     /**
@@ -1400,8 +1400,8 @@ UNKNOWN;
      */
     enum EndpointType {
         POLLING,
-DIRECT,
-EVENT;
+        DIRECT,
+        EVENT;
     }
     /**
      * The Twitter Timeline component consumes twitter timeline or update the

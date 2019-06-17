@@ -1301,16 +1301,16 @@ public interface CassandraEndpointBuilderFactory {
      */
     enum ConsistencyLevel {
         ANY,
-ONE,
-TWO,
-THREE,
-QUORUM,
-ALL,
-LOCAL_QUORUM,
-EACH_QUORUM,
-SERIAL,
-LOCAL_SERIAL,
-LOCAL_ONE;
+        ONE,
+        TWO,
+        THREE,
+        QUORUM,
+        ALL,
+        LOCAL_QUORUM,
+        EACH_QUORUM,
+        SERIAL,
+        LOCAL_SERIAL,
+        LOCAL_ONE;
     }
     /**
      * The cql component aims at integrating Cassandra 2.0 using the CQL3 API

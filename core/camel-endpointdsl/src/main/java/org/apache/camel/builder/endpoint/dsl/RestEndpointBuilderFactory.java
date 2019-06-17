@@ -672,10 +672,10 @@ public interface RestEndpointBuilderFactory {
      */
     enum RestBindingMode {
         auto,
-off,
-json,
-xml,
-json_xml;
+        off,
+        json,
+        xml,
+        json_xml;
     }
     /**
      * The rest component is used for either hosting REST services (consumer) or

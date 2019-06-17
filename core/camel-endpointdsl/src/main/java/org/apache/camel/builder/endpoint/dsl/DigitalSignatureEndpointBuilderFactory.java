@@ -454,7 +454,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      */
     enum CryptoOperation {
         sign,
-verify;
+        verify;
     }
     /**
      * The crypto component is used for signing and verifying exchanges using

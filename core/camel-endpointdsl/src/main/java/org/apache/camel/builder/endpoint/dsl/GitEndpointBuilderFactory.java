@@ -587,8 +587,8 @@ public interface GitEndpointBuilderFactory {
      */
     enum GitType {
         COMMIT,
-TAG,
-BRANCH;
+        TAG,
+        BRANCH;
     }
     /**
      * The git component is used for working with git repositories. Creates a

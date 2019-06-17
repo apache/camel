@@ -1072,11 +1072,11 @@ public interface BeanstalkEndpointBuilderFactory {
      */
     enum BeanstalkCommand {
         bury,
-release,
-put,
-touch,
-delete,
-kick;
+        release,
+        put,
+        touch,
+        delete,
+        kick;
     }
     /**
      * The beanstalk component is used for job retrieval and post-processing of

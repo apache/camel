@@ -116,11 +116,11 @@ public interface MQEndpointBuilderFactory {
      */
     enum MQOperations {
         listBrokers,
-createBroker,
-deleteBroker,
-rebootBroker,
-updateBroker,
-describeBroker;
+        createBroker,
+        deleteBroker,
+        rebootBroker,
+        updateBroker,
+        describeBroker;
     }
     /**
      * The aws-mq is used for managing Amazon MQ instances. Creates a builder to

@@ -693,10 +693,10 @@ public interface AtmosEndpointBuilderFactory {
      */
     enum AtmosOperation {
         put,
-del,
-search,
-get,
-move;
+        del,
+        search,
+        get,
+        move;
     }
     /**
      * The atmos component is used for integrating with EMC's Atomos Storage.

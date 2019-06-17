@@ -1994,12 +1994,12 @@ public interface ElsqlEndpointBuilderFactory {
      */
     enum ElSqlDatabaseVendor {
         Default,
-Postgres,
-HSql,
-MySql,
-Oracle,
-SqlServer2008,
-Veritca;
+        Postgres,
+        HSql,
+        MySql,
+        Oracle,
+        SqlServer2008,
+        Veritca;
     }
 
     /**
@@ -2008,8 +2008,8 @@ Veritca;
      */
     enum SqlOutputType {
         SelectOne,
-SelectList,
-StreamList;
+        SelectList,
+        StreamList;
     }
     /**
      * The elsql component is an extension to the existing SQL Component that

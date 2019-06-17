@@ -1423,8 +1423,8 @@ public interface Jt400EndpointBuilderFactory {
      */
     enum Jt400Type {
         DTAQ,
-PGM,
-SRVPGM;
+        PGM,
+        SRVPGM;
     }
 
     /**
@@ -1434,7 +1434,7 @@ SRVPGM;
      */
     enum Format {
         text,
-binary;
+        binary;
     }
 
     /**
@@ -1443,11 +1443,11 @@ binary;
      */
     enum SearchType {
         EQ,
-NE,
-LT,
-LE,
-GT,
-GE;
+        NE,
+        LT,
+        LE,
+        GT,
+        GE;
     }
     /**
      * The jt400 component allows you to exchanges messages with an AS/400

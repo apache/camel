@@ -153,13 +153,13 @@ public interface IgniteSetEndpointBuilderFactory {
      */
     enum IgniteSetOperation {
         CONTAINS,
-ADD,
-SIZE,
-REMOVE,
-ITERATOR,
-CLEAR,
-RETAIN_ALL,
-ARRAY;
+        ADD,
+        SIZE,
+        REMOVE,
+        ITERATOR,
+        CLEAR,
+        RETAIN_ALL,
+        ARRAY;
     }
     /**
      * The Ignite Sets endpoint is one of camel-ignite endpoints which allows

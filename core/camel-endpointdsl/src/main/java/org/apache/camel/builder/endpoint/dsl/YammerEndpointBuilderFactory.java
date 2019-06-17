@@ -1009,14 +1009,14 @@ public interface YammerEndpointBuilderFactory {
      */
     enum YammerFunctionType {
         MESSAGES,
-MY_FEED,
-ALGO,
-FOLLOWING,
-SENT,
-PRIVATE,
-RECEIVED,
-USERS,
-CURRENT;
+        MY_FEED,
+        ALGO,
+        FOLLOWING,
+        SENT,
+        PRIVATE,
+        RECEIVED,
+        USERS,
+        CURRENT;
     }
     /**
      * The yammer component allows you to interact with the Yammer enterprise

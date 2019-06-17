@@ -4527,8 +4527,8 @@ public interface SftpEndpointBuilderFactory {
      */
     enum PathSeparator {
         UNIX,
-Windows,
-Auto;
+        Windows,
+        Auto;
     }
 
     /**
@@ -4537,11 +4537,11 @@ Auto;
      */
     enum GenericFileExist {
         Override,
-Append,
-Fail,
-Ignore,
-Move,
-TryRename;
+        Append,
+        Fail,
+        Ignore,
+        Move,
+        TryRename;
     }
     /**
      * The sftp (FTP over SSH) component is used for uploading or downloading

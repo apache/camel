@@ -480,9 +480,9 @@ public interface CryptoCmsEndpointBuilderFactory {
      */
     enum CryptoOperation {
         sign,
-verify,
-encrypt,
-decrypt;
+        verify,
+        encrypt,
+        decrypt;
     }
     /**
      * The crypto cms component is used for encrypting data in CMS Enveloped

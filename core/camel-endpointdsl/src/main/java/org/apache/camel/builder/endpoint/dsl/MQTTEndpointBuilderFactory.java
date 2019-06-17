@@ -2262,8 +2262,8 @@ public interface MQTTEndpointBuilderFactory {
      */
     enum QoS {
         AT_MOST_ONCE,
-AT_LEAST_ONCE,
-EXACTLY_ONCE;
+        AT_LEAST_ONCE,
+        EXACTLY_ONCE;
     }
     /**
      * Component for communicating with MQTT M2M message brokers using

@@ -618,12 +618,12 @@ public interface GoogleMailEndpointBuilderFactory {
      */
     enum GoogleMailApiName {
         THREADS,
-MESSAGES,
-ATTACHMENTS,
-LABELS,
-HISTORY,
-DRAFTS,
-USERS;
+        MESSAGES,
+        ATTACHMENTS,
+        LABELS,
+        HISTORY,
+        DRAFTS,
+        USERS;
     }
     /**
      * The google-mail component provides access to Google Mail. Creates a

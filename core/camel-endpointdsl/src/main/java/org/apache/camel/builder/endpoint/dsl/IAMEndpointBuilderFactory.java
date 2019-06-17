@@ -116,18 +116,18 @@ public interface IAMEndpointBuilderFactory {
      */
     enum IAMOperations {
         listAccessKeys,
-createUser,
-deleteUser,
-getUser,
-listUsers,
-createAccessKey,
-deleteAccessKey,
-updateAccessKey,
-createGroup,
-deleteGroup,
-listGroups,
-addUserToGroup,
-removeUserFromGroup;
+        createUser,
+        deleteUser,
+        getUser,
+        listUsers,
+        createAccessKey,
+        deleteAccessKey,
+        updateAccessKey,
+        createGroup,
+        deleteGroup,
+        listGroups,
+        addUserToGroup,
+        removeUserFromGroup;
     }
     /**
      * The aws-iam is used for managing Amazon IAM Creates a builder to build

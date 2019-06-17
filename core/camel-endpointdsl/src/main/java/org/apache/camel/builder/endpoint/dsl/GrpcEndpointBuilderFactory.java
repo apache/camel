@@ -1170,7 +1170,7 @@ public interface GrpcEndpointBuilderFactory {
      */
     enum GrpcConsumerStrategy {
         AGGREGATION,
-PROPAGATION;
+        PROPAGATION;
     }
 
     /**
@@ -1179,7 +1179,7 @@ PROPAGATION;
      */
     enum GrpcProducerStrategy {
         SIMPLE,
-STREAMING;
+        STREAMING;
     }
 
     /**
@@ -1188,8 +1188,8 @@ STREAMING;
      */
     enum GrpcAuthType {
         NONE,
-GOOGLE,
-JWT;
+        GOOGLE,
+        JWT;
     }
 
     /**
@@ -1198,8 +1198,8 @@ JWT;
      */
     enum JwtAlgorithm {
         HMAC256,
-HMAC384,
-HMAC512;
+        HMAC384,
+        HMAC512;
     }
 
     /**
@@ -1207,8 +1207,8 @@ HMAC512;
      */
     enum NegotiationType {
         TLS,
-PLAINTEXT_UPGRADE,
-PLAINTEXT;
+        PLAINTEXT_UPGRADE,
+        PLAINTEXT;
     }
     /**
      * The gRPC component allows to call and expose remote procedures via HTTP/2
