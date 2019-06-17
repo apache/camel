@@ -314,6 +314,7 @@
     <feature version='${project.version}'>camel-core</feature>
 	  <feature>transaction</feature>
     <bundle dependency='true'>mvn:net.sf.ehcache/ehcache/${ehcache-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
   </feature>
   <feature name='camel-caffeine' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version="${project.version}">camel-core</feature>
