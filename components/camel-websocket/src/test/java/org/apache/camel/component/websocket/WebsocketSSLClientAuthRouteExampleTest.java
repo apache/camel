@@ -46,7 +46,7 @@ import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
+public class WebsocketSSLClientAuthRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
@@ -80,6 +80,14 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         clientSSLTrustManagers.setKeyStore(truststoreParameters);
         sslContextParameters.setTrustManagers(clientSSLTrustManagers);
 
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setResource("jsse/localhost.ks");
+        keystoreParameters.setPassword(pwd);
+        KeyManagersParameters clientAuthClientSSLKeyManagers = new KeyManagersParameters();
+        clientAuthClientSSLKeyManagers.setKeyPassword(pwd);
+        clientAuthClientSSLKeyManagers.setKeyStore(keystoreParameters);
+        sslContextParameters.setKeyManagers(clientAuthClientSSLKeyManagers);
+
         SSLContext sslContext = sslContextParameters.createSSLContext(context());
         JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
         builder.setSslContext(ssl);
@@ -93,7 +101,6 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
     protected SSLContextParameters defineSSLContextParameters() {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
-        // ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setResource("jsse/localhost.ks");
         ksp.setPassword(pwd);
 
@@ -104,9 +111,8 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
-        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
-        // is provided.  We turn on WANT client-auth to prefer using authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication("REQUIRE");
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
