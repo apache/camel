@@ -349,6 +349,13 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
+     * Gets the connection factory to be used.
+     */
+    public ConnectionFactory getConnectionFactory() {
+        return getConfiguration().getConnectionFactory();
+    }
+
+    /**
      * The connection factory to be use. A connection factory must be configured either on the component or endpoint.
      */
     @Metadata(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
