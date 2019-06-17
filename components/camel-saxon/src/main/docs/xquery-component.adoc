@@ -235,7 +235,17 @@ from("direct:start").
    transform().xquery("/people/person/text()", String.class);
 -------------------------------------------------------------
 
- 
+If you want to use camel variables like headers, you have to explicitly declare them in the xquery expression.
+[source,xml]
+-------------------------------------------------------------
+<transform>
+    <xquery>
+        declare variable $in.headers.foo external;
+        element item {$in.headers.foo}
+    </xquery>
+</transform>
+-------------------------------------------------------------
+
 
 ### Using XQuery as an endpoint
 
