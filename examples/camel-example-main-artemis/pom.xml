@@ -34,7 +34,7 @@
     <description>An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)</description>
 
     <properties>
-        <category>Beginner</category>
+        <category>Messaging</category>
     </properties>
 
     <dependencies>
