@@ -40,7 +40,10 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.catalog.maven.MavenVersionManager;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -91,6 +94,27 @@ public class AutowireMojo extends AbstractExecMojo {
     @Parameter(readonly = true, defaultValue = "${project.build.directory}/classes/META-INF/services/org/apache/camel/")
     protected File outFolder;
 
+    /**
+     * To exclude autowiring specific properties with these key names.
+     * You can also configure a single entry and separate the excludes with comma
+     */
+    @Parameter(property = "camel.exclude")
+    protected String[] exclude;
+
+    /**
+     * To include autowiring specific properties or component with these key names.
+     * You can also configure a single entry and separate the includes with comma
+     */
+    @Parameter(property = "camel.include")
+    protected String[] include;
+
+    /**
+     * To setup special mappings between known types as key=value pairs.
+     * You can also configure a single entry and separate the mappings with comma
+     */
+    @Parameter(property = "camel.mappings")
+    protected String[] mappings;
+
     @Component
     private ArtifactFactory artifactFactory;
 
@@ -106,8 +130,6 @@ public class AutowireMojo extends AbstractExecMojo {
     private transient ClassLoader classLoader;
 
     // TODO: Allow to configure known types in xml config, or refer to external file
-    // TODO: Allow to configure include/exclude names on components,names
-    // TODO: Skip some known types
 
     // CHECKSTYLE:OFF
     @Override
@@ -165,12 +187,23 @@ public class AutowireMojo extends AbstractExecMojo {
                 .addClassLoader(classLoader)
                 .setScanners(new SubTypesScanner()));
 
-        // load known types
-        Properties knownTypes = loadKnownTypes();
-        getLog().debug("Loaded known-types: " + knownTypes);
+        // load default mappings
+        Properties mappingProperties = loadDefaultMappings();
+        getLog().debug("Loaded default-mappings: " + mappingProperties);
+        // add extra mappings
+        if (this.mappings != null) {
+            for (String m : this.mappings) {
+                String key = StringHelper.before(m, "=");
+                String value = StringHelper.after(m, "=");
+                if (key != null && value != null) {
+                    mappingProperties.setProperty(key, value);
+                    getLog().debug("Added mapping: " + key + "=" + value);
+                }
+            }
+        }
 
         // find the autowire via classpath scanning
-        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, components, reflections, knownTypes);
+        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, components, reflections, mappingProperties);
 
         if (!autowires.isEmpty()) {
             outFolder.mkdirs();
@@ -190,21 +223,21 @@ public class AutowireMojo extends AbstractExecMojo {
         }
     }
 
-    protected Properties loadKnownTypes() throws MojoFailureException {
-        Properties knownTypes = new Properties();
+    protected Properties loadDefaultMappings() throws MojoFailureException {
+        Properties mappings = new OrderedProperties();
         try {
-            InputStream is = AutowireMojo.class.getResourceAsStream("/known-types.properties");
+            InputStream is = AutowireMojo.class.getResourceAsStream("/default-mappings.properties");
             if (is != null) {
-                knownTypes.load(is);
+                mappings.load(is);
             }
         } catch (IOException e) {
-            throw new MojoFailureException("Cannot load known-types.properties from classpath");
+            throw new MojoFailureException("Cannot load default-mappings.properties from classpath");
         }
-        return knownTypes;
+        return mappings;
     }
 
     protected List<String> findAutowireComponentOptionsByClasspath(CamelCatalog catalog, Set<String> components,
-                                                                   Reflections reflections, Properties knownTypes) {
+                                                                   Reflections reflections, Properties mappingProperties) {
         List<String> autowires = new ArrayList<>();
 
         for (String componentName : components) {
@@ -223,13 +256,17 @@ public class AutowireMojo extends AbstractExecMojo {
                 String type = row.get("type");
                 String javaType = safeJavaType(row.get("javaType"));
                 if ("object".equals(type)) {
+                    if (!isValidPropertyName(componentName, name)) {
+                        getLog().debug("Skipping property name: " + name);
+                        continue;
+                    }
                     try {
                         Class clazz = classLoader.loadClass(javaType);
                         if (clazz.isInterface() && isComplexUserType(clazz)) {
                             Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
                             // filter classes to not be interfaces or not a top level class
                             classes = classes.stream().filter(c -> !c.isInterface() && c.getEnclosingClass() == null).collect(Collectors.toSet());
-                            Class best = chooseBestKnownType(clazz, classes, knownTypes);
+                            Class best = chooseBestKnownType(clazz, classes, mappingProperties);
                             if (isValidAutowireClass(best)) {
                                 String line = "camel.component." + componentName + "." + name + "=#class:" + best.getName();
                                 getLog().debug(line);
@@ -251,7 +288,7 @@ public class AutowireMojo extends AbstractExecMojo {
     protected Class chooseBestKnownType(Class type, Set<Class<?>> candidates, Properties knownTypes) {
         String known = knownTypes.getProperty(type.getName());
         if (known != null) {
-            for (String k : known.split(",")) {
+            for (String k : known.split(";")) {
                 // special as we should skip this option
                 if ("#skip#".equals(k)) {
                     return null;
@@ -269,6 +306,41 @@ public class AutowireMojo extends AbstractExecMojo {
             getLog().debug("Cannot chose best type: " + type.getName() + " among " + candidates.size() + " implementations: " + candidates);
         }
         return null;
+    }
+
+    protected boolean isValidPropertyName(String componentName, String name) {
+        // we want to regard names as the same if they are using dash or not, and also to be case insensitive.
+        String prefix = "camel.component." + componentName + ".";
+        name = StringHelper.dashToCamelCase(name);
+
+        if (exclude != null) {
+            // works on components too
+            for (String pattern : exclude) {
+                pattern = StringHelper.dashToCamelCase(pattern);
+                if (PatternHelper.matchPattern(componentName, pattern)) {
+                    return false;
+                }
+                if (PatternHelper.matchPattern(name, pattern) || PatternHelper.matchPattern(prefix + name, pattern)) {
+                    return false;
+                }
+            }
+        }
+
+        if (include != null) {
+            for (String pattern : include) {
+                pattern = StringHelper.dashToCamelCase(pattern);
+                if (PatternHelper.matchPattern(componentName, pattern)) {
+                    return true;
+                }
+                if (PatternHelper.matchPattern(name, pattern) || PatternHelper.matchPattern(prefix + name, pattern)) {
+                    return true;
+                }
+            }
+            // we have include enabled and none matched so it should be false
+            return false;
+        }
+
+        return true;
     }
 
     private static boolean isComplexUserType(Class type) {

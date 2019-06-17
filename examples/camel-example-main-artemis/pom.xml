@@ -105,6 +105,8 @@
                 <version>${project.version}</version>
                 <configuration>
                     <logClasspath>false</logClasspath>
+                    <!-- just include only the jms component -->
+                    <include>jms</include>
                 </configuration>
                 <executions>
                     <execution>
