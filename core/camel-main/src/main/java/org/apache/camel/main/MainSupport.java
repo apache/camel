@@ -1003,14 +1003,15 @@ public abstract class MainSupport extends ServiceSupport {
             String stringValue = value != null ? value.toString() : null;
 
             LOG.debug("Setting property {} on {} with value {}", name, target, stringValue);
-            boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
-
-            if (hit) {
-                it.remove();
+            if (failIfNotSet) {
+                PropertyBindingSupport.bindMandatoryProperty(context, target, name, stringValue);
                 rc = true;
-            } else if (failIfNotSet) {
-                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class ["
-                    + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
+            } else {
+                boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
+                if (hit) {
+                    it.remove();
+                    rc = true;
+                }
             }
         }
 

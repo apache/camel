@@ -55,6 +55,7 @@ import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -68,7 +69,7 @@ import org.reflections.util.ConfigurationBuilder;
 /**
  * Pre scans your project and prepare autowiring by classpath scanning
  */
-@Mojo(name = "autowire", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "autowire", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class AutowireMojo extends AbstractExecMojo {
 
     /**

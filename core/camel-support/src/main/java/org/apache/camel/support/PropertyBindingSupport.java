@@ -507,7 +507,7 @@ public final class PropertyBindingSupport {
     public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, true, true, true, true, true);
+                return setProperty(camelContext, target, name, value, false, true, true, true, true, true);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -520,7 +520,7 @@ public final class PropertyBindingSupport {
                                 boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, nesting, deepNesting, fluentBuilder, reference, placeholder);
+                return setProperty(camelContext, target, name, value, false, nesting, deepNesting, fluentBuilder, reference, placeholder);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -540,7 +540,7 @@ public final class PropertyBindingSupport {
     public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                boolean bound = setProperty(camelContext, target, name, value, true, true, true, true, true);
+                boolean bound = setProperty(camelContext, target, name, value, true, true, true, true, true, true);
                 if (!bound) {
                     throw new PropertyBindingException(target, name);
                 }
@@ -550,7 +550,7 @@ public final class PropertyBindingSupport {
         }
     }
 
-    private static boolean setProperty(CamelContext context, Object target, String name, Object value,
+    private static boolean setProperty(CamelContext context, Object target, String name, Object value, boolean mandatory,
                                        boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) throws Exception {
         String refName = null;
 
@@ -562,6 +562,8 @@ public final class PropertyBindingSupport {
                 value = context.resolvePropertyPlaceholders(value.toString());
             }
         }
+
+        String ognlPath = name;
 
         // if name has dot then we need to OGNL walk it
         if (nesting) {
@@ -590,6 +592,11 @@ public final class PropertyBindingSupport {
                                 org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, instance);
                                 newTarget = instance;
                                 newClass = newTarget.getClass();
+                            }
+                        } else {
+                            if (mandatory) {
+                                // there is no getter with this given name, so lets report this as a problem
+                                throw new IllegalArgumentException("Cannot find nested getter method: " + part + " on bean: " + newClass + " when binding property: " + ognlPath);
                             }
                         }
                     } else {
@@ -642,7 +649,12 @@ public final class PropertyBindingSupport {
             }
         }
 
-        return IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder);
+        boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder);
+        if (!hit && mandatory) {
+            // there is no setter with this given name, so lets report this as a problem
+            throw new IllegalArgumentException("Cannot find setter method: " + name + " on bean: " + target + " when binding property: " + ognlPath);
+        }
+        return hit;
     }
 
     private static Object getOrElseProperty(Object target, String property, Object defaultValue) {
