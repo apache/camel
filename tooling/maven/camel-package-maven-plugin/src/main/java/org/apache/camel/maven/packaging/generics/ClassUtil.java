@@ -1,20 +1,18 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements. See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership. The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.maven.packaging.generics;
 
@@ -27,7 +25,6 @@ import java.lang.reflect.WildcardType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Utility classes with respect to the class operations.
@@ -62,10 +59,10 @@ public final class ClassUtil {
     }
 
     public static boolean isSame(Type type1, Type type2) {
-        if ((type1 instanceof Class) && ((Class<?>) type1).isPrimitive()) {
+        if ((type1 instanceof Class) && ((Class<?>)type1).isPrimitive()) {
             type1 = PRIMITIVE_TO_WRAPPERS_MAP.get(type1);
         }
-        if ((type2 instanceof Class) && ((Class<?>) type2).isPrimitive()) {
+        if ((type2 instanceof Class) && ((Class<?>)type2).isPrimitive()) {
             type2 = PRIMITIVE_TO_WRAPPERS_MAP.get(type2);
         }
         return type1 == type2;
@@ -87,11 +84,9 @@ public final class ClassUtil {
      * @param type class or parametrized type
      * @return
      */
-    public static Class<?> getClass(Type type)
-    {
+    public static Class<?> getClass(Type type) {
         return getClazz(type);
     }
-
 
     /**
      * Returns true if type is an instance of <code>ParameterizedType</code>
@@ -100,46 +95,38 @@ public final class ClassUtil {
      * @param type type of the artifact
      * @return true if type is an instance of <code>ParameterizedType</code>
      */
-    public static boolean isParametrizedType(Type type)
-    {
+    public static boolean isParametrizedType(Type type) {
         return type instanceof ParameterizedType;
     }
-    
+
     /**
-     * Returns true if type is an instance of <code>WildcardType</code>
-     * else otherwise.
+     * Returns true if type is an instance of <code>WildcardType</code> else
+     * otherwise.
      * 
      * @param type type of the artifact
      * @return true if type is an instance of <code>WildcardType</code>
-     */    
-    public static boolean isWildCardType(Type type)
-    {
+     */
+    public static boolean isWildCardType(Type type) {
         return type instanceof WildcardType;
     }
 
-
     /**
-     * Returns true if rhs is assignable type
-     * to the lhs, false otherwise.
+     * Returns true if rhs is assignable type to the lhs, false otherwise.
      * 
      * @param lhs left hand side class
      * @param rhs right hand side class
      * @return true if rhs is assignable to lhs
      */
-    public static boolean isClassAssignableFrom(Class<?> lhs, Class<?> rhs)
-    {
-        if(lhs.isPrimitive())
-        {
+    public static boolean isClassAssignableFrom(Class<?> lhs, Class<?> rhs) {
+        if (lhs.isPrimitive()) {
             lhs = getPrimitiveWrapper(lhs);
         }
-        
-        if(rhs.isPrimitive())
-        {
+
+        if (rhs.isPrimitive()) {
             rhs = getPrimitiveWrapper(rhs);
         }
 
-        if (lhs.isAssignableFrom(rhs))
-        {
+        if (lhs.isAssignableFrom(rhs)) {
             return true;
         }
 
@@ -154,15 +141,15 @@ public final class ClassUtil {
      */
     public static Class<?> getClazz(Type type) {
         if (type instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) type;
-            return (Class<?>) pt.getRawType();
+            ParameterizedType pt = (ParameterizedType)type;
+            return (Class<?>)pt.getRawType();
         } else if (type instanceof Class) {
-            return (Class<?>) type;
+            return (Class<?>)type;
         } else if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType) type;
+            GenericArrayType arrayType = (GenericArrayType)type;
             return Array.newInstance(getClazz(arrayType.getGenericComponentType()), 0).getClass();
         } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType) type;
+            WildcardType wildcardType = (WildcardType)type;
             Type[] bounds = wildcardType.getUpperBounds();
             if (bounds.length > 1) {
                 throw new IllegalArgumentException("Illegal use of wild card type with more than one upper bound: " + wildcardType);
@@ -172,7 +159,7 @@ public final class ClassUtil {
                 return getClass(bounds[0]);
             }
         } else if (type instanceof TypeVariable) {
-            TypeVariable<?> typeVariable = (TypeVariable<?>) type;
+            TypeVariable<?> typeVariable = (TypeVariable<?>)type;
             if (typeVariable.getBounds().length > 1) {
                 throw new IllegalArgumentException("Illegal use of type variable with more than one bound: " + typeVariable);
             } else {
@@ -188,7 +175,6 @@ public final class ClassUtil {
         }
     }
 
-
     public static boolean isRawClassEquals(Type ipType, Type apiType) {
         Class ipClass = getRawPrimitiveType(ipType);
         Class apiClass = getRawPrimitiveType(apiType);
@@ -203,14 +189,14 @@ public final class ClassUtil {
 
     private static Class getRawPrimitiveType(Type type) {
         if (type instanceof Class) {
-            if (((Class) type).isPrimitive()) {
-                return getPrimitiveWrapper((Class) type);
+            if (((Class)type).isPrimitive()) {
+                return getPrimitiveWrapper((Class)type);
             }
-            return (Class) type;
+            return (Class)type;
         }
 
         if (type instanceof ParameterizedType) {
-            return getRawPrimitiveType(((ParameterizedType) type).getRawType());
+            return getRawPrimitiveType(((ParameterizedType)type).getRawType());
         }
 
         return null;
