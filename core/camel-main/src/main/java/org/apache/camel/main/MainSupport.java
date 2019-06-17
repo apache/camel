@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,9 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -897,8 +900,34 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {
-        // load properties
-        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        // load optional META-INF/services/org/apache/camel/autowire.properties
+        Properties prop = new OrderedProperties();
+        try {
+            InputStream is = camelContext.getClassResolver().loadResourceAsStream("/META-INF/services/org/apache/camel/autowire.properties");
+            prop.load(is);
+            if (!prop.isEmpty()) {
+                LOG.info("Loaded {} properties from classpath: META-INF/services/org/apache/camel/autowire.properties", prop.size());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
+                    for (String key : prop.stringPropertyNames()) {
+                        LOG.debug("    {}={}", key, prop.getProperty(key));
+                    }
+                }
+            }
+            IOHelper.close(is);
+        } catch (Throwable e) {
+            // ignore as this file is optional
+        }
+
+        // load properties from properties component
+        Properties propPC = camelContext.getPropertiesComponent().loadProperties();
+        if (propPC != null) {
+            prop.putAll(propPC);
+            LOG.debug("Properties from Camel properties component:");
+            for (String key : propPC.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propPC.getProperty(key));
+            }
+        }
 
         Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
 
