@@ -17,6 +17,7 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,6 +116,12 @@ public class AutowireMojo extends AbstractExecMojo {
     @Parameter(property = "camel.mappings")
     protected String[] mappings;
 
+    /**
+     * Optional mappings file loaded from classpath, with mapping that override any default mappings
+     */
+    @Parameter(defaultValue = "${project.build.directory}/classes/camel-main-mappings.properties")
+    protected File mappingsFile;
+
     @Component
     private ArtifactFactory artifactFactory;
 
@@ -197,9 +204,14 @@ public class AutowireMojo extends AbstractExecMojo {
                 String value = StringHelper.after(m, "=");
                 if (key != null && value != null) {
                     mappingProperties.setProperty(key, value);
-                    getLog().debug("Added mapping: " + key + "=" + value);
+                    getLog().debug("Added mapping from pom.xml: " + key + "=" + value);
                 }
             }
+        }
+        Properties mappingFileProperties = loadMappingsFile();
+        if (!mappingFileProperties.isEmpty()) {
+            getLog().debug("Loaded mappings file: " + mappingsFile + " with mappings: " + mappingFileProperties);
+            mappingProperties.putAll(mappingFileProperties);
         }
 
         // find the autowire via classpath scanning
@@ -232,6 +244,19 @@ public class AutowireMojo extends AbstractExecMojo {
             }
         } catch (IOException e) {
             throw new MojoFailureException("Cannot load default-mappings.properties from classpath");
+        }
+        return mappings;
+    }
+
+    protected Properties loadMappingsFile() throws MojoFailureException {
+        Properties mappings = new OrderedProperties();
+        if (mappingsFile.exists() && mappingsFile.isFile()) {
+            try {
+                InputStream is = new FileInputStream(mappingsFile);
+                mappings.load(is);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot load file: " + mappingsFile);
+            }
         }
         return mappings;
     }
