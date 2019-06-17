@@ -16,14 +16,28 @@
  */
 package org.apache.camel.dataformat.any23;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import org.apache.any23.Any23;
+import org.apache.any23.extractor.ExtractionException;
+import org.apache.any23.http.HTTPClient;
+import org.apache.any23.source.DocumentSource;
+import org.apache.any23.source.HTTPDocumentSource;
+import org.apache.any23.source.StringDocumentSource;
+import org.apache.any23.writer.NTriplesWriter;
+import org.apache.any23.writer.TripleHandler;
+import org.apache.any23.writer.TripleHandlerException;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +54,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
    */
   private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
-
+  private Any23Parameters parameters ;
 
   /**
    * String or Node to return
@@ -56,20 +70,75 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
   public String getDataFormatName() {
     return "any23";
   }
+  
+  
+  /*protected final void setDefaultParameters () {
+     parameters = new Any23Parameters ();
+  
+  }*/
+  
+  /*public Any23DataFormat (){
+    this.setDefaultParameters();
+  }*/
 
   /**
    * Marshal data. Generate RDF.
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-    throw new CamelException("Under construction");
+   /*final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
+   System.out.print ("payload");
+   System.out.print (payload);
+   
+    Any23 runner = new Any23();*/
+    anytordf( exchange,  object,  outputStream);
+           //  return n3;
+   // throw new CamelException("Under construction");
   }
 
   /**
    * Unmarshal the data
    */
   public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-
-     throw new CamelException("Under construction");
+          Any23 runner = new Any23();
+          runner.setHTTPUserAgent("test-user-agent");
+          HTTPClient httpClient = runner.getHTTPClient();
+          DocumentSource source = new HTTPDocumentSource(
+                  httpClient,
+                  "http://dbpedia.org/page/Ecuador");
+        //  System.out.print("#######");
+        //  System.out.print(source.getContentType());
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          TripleHandler handler = new NTriplesWriter(out);
+           
+              runner.extract(source, handler);
+        
+              
+             handler.close();
+            
+          
+             String n3 = out.toString("UTF-8");
+            
+           //  System.out.print (n3);
+             return n3;
+     //throw new CamelException("Under construction");
+  }
+  
+  private void anytordf (final Exchange exchange, Object object, OutputStream outputStream) throws IOException, ExtractionException, TypeConversionException, NoTypeConversionAvailableException, TripleHandlerException{
+    final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
+    System.out.println ("PAYLOAD");
+    System.out.println (payload);
+    DocumentSource source = new StringDocumentSource(payload, "http://host.com/service");
+    Any23 runner = new Any23();
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    this.parameters = new Any23Parameters (out);
+    runner.extract(source, this.parameters.getTripleHandlerOutput());
+    this.parameters.getTripleHandlerOutput().close();
+   // out.toString("UTF-8").get
+   // out.toString("UTF-8");
+   System.out.println("SALIDA");
+    System.out.println(out.toString("UTF-8"));
+    outputStream.write(out.toByteArray());
+    
   }
 
   @Override

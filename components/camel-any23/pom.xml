@@ -69,5 +69,10 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.any23</groupId>
+            <artifactId>apache-any23-core</artifactId>
+            <version>2.3</version>
+        </dependency>
     </dependencies>
 </project>
