@@ -691,7 +691,7 @@ public interface AtmosEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atmos.util.AtmosOperation</code> enum.
      */
-    static enum AtmosOperation {
+    enum AtmosOperation {
         put, del, search, get, move;
     }
     /**

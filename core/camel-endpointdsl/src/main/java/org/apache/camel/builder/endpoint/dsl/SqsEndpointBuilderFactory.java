@@ -1880,7 +1880,7 @@ public interface SqsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> enum.
      */
-    static enum SqsOperations {
+    enum SqsOperations {
         sendBatchMessage, deleteMessage, listQueues;
     }
     /**

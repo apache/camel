@@ -1723,7 +1723,7 @@ public interface CxfRsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> enum.
      */
-    static enum BindingStyle {
+    enum BindingStyle {
         SimpleConsumer, Default, Custom;
     }
     /**

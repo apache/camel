@@ -1460,7 +1460,7 @@ public interface XQueryEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.xquery.ResultFormat</code> enum.
      */
-    static enum ResultFormat {
+    enum ResultFormat {
         Bytes, BytesSource, DOM, DOMSource, List, String, StringSource;
     }
     /**

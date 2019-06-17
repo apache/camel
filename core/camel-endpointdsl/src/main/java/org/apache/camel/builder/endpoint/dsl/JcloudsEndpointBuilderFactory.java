@@ -561,7 +561,7 @@ public interface JcloudsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> enum.
      */
-    static enum JcloudsCommand {
+    enum JcloudsCommand {
         blobstore, compute;
     }
     /**

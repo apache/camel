@@ -1421,7 +1421,7 @@ public interface Jt400EndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jt400.Jt400Type</code>
      * enum.
      */
-    static enum Jt400Type {
+    enum Jt400Type {
         DTAQ, PGM, SRVPGM;
     }
 
@@ -1430,7 +1430,7 @@ public interface Jt400EndpointBuilderFactory {
      * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code>
      * enum.
      */
-    static enum Format {
+    enum Format {
         text, binary;
     }
 
@@ -1438,7 +1438,7 @@ public interface Jt400EndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> enum.
      */
-    static enum SearchType {
+    enum SearchType {
         EQ, NE, LT, LE, GT, GE;
     }
     /**

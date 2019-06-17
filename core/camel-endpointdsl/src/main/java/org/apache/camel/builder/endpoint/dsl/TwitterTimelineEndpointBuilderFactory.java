@@ -1385,7 +1385,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.twitter.data.TimelineType</code> enum.
      */
-    static enum TimelineType {
+    enum TimelineType {
         PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, UNKNOWN;
     }
 
@@ -1393,7 +1393,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
-    static enum EndpointType {
+    enum EndpointType {
         POLLING, DIRECT, EVENT;
     }
     /**

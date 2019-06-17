@@ -478,7 +478,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code> enum.
      */
-    static enum CryptoOperation {
+    enum CryptoOperation {
         sign, verify, encrypt, decrypt;
     }
     /**

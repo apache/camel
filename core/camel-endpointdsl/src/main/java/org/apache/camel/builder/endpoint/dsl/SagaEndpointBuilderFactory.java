@@ -117,7 +117,7 @@ public interface SagaEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> enum.
      */
-    static enum SagaEndpointAction {
+    enum SagaEndpointAction {
         COMPLETE, COMPENSATE;
     }
     /**

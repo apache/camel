@@ -114,7 +114,7 @@ public interface EKSEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.eks.EKSOperations</code> enum.
      */
-    static enum EKSOperations {
+    enum EKSOperations {
         listClusters, describeCluster, createCluster, deleteCluster;
     }
     /**

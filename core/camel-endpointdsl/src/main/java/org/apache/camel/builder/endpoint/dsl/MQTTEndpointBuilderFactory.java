@@ -2260,7 +2260,7 @@ public interface MQTTEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.fusesource.mqtt.client.QoS</code> enum.
      */
-    static enum QoS {
+    enum QoS {
         AT_MOST_ONCE, AT_LEAST_ONCE, EXACTLY_ONCE;
     }
     /**

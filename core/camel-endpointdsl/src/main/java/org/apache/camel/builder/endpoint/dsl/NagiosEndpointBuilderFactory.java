@@ -235,7 +235,7 @@ public interface NagiosEndpointBuilderFactory {
      * Proxy enum for
      * <code>com.googlecode.jsendnsca.encryption.Encryption</code> enum.
      */
-    static enum Encryption {
+    enum Encryption {
         NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH;
     }
 
@@ -244,7 +244,7 @@ public interface NagiosEndpointBuilderFactory {
      * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
      * enum.
      */
-    static enum NagiosEncryptionMethod {
+    enum NagiosEncryptionMethod {
         No, Xor, TripleDes;
     }
     /**

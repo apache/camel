@@ -360,7 +360,7 @@ public interface SnmpEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.snmp.SnmpActionType</code> enum.
      */
-    static enum SnmpActionType {
+    enum SnmpActionType {
         TRAP, POLL, GET_NEXT;
     }
     /**

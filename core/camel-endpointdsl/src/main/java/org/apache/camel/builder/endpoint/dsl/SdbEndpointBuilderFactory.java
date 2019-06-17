@@ -242,7 +242,7 @@ public interface SdbEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> enum.
      */
-    static enum SdbOperations {
+    enum SdbOperations {
         BatchDeleteAttributes, BatchPutAttributes, DeleteAttributes, DeleteDomain, DomainMetadata, GetAttributes, ListDomains, PutAttributes, Select;
     }
     /**

@@ -572,7 +572,7 @@ public class EndpointDslMojo extends AbstractMojo {
             }
             JavaClass enumClass = enumClasses.get(enumClassName);
             if (enumClass == null) {
-                enumClass = javaClass.addNestedType().setPackagePrivate().setStatic(true)
+                enumClass = javaClass.addNestedType().setPackagePrivate()
                                 .setName(enumClassName).setEnum(true);
                 enumClass.getJavaDoc().setText("Proxy enum for <code>" + type + "</code> enum.");
                 enumClasses.put(enumClassName, enumClass);

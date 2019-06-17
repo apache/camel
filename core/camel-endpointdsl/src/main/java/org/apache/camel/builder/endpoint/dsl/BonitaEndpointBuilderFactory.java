@@ -163,7 +163,7 @@ public interface BonitaEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.bonita.util.BonitaOperation</code> enum.
      */
-    static enum BonitaOperation {
+    enum BonitaOperation {
         startCase;
     }
     /**

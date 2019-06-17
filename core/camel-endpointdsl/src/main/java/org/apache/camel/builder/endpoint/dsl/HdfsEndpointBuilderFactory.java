@@ -1788,7 +1788,7 @@ public interface HdfsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code> enum.
      */
-    static enum HdfsFileSystemType {
+    enum HdfsFileSystemType {
         LOCAL, HDFS;
     }
 
@@ -1796,7 +1796,7 @@ public interface HdfsEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.hdfs2.HdfsFileType</code>
      * enum.
      */
-    static enum HdfsFileType {
+    enum HdfsFileType {
         NORMAL_FILE, SEQUENCE_FILE, MAP_FILE, BLOOMMAP_FILE, ARRAY_FILE;
     }
 
@@ -1804,7 +1804,7 @@ public interface HdfsEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.hdfs2.WritableType</code>
      * enum.
      */
-    static enum WritableType {
+    enum WritableType {
         NULL, BOOLEAN, BYTE, INT, FLOAT, LONG, DOUBLE, TEXT, BYTES;
     }
 
@@ -1812,7 +1812,7 @@ public interface HdfsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code> enum.
      */
-    static enum HdfsCompressionCodec {
+    enum HdfsCompressionCodec {
         DEFAULT, GZIP, BZIP2;
     }
 
@@ -1820,7 +1820,7 @@ public interface HdfsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> enum.
      */
-    static enum CompressionType {
+    enum CompressionType {
         NONE, RECORD, BLOCK;
     }
     /**

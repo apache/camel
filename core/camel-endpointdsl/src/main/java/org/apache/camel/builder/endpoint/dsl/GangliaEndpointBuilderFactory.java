@@ -314,7 +314,7 @@ public interface GangliaEndpointBuilderFactory {
      * <code>info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode</code>
      * enum.
      */
-    static enum UDPAddressingMode {
+    enum UDPAddressingMode {
         MULTICAST, UNICAST;
     }
 
@@ -322,7 +322,7 @@ public interface GangliaEndpointBuilderFactory {
      * Proxy enum for <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code>
      * enum.
      */
-    static enum GMetricSlope {
+    enum GMetricSlope {
         ZERO, POSITIVE, NEGATIVE, BOTH;
     }
 
@@ -330,7 +330,7 @@ public interface GangliaEndpointBuilderFactory {
      * Proxy enum for <code>info.ganglia.gmetric4j.gmetric.GMetricType</code>
      * enum.
      */
-    static enum GMetricType {
+    enum GMetricType {
         STRING, INT8, UINT8, INT16, UINT16, INT32, UINT32, FLOAT, DOUBLE;
     }
     /**

@@ -1833,7 +1833,7 @@ public interface SmppEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code> enum.
      */
-    static enum SmppSplittingPolicy {
+    enum SmppSplittingPolicy {
         ALLOW, REJECT, TRUNCATE;
     }
     /**

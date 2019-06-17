@@ -185,7 +185,7 @@ public interface MicrometerEndpointBuilderFactory {
      * Proxy enum for <code>io.micrometer.core.instrument.Meter$Type</code>
      * enum.
      */
-    static enum Type {
+    enum Type {
         COUNTER, GAUGE, LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER;
     }
     /**

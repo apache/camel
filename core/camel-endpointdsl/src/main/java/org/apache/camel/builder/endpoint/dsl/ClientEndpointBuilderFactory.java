@@ -1293,7 +1293,7 @@ public interface ClientEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code> enum.
      */
-    static enum ASDUAddressType {
+    enum ASDUAddressType {
         SIZE_1, SIZE_2;
     }
 
@@ -1301,7 +1301,7 @@ public interface ClientEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> enum.
      */
-    static enum CauseOfTransmissionType {
+    enum CauseOfTransmissionType {
         SIZE_1, SIZE_2;
     }
 
@@ -1309,7 +1309,7 @@ public interface ClientEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> enum.
      */
-    static enum InformationObjectAddressType {
+    enum InformationObjectAddressType {
         SIZE_1, SIZE_2, SIZE_3;
     }
     /**

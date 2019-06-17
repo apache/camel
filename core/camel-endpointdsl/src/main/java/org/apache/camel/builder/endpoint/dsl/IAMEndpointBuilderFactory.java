@@ -114,7 +114,7 @@ public interface IAMEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.iam.IAMOperations</code> enum.
      */
-    static enum IAMOperations {
+    enum IAMOperations {
         listAccessKeys, createUser, deleteUser, getUser, listUsers, createAccessKey, deleteAccessKey, updateAccessKey, createGroup, deleteGroup, listGroups, addUserToGroup, removeUserFromGroup;
     }
     /**

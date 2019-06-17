@@ -152,7 +152,7 @@ public interface DdbStreamEndpointBuilderFactory {
      * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code>
      * enum.
      */
-    static enum ShardIteratorType {
+    enum ShardIteratorType {
         TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER;
     }
     /**

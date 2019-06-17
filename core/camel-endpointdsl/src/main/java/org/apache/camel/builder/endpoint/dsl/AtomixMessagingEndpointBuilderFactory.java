@@ -1214,7 +1214,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> enum.
      */
-    static enum BroadcastType {
+    enum BroadcastType {
         ALL, RANDOM;
     }
 
@@ -1222,14 +1222,14 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> enum.
      */
-    static enum Action {
+    enum Action {
         DIRECT, BROADCAST;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
-    static enum ReadConsistency {
+    enum ReadConsistency {
         ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
     }
     /**

@@ -961,21 +961,21 @@ public interface EhcacheEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.ehcache.event.EventFiring</code> enum.
      */
-    static enum EventFiring {
+    enum EventFiring {
         ASYNCHRONOUS, SYNCHRONOUS;
     }
 
     /**
      * Proxy enum for <code>org.ehcache.event.EventOrdering</code> enum.
      */
-    static enum EventOrdering {
+    enum EventOrdering {
         UNORDERED, ORDERED;
     }
 
     /**
      * Proxy enum for <code>org.ehcache.event.EventType</code> enum.
      */
-    static enum EventType {
+    enum EventType {
         EVICTED, EXPIRED, REMOVED, CREATED, UPDATED;
     }
     /**

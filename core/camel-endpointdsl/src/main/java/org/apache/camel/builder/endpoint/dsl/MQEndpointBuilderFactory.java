@@ -114,7 +114,7 @@ public interface MQEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.mq.MQOperations</code> enum.
      */
-    static enum MQOperations {
+    enum MQOperations {
         listBrokers, createBroker, deleteBroker, rebootBroker, updateBroker, describeBroker;
     }
     /**

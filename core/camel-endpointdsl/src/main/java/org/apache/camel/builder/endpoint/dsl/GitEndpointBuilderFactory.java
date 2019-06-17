@@ -585,7 +585,7 @@ public interface GitEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.git.consumer.GitType</code> enum.
      */
-    static enum GitType {
+    enum GitType {
         COMMIT, TAG, BRANCH;
     }
     /**

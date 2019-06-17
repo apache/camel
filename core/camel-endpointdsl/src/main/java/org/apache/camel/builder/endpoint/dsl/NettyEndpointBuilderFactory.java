@@ -3617,7 +3617,7 @@ public interface NettyEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.netty4.TextLineDelimiter</code> enum.
      */
-    static enum TextLineDelimiter {
+    enum TextLineDelimiter {
         LINE, NULL;
     }
     /**

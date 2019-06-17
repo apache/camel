@@ -1423,7 +1423,7 @@ public interface SoroushBotEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.soroushbot.models.Endpoint</code> enum.
      */
-    static enum Endpoint {
+    enum Endpoint {
         sendMessage, getMessage, uploadFile, downloadFile;
     }
     /**

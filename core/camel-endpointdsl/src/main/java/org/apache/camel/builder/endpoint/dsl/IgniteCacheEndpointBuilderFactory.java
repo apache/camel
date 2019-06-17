@@ -725,7 +725,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.apache.ignite.cache.CachePeekMode</code> enum.
      */
-    static enum CachePeekMode {
+    enum CachePeekMode {
         ALL, NEAR, PRIMARY, BACKUP, ONHEAP, OFFHEAP;
     }
 
@@ -734,7 +734,7 @@ public interface IgniteCacheEndpointBuilderFactory {
      * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code>
      * enum.
      */
-    static enum IgniteCacheOperation {
+    enum IgniteCacheOperation {
         GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR;
     }
     /**

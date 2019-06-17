@@ -1893,7 +1893,7 @@ public interface CxfEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.cxf.DataFormat</code>
      * enum.
      */
-    static enum DataFormat {
+    enum DataFormat {
         PAYLOAD, RAW, MESSAGE, CXF_MESSAGE, POJO;
     }
     /**

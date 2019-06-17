@@ -804,7 +804,7 @@ public interface ThriftEndpointBuilderFactory {
      * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
      * enum.
      */
-    static enum ThriftCompressionType {
+    enum ThriftCompressionType {
         NONE, ZLIB;
     }
 
@@ -813,7 +813,7 @@ public interface ThriftEndpointBuilderFactory {
      * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
      * enum.
      */
-    static enum ThriftExchangeProtocol {
+    enum ThriftExchangeProtocol {
         BINARY, JSON, SJSON, COMPACT;
     }
 
@@ -822,7 +822,7 @@ public interface ThriftEndpointBuilderFactory {
      * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
      * enum.
      */
-    static enum ThriftNegotiationType {
+    enum ThriftNegotiationType {
         PLAINTEXT, SSL, SASL;
     }
     /**

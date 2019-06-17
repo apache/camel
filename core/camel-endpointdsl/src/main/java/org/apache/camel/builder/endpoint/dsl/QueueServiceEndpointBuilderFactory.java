@@ -588,7 +588,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> enum.
      */
-    static enum QueueServiceOperations {
+    enum QueueServiceOperations {
         listQueues, createQueue, deleteQueue, addMessage, retrieveMessage, peekMessage, updateMessage, deleteMessage;
     }
     /**

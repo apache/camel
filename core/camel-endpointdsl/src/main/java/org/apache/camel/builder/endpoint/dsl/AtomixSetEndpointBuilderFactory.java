@@ -1134,14 +1134,14 @@ public interface AtomixSetEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> enum.
      */
-    static enum Action {
+    enum Action {
         ADD, CLEAR, CONTAINS, IS_EMPTY, REMOVE, SIZE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
-    static enum ReadConsistency {
+    enum ReadConsistency {
         ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
     }
     /**

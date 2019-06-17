@@ -527,7 +527,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> enum.
      */
-    static enum ReactiveStreamsBackpressureStrategy {
+    enum ReactiveStreamsBackpressureStrategy {
         BUFFER, OLDEST, LATEST;
     }
     /**

@@ -1243,7 +1243,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code> enum.
      */
-    static enum MongoDbOperation {
+    enum MongoDbOperation {
         findById, findOneByQuery, findAll, findDistinct, insert, save, update, remove, bulkWrite, aggregate, getDbStats, getColStats, count, command;
     }
 
@@ -1251,7 +1251,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code> enum.
      */
-    static enum MongoDbOutputType {
+    enum MongoDbOutputType {
         DocumentList, Document, MongoIterable;
     }
     /**

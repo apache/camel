@@ -925,7 +925,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> enum.
      */
-    static enum XmlCommand {
+    enum XmlCommand {
         sign, verify;
     }
     /**
