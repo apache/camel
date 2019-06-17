@@ -1804,7 +1804,7 @@ public interface SjmsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> enum.
      */
-    static enum SessionAcknowledgementType {
+    enum SessionAcknowledgementType {
         AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE, SESSION_TRANSACTED;
     }
     /**

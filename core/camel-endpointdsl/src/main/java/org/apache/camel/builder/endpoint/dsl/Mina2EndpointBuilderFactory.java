@@ -1732,7 +1732,7 @@ public interface Mina2EndpointBuilderFactory {
      * <code>org.apache.camel.component.mina2.Mina2TextLineDelimiter</code>
      * enum.
      */
-    static enum Mina2TextLineDelimiter {
+    enum Mina2TextLineDelimiter {
         DEFAULT, AUTO, UNIX, WINDOWS, MAC;
     }
     /**

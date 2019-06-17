@@ -4842,7 +4842,7 @@ public interface FtpsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> enum.
      */
-    static enum PathSeparator {
+    enum PathSeparator {
         UNIX, Windows, Auto;
     }
 
@@ -4850,7 +4850,7 @@ public interface FtpsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
      */
-    static enum GenericFileExist {
+    enum GenericFileExist {
         Override, Append, Fail, Ignore, Move, TryRename;
     }
     /**

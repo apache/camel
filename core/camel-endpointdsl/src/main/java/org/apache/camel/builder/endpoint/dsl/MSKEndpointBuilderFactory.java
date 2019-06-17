@@ -114,7 +114,7 @@ public interface MSKEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.msk.MSKOperations</code> enum.
      */
-    static enum MSKOperations {
+    enum MSKOperations {
         listClusters, createCluster, deleteCluster, describeCluster;
     }
     /**

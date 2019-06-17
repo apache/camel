@@ -186,7 +186,7 @@ public interface XChangeEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> enum.
      */
-    static enum XChangeMethod {
+    enum XChangeMethod {
         balances, fundingHistory, wallets, currencies, currencyMetaData, currencyPairs, currencyPairMetaData, ticker;
     }
 
@@ -194,7 +194,7 @@ public interface XChangeEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> enum.
      */
-    static enum XChangeService {
+    enum XChangeService {
         marketdata, metadata, account;
     }
     /**

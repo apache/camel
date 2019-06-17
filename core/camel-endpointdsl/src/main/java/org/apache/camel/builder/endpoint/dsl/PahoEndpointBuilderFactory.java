@@ -871,7 +871,7 @@ public interface PahoEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.paho.PahoPersistence</code> enum.
      */
-    static enum PahoPersistence {
+    enum PahoPersistence {
         FILE, MEMORY;
     }
     /**

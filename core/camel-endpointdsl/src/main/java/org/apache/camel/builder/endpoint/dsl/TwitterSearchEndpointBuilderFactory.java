@@ -1306,7 +1306,7 @@ public interface TwitterSearchEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
-    static enum EndpointType {
+    enum EndpointType {
         POLLING, DIRECT, EVENT;
     }
     /**

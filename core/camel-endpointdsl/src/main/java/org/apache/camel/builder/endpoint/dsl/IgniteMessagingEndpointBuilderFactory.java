@@ -576,7 +576,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> enum.
      */
-    static enum IgniteMessagingSendMode {
+    enum IgniteMessagingSendMode {
         ORDERED, UNORDERED;
     }
     /**

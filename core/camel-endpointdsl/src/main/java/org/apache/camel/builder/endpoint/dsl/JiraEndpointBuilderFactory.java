@@ -719,7 +719,7 @@ public interface JiraEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jira.JiraType</code>
      * enum.
      */
-    static enum JiraType {
+    enum JiraType {
         ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS;
     }
     /**

@@ -587,7 +587,7 @@ public interface HttpEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.http.common.HttpMethods</code>
      * enum.
      */
-    static enum HttpMethods {
+    enum HttpMethods {
         GET, POST, PUT, DELETE, HEAD, OPTIONS, TRACE, PATCH;
     }
     /**

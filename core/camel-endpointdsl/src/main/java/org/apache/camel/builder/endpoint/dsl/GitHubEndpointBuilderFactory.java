@@ -580,7 +580,7 @@ public interface GitHubEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.github.GitHubType</code>
      * enum.
      */
-    static enum GitHubType {
+    enum GitHubType {
         CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE;
     }
     /**

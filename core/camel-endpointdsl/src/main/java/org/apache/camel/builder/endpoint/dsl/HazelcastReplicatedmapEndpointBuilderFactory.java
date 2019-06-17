@@ -1034,7 +1034,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
      * enum.
      */
-    static enum HazelcastOperation {
+    enum HazelcastOperation {
         put, delete, get, update, query, getAll, clear, putIfAbsent, allAll, removeAll, retainAll, evict, evictAll, valueCount, containsKey, containsValue, keySet, removevalue, increment, decrement, setvalue, destroy, compareAndSet, getAndAdd, add, offer, peek, poll, remainingCapacity, drainTo, removeIf, take, publish, readOnceHeal, readOnceTail, capacity;
     }
 
@@ -1042,7 +1042,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
      */
-    static enum HazelcastQueueConsumerMode {
+    enum HazelcastQueueConsumerMode {
         listen, poll;
     }
     /**

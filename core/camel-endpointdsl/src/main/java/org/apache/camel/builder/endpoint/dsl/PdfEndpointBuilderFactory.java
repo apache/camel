@@ -283,7 +283,7 @@ public interface PdfEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.pdf.PdfOperation</code>
      * enum.
      */
-    static enum PdfOperation {
+    enum PdfOperation {
         create, append, extractText;
     }
 
@@ -291,7 +291,7 @@ public interface PdfEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.pdf.TextProcessingFactory</code> enum.
      */
-    static enum TextProcessingFactory {
+    enum TextProcessingFactory {
         autoFormatting, lineTermination;
     }
     /**

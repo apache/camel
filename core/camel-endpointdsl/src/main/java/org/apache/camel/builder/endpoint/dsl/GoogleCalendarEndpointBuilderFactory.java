@@ -755,7 +755,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> enum.
      */
-    static enum GoogleCalendarApiName {
+    enum GoogleCalendarApiName {
         ACL, LIST, CALENDARS, CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS;
     }
     /**

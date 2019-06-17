@@ -238,7 +238,7 @@ public interface MetricsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.metrics.MetricsType</code> enum.
      */
-    static enum MetricsType {
+    enum MetricsType {
         gauge, counter, histogram, meter, timer;
     }
 
@@ -246,7 +246,7 @@ public interface MetricsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.metrics.MetricsTimerAction</code> enum.
      */
-    static enum MetricsTimerAction {
+    enum MetricsTimerAction {
         start, stop;
     }
     /**

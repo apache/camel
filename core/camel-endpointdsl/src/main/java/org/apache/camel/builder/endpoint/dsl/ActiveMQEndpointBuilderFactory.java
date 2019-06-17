@@ -4622,7 +4622,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jms.JmsMessageType</code>
      * enum.
      */
-    static enum JmsMessageType {
+    enum JmsMessageType {
         Bytes, Map, Object, Stream, Text, Blob;
     }
 
@@ -4630,7 +4630,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jms.ConsumerType</code>
      * enum.
      */
-    static enum ConsumerType {
+    enum ConsumerType {
         Simple, Default, Custom;
     }
 
@@ -4638,7 +4638,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code> enum.
      */
-    static enum DefaultTaskExecutorType {
+    enum DefaultTaskExecutorType {
         ThreadPool, SimpleAsync;
     }
 
@@ -4646,7 +4646,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jms.ReplyToType</code>
      * enum.
      */
-    static enum ReplyToType {
+    enum ReplyToType {
         Temporary, Shared, Exclusive;
     }
     /**

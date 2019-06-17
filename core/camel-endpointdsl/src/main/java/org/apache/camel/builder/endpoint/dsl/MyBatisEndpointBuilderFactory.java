@@ -932,7 +932,7 @@ public interface MyBatisEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
      */
-    static enum ExecutorType {
+    enum ExecutorType {
         SIMPLE, REUSE, BATCH;
     }
 
@@ -940,7 +940,7 @@ public interface MyBatisEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.mybatis.StatementType</code> enum.
      */
-    static enum StatementType {
+    enum StatementType {
         SelectOne, SelectList, Insert, InsertList, Update, UpdateList, Delete, DeleteList;
     }
     /**

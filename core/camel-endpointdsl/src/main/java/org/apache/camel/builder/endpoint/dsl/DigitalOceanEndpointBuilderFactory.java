@@ -261,7 +261,7 @@ public interface DigitalOceanEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> enum.
      */
-    static enum DigitalOceanOperations {
+    enum DigitalOceanOperations {
         create, update, delete, list, ownList, get, listBackups, listActions, listNeighbors, listSnapshots, listKernels, listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild, rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach, assign, unassign, tag, untag;
     }
 
@@ -269,7 +269,7 @@ public interface DigitalOceanEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> enum.
      */
-    static enum DigitalOceanResources {
+    enum DigitalOceanResources {
         account, actions, blockStorages, droplets, images, snapshots, keys, regions, sizes, floatingIPs, tags;
     }
     /**

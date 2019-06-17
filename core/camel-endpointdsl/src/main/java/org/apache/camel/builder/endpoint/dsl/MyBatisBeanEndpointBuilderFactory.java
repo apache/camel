@@ -119,7 +119,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
      */
-    static enum ExecutorType {
+    enum ExecutorType {
         SIMPLE, REUSE, BATCH;
     }
     /**

@@ -279,7 +279,7 @@ public interface DdbEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> enum.
      */
-    static enum DdbOperations {
+    enum DdbOperations {
         BatchGetItems, DeleteItem, DeleteTable, DescribeTable, GetItem, PutItem, Query, Scan, UpdateItem, UpdateTable;
     }
     /**

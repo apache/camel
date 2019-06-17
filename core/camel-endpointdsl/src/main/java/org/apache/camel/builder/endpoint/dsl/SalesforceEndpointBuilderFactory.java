@@ -2319,7 +2319,7 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.internal.OperationName</code>
      * enum.
      */
-    static enum OperationName {
+    enum OperationName {
         GET_VERSIONS, GET_RESOURCES, GET_GLOBAL_OBJECTS, GET_BASIC_INFO, GET_DESCRIPTION, GET_SOBJECT, CREATE_SOBJECT, UPDATE_SOBJECT, DELETE_SOBJECT, GET_SOBJECT_WITH_ID, UPSERT_SOBJECT, DELETE_SOBJECT_WITH_ID, GET_BLOB_FIELD, QUERY, QUERY_MORE, QUERY_ALL, SEARCH, APEX_CALL, RECENT, CREATE_JOB, GET_JOB, CLOSE_JOB, ABORT_JOB, CREATE_BATCH, GET_BATCH, GET_ALL_BATCHES, GET_REQUEST, GET_RESULTS, CREATE_BATCH_QUERY, GET_QUERY_RESULT_IDS, GET_QUERY_RESULT, GET_RECENT_REPORTS, GET_REPORT_DESCRIPTION, EXECUTE_SYNCREPORT, EXECUTE_ASYNCREPORT, GET_REPORT_INSTANCES, GET_REPORT_RESULTS, LIMITS, APPROVAL, APPROVALS, COMPOSITE_TREE, COMPOSITE_BATCH, COMPOSITE;
     }
 
@@ -2327,7 +2327,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> enum.
      */
-    static enum ContentType {
+    enum ContentType {
         XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON;
     }
 
@@ -2336,7 +2336,7 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code>
      * enum.
      */
-    static enum PayloadFormat {
+    enum PayloadFormat {
         JSON, XML;
     }
 
@@ -2345,7 +2345,7 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
      * enum.
      */
-    static enum NotFoundBehaviour {
+    enum NotFoundBehaviour {
         EXCEPTION, NULL;
     }
 
@@ -2353,7 +2353,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> enum.
      */
-    static enum NotifyForFieldsEnum {
+    enum NotifyForFieldsEnum {
         ALL, REFERENCED, SELECT, WHERE;
     }
 
@@ -2361,7 +2361,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> enum.
      */
-    static enum NotifyForOperationsEnum {
+    enum NotifyForOperationsEnum {
         ALL, CREATE, EXTENDED, UPDATE;
     }
     /**

@@ -479,7 +479,7 @@ public interface AsteriskEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.asterisk.AsteriskAction</code> enum.
      */
-    static enum AsteriskAction {
+    enum AsteriskAction {
         QUEUE_STATUS, SIP_PEERS, EXTENSION_STATE;
     }
     /**

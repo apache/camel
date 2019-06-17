@@ -1082,14 +1082,14 @@ public interface AtomixQueueEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> enum.
      */
-    static enum Action {
+    enum Action {
         ADD, OFFER, PEEK, POLL, CLEAR, CONTAINS, IS_EMPTY, REMOVE, SIZE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
-    static enum ReadConsistency {
+    enum ReadConsistency {
         ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
     }
     /**

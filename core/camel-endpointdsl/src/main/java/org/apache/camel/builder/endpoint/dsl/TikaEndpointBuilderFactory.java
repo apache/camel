@@ -186,7 +186,7 @@ public interface TikaEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.tika.TikaOperation</code>
      * enum.
      */
-    static enum TikaOperation {
+    enum TikaOperation {
         parse, detect;
     }
 
@@ -194,7 +194,7 @@ public interface TikaEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code> enum.
      */
-    static enum TikaParseOutputFormat {
+    enum TikaParseOutputFormat {
         xml, html, text, textMain;
     }
     /**
