@@ -1168,7 +1168,7 @@ public interface GrpcEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code> enum.
      */
-    public static enum GrpcConsumerStrategy {
+    static enum GrpcConsumerStrategy {
         AGGREGATION, PROPAGATION;
     }
 
@@ -1176,7 +1176,7 @@ public interface GrpcEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code> enum.
      */
-    public static enum GrpcProducerStrategy {
+    static enum GrpcProducerStrategy {
         SIMPLE, STREAMING;
     }
 
@@ -1184,7 +1184,7 @@ public interface GrpcEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.grpc.GrpcAuthType</code>
      * enum.
      */
-    public static enum GrpcAuthType {
+    static enum GrpcAuthType {
         NONE, GOOGLE, JWT;
     }
 
@@ -1192,14 +1192,14 @@ public interface GrpcEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code> enum.
      */
-    public static enum JwtAlgorithm {
+    static enum JwtAlgorithm {
         HMAC256, HMAC384, HMAC512;
     }
 
     /**
      * Proxy enum for <code>io.grpc.netty.NegotiationType</code> enum.
      */
-    public static enum NegotiationType {
+    static enum NegotiationType {
         TLS, PLAINTEXT_UPGRADE, PLAINTEXT;
     }
     /**

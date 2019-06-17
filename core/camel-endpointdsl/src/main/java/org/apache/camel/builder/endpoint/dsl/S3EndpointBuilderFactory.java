@@ -1891,7 +1891,7 @@ public interface S3EndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.s3.S3Operations</code> enum.
      */
-    public static enum S3Operations {
+    static enum S3Operations {
         copyObject, listObjects, deleteObject, deleteBucket, listBuckets, downloadLink, getObject;
     }
     /**

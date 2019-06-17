@@ -647,7 +647,7 @@ public interface DisruptorVmEndpointBuilderFactory {
      * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code>
      * enum.
      */
-    public static enum DisruptorWaitStrategy {
+    static enum DisruptorWaitStrategy {
         Blocking, Sleeping, BusySpin, Yielding;
     }
 
@@ -656,7 +656,7 @@ public interface DisruptorVmEndpointBuilderFactory {
      * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code>
      * enum.
      */
-    public static enum DisruptorProducerType {
+    static enum DisruptorProducerType {
         Single, Multi;
     }
     /**

@@ -1160,7 +1160,7 @@ public interface FlatpackEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.flatpack.FlatpackType</code> enum.
      */
-    public static enum FlatpackType {
+    static enum FlatpackType {
         fixed, delim;
     }
     /**

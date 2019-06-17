@@ -114,7 +114,7 @@ public interface KMSEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.kms.KMSOperations</code> enum.
      */
-    public static enum KMSOperations {
+    static enum KMSOperations {
         listKeys, createKey, disableKey, scheduleKeyDeletion, describeKey, enableKey;
     }
     /**

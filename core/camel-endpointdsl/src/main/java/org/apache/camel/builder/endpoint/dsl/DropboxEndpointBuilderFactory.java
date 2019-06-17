@@ -740,7 +740,7 @@ public interface DropboxEndpointBuilderFactory {
      * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
      * enum.
      */
-    public static enum DropboxOperation {
+    static enum DropboxOperation {
         put, del, search, get, move;
     }
 
@@ -749,7 +749,7 @@ public interface DropboxEndpointBuilderFactory {
      * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code>
      * enum.
      */
-    public static enum DropboxUploadMode {
+    static enum DropboxUploadMode {
         add, force;
     }
     /**

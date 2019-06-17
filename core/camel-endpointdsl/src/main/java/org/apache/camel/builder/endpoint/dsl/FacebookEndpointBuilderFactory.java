@@ -4432,7 +4432,7 @@ public interface FacebookEndpointBuilderFactory {
     /**
      * Proxy enum for <code>facebook4j.PictureSize</code> enum.
      */
-    public static enum PictureSize {
+    static enum PictureSize {
         square, small, normal, large, thumbnail, album;
     }
     /**

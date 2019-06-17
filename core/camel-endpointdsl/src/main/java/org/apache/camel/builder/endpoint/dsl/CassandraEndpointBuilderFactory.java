@@ -1299,7 +1299,7 @@ public interface CassandraEndpointBuilderFactory {
      * Proxy enum for <code>com.datastax.driver.core.ConsistencyLevel</code>
      * enum.
      */
-    public static enum ConsistencyLevel {
+    static enum ConsistencyLevel {
         ANY, ONE, TWO, THREE, QUORUM, ALL, LOCAL_QUORUM, EACH_QUORUM, SERIAL, LOCAL_SERIAL, LOCAL_ONE;
     }
     /**

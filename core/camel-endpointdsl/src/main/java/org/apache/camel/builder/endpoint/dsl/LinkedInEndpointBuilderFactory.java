@@ -1049,7 +1049,7 @@ public interface LinkedInEndpointBuilderFactory {
      * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code>
      * enum.
      */
-    public static enum LinkedInApiName {
+    static enum LinkedInApiName {
         COMMENTS, COMPANIES, GROUPS, JOBS, PEOPLE, POSTS, SEARCH;
     }
 
@@ -1057,7 +1057,7 @@ public interface LinkedInEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.linkedin.api.OAuthScope</code> enum.
      */
-    public static enum OAuthScope {
+    static enum OAuthScope {
         R_BASICPROFILE, R_FULLPROFILE, R_EMAILADDRESS, R_NETWORK, R_CONTACTINFO, RW_NUS, RW_COMPANY_ADMIN, RW_GROUPS, W_MESSAGES, W_SHARE;
     }
     /**

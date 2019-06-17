@@ -2911,7 +2911,7 @@ public interface FileEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
      */
-    public static enum GenericFileExist {
+    static enum GenericFileExist {
         Override, Append, Fail, Ignore, Move, TryRename;
     }
     /**

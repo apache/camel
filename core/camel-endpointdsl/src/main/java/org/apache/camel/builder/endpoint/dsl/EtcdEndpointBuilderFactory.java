@@ -1127,7 +1127,7 @@ public interface EtcdEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.etcd.EtcdNamespace</code>
      * enum.
      */
-    public static enum EtcdNamespace {
+    static enum EtcdNamespace {
         stats, watch, keys;
     }
     /**

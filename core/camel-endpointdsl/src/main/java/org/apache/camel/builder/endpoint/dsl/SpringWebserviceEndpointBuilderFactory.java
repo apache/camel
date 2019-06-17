@@ -948,7 +948,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> enum.
      */
-    public static enum EndpointMappingType {
+    static enum EndpointMappingType {
         ROOT_QNAME, ACTION, TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME;
     }
     /**

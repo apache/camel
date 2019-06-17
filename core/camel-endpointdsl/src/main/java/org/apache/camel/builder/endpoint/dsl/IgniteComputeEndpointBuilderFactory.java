@@ -156,7 +156,7 @@ public interface IgniteComputeEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> enum.
      */
-    public static enum IgniteComputeExecutionType {
+    static enum IgniteComputeExecutionType {
         CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN;
     }
     /**

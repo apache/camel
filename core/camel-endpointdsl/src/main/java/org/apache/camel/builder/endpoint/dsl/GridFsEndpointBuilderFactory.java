@@ -790,7 +790,7 @@ public interface GridFsEndpointBuilderFactory {
      * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
      * enum.
      */
-    public static enum QueryStrategy {
+    static enum QueryStrategy {
         TimeStamp, PersistentTimestamp, FileAttribute, TimeStampAndFileAttribute, PersistentTimestampAndFileAttribute;
     }
     /**

@@ -1795,7 +1795,7 @@ public interface SqlEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.sql.SqlOutputType</code>
      * enum.
      */
-    public static enum SqlOutputType {
+    static enum SqlOutputType {
         SelectOne, SelectList, StreamList;
     }
     /**

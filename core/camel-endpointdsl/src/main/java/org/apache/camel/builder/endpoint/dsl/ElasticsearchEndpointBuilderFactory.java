@@ -312,7 +312,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> enum.
      */
-    public static enum ElasticsearchOperation {
+    static enum ElasticsearchOperation {
         Index, Update, Bulk, BulkIndex, GetById, MultiGet, MultiSearch, Delete, DeleteIndex, Search, Exists, Ping, Info;
     }
     /**

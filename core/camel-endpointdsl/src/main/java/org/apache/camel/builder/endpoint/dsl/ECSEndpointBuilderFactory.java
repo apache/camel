@@ -114,7 +114,7 @@ public interface ECSEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> enum.
      */
-    public static enum ECSOperations {
+    static enum ECSOperations {
         listClusters, describeCluster, createCluster, deleteCluster;
     }
     /**

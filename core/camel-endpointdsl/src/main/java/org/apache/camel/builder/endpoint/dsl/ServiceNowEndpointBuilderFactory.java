@@ -834,7 +834,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
      * enum.
      */
-    public static enum ServiceNowRelease {
+    static enum ServiceNowRelease {
         FUJI, GENEVA, HELSINKI;
     }
     /**

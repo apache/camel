@@ -1217,7 +1217,7 @@ public interface JCacheEndpointBuilderFactory {
     /**
      * Proxy enum for <code>javax.cache.event.EventType</code> enum.
      */
-    public static enum EventType {
+    static enum EventType {
         CREATED, UPDATED, REMOVED, EXPIRED;
     }
     /**

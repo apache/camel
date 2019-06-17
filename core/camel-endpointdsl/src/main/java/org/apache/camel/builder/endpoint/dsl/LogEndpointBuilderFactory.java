@@ -582,7 +582,7 @@ public interface LogEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> enum.
      */
-    public static enum OutputStyle {
+    static enum OutputStyle {
         Default, Tab, Fixed;
     }
     /**

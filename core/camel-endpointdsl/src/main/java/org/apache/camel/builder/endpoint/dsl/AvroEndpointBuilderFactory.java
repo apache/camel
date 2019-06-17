@@ -794,7 +794,7 @@ public interface AvroEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.avro.AvroTransport</code>
      * enum.
      */
-    public static enum AvroTransport {
+    static enum AvroTransport {
         http, netty;
     }
     /**

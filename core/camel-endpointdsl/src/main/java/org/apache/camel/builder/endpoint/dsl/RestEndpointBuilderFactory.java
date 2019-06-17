@@ -670,7 +670,7 @@ public interface RestEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code> enum.
      */
-    public static enum RestBindingMode {
+    static enum RestBindingMode {
         auto, off, json, xml, json_xml;
     }
     /**

@@ -705,7 +705,7 @@ public interface GooglePubsubEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> enum.
      */
-    public static enum AckMode {
+    static enum AckMode {
         AUTO, NONE;
     }
     /**

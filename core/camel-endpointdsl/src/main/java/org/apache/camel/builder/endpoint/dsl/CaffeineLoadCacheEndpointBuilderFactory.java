@@ -824,7 +824,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.caffeine.EvictionType</code> enum.
      */
-    public static enum EvictionType {
+    static enum EvictionType {
         size_based, time_based;
     }
     /**

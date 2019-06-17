@@ -1084,7 +1084,7 @@ public interface Olingo2EndpointBuilderFactory {
      * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code>
      * enum.
      */
-    public static enum Olingo2ApiName {
+    static enum Olingo2ApiName {
         DEFAULT;
     }
     /**

@@ -819,7 +819,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> enum.
      */
-    public static enum BraintreeApiName {
+    static enum BraintreeApiName {
         ADDON, ADDRESS, CLIENTTOKEN, CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD, MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT, SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION;
     }
     /**

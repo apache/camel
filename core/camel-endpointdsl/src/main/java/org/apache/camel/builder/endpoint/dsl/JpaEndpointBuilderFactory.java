@@ -1627,7 +1627,7 @@ public interface JpaEndpointBuilderFactory {
     /**
      * Proxy enum for <code>javax.persistence.LockModeType</code> enum.
      */
-    public static enum LockModeType {
+    static enum LockModeType {
         READ, WRITE, OPTIMISTIC, OPTIMISTIC_FORCE_INCREMENT, PESSIMISTIC_READ, PESSIMISTIC_WRITE, PESSIMISTIC_FORCE_INCREMENT, NONE;
     }
     /**
