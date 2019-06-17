@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
+import org.apache.camel.model.language.TokenizerExpression;
 import org.junit.Test;
 
 public class TokenizerTest extends ExchangeTestSupport {
@@ -30,6 +31,19 @@ public class TokenizerTest extends ExchangeTestSupport {
     protected void populateExchange(Exchange exchange) {
         super.populateExchange(exchange);
         exchange.getIn().setHeader("names", "Claus,James,Willem");
+    }
+
+    @Test
+    public void testTokenizeHeaderWithStringContructor() throws Exception {
+        TokenizerExpression definition = new TokenizerExpression(",");
+        definition.setHeaderName("names");
+
+        List<?> names = definition.createExpression(exchange.getContext()).evaluate(exchange, List.class);
+        assertEquals(3, names.size());
+
+        assertEquals("Claus", names.get(0));
+        assertEquals("James", names.get(1));
+        assertEquals("Willem", names.get(2));
     }
 
     @Test
@@ -250,7 +264,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         List<?> names = exp.evaluate(exchange, List.class);
         assertNull(names);
     }
-    
+
     @Test
     public void testTokenizeXMLPairWithSimilarChildNames() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("Trip", "Trips");
@@ -258,7 +272,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(1, names.size());
     }
-    
+
 
     @Test
     public void testTokenizeXMLPairWithDefaultNamespace() throws Exception {

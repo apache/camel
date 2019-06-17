@@ -61,6 +61,10 @@ public class TokenizerExpression extends ExpressionDefinition {
     public TokenizerExpression() {
     }
 
+    public TokenizerExpression(String token) {
+        this.token = token;
+    }
+
     @Override
     public String getLanguage() {
         return "tokenize";
