@@ -1995,6 +1995,10 @@
   </feature>
   <feature name='camel-script-groovy' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-script</feature>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
   </feature>
