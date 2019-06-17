@@ -750,6 +750,10 @@ public final class IntrospectionSupport {
     public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
         Set<Method> candidates = new LinkedHashSet<>();
 
+        boolean allowPrivate = name.startsWith("#private#");
+        if (allowPrivate) {
+            name = name.substring(9);
+        }
         // Build the method name
         String builderName = "with" + StringHelper.capitalize(name, true);
         String builderName2 = StringHelper.capitalize(name, true);
@@ -759,15 +763,17 @@ public final class IntrospectionSupport {
             // Since Object.class.isInstance all the objects,
             // here we just make sure it will be add to the bottom of the set.
             Method objectSetMethod = null;
-            Method[] methods = clazz.getMethods();
+            Method[] methods = allowPrivate ? clazz.getDeclaredMethods() : clazz.getMethods();
             for (Method method : methods) {
                 boolean validName = method.getName().equals(setName) || allowBuilderPattern && method.getName().equals(builderName) || allowBuilderPattern && method.getName().equals(builderName2);
-                if (validName && isSetter(method, allowBuilderPattern)) {
-                    Class<?>[] params = method.getParameterTypes();
-                    if (params[0].equals(Object.class)) {
-                        objectSetMethod = method;
-                    } else {
-                        candidates.add(method);
+                if (validName) {
+                    if (isSetter(method, allowBuilderPattern)) {
+                        Class<?>[] params = method.getParameterTypes();
+                        if (params[0].equals(Object.class)) {
+                            objectSetMethod = method;
+                        } else {
+                            candidates.add(method);
+                        }
                     }
                 }
             }
