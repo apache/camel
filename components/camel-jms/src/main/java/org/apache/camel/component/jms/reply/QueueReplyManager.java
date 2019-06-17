@@ -177,7 +177,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
             answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
-        answer.setConnectionFactory(endpoint.getConnectionFactory());
+        answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";

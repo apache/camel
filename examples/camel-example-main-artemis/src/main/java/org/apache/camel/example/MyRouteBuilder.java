@@ -22,11 +22,9 @@ public class MyRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("quartz2:foo?cron={{myCron}}")
-            .bean("myBean", "hello")
-            .log("${body}")
-            .bean("myBean", "bye")
-            .log("${body}");
+        from("timer:foo?period=3s")
+            .transform(constant("Hello World"))
+            .to("jms:queue:cheese");
 
         from("jms:queue:cheese").to("log:cheese");
     }

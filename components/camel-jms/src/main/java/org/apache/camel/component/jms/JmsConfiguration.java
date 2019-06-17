@@ -766,6 +766,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateConnectionFactory() {
         if (connectionFactory == null) {
             connectionFactory = createConnectionFactory();
         }
@@ -1621,7 +1625,7 @@ public class JmsConfiguration implements Cloneable {
      */
     protected PlatformTransactionManager createTransactionManager() {
         JmsTransactionManager answer = new JmsTransactionManager();
-        answer.setConnectionFactory(getConnectionFactory());
+        answer.setConnectionFactory(getOrCreateConnectionFactory());
         return answer;
     }
 

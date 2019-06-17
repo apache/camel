@@ -595,12 +595,7 @@ public final class PropertyBindingSupport {
 
     private static boolean isComplexUserType(Class type) {
         // lets consider all non java, as complex types
-        return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
-    }
-
-    private static boolean isInterface(Class type) {
-        // lets consider all non java, as complex types
-        return type != null && type.isInterface();
+        return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
     }
 
     private static void setReferenceProperties(CamelContext context, Object target, Map<String, Object> parameters) {

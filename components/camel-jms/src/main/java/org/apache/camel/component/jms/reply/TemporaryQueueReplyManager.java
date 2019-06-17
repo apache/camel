@@ -111,7 +111,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getReplyToMaxConcurrentConsumers() > 0) {
             answer.setMaxConcurrentConsumers(endpoint.getReplyToMaxConcurrentConsumers());
         }
-        answer.setConnectionFactory(endpoint.getConnectionFactory());
+        answer.setConnectionFactory(endpoint.getConfiguration().getOrCreateConnectionFactory());
         // we use CACHE_CONSUMER by default to cling to the consumer as long as we can, since we can only consume
         // msgs from the JMS Connection that created the temp destination in the first place
         if (endpoint.getReplyToCacheLevelName() != null) {
