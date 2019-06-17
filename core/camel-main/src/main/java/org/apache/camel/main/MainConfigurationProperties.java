@@ -24,6 +24,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationEnabled = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
+    private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private long duration = -1;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
@@ -109,6 +110,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
     }
 
+    public boolean isAutowireComponentPropertiesAllowPrivateSetter() {
+        return autowireComponentPropertiesAllowPrivateSetter;
+    }
+
+    /**
+     * Whether autowiring components allows to use private setter method when setting the value. This may be needed
+     * in some rare situations when some configuration classes may configure via constructors over setters. But
+     * constructor configuration is more cumbersome to use via .properties files etc.
+     */
+    public void setAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
+        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
+    }
+
     public long getDuration() {
         return duration;
     }
@@ -191,6 +205,18 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutowireComponentPropertiesDeep(boolean autowireComponentPropertiesDeep) {
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
+        return this;
+    }
+
+    /**
+     * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
+     * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
+     * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
+        this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
         return this;
     }
 

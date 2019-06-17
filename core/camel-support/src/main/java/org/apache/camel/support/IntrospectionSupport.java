@@ -539,6 +539,23 @@ public final class IntrospectionSupport {
      */
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern) throws Exception {
+        return setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, false);
+    }
+
+    /**
+     * This method supports three modes to set a property:
+     *
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     *
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
+     * NULL and {@code value} is non-NULL.
+     *
+     * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
+     * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
+     * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
+     */
+    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+                                      boolean allowBuilderPattern, boolean allowPrivateSetter) throws Exception {
 
         // does the property name include a lookup key, then we need to set the property as a map or list
         if (name.contains("[") && name.endsWith("]")) {
@@ -599,10 +616,10 @@ public final class IntrospectionSupport {
 
         // we need to lookup the value from the registry
         if (context != null && refName != null && value == null) {
-            setters = findSetterMethodsOrderedByParameterType(clazz, name, allowBuilderPattern);
+            setters = findSetterMethodsOrderedByParameterType(clazz, name, allowBuilderPattern, allowPrivateSetter);
         } else {
             // find candidates of setter methods as there can be overloaded setters
-            setters = findSetterMethods(clazz, name, value, allowBuilderPattern);
+            setters = findSetterMethods(clazz, name, value, allowBuilderPattern, allowPrivateSetter);
         }
         if (setters.isEmpty()) {
             return false;
@@ -723,22 +740,22 @@ public final class IntrospectionSupport {
 
     public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true);
+        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false);
     }
 
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(context, typeConverter, target, name, value, null, true);
+        return setProperty(context, typeConverter, target, name, value, null, true, false);
     }
     
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(null, typeConverter, target, name, value, null, true);
+        return setProperty(null, typeConverter, target, name, value, null, true, false);
     }
 
     @Deprecated
     public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
-        return setProperty(null, null, target, name, value, null, allowBuilderPattern);
+        return setProperty(null, null, target, name, value, null, allowBuilderPattern, false);
     }
 
     @Deprecated
@@ -747,13 +764,9 @@ public final class IntrospectionSupport {
         return setProperty(target, name, value, true);
     }
 
-    public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern) {
+    public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter) {
         Set<Method> candidates = new LinkedHashSet<>();
 
-        boolean allowPrivate = name.startsWith("#private#");
-        if (allowPrivate) {
-            name = name.substring(9);
-        }
         // Build the method name
         String builderName = "with" + StringHelper.capitalize(name, true);
         String builderName2 = StringHelper.capitalize(name, true);
@@ -763,7 +776,7 @@ public final class IntrospectionSupport {
             // Since Object.class.isInstance all the objects,
             // here we just make sure it will be add to the bottom of the set.
             Method objectSetMethod = null;
-            Method[] methods = allowPrivate ? clazz.getDeclaredMethods() : clazz.getMethods();
+            Method[] methods = allowPrivateSetter ? clazz.getDeclaredMethods() : clazz.getMethods();
             for (Method method : methods) {
                 boolean validName = method.getName().equals(setName) || allowBuilderPattern && method.getName().equals(builderName) || allowBuilderPattern && method.getName().equals(builderName2);
                 if (validName) {
@@ -785,8 +798,8 @@ public final class IntrospectionSupport {
         return candidates;
     }
 
-    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
-        Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern);
+    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern, boolean allowPrivateSetter) {
+        Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern, allowPrivateSetter);
 
         if (candidates.isEmpty()) {
             return candidates;
@@ -811,10 +824,10 @@ public final class IntrospectionSupport {
         }
     }
 
-    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern) {
+    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern, boolean allowPrivateSetter) {
         List<Method> answer = new LinkedList<>();
         List<Method> primitives = new LinkedList<>();
-        Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern);
+        Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern, allowPrivateSetter);
         for (Method setter : setters) {
             Class<?> parameterType = setter.getParameterTypes()[0];
             if (PRIMITIVE_CLASSES.contains(parameterType)) {

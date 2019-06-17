@@ -19,18 +19,13 @@ package org.apache.camel.support;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.camel.CamelContext;
@@ -55,9 +50,6 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
  * </ul>
- * When setting the property then by default only public setter methods is supported, however you can
- * prefix the name with #private# to allow using private/protected setters, eg to use the private setBrokerURL setter method:
- * camel.component.jms.configuration.connectionFactory.#private#brokerURL=tcp://localhost:61616.
  * <p/>
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
@@ -73,6 +65,7 @@ public final class PropertyBindingSupport {
         private boolean reference = true;
         private boolean placeholder = true;
         private boolean fluentBuilder = true;
+        private boolean allowPrivateSetter = true;
         private String optionPrefix;
 
         /**
@@ -126,6 +119,15 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * Whether properties should be filtered by prefix.         *
+         * Note that the prefix is removed from the key before the property is bound.
+         */
+        public Builder withAllowPrivateSetter(boolean allowPrivateSetter) {
+            this.allowPrivateSetter = allowPrivateSetter;
+            return this;
+        }
+
+        /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
          * @param camelContext  the camel context
@@ -138,7 +140,7 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
             org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
-            return bindProperties(camelContext, target, properties, optionPrefix, nesting, deepNesting, fluentBuilder, reference, placeholder);
+            return bindProperties(camelContext, target, properties, optionPrefix, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
         }
 
     }
@@ -246,7 +248,7 @@ public final class PropertyBindingSupport {
                 // attempt to create new instances to walk down the tree if its null (deepNesting option)
                 if (value == null && deepNesting) {
                     // okay is there a setter so we can create a new instance and set it automatic
-                    Method method = findBestSetterMethod(target.getClass(), key, true);
+                    Method method = findBestSetterMethod(target.getClass(), key, true, true);
                     if (method != null) {
                         Class<?> parameterType = method.getParameterTypes()[0];
                         if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
@@ -373,7 +375,7 @@ public final class PropertyBindingSupport {
                 // attempt to create new instances to walk down the tree if its null (deepNesting option)
                 if (value == null && deepNesting) {
                     // okay is there a setter so we can create a new instance and set it automatic
-                    Method method = findBestSetterMethod(target.getClass(), key, true);
+                    Method method = findBestSetterMethod(target.getClass(), key, true, true);
                     if (method != null) {
                         Class<?> parameterType = method.getParameterTypes()[0];
                         if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
@@ -424,48 +426,52 @@ public final class PropertyBindingSupport {
      * @return              true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties, String optionPrefix) {
-        return bindProperties(camelContext, target, properties, optionPrefix, true, true, true, true, true);
+        return bindProperties(camelContext, target, properties, optionPrefix, true, true, true, true, true, true);
     }
 
     /**
      * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
      *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @param nesting       whether nesting is in use
-     * @param deepNesting   whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
-     *                      a property has a setter and the object can be created from a default no-arg constructor.
-     * @param fluentBuilder whether fluent builder is allowed as a valid getter/setter
-     * @param reference     whether reference parameter (syntax starts with #) is in use
-     * @param placeholder   whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @return              true if one or more properties was bound
+     * @param camelContext        the camel context
+     * @param target              the target object
+     * @param properties          the properties where the bound properties will be removed from
+     * @param nesting             whether nesting is in use
+     * @param deepNesting         whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     *                            a property has a setter and the object can be created from a default no-arg constructor.
+     * @param fluentBuilder       whether fluent builder is allowed as a valid getter/setter
+     * @param allowPrivateSetter  whether autowiring components allows to use private setter method when setting the value
+     * @param reference           whether reference parameter (syntax starts with #) is in use
+     * @param placeholder         whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @return                    true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
-                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
+                                         boolean reference, boolean placeholder) {
 
-        return bindProperties(camelContext, target, properties, null, nesting, deepNesting, fluentBuilder, reference, placeholder);
+        return bindProperties(camelContext, target, properties, null, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
     }
 
     /**
      * Binds the properties with the given prefix to the target object, and removes the property that was bound from properties.
      * Note that the prefix is removed from the key before the property is bound.
      *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param properties    the properties where the bound properties will be removed from
-     * @param optionPrefix  the prefix used to filter properties
-     * @param nesting       whether nesting is in use
-     * @param deepNesting   whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
-     *                      a property has a setter and the object can be created from a default no-arg constructor.
-     * @param fluentBuilder whether fluent builder is allowed as a valid getter/setter
-     * @param reference     whether reference parameter (syntax starts with #) is in use
-     * @param placeholder   whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @return              true if one or more properties was bound
+     * @param camelContext        the camel context
+     * @param target              the target object
+     * @param properties          the properties where the bound properties will be removed from
+     * @param optionPrefix        the prefix used to filter properties
+     * @param nesting             whether nesting is in use
+     * @param deepNesting         whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects in the OGNL graph if
+     *                            a property has a setter and the object can be created from a default no-arg constructor.
+     * @param fluentBuilder       whether fluent builder is allowed as a valid getter/setter
+     * @param allowPrivateSetter  whether autowiring components allows to use private setter method when setting the value
+     * @param reference           whether reference parameter (syntax starts with #) is in use
+     * @param placeholder         whether to use Camels property placeholder to resolve placeholders on keys and values
+     * @return                    true if one or more properties was bound
      */
     public static boolean bindProperties(CamelContext camelContext, Object target, Map<String, Object> properties,
                                          String optionPrefix,
-                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+                                         boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
+                                         boolean reference, boolean placeholder) {
         org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         org.apache.camel.util.ObjectHelper.notNull(target, "target");
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
@@ -486,7 +492,7 @@ public final class PropertyBindingSupport {
                 key = key.substring(optionPrefix.length());
             }
 
-            if (bindProperty(camelContext, target, key, value, nesting, deepNesting, fluentBuilder, reference, placeholder)) {
+            if (bindProperty(camelContext, target, key, value, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder)) {
                 iter.remove();
                 rc = true;
             }
@@ -507,7 +513,7 @@ public final class PropertyBindingSupport {
     public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, false, true, true, true, true, true);
+                return setProperty(camelContext, target, name, value, false, true, true, true, true, true, true);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -517,10 +523,10 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value,
-                                boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) {
+                                        boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter, boolean reference, boolean placeholder) {
         try {
             if (target != null && name != null) {
-                return setProperty(camelContext, target, name, value, false, nesting, deepNesting, fluentBuilder, reference, placeholder);
+                return setProperty(camelContext, target, name, value, false, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
             }
         } catch (Exception e) {
             throw new PropertyBindingException(target, name, e);
@@ -540,7 +546,7 @@ public final class PropertyBindingSupport {
     public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) {
         try {
             if (target != null && name != null) {
-                boolean bound = setProperty(camelContext, target, name, value, true, true, true, true, true, true);
+                boolean bound = setProperty(camelContext, target, name, value, true, true, true, true, true, true, true);
                 if (!bound) {
                     throw new PropertyBindingException(target, name);
                 }
@@ -551,7 +557,8 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean setProperty(CamelContext context, Object target, String name, Object value, boolean mandatory,
-                                       boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean reference, boolean placeholder) throws Exception {
+                                       boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
+                                       boolean reference, boolean placeholder) throws Exception {
         String refName = null;
 
         if (placeholder) {
@@ -581,7 +588,7 @@ public final class PropertyBindingSupport {
                             break;
                         }
                         // okay is there a setter so we can create a new instance and set it automatic
-                        Method method = findBestSetterMethod(newClass, part, fluentBuilder);
+                        Method method = findBestSetterMethod(newClass, part, fluentBuilder, allowPrivateSetter);
                         if (method != null) {
                             Class<?> parameterType = method.getParameterTypes()[0];
                             Object instance = null;
@@ -632,7 +639,7 @@ public final class PropertyBindingSupport {
                 }
             } else if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
-                Method method = findBestSetterMethod(target.getClass(), name, fluentBuilder);
+                Method method = findBestSetterMethod(target.getClass(), name, fluentBuilder, allowPrivateSetter);
                 if (method != null) {
                     Class<?> parameterType = method.getParameterTypes()[0];
                     if (parameterType != null) {
@@ -649,7 +656,7 @@ public final class PropertyBindingSupport {
             }
         }
 
-        boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder);
+        boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter);
         if (!hit && mandatory) {
             // there is no setter with this given name, so lets report this as a problem
             throw new IllegalArgumentException("Cannot find setter method: " + name + " on bean: " + target + " when binding property: " + ognlPath);
@@ -689,16 +696,16 @@ public final class PropertyBindingSupport {
         return answer != null ? answer : defaultValue;
     }
 
-    private static Method findBestSetterMethod(Class clazz, String name, boolean fluentBuilder) {
+    private static Method findBestSetterMethod(Class clazz, String name, boolean fluentBuilder, boolean allowPrivateSetter) {
         // is there a direct setter?
-        Set<Method> candidates = findSetterMethods(clazz, name, false);
+        Set<Method> candidates = findSetterMethods(clazz, name, fluentBuilder, allowPrivateSetter);
         if (candidates.size() == 1) {
             return candidates.iterator().next();
         }
 
         // okay now try with builder pattern
         if (fluentBuilder) {
-            candidates = findSetterMethods(clazz, name, true);
+            candidates = findSetterMethods(clazz, name, fluentBuilder, allowPrivateSetter);
             if (candidates.size() == 1) {
                 return candidates.iterator().next();
             }
