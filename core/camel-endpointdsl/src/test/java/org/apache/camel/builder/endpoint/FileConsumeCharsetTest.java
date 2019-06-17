@@ -28,8 +28,7 @@ import org.junit.Test;
 /**
  *
  */
-public class FileConsumeCharsetTest extends ContextTestSupport
-        {
+public class FileConsumeCharsetTest extends ContextTestSupport {
 
     @Override
     @Before
