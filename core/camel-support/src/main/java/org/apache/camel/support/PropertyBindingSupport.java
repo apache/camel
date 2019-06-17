@@ -596,7 +596,7 @@ public final class PropertyBindingSupport {
                         } else {
                             if (mandatory) {
                                 // there is no getter with this given name, so lets report this as a problem
-                                throw new IllegalArgumentException("Cannot find nested getter method: " + part + " on bean: " + newClass + " when binding property: " + ognlPath);
+                                throw new IllegalArgumentException("Cannot find getter method: " + part + " on bean: " + newClass + " when binding property: " + ognlPath);
                             }
                         }
                     } else {
@@ -775,7 +775,6 @@ public final class PropertyBindingSupport {
         String cp = System.getProperty("java.class.path");
         String[] parts = cp.split(":");
         for (String p : parts) {
-            System.out.println(p);
             if (p.endsWith(".jar")) {
                 JarFile jar = new JarFile(p);
                 jar.stream().forEach(e -> {
