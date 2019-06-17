@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,13 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.jar.JarFile;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.spi.PackageScanClassResolver;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -269,133 +263,6 @@ public final class PropertyBindingSupport {
                     // do not walk down if it point to our-selves (circular reference)
                     parents.add(target);
                     hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, deepNesting, callback);
-                }
-            }
-        }
-
-        return hit;
-    }
-
-    /**
-     * This will discover all the properties on the target which are interfaces, and automatic attempt to bind the properties that are null by
-     * doing classpath scanning to find if there is a just only one class that implements the interface, and then attempt to create a new instance
-     * of this class. This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
-     * so on.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @return              true if one ore more properties was auto wired
-     */
-    @Deprecated
-    public static boolean autowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target) {
-        return autowireInterfacePropertiesFromClasspath(camelContext, target, false, false, null);
-    }
-
-    /**
-     * This will discover all the properties on the target which are interfaces, and automatic attempt to bind the properties that are null by
-     * doing classpath scanning to find if there is a just only one class that implements the interface, and then attempt to create a new instance
-     * of this class. This is used for convention over configuration to automatic configure resources such as DataSource, Amazon Logins and
-     * so on.
-     *
-     * @param camelContext  the camel context
-     * @param target        the target object
-     * @param bindNullOnly  whether to only autowire if the property has no default value or has not been configured explicit
-     * @param deepNesting   whether to attempt to walk as deep down the object graph by creating new empty objects on the way if needed (Camel can only create
-     *                      new empty objects if they have a default no-arg constructor, also mind that this may lead to creating many empty objects, even
-     *                      if they will not have any objects autowired from the registry, so use this with caution)
-     * @param callback      optional callback when a property was auto wired
-     * @return              true if one ore more properties was auto wired
-     */
-    @Deprecated
-    public static boolean autowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target,
-                                                                   boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) {
-        try {
-            if (target != null) {
-                Set<Object> parents = new HashSet<>();
-                return doAutowireInterfacePropertiesFromClasspath(camelContext, target, parents, bindNullOnly, deepNesting, callback);
-            }
-        } catch (Exception e) {
-            throw new PropertyBindingException(target, e);
-        }
-
-        return false;
-    }
-
-    @Deprecated
-    private static boolean doAutowireInterfacePropertiesFromClasspath(CamelContext camelContext, Object target, Set<Object> parents,
-                                                                      boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) throws Exception {
-
-        Map<String, Object> properties = new LinkedHashMap<>();
-        IntrospectionSupport.getProperties(target, properties, null);
-
-        boolean hit = false;
-
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            Class<?> type = getGetterType(target, key);
-
-            boolean skip = parents.contains(value) || value instanceof CamelContext;
-            if (skip) {
-                // we have already covered this as parent of parents so dont walk down this as we want to avoid
-                // circular dependencies when walking the OGNL graph, also we dont want to walk down CamelContext
-                continue;
-            }
-
-            if (isComplexUserType(type) && isInterface(type)) {
-                // if the property has not been set and its a complex type (not simple or string etc)
-                if (!bindNullOnly || value == null) {
-                    // do classpath scanning (TODO: do this only once)
-                    Set<String> packageNames = findAllPackageNames(null);
-                    if (!packageNames.isEmpty()) {
-                        String[] packages = packageNames.toArray(new String[packageNames.size()]);
-
-                        PackageScanClassResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
-                        Set<Class<?>> classes = resolver.findByFilter(
-                                c -> !c.isInterface() && type.isAssignableFrom(c),
-                                packages);
-
-                        if (classes.size() == 1) {
-                            Class<?> clazz = classes.iterator().next();
-                            try {
-                                value = camelContext.getInjector().newInstance(clazz);
-                            } catch (Throwable e) {
-                                // ignore
-                            }
-                            if (value != null) {
-                                hit |= IntrospectionSupport.setProperty(camelContext, target, key, value);
-                                if (hit && callback != null) {
-                                    callback.onAutowire(target, key, type, value);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // attempt to create new instances to walk down the tree if its null (deepNesting option)
-                if (value == null && deepNesting) {
-                    // okay is there a setter so we can create a new instance and set it automatic
-                    Method method = findBestSetterMethod(target.getClass(), key, true, true);
-                    if (method != null) {
-                        Class<?> parameterType = method.getParameterTypes()[0];
-                        if (parameterType != null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                            Object instance = camelContext.getInjector().newInstance(parameterType);
-                            if (instance != null) {
-                                org.apache.camel.support.ObjectHelper.invokeMethod(method, target, instance);
-                                target = instance;
-                                // remember this as parent and also autowire nested properties
-                                // do not walk down if it point to our-selves (circular reference)
-                                parents.add(target);
-                                value = instance;
-                                hit |= doAutowireInterfacePropertiesFromClasspath(camelContext, value, parents, bindNullOnly, deepNesting, callback);
-                            }
-                        }
-                    }
-                } else if (value != null) {
-                    // remember this as parent and also autowire nested properties
-                    // do not walk down if it point to our-selves (circular reference)
-                    parents.add(target);
-                    hit |= doAutowireInterfacePropertiesFromClasspath(camelContext, value, parents, bindNullOnly, deepNesting, callback);
                 }
             }
         }
@@ -773,74 +640,5 @@ public final class PropertyBindingSupport {
         return parameter != null && parameter.trim().startsWith("#");
     }
 
-    // TODO: move this to some util class
-    @Deprecated
-    public static Set<String> findAllPackageNames(ClassLoader loader) throws IOException {
-        Set<String> answer = new TreeSet<>();
-
-        // get all JARs on classpath
-        String cp = System.getProperty("java.class.path");
-        String[] parts = cp.split(":");
-        for (String p : parts) {
-            if (p.endsWith(".jar")) {
-                JarFile jar = new JarFile(p);
-                jar.stream().forEach(e -> {
-                    if (e.isDirectory()) {
-                        String name = e.getName();
-                        name = name.replace('/', '.');
-                        name = name.replace('\\', '.');
-                        if (name.endsWith(".")) {
-                            name = name.substring(0, name.length() - 1);
-                        }
-                        if (validName(name)) {
-                            answer.add(name);
-                        }
-                    }
-                });
-            } else {
-                // its a directory such as target, then traverse and find all directory
-                gatherAllDirectories(new File(p), "", answer);
-            }
-        }
-
-        return answer;
-    }
-
-    @Deprecated
-    public static boolean validName(String name) {
-        boolean invalid = name.startsWith("META-INF") || name.startsWith("java") || name.startsWith("jdk") || name.startsWith("netscape")
-                || name.startsWith("resources") || name.startsWith("toolbarButtonGraphics")
-                || name.startsWith("oracle") || name.startsWith("sun") || name.startsWith("com.sun") || name.startsWith("com.oracle");
-        return !invalid;
-    }
-
-    @Deprecated
-    public static boolean validPackageForClassloader(String packageName, ClassLoader loader) throws IOException {
-        return loader.getResources(packageName) != null;
-    }
-
-    @Deprecated
-    public static void gatherAllDirectories(File path, String root, Set<String> dirs) {
-        if (path == null) {
-            return;
-        }
-        File[] paths = path.listFiles(f -> f.isDirectory());
-        if (paths != null) {
-            for (File dir : paths) {
-                String name = root + (root.isEmpty() ? "" : ".") + dir.getName();
-                name = name.replace('/', '.');
-                name = name.replace('\\', '.');
-                if (name.endsWith(".")) {
-                    name = name.substring(0, name.length() - 1);
-                }
-
-                if (validName(name)) {
-                    dirs.add(name);
-                    String subRoot = root + (root.isEmpty() ? "" : ".") + dir.getName();
-                    gatherAllDirectories(dir, subRoot, dirs);
-                }
-            }
-        }
-    }
 
 }
