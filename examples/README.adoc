@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 110 (0 deprecated)
+Number of Examples: 111 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -44,6 +44,7 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-main/readme.adoc[Main] (camel-example-main) | Beginner | An example for showing standalone Camel
 
 | link:camel-example-pojo-messaging/README.md[POJO Routing] (camel-example-pojo-messaging) | Beginner | An example showing how to produce and consume messages from Camel endpoints using annotated POJOs
+    
 
 | link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a Rest service defined using Swagger specification
 
@@ -106,6 +107,8 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-billboard-aggr/README.md[Billboard Aggr] (camel-example-billboard-aggr) | EIP | Billboard aggregation example
 
 | link:camel-example-cafe/README.md[Cafe] (camel-example-cafe) | EIP | A cafe example showing how to work with Camel
+
+| link:camel-example-cafe-endpointdsl/README.md[Cafe Endpointdsl] (camel-example-cafe-endpointdsl) | EIP | A cafe example showing how to work with Camel and the Endpoint DSL
 
 | link:camel-example-hystrix/README.md[Hystrix] (camel-example-hystrix) | EIP | An example showing how to use Hystrix EIP as circuit breaker in Camel routes
 
@@ -177,6 +180,8 @@ Number of Examples: 110 (0 deprecated)
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
+
+| link:camel-example-main-artemis/readme.adoc[Main Artemis] (camel-example-main-artemis) | Messaging | An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)
 
 | link:camel-example-netty-custom-correlation/readme.adoc[Netty Custom Correlation] (camel-example-netty-custom-correlation) | Messaging | An example for showing Camel Netty with custom codec and correlation id
 
