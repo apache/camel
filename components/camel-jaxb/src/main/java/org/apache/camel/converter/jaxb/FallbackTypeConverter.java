@@ -43,6 +43,7 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version
  */
+@DeferredContextBinding
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware, CamelContextAware {
 
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";
