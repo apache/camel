@@ -55,9 +55,14 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
  *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
  * </ul>
+ * When setting the property then by default only public setter methods is supported, however you can
+ * prefix the name with #private# to allow using private/protected setters, eg to use the private setBrokerURL setter method:
+ * camel.component.jms.configuration.connectionFactory.#private#brokerURL=tcp://localhost:61616.
+ * <p/>
  * This implementations reuses parts of {@link IntrospectionSupport}.
  */
 public final class PropertyBindingSupport {
+
     /**
      * To use a fluent builder style to configure this property binding support.
      */
@@ -478,15 +483,12 @@ public final class PropertyBindingSupport {
                 if (!key.startsWith(optionPrefix)) {
                     continue;
                 }
-
                 key = key.substring(optionPrefix.length());
             }
 
-            if (entry != null) {
-                if (bindProperty(camelContext, target, key, value, nesting, deepNesting, fluentBuilder, reference, placeholder)) {
-                    iter.remove();
-                    rc = true;
-                }
+            if (bindProperty(camelContext, target, key, value, nesting, deepNesting, fluentBuilder, reference, placeholder)) {
+                iter.remove();
+                rc = true;
             }
         }
 
@@ -753,17 +755,12 @@ public final class PropertyBindingSupport {
     }
 
     // TODO: move this to some util class
-
-    public static void main(String[] args) throws IOException {
-        PropertyBindingSupport.findAllPackageNames(null);
-    }
-
+    @Deprecated
     public static Set<String> findAllPackageNames(ClassLoader loader) throws IOException {
         Set<String> answer = new TreeSet<>();
 
         // get all JARs on classpath
         String cp = System.getProperty("java.class.path");
-//        System.out.println(cp);
         String[] parts = cp.split(":");
         for (String p : parts) {
             System.out.println(p);
@@ -788,11 +785,10 @@ public final class PropertyBindingSupport {
             }
         }
 
-        System.out.println("There are " + answer.size() + " packages");
-        answer.forEach(System.out::println);
         return answer;
     }
 
+    @Deprecated
     public static boolean validName(String name) {
         boolean invalid = name.startsWith("META-INF") || name.startsWith("java") || name.startsWith("jdk") || name.startsWith("netscape")
                 || name.startsWith("resources") || name.startsWith("toolbarButtonGraphics")
@@ -800,10 +796,12 @@ public final class PropertyBindingSupport {
         return !invalid;
     }
 
+    @Deprecated
     public static boolean validPackageForClassloader(String packageName, ClassLoader loader) throws IOException {
         return loader.getResources(packageName) != null;
     }
 
+    @Deprecated
     public static void gatherAllDirectories(File path, String root, Set<String> dirs) {
         if (path == null) {
             return;
