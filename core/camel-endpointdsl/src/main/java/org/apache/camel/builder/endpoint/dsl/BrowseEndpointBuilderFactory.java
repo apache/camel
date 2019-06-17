@@ -192,7 +192,7 @@ public interface BrowseEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Browse component.
      */
-    public static interface BrowseEndpointProducerBuilder
+    public interface BrowseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBrowseEndpointProducerBuilder advanced() {
@@ -303,7 +303,7 @@ public interface BrowseEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Browse component.
      */
-    public static interface BrowseEndpointBuilder
+    public interface BrowseEndpointBuilder
             extends
                 BrowseEndpointConsumerBuilder, BrowseEndpointProducerBuilder {
         default AdvancedBrowseEndpointBuilder advanced() {
@@ -323,7 +323,7 @@ public interface BrowseEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Browse component.
      */
-    public static interface AdvancedBrowseEndpointBuilder
+    public interface AdvancedBrowseEndpointBuilder
             extends
                 AdvancedBrowseEndpointConsumerBuilder, AdvancedBrowseEndpointProducerBuilder {
         default BrowseEndpointBuilder basic() {

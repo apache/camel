@@ -468,7 +468,7 @@ public interface AtomixMapEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atomix Map component.
      */
-    public static interface AtomixMapEndpointProducerBuilder
+    public interface AtomixMapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtomixMapEndpointProducerBuilder advanced() {
@@ -853,7 +853,7 @@ public interface AtomixMapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix Map component.
      */
-    public static interface AtomixMapEndpointBuilder
+    public interface AtomixMapEndpointBuilder
             extends
                 AtomixMapEndpointConsumerBuilder, AtomixMapEndpointProducerBuilder {
         default AdvancedAtomixMapEndpointBuilder advanced() {
@@ -1009,7 +1009,7 @@ public interface AtomixMapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix Map component.
      */
-    public static interface AdvancedAtomixMapEndpointBuilder
+    public interface AdvancedAtomixMapEndpointBuilder
             extends
                 AdvancedAtomixMapEndpointConsumerBuilder, AdvancedAtomixMapEndpointProducerBuilder {
         default AtomixMapEndpointBuilder basic() {

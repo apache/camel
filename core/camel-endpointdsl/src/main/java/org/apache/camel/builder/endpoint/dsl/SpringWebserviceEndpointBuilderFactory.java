@@ -357,7 +357,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Spring WebService component.
      */
-    public static interface SpringWebserviceEndpointProducerBuilder
+    public interface SpringWebserviceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSpringWebserviceEndpointProducerBuilder advanced() {
@@ -835,7 +835,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spring WebService component.
      */
-    public static interface SpringWebserviceEndpointBuilder
+    public interface SpringWebserviceEndpointBuilder
             extends
                 SpringWebserviceEndpointConsumerBuilder, SpringWebserviceEndpointProducerBuilder {
         default AdvancedSpringWebserviceEndpointBuilder advanced() {
@@ -892,7 +892,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spring WebService component.
      */
-    public static interface AdvancedSpringWebserviceEndpointBuilder
+    public interface AdvancedSpringWebserviceEndpointBuilder
             extends
                 AdvancedSpringWebserviceEndpointConsumerBuilder, AdvancedSpringWebserviceEndpointProducerBuilder {
         default SpringWebserviceEndpointBuilder basic() {

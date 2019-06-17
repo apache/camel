@@ -34,9 +34,7 @@ public interface LuceneEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Lucene component.
      */
-    public static interface LuceneEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LuceneEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLuceneEndpointBuilder advanced() {
             return (AdvancedLuceneEndpointBuilder) this;
         }
@@ -160,7 +158,7 @@ public interface LuceneEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Lucene component.
      */
-    public static interface AdvancedLuceneEndpointBuilder
+    public interface AdvancedLuceneEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LuceneEndpointBuilder basic() {

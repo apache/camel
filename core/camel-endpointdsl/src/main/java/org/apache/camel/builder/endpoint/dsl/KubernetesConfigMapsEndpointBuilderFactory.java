@@ -34,7 +34,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes ConfigMap component.
      */
-    public static interface KubernetesConfigMapsEndpointBuilder
+    public interface KubernetesConfigMapsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesConfigMapsEndpointBuilder advanced() {
@@ -238,7 +238,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes ConfigMap component.
      */
-    public static interface AdvancedKubernetesConfigMapsEndpointBuilder
+    public interface AdvancedKubernetesConfigMapsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesConfigMapsEndpointBuilder basic() {

@@ -33,7 +33,7 @@ public interface JsonValidatorEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JSON Schema Validator component.
      */
-    public static interface JsonValidatorEndpointBuilder
+    public interface JsonValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJsonValidatorEndpointBuilder advanced() {
@@ -125,7 +125,7 @@ public interface JsonValidatorEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JSON Schema Validator component.
      */
-    public static interface AdvancedJsonValidatorEndpointBuilder
+    public interface AdvancedJsonValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default JsonValidatorEndpointBuilder basic() {

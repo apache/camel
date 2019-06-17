@@ -522,7 +522,7 @@ public interface ServerEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IEC 60870 Server component.
      */
-    public static interface ServerEndpointProducerBuilder
+    public interface ServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedServerEndpointProducerBuilder advanced() {
@@ -961,7 +961,7 @@ public interface ServerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IEC 60870 Server component.
      */
-    public static interface ServerEndpointBuilder
+    public interface ServerEndpointBuilder
             extends
                 ServerEndpointConsumerBuilder, ServerEndpointProducerBuilder {
         default AdvancedServerEndpointBuilder advanced() {
@@ -1297,7 +1297,7 @@ public interface ServerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IEC 60870 Server component.
      */
-    public static interface AdvancedServerEndpointBuilder
+    public interface AdvancedServerEndpointBuilder
             extends
                 AdvancedServerEndpointConsumerBuilder, AdvancedServerEndpointProducerBuilder {
         default ServerEndpointBuilder basic() {

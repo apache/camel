@@ -247,7 +247,7 @@ public interface QuickfixjEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the QuickFix component.
      */
-    public static interface QuickfixjEndpointProducerBuilder
+    public interface QuickfixjEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedQuickfixjEndpointProducerBuilder advanced() {
@@ -413,7 +413,7 @@ public interface QuickfixjEndpointBuilderFactory {
     /**
      * Builder for endpoint for the QuickFix component.
      */
-    public static interface QuickfixjEndpointBuilder
+    public interface QuickfixjEndpointBuilder
             extends
                 QuickfixjEndpointConsumerBuilder, QuickfixjEndpointProducerBuilder {
         default AdvancedQuickfixjEndpointBuilder advanced() {
@@ -488,7 +488,7 @@ public interface QuickfixjEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the QuickFix component.
      */
-    public static interface AdvancedQuickfixjEndpointBuilder
+    public interface AdvancedQuickfixjEndpointBuilder
             extends
                 AdvancedQuickfixjEndpointConsumerBuilder, AdvancedQuickfixjEndpointProducerBuilder {
         default QuickfixjEndpointBuilder basic() {

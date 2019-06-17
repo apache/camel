@@ -34,9 +34,7 @@ public interface ClassEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Class component.
      */
-    public static interface ClassEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ClassEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedClassEndpointBuilder advanced() {
             return (AdvancedClassEndpointBuilder) this;
         }
@@ -107,7 +105,7 @@ public interface ClassEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Class component.
      */
-    public static interface AdvancedClassEndpointBuilder
+    public interface AdvancedClassEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ClassEndpointBuilder basic() {

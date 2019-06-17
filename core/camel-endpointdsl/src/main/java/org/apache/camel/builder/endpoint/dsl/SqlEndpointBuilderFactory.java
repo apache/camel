@@ -1002,7 +1002,7 @@ public interface SqlEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the SQL component.
      */
-    public static interface SqlEndpointProducerBuilder
+    public interface SqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSqlEndpointProducerBuilder advanced() {
@@ -1450,7 +1450,7 @@ public interface SqlEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SQL component.
      */
-    public static interface SqlEndpointBuilder
+    public interface SqlEndpointBuilder
             extends
                 SqlEndpointConsumerBuilder, SqlEndpointProducerBuilder {
         default AdvancedSqlEndpointBuilder advanced() {
@@ -1606,7 +1606,7 @@ public interface SqlEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SQL component.
      */
-    public static interface AdvancedSqlEndpointBuilder
+    public interface AdvancedSqlEndpointBuilder
             extends
                 AdvancedSqlEndpointConsumerBuilder, AdvancedSqlEndpointProducerBuilder {
         default SqlEndpointBuilder basic() {

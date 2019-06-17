@@ -217,7 +217,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JGroups raft component.
      */
-    public static interface JGroupsRaftEndpointProducerBuilder
+    public interface JGroupsRaftEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJGroupsRaftEndpointProducerBuilder advanced() {
@@ -329,7 +329,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JGroups raft component.
      */
-    public static interface JGroupsRaftEndpointBuilder
+    public interface JGroupsRaftEndpointBuilder
             extends
                 JGroupsRaftEndpointConsumerBuilder, JGroupsRaftEndpointProducerBuilder {
         default AdvancedJGroupsRaftEndpointBuilder advanced() {
@@ -349,7 +349,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JGroups raft component.
      */
-    public static interface AdvancedJGroupsRaftEndpointBuilder
+    public interface AdvancedJGroupsRaftEndpointBuilder
             extends
                 AdvancedJGroupsRaftEndpointConsumerBuilder, AdvancedJGroupsRaftEndpointProducerBuilder {
         default JGroupsRaftEndpointBuilder basic() {

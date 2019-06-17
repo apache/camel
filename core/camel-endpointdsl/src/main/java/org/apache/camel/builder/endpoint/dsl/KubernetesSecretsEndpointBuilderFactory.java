@@ -34,7 +34,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Secrets component.
      */
-    public static interface KubernetesSecretsEndpointBuilder
+    public interface KubernetesSecretsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesSecretsEndpointBuilder advanced() {
@@ -237,7 +237,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Secrets component.
      */
-    public static interface AdvancedKubernetesSecretsEndpointBuilder
+    public interface AdvancedKubernetesSecretsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesSecretsEndpointBuilder basic() {

@@ -1070,7 +1070,7 @@ public interface ElsqlEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the ElSQL component.
      */
-    public static interface ElsqlEndpointProducerBuilder
+    public interface ElsqlEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedElsqlEndpointProducerBuilder advanced() {
@@ -1583,7 +1583,7 @@ public interface ElsqlEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ElSQL component.
      */
-    public static interface ElsqlEndpointBuilder
+    public interface ElsqlEndpointBuilder
             extends
                 ElsqlEndpointConsumerBuilder, ElsqlEndpointProducerBuilder {
         default AdvancedElsqlEndpointBuilder advanced() {
@@ -1780,7 +1780,7 @@ public interface ElsqlEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ElSQL component.
      */
-    public static interface AdvancedElsqlEndpointBuilder
+    public interface AdvancedElsqlEndpointBuilder
             extends
                 AdvancedElsqlEndpointConsumerBuilder, AdvancedElsqlEndpointProducerBuilder {
         default ElsqlEndpointBuilder basic() {

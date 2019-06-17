@@ -34,9 +34,7 @@ public interface GrapeEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Grape component.
      */
-    public static interface GrapeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface GrapeEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedGrapeEndpointBuilder advanced() {
             return (AdvancedGrapeEndpointBuilder) this;
         }
@@ -56,7 +54,7 @@ public interface GrapeEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Grape component.
      */
-    public static interface AdvancedGrapeEndpointBuilder
+    public interface AdvancedGrapeEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default GrapeEndpointBuilder basic() {

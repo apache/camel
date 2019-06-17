@@ -34,9 +34,7 @@ public interface KeystoneEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Keystone component.
      */
-    public static interface KeystoneEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface KeystoneEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedKeystoneEndpointBuilder advanced() {
             return (AdvancedKeystoneEndpointBuilder) this;
         }
@@ -128,7 +126,7 @@ public interface KeystoneEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Keystone component.
      */
-    public static interface AdvancedKeystoneEndpointBuilder
+    public interface AdvancedKeystoneEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KeystoneEndpointBuilder basic() {

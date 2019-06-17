@@ -34,7 +34,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Ringbuffer component.
      */
-    public static interface HazelcastRingbufferEndpointBuilder
+    public interface HazelcastRingbufferEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastRingbufferEndpointBuilder advanced() {
@@ -244,7 +244,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Ringbuffer component.
      */
-    public static interface AdvancedHazelcastRingbufferEndpointBuilder
+    public interface AdvancedHazelcastRingbufferEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default HazelcastRingbufferEndpointBuilder basic() {

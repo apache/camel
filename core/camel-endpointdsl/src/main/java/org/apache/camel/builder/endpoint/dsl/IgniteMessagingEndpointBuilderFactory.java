@@ -237,7 +237,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Ignite Messaging component.
      */
-    public static interface IgniteMessagingEndpointProducerBuilder
+    public interface IgniteMessagingEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIgniteMessagingEndpointProducerBuilder advanced() {
@@ -456,7 +456,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Messaging component.
      */
-    public static interface IgniteMessagingEndpointBuilder
+    public interface IgniteMessagingEndpointBuilder
             extends
                 IgniteMessagingEndpointConsumerBuilder, IgniteMessagingEndpointProducerBuilder {
         default AdvancedIgniteMessagingEndpointBuilder advanced() {
@@ -520,7 +520,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Messaging component.
      */
-    public static interface AdvancedIgniteMessagingEndpointBuilder
+    public interface AdvancedIgniteMessagingEndpointBuilder
             extends
                 AdvancedIgniteMessagingEndpointConsumerBuilder, AdvancedIgniteMessagingEndpointProducerBuilder {
         default IgniteMessagingEndpointBuilder basic() {

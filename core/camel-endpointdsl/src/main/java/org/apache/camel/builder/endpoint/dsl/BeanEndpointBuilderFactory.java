@@ -34,9 +34,7 @@ public interface BeanEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Bean component.
      */
-    public static interface BeanEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface BeanEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedBeanEndpointBuilder advanced() {
             return (AdvancedBeanEndpointBuilder) this;
         }
@@ -107,7 +105,7 @@ public interface BeanEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Bean component.
      */
-    public static interface AdvancedBeanEndpointBuilder
+    public interface AdvancedBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default BeanEndpointBuilder basic() {

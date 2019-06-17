@@ -295,7 +295,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Disruptor VM component.
      */
-    public static interface DisruptorVmEndpointProducerBuilder
+    public interface DisruptorVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDisruptorVmEndpointProducerBuilder advanced() {
@@ -542,7 +542,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Disruptor VM component.
      */
-    public static interface DisruptorVmEndpointBuilder
+    public interface DisruptorVmEndpointBuilder
             extends
                 DisruptorVmEndpointConsumerBuilder, DisruptorVmEndpointProducerBuilder {
         default AdvancedDisruptorVmEndpointBuilder advanced() {
@@ -590,7 +590,7 @@ public interface DisruptorVmEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Disruptor VM component.
      */
-    public static interface AdvancedDisruptorVmEndpointBuilder
+    public interface AdvancedDisruptorVmEndpointBuilder
             extends
                 AdvancedDisruptorVmEndpointConsumerBuilder, AdvancedDisruptorVmEndpointProducerBuilder {
         default DisruptorVmEndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface KMSEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS KMS component.
      */
-    public static interface KMSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface KMSEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedKMSEndpointBuilder advanced() {
             return (AdvancedKMSEndpointBuilder) this;
         }
@@ -62,7 +60,7 @@ public interface KMSEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS KMS component.
      */
-    public static interface AdvancedKMSEndpointBuilder
+    public interface AdvancedKMSEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KMSEndpointBuilder basic() {

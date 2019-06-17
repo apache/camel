@@ -33,9 +33,7 @@ public interface DnsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the DNS component.
      */
-    public static interface DnsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface DnsEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedDnsEndpointBuilder advanced() {
             return (AdvancedDnsEndpointBuilder) this;
         }
@@ -64,7 +62,7 @@ public interface DnsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the DNS component.
      */
-    public static interface AdvancedDnsEndpointBuilder
+    public interface AdvancedDnsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DnsEndpointBuilder basic() {

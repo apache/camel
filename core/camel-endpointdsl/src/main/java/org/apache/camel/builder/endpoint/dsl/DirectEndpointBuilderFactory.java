@@ -192,7 +192,7 @@ public interface DirectEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Direct component.
      */
-    public static interface DirectEndpointProducerBuilder
+    public interface DirectEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDirectEndpointProducerBuilder advanced() {
@@ -365,7 +365,7 @@ public interface DirectEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Direct component.
      */
-    public static interface DirectEndpointBuilder
+    public interface DirectEndpointBuilder
             extends
                 DirectEndpointConsumerBuilder, DirectEndpointProducerBuilder {
         default AdvancedDirectEndpointBuilder advanced() {
@@ -385,7 +385,7 @@ public interface DirectEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Direct component.
      */
-    public static interface AdvancedDirectEndpointBuilder
+    public interface AdvancedDirectEndpointBuilder
             extends
                 AdvancedDirectEndpointConsumerBuilder, AdvancedDirectEndpointProducerBuilder {
         default DirectEndpointBuilder basic() {

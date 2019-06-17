@@ -819,7 +819,7 @@ public interface MQTTEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the MQTT component.
      */
-    public static interface MQTTEndpointProducerBuilder
+    public interface MQTTEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMQTTEndpointProducerBuilder advanced() {
@@ -1577,7 +1577,7 @@ public interface MQTTEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MQTT component.
      */
-    public static interface MQTTEndpointBuilder
+    public interface MQTTEndpointBuilder
             extends
                 MQTTEndpointConsumerBuilder, MQTTEndpointProducerBuilder {
         default AdvancedMQTTEndpointBuilder advanced() {
@@ -2207,7 +2207,7 @@ public interface MQTTEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MQTT component.
      */
-    public static interface AdvancedMQTTEndpointBuilder
+    public interface AdvancedMQTTEndpointBuilder
             extends
                 AdvancedMQTTEndpointConsumerBuilder, AdvancedMQTTEndpointProducerBuilder {
         default MQTTEndpointBuilder basic() {

@@ -324,7 +324,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Google Drive component.
      */
-    public static interface GoogleDriveEndpointProducerBuilder
+    public interface GoogleDriveEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoogleDriveEndpointProducerBuilder advanced() {
@@ -566,7 +566,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Drive component.
      */
-    public static interface GoogleDriveEndpointBuilder
+    public interface GoogleDriveEndpointBuilder
             extends
                 GoogleDriveEndpointConsumerBuilder, GoogleDriveEndpointProducerBuilder {
         default AdvancedGoogleDriveEndpointBuilder advanced() {
@@ -711,7 +711,7 @@ public interface GoogleDriveEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Drive component.
      */
-    public static interface AdvancedGoogleDriveEndpointBuilder
+    public interface AdvancedGoogleDriveEndpointBuilder
             extends
                 AdvancedGoogleDriveEndpointConsumerBuilder, AdvancedGoogleDriveEndpointProducerBuilder {
         default GoogleDriveEndpointBuilder basic() {

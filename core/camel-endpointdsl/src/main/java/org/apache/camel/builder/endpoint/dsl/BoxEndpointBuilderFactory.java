@@ -425,7 +425,7 @@ public interface BoxEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Box component.
      */
-    public static interface BoxEndpointProducerBuilder
+    public interface BoxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBoxEndpointProducerBuilder advanced() {
@@ -768,7 +768,7 @@ public interface BoxEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Box component.
      */
-    public static interface BoxEndpointBuilder
+    public interface BoxEndpointBuilder
             extends
                 BoxEndpointConsumerBuilder, BoxEndpointProducerBuilder {
         default AdvancedBoxEndpointBuilder advanced() {
@@ -932,7 +932,7 @@ public interface BoxEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Box component.
      */
-    public static interface AdvancedBoxEndpointBuilder
+    public interface AdvancedBoxEndpointBuilder
             extends
                 AdvancedBoxEndpointConsumerBuilder, AdvancedBoxEndpointProducerBuilder {
         default BoxEndpointBuilder basic() {

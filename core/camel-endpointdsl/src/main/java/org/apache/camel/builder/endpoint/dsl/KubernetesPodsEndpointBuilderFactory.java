@@ -461,7 +461,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes Pods component.
      */
-    public static interface KubernetesPodsEndpointProducerBuilder
+    public interface KubernetesPodsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesPodsEndpointProducerBuilder advanced() {
@@ -794,7 +794,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Pods component.
      */
-    public static interface KubernetesPodsEndpointBuilder
+    public interface KubernetesPodsEndpointBuilder
             extends
                 KubernetesPodsEndpointConsumerBuilder, KubernetesPodsEndpointProducerBuilder {
         default AdvancedKubernetesPodsEndpointBuilder advanced() {
@@ -993,7 +993,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Pods component.
      */
-    public static interface AdvancedKubernetesPodsEndpointBuilder
+    public interface AdvancedKubernetesPodsEndpointBuilder
             extends
                 AdvancedKubernetesPodsEndpointConsumerBuilder, AdvancedKubernetesPodsEndpointProducerBuilder {
         default KubernetesPodsEndpointBuilder basic() {

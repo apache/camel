@@ -552,7 +552,7 @@ public interface ApnsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the APNS component.
      */
-    public static interface ApnsEndpointProducerBuilder
+    public interface ApnsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedApnsEndpointProducerBuilder advanced() {
@@ -673,7 +673,7 @@ public interface ApnsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the APNS component.
      */
-    public static interface ApnsEndpointBuilder
+    public interface ApnsEndpointBuilder
             extends
                 ApnsEndpointConsumerBuilder, ApnsEndpointProducerBuilder {
         default AdvancedApnsEndpointBuilder advanced() {
@@ -703,7 +703,7 @@ public interface ApnsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the APNS component.
      */
-    public static interface AdvancedApnsEndpointBuilder
+    public interface AdvancedApnsEndpointBuilder
             extends
                 AdvancedApnsEndpointConsumerBuilder, AdvancedApnsEndpointProducerBuilder {
         default ApnsEndpointBuilder basic() {

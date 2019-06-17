@@ -33,7 +33,7 @@ public interface ChatScriptEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ChatScript component.
      */
-    public static interface ChatScriptEndpointBuilder
+    public interface ChatScriptEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedChatScriptEndpointBuilder advanced() {
@@ -108,7 +108,7 @@ public interface ChatScriptEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ChatScript component.
      */
-    public static interface AdvancedChatScriptEndpointBuilder
+    public interface AdvancedChatScriptEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ChatScriptEndpointBuilder basic() {

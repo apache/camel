@@ -35,9 +35,7 @@ public interface JdbcEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JDBC component.
      */
-    public static interface JdbcEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface JdbcEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedJdbcEndpointBuilder advanced() {
             return (AdvancedJdbcEndpointBuilder) this;
         }
@@ -280,7 +278,7 @@ public interface JdbcEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JDBC component.
      */
-    public static interface AdvancedJdbcEndpointBuilder
+    public interface AdvancedJdbcEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default JdbcEndpointBuilder basic() {

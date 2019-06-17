@@ -33,9 +33,7 @@ public interface MSKEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS MSK component.
      */
-    public static interface MSKEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MSKEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMSKEndpointBuilder advanced() {
             return (AdvancedMSKEndpointBuilder) this;
         }
@@ -62,7 +60,7 @@ public interface MSKEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS MSK component.
      */
-    public static interface AdvancedMSKEndpointBuilder
+    public interface AdvancedMSKEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MSKEndpointBuilder basic() {

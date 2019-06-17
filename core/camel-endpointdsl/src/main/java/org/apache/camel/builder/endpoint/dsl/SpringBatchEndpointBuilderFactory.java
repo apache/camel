@@ -34,7 +34,7 @@ public interface SpringBatchEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spring Batch component.
      */
-    public static interface SpringBatchEndpointBuilder
+    public interface SpringBatchEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSpringBatchEndpointBuilder advanced() {
@@ -116,7 +116,7 @@ public interface SpringBatchEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spring Batch component.
      */
-    public static interface AdvancedSpringBatchEndpointBuilder
+    public interface AdvancedSpringBatchEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SpringBatchEndpointBuilder basic() {

@@ -891,7 +891,7 @@ public interface HdfsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the HDFS2 component.
      */
-    public static interface HdfsEndpointProducerBuilder
+    public interface HdfsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHdfsEndpointProducerBuilder advanced() {
@@ -1380,7 +1380,7 @@ public interface HdfsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the HDFS2 component.
      */
-    public static interface HdfsEndpointBuilder
+    public interface HdfsEndpointBuilder
             extends
                 HdfsEndpointConsumerBuilder, HdfsEndpointProducerBuilder {
         default AdvancedHdfsEndpointBuilder advanced() {
@@ -1550,7 +1550,7 @@ public interface HdfsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the HDFS2 component.
      */
-    public static interface AdvancedHdfsEndpointBuilder
+    public interface AdvancedHdfsEndpointBuilder
             extends
                 AdvancedHdfsEndpointConsumerBuilder, AdvancedHdfsEndpointProducerBuilder {
         default HdfsEndpointBuilder basic() {

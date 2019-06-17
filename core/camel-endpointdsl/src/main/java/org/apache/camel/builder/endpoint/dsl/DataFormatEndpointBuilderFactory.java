@@ -34,7 +34,7 @@ public interface DataFormatEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Data Format component.
      */
-    public static interface DataFormatEndpointBuilder
+    public interface DataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDataFormatEndpointBuilder advanced() {
@@ -63,7 +63,7 @@ public interface DataFormatEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Data Format component.
      */
-    public static interface AdvancedDataFormatEndpointBuilder
+    public interface AdvancedDataFormatEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DataFormatEndpointBuilder basic() {

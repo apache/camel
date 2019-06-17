@@ -428,7 +428,7 @@ public interface Olingo2EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Olingo2 component.
      */
-    public static interface Olingo2EndpointProducerBuilder
+    public interface Olingo2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedOlingo2EndpointProducerBuilder advanced() {
@@ -775,7 +775,7 @@ public interface Olingo2EndpointBuilderFactory {
     /**
      * Builder for endpoint for the Olingo2 component.
      */
-    public static interface Olingo2EndpointBuilder
+    public interface Olingo2EndpointBuilder
             extends
                 Olingo2EndpointConsumerBuilder, Olingo2EndpointProducerBuilder {
         default AdvancedOlingo2EndpointBuilder advanced() {
@@ -1029,7 +1029,7 @@ public interface Olingo2EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Olingo2 component.
      */
-    public static interface AdvancedOlingo2EndpointBuilder
+    public interface AdvancedOlingo2EndpointBuilder
             extends
                 AdvancedOlingo2EndpointConsumerBuilder, AdvancedOlingo2EndpointProducerBuilder {
         default Olingo2EndpointBuilder basic() {

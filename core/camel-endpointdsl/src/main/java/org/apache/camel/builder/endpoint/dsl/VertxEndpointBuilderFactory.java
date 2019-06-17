@@ -213,7 +213,7 @@ public interface VertxEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Vert.x component.
      */
-    public static interface VertxEndpointProducerBuilder
+    public interface VertxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedVertxEndpointProducerBuilder advanced() {
@@ -345,7 +345,7 @@ public interface VertxEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Vert.x component.
      */
-    public static interface VertxEndpointBuilder
+    public interface VertxEndpointBuilder
             extends
                 VertxEndpointConsumerBuilder, VertxEndpointProducerBuilder {
         default AdvancedVertxEndpointBuilder advanced() {
@@ -386,7 +386,7 @@ public interface VertxEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Vert.x component.
      */
-    public static interface AdvancedVertxEndpointBuilder
+    public interface AdvancedVertxEndpointBuilder
             extends
                 AdvancedVertxEndpointConsumerBuilder, AdvancedVertxEndpointProducerBuilder {
         default VertxEndpointBuilder basic() {

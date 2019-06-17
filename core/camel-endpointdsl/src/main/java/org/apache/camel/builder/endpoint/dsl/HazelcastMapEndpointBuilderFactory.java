@@ -443,7 +443,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hazelcast Map component.
      */
-    public static interface HazelcastMapEndpointProducerBuilder
+    public interface HazelcastMapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastMapEndpointProducerBuilder advanced() {
@@ -746,7 +746,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Map component.
      */
-    public static interface HazelcastMapEndpointBuilder
+    public interface HazelcastMapEndpointBuilder
             extends
                 HazelcastMapEndpointConsumerBuilder, HazelcastMapEndpointProducerBuilder {
         default AdvancedHazelcastMapEndpointBuilder advanced() {
@@ -954,7 +954,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Map component.
      */
-    public static interface AdvancedHazelcastMapEndpointBuilder
+    public interface AdvancedHazelcastMapEndpointBuilder
             extends
                 AdvancedHazelcastMapEndpointConsumerBuilder, AdvancedHazelcastMapEndpointProducerBuilder {
         default HazelcastMapEndpointBuilder basic() {

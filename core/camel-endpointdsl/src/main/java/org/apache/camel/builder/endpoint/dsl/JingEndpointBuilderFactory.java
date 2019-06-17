@@ -33,9 +33,7 @@ public interface JingEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Jing component.
      */
-    public static interface JingEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface JingEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedJingEndpointBuilder advanced() {
             return (AdvancedJingEndpointBuilder) this;
         }
@@ -77,7 +75,7 @@ public interface JingEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Jing component.
      */
-    public static interface AdvancedJingEndpointBuilder
+    public interface AdvancedJingEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default JingEndpointBuilder basic() {

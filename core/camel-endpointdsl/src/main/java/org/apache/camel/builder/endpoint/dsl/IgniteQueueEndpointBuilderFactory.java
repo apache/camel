@@ -34,7 +34,7 @@ public interface IgniteQueueEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Queues component.
      */
-    public static interface IgniteQueueEndpointBuilder
+    public interface IgniteQueueEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIgniteQueueEndpointBuilder advanced() {
@@ -98,7 +98,7 @@ public interface IgniteQueueEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Queues component.
      */
-    public static interface AdvancedIgniteQueueEndpointBuilder
+    public interface AdvancedIgniteQueueEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IgniteQueueEndpointBuilder basic() {

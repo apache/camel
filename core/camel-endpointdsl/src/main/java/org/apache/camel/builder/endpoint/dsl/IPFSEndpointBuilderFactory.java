@@ -35,9 +35,7 @@ public interface IPFSEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IPFS component.
      */
-    public static interface IPFSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface IPFSEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedIPFSEndpointBuilder advanced() {
             return (AdvancedIPFSEndpointBuilder) this;
         }
@@ -74,7 +72,7 @@ public interface IPFSEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IPFS component.
      */
-    public static interface AdvancedIPFSEndpointBuilder
+    public interface AdvancedIPFSEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IPFSEndpointBuilder basic() {

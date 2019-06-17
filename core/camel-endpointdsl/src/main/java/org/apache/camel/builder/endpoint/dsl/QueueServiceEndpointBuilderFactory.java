@@ -240,7 +240,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * Builder for endpoint producers for the Azure Storage Queue Service
      * component.
      */
-    public static interface QueueServiceEndpointProducerBuilder
+    public interface QueueServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedQueueServiceEndpointProducerBuilder advanced() {
@@ -468,7 +468,7 @@ public interface QueueServiceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Azure Storage Queue Service component.
      */
-    public static interface QueueServiceEndpointBuilder
+    public interface QueueServiceEndpointBuilder
             extends
                 QueueServiceEndpointConsumerBuilder, QueueServiceEndpointProducerBuilder {
         default AdvancedQueueServiceEndpointBuilder advanced() {
@@ -532,7 +532,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * Advanced builder for endpoint for the Azure Storage Queue Service
      * component.
      */
-    public static interface AdvancedQueueServiceEndpointBuilder
+    public interface AdvancedQueueServiceEndpointBuilder
             extends
                 AdvancedQueueServiceEndpointConsumerBuilder, AdvancedQueueServiceEndpointProducerBuilder {
         default QueueServiceEndpointBuilder basic() {

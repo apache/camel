@@ -33,7 +33,7 @@ public interface SchematronEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Schematron component.
      */
-    public static interface SchematronEndpointBuilder
+    public interface SchematronEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSchematronEndpointBuilder advanced() {
@@ -91,7 +91,7 @@ public interface SchematronEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Schematron component.
      */
-    public static interface AdvancedSchematronEndpointBuilder
+    public interface AdvancedSchematronEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SchematronEndpointBuilder basic() {

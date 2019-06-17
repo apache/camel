@@ -34,9 +34,7 @@ public interface SparkEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spark Rest component.
      */
-    public static interface SparkEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface SparkEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedSparkEndpointBuilder advanced() {
             return (AdvancedSparkEndpointBuilder) this;
         }
@@ -191,7 +189,7 @@ public interface SparkEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spark Rest component.
      */
-    public static interface AdvancedSparkEndpointBuilder
+    public interface AdvancedSparkEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default SparkEndpointBuilder basic() {

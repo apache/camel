@@ -33,9 +33,7 @@ public interface MvelEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MVEL component.
      */
-    public static interface MvelEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MvelEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMvelEndpointBuilder advanced() {
             return (AdvancedMvelEndpointBuilder) this;
         }
@@ -85,7 +83,7 @@ public interface MvelEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MVEL component.
      */
-    public static interface AdvancedMvelEndpointBuilder
+    public interface AdvancedMvelEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MvelEndpointBuilder basic() {

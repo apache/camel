@@ -721,7 +721,7 @@ public interface IronMQEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IronMQ component.
      */
-    public static interface IronMQEndpointProducerBuilder
+    public interface IronMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIronMQEndpointProducerBuilder advanced() {
@@ -928,7 +928,7 @@ public interface IronMQEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IronMQ component.
      */
-    public static interface IronMQEndpointBuilder
+    public interface IronMQEndpointBuilder
             extends
                 IronMQEndpointConsumerBuilder, IronMQEndpointProducerBuilder {
         default AdvancedIronMQEndpointBuilder advanced() {
@@ -1020,7 +1020,7 @@ public interface IronMQEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IronMQ component.
      */
-    public static interface AdvancedIronMQEndpointBuilder
+    public interface AdvancedIronMQEndpointBuilder
             extends
                 AdvancedIronMQEndpointConsumerBuilder, AdvancedIronMQEndpointProducerBuilder {
         default IronMQEndpointBuilder basic() {

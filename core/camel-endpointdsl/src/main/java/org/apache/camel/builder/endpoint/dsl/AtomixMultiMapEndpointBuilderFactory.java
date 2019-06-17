@@ -37,7 +37,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix MultiMap component.
      */
-    public static interface AtomixMultiMapEndpointBuilder
+    public interface AtomixMultiMapEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedAtomixMultiMapEndpointBuilder advanced() {
@@ -193,7 +193,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix MultiMap component.
      */
-    public static interface AdvancedAtomixMultiMapEndpointBuilder
+    public interface AdvancedAtomixMultiMapEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AtomixMultiMapEndpointBuilder basic() {

@@ -791,7 +791,7 @@ public interface XQueryEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the XQuery component.
      */
-    public static interface XQueryEndpointProducerBuilder
+    public interface XQueryEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedXQueryEndpointProducerBuilder advanced() {
@@ -1148,7 +1148,7 @@ public interface XQueryEndpointBuilderFactory {
     /**
      * Builder for endpoint for the XQuery component.
      */
-    public static interface XQueryEndpointBuilder
+    public interface XQueryEndpointBuilder
             extends
                 XQueryEndpointConsumerBuilder, XQueryEndpointProducerBuilder {
         default AdvancedXQueryEndpointBuilder advanced() {
@@ -1280,7 +1280,7 @@ public interface XQueryEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the XQuery component.
      */
-    public static interface AdvancedXQueryEndpointBuilder
+    public interface AdvancedXQueryEndpointBuilder
             extends
                 AdvancedXQueryEndpointConsumerBuilder, AdvancedXQueryEndpointProducerBuilder {
         default XQueryEndpointBuilder basic() {

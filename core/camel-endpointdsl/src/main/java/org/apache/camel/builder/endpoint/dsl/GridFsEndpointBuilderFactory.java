@@ -398,7 +398,7 @@ public interface GridFsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the MongoDB GridFS component.
      */
-    public static interface GridFsEndpointProducerBuilder
+    public interface GridFsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGridFsEndpointProducerBuilder advanced() {
@@ -619,7 +619,7 @@ public interface GridFsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MongoDB GridFS component.
      */
-    public static interface GridFsEndpointBuilder
+    public interface GridFsEndpointBuilder
             extends
                 GridFsEndpointConsumerBuilder, GridFsEndpointProducerBuilder {
         default AdvancedGridFsEndpointBuilder advanced() {
@@ -735,7 +735,7 @@ public interface GridFsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MongoDB GridFS component.
      */
-    public static interface AdvancedGridFsEndpointBuilder
+    public interface AdvancedGridFsEndpointBuilder
             extends
                 AdvancedGridFsEndpointConsumerBuilder, AdvancedGridFsEndpointProducerBuilder {
         default GridFsEndpointBuilder basic() {

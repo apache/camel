@@ -34,7 +34,7 @@ public interface SpringLdapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spring LDAP component.
      */
-    public static interface SpringLdapEndpointBuilder
+    public interface SpringLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSpringLdapEndpointBuilder advanced() {
@@ -85,7 +85,7 @@ public interface SpringLdapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spring LDAP component.
      */
-    public static interface AdvancedSpringLdapEndpointBuilder
+    public interface AdvancedSpringLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SpringLdapEndpointBuilder basic() {

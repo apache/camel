@@ -733,7 +733,7 @@ public interface SshEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the SSH component.
      */
-    public static interface SshEndpointProducerBuilder
+    public interface SshEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSshEndpointProducerBuilder advanced() {
@@ -1023,7 +1023,7 @@ public interface SshEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SSH component.
      */
-    public static interface SshEndpointBuilder
+    public interface SshEndpointBuilder
             extends
                 SshEndpointConsumerBuilder, SshEndpointProducerBuilder {
         default AdvancedSshEndpointBuilder advanced() {
@@ -1173,7 +1173,7 @@ public interface SshEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SSH component.
      */
-    public static interface AdvancedSshEndpointBuilder
+    public interface AdvancedSshEndpointBuilder
             extends
                 AdvancedSshEndpointConsumerBuilder, AdvancedSshEndpointProducerBuilder {
         default SshEndpointBuilder basic() {

@@ -35,9 +35,7 @@ public interface JMXEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JMX component.
      */
-    public static interface JMXEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface JMXEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedJMXEndpointBuilder advanced() {
             return (AdvancedJMXEndpointBuilder) this;
         }
@@ -301,7 +299,7 @@ public interface JMXEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JMX component.
      */
-    public static interface AdvancedJMXEndpointBuilder
+    public interface AdvancedJMXEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default JMXEndpointBuilder basic() {

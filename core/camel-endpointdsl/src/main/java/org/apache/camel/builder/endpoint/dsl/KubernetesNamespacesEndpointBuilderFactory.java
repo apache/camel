@@ -470,7 +470,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes Namespaces component.
      */
-    public static interface KubernetesNamespacesEndpointProducerBuilder
+    public interface KubernetesNamespacesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesNamespacesEndpointProducerBuilder advanced() {
@@ -809,7 +809,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Namespaces component.
      */
-    public static interface KubernetesNamespacesEndpointBuilder
+    public interface KubernetesNamespacesEndpointBuilder
             extends
                 KubernetesNamespacesEndpointConsumerBuilder, KubernetesNamespacesEndpointProducerBuilder {
         default AdvancedKubernetesNamespacesEndpointBuilder advanced() {
@@ -1013,7 +1013,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Namespaces component.
      */
-    public static interface AdvancedKubernetesNamespacesEndpointBuilder
+    public interface AdvancedKubernetesNamespacesEndpointBuilder
             extends
                 AdvancedKubernetesNamespacesEndpointConsumerBuilder, AdvancedKubernetesNamespacesEndpointProducerBuilder {
         default KubernetesNamespacesEndpointBuilder basic() {

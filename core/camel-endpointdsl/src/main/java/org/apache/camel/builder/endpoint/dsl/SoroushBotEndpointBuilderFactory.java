@@ -584,7 +584,7 @@ public interface SoroushBotEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Soroush component.
      */
-    public static interface SoroushBotEndpointProducerBuilder
+    public interface SoroushBotEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSoroushBotEndpointProducerBuilder advanced() {
@@ -1026,7 +1026,7 @@ public interface SoroushBotEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Soroush component.
      */
-    public static interface SoroushBotEndpointBuilder
+    public interface SoroushBotEndpointBuilder
             extends
                 SoroushBotEndpointConsumerBuilder, SoroushBotEndpointProducerBuilder {
         default AdvancedSoroushBotEndpointBuilder advanced() {
@@ -1368,7 +1368,7 @@ public interface SoroushBotEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Soroush component.
      */
-    public static interface AdvancedSoroushBotEndpointBuilder
+    public interface AdvancedSoroushBotEndpointBuilder
             extends
                 AdvancedSoroushBotEndpointConsumerBuilder, AdvancedSoroushBotEndpointProducerBuilder {
         default SoroushBotEndpointBuilder basic() {

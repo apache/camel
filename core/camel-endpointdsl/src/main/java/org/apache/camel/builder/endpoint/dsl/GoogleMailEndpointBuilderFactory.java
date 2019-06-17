@@ -272,7 +272,7 @@ public interface GoogleMailEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Google Mail component.
      */
-    public static interface GoogleMailEndpointProducerBuilder
+    public interface GoogleMailEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoogleMailEndpointProducerBuilder advanced() {
@@ -464,7 +464,7 @@ public interface GoogleMailEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Mail component.
      */
-    public static interface GoogleMailEndpointBuilder
+    public interface GoogleMailEndpointBuilder
             extends
                 GoogleMailEndpointConsumerBuilder, GoogleMailEndpointProducerBuilder {
         default AdvancedGoogleMailEndpointBuilder advanced() {
@@ -561,7 +561,7 @@ public interface GoogleMailEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Mail component.
      */
-    public static interface AdvancedGoogleMailEndpointBuilder
+    public interface AdvancedGoogleMailEndpointBuilder
             extends
                 AdvancedGoogleMailEndpointConsumerBuilder, AdvancedGoogleMailEndpointProducerBuilder {
         default GoogleMailEndpointBuilder basic() {

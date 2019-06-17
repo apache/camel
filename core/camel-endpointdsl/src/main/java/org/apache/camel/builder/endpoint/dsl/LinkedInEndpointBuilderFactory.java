@@ -417,7 +417,7 @@ public interface LinkedInEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Linkedin component.
      */
-    public static interface LinkedInEndpointProducerBuilder
+    public interface LinkedInEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedLinkedInEndpointProducerBuilder advanced() {
@@ -752,7 +752,7 @@ public interface LinkedInEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Linkedin component.
      */
-    public static interface LinkedInEndpointBuilder
+    public interface LinkedInEndpointBuilder
             extends
                 LinkedInEndpointConsumerBuilder, LinkedInEndpointProducerBuilder {
         default AdvancedLinkedInEndpointBuilder advanced() {
@@ -994,7 +994,7 @@ public interface LinkedInEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Linkedin component.
      */
-    public static interface AdvancedLinkedInEndpointBuilder
+    public interface AdvancedLinkedInEndpointBuilder
             extends
                 AdvancedLinkedInEndpointConsumerBuilder, AdvancedLinkedInEndpointProducerBuilder {
         default LinkedInEndpointBuilder basic() {

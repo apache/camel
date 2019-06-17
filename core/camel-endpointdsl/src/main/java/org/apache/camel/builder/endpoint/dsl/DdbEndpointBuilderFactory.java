@@ -34,9 +34,7 @@ public interface DdbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS DynamoDB component.
      */
-    public static interface DdbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface DdbEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedDdbEndpointBuilder advanced() {
             return (AdvancedDdbEndpointBuilder) this;
         }
@@ -227,7 +225,7 @@ public interface DdbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS DynamoDB component.
      */
-    public static interface AdvancedDdbEndpointBuilder
+    public interface AdvancedDdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DdbEndpointBuilder basic() {

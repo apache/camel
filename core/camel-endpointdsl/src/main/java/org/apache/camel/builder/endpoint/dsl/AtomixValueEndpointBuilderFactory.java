@@ -448,7 +448,7 @@ public interface AtomixValueEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atomix Value component.
      */
-    public static interface AtomixValueEndpointProducerBuilder
+    public interface AtomixValueEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtomixValueEndpointProducerBuilder advanced() {
@@ -813,7 +813,7 @@ public interface AtomixValueEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix Value component.
      */
-    public static interface AtomixValueEndpointBuilder
+    public interface AtomixValueEndpointBuilder
             extends
                 AtomixValueEndpointConsumerBuilder, AtomixValueEndpointProducerBuilder {
         default AdvancedAtomixValueEndpointBuilder advanced() {
@@ -949,7 +949,7 @@ public interface AtomixValueEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix Value component.
      */
-    public static interface AdvancedAtomixValueEndpointBuilder
+    public interface AdvancedAtomixValueEndpointBuilder
             extends
                 AdvancedAtomixValueEndpointConsumerBuilder, AdvancedAtomixValueEndpointProducerBuilder {
         default AtomixValueEndpointBuilder basic() {

@@ -238,7 +238,7 @@ public class EndpointDslMojo extends AbstractMojo {
             }
 
             String producerName = builderName.replace("Endpoint", "EndpointProducer");
-            producerClass = javaClass.addNestedType().setPublic().setStatic(true).setClass(false);
+            producerClass = javaClass.addNestedType().setPublic().setClass(false);
             producerClass.setName(producerName);
             producerClass.implementInterface("EndpointProducerBuilder");
             generateDummyClass(producerClass.getCanonicalName());
@@ -260,7 +260,7 @@ public class EndpointDslMojo extends AbstractMojo {
 
         JavaClass builderClass;
         JavaClass advancedBuilderClass = null;
-        builderClass = javaClass.addNestedType().setPublic().setStatic(true).setClass(false);
+        builderClass = javaClass.addNestedType().setPublic().setClass(false);
         builderClass.setName(builderName);
         if (realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()) {
             builderClass.implementInterface("EndpointProducerBuilder");
@@ -273,7 +273,7 @@ public class EndpointDslMojo extends AbstractMojo {
         generateDummyClass(builderClass.getCanonicalName());
         builderClass.getJavaDoc().setText("Builder for endpoint for the " + model.getTitle() + " component.");
         if (advanced) {
-            advancedBuilderClass = javaClass.addNestedType().setPublic().setStatic(true).setClass(false);
+            advancedBuilderClass = javaClass.addNestedType().setPublic().setClass(false);
             advancedBuilderClass.setName("Advanced" + builderName);
             if (realEndpointClass.getAnnotation(UriEndpoint.class).producerOnly()) {
                 advancedBuilderClass.implementInterface("EndpointProducerBuilder");

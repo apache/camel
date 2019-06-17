@@ -37,9 +37,7 @@ public interface CryptoCmsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Crypto CMS component.
      */
-    public static interface CryptoCmsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface CryptoCmsEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedCryptoCmsEndpointBuilder advanced() {
             return (AdvancedCryptoCmsEndpointBuilder) this;
         }
@@ -426,7 +424,7 @@ public interface CryptoCmsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Crypto CMS component.
      */
-    public static interface AdvancedCryptoCmsEndpointBuilder
+    public interface AdvancedCryptoCmsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default CryptoCmsEndpointBuilder basic() {

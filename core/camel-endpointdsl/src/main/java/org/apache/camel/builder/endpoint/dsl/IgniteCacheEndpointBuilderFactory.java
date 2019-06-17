@@ -362,7 +362,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Ignite Cache component.
      */
-    public static interface IgniteCacheEndpointProducerBuilder
+    public interface IgniteCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIgniteCacheEndpointProducerBuilder advanced() {
@@ -606,7 +606,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Cache component.
      */
-    public static interface IgniteCacheEndpointBuilder
+    public interface IgniteCacheEndpointBuilder
             extends
                 IgniteCacheEndpointConsumerBuilder, IgniteCacheEndpointProducerBuilder {
         default AdvancedIgniteCacheEndpointBuilder advanced() {
@@ -670,7 +670,7 @@ public interface IgniteCacheEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Cache component.
      */
-    public static interface AdvancedIgniteCacheEndpointBuilder
+    public interface AdvancedIgniteCacheEndpointBuilder
             extends
                 AdvancedIgniteCacheEndpointConsumerBuilder, AdvancedIgniteCacheEndpointProducerBuilder {
         default IgniteCacheEndpointBuilder basic() {

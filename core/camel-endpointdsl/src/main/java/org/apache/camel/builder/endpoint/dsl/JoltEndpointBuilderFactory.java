@@ -34,9 +34,7 @@ public interface JoltEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JOLT component.
      */
-    public static interface JoltEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface JoltEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedJoltEndpointBuilder advanced() {
             return (AdvancedJoltEndpointBuilder) this;
         }
@@ -143,7 +141,7 @@ public interface JoltEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JOLT component.
      */
-    public static interface AdvancedJoltEndpointBuilder
+    public interface AdvancedJoltEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default JoltEndpointBuilder basic() {

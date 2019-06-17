@@ -473,7 +473,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      * Builder for endpoint producers for the Kubernetes Replication Controller
      * component.
      */
-    public static interface KubernetesReplicationControllersEndpointProducerBuilder
+    public interface KubernetesReplicationControllersEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesReplicationControllersEndpointProducerBuilder advanced() {
@@ -812,7 +812,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Replication Controller component.
      */
-    public static interface KubernetesReplicationControllersEndpointBuilder
+    public interface KubernetesReplicationControllersEndpointBuilder
             extends
                 KubernetesReplicationControllersEndpointConsumerBuilder, KubernetesReplicationControllersEndpointProducerBuilder {
         default AdvancedKubernetesReplicationControllersEndpointBuilder advanced() {
@@ -1027,7 +1027,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      * Advanced builder for endpoint for the Kubernetes Replication Controller
      * component.
      */
-    public static interface AdvancedKubernetesReplicationControllersEndpointBuilder
+    public interface AdvancedKubernetesReplicationControllersEndpointBuilder
             extends
                 AdvancedKubernetesReplicationControllersEndpointConsumerBuilder, AdvancedKubernetesReplicationControllersEndpointProducerBuilder {
         default KubernetesReplicationControllersEndpointBuilder basic() {

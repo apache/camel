@@ -34,9 +34,7 @@ public interface SagaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Saga component.
      */
-    public static interface SagaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SagaEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSagaEndpointBuilder advanced() {
             return (AdvancedSagaEndpointBuilder) this;
         }
@@ -65,7 +63,7 @@ public interface SagaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Saga component.
      */
-    public static interface AdvancedSagaEndpointBuilder
+    public interface AdvancedSagaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SagaEndpointBuilder basic() {

@@ -662,7 +662,7 @@ public interface MllpEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the MLLP component.
      */
-    public static interface MllpEndpointProducerBuilder
+    public interface MllpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMllpEndpointProducerBuilder advanced() {
@@ -1122,7 +1122,7 @@ public interface MllpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MLLP component.
      */
-    public static interface MllpEndpointBuilder
+    public interface MllpEndpointBuilder
             extends
                 MllpEndpointConsumerBuilder, MllpEndpointProducerBuilder {
         default AdvancedMllpEndpointBuilder advanced() {
@@ -1316,7 +1316,7 @@ public interface MllpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MLLP component.
      */
-    public static interface AdvancedMllpEndpointBuilder
+    public interface AdvancedMllpEndpointBuilder
             extends
                 AdvancedMllpEndpointConsumerBuilder, AdvancedMllpEndpointProducerBuilder {
         default MllpEndpointBuilder basic() {

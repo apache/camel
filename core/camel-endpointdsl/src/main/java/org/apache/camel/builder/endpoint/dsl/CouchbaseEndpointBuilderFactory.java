@@ -882,7 +882,7 @@ public interface CouchbaseEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Couchbase component.
      */
-    public static interface CouchbaseEndpointProducerBuilder
+    public interface CouchbaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCouchbaseEndpointProducerBuilder advanced() {
@@ -1353,7 +1353,7 @@ public interface CouchbaseEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Couchbase component.
      */
-    public static interface CouchbaseEndpointBuilder
+    public interface CouchbaseEndpointBuilder
             extends
                 CouchbaseEndpointConsumerBuilder, CouchbaseEndpointProducerBuilder {
         default AdvancedCouchbaseEndpointBuilder advanced() {
@@ -1436,7 +1436,7 @@ public interface CouchbaseEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Couchbase component.
      */
-    public static interface AdvancedCouchbaseEndpointBuilder
+    public interface AdvancedCouchbaseEndpointBuilder
             extends
                 AdvancedCouchbaseEndpointConsumerBuilder, AdvancedCouchbaseEndpointProducerBuilder {
         default CouchbaseEndpointBuilder basic() {

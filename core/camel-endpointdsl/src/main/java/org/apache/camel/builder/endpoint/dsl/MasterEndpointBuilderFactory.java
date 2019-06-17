@@ -34,9 +34,7 @@ public interface MasterEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Master component.
      */
-    public static interface MasterEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface MasterEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedMasterEndpointBuilder advanced() {
             return (AdvancedMasterEndpointBuilder) this;
         }
@@ -63,7 +61,7 @@ public interface MasterEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Master component.
      */
-    public static interface AdvancedMasterEndpointBuilder
+    public interface AdvancedMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default MasterEndpointBuilder basic() {

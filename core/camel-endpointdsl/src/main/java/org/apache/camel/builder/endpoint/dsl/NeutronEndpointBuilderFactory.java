@@ -34,9 +34,7 @@ public interface NeutronEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Neutron component.
      */
-    public static interface NeutronEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface NeutronEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedNeutronEndpointBuilder advanced() {
             return (AdvancedNeutronEndpointBuilder) this;
         }
@@ -137,7 +135,7 @@ public interface NeutronEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Neutron component.
      */
-    public static interface AdvancedNeutronEndpointBuilder
+    public interface AdvancedNeutronEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default NeutronEndpointBuilder basic() {

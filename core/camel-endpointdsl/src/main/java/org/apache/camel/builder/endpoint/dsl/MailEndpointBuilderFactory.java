@@ -1362,7 +1362,7 @@ public interface MailEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IMAP component.
      */
-    public static interface MailEndpointProducerBuilder
+    public interface MailEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMailEndpointProducerBuilder advanced() {
@@ -1920,7 +1920,7 @@ public interface MailEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IMAP component.
      */
-    public static interface MailEndpointBuilder
+    public interface MailEndpointBuilder
             extends
                 MailEndpointConsumerBuilder, MailEndpointProducerBuilder {
         default AdvancedMailEndpointBuilder advanced() {
@@ -2018,7 +2018,7 @@ public interface MailEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IMAP component.
      */
-    public static interface AdvancedMailEndpointBuilder
+    public interface AdvancedMailEndpointBuilder
             extends
                 AdvancedMailEndpointConsumerBuilder, AdvancedMailEndpointProducerBuilder {
         default MailEndpointBuilder basic() {

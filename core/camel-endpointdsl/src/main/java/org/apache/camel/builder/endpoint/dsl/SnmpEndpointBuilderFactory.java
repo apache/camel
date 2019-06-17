@@ -34,9 +34,7 @@ public interface SnmpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SNMP component.
      */
-    public static interface SnmpEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface SnmpEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedSnmpEndpointBuilder advanced() {
             return (AdvancedSnmpEndpointBuilder) this;
         }
@@ -308,7 +306,7 @@ public interface SnmpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SNMP component.
      */
-    public static interface AdvancedSnmpEndpointBuilder
+    public interface AdvancedSnmpEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default SnmpEndpointBuilder basic() {

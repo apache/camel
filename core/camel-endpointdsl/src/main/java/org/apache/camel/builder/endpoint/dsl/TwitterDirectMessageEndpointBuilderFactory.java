@@ -936,7 +936,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Twitter Direct Message component.
      */
-    public static interface TwitterDirectMessageEndpointProducerBuilder
+    public interface TwitterDirectMessageEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedTwitterDirectMessageEndpointProducerBuilder advanced() {
@@ -1149,7 +1149,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Twitter Direct Message component.
      */
-    public static interface TwitterDirectMessageEndpointBuilder
+    public interface TwitterDirectMessageEndpointBuilder
             extends
                 TwitterDirectMessageEndpointConsumerBuilder, TwitterDirectMessageEndpointProducerBuilder {
         default AdvancedTwitterDirectMessageEndpointBuilder advanced() {
@@ -1270,7 +1270,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Twitter Direct Message component.
      */
-    public static interface AdvancedTwitterDirectMessageEndpointBuilder
+    public interface AdvancedTwitterDirectMessageEndpointBuilder
             extends
                 AdvancedTwitterDirectMessageEndpointConsumerBuilder, AdvancedTwitterDirectMessageEndpointProducerBuilder {
         default TwitterDirectMessageEndpointBuilder basic() {

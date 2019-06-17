@@ -315,7 +315,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Reactive Streams component.
      */
-    public static interface ReactiveStreamsEndpointProducerBuilder
+    public interface ReactiveStreamsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedReactiveStreamsEndpointProducerBuilder advanced() {
@@ -451,7 +451,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Reactive Streams component.
      */
-    public static interface ReactiveStreamsEndpointBuilder
+    public interface ReactiveStreamsEndpointBuilder
             extends
                 ReactiveStreamsEndpointConsumerBuilder, ReactiveStreamsEndpointProducerBuilder {
         default AdvancedReactiveStreamsEndpointBuilder advanced() {
@@ -471,7 +471,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Reactive Streams component.
      */
-    public static interface AdvancedReactiveStreamsEndpointBuilder
+    public interface AdvancedReactiveStreamsEndpointBuilder
             extends
                 AdvancedReactiveStreamsEndpointConsumerBuilder, AdvancedReactiveStreamsEndpointProducerBuilder {
         default ReactiveStreamsEndpointBuilder basic() {

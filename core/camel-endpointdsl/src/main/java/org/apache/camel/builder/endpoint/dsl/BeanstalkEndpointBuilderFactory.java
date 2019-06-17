@@ -701,7 +701,7 @@ public interface BeanstalkEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Beanstalk component.
      */
-    public static interface BeanstalkEndpointProducerBuilder
+    public interface BeanstalkEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBeanstalkEndpointProducerBuilder advanced() {
@@ -905,7 +905,7 @@ public interface BeanstalkEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Beanstalk component.
      */
-    public static interface BeanstalkEndpointBuilder
+    public interface BeanstalkEndpointBuilder
             extends
                 BeanstalkEndpointConsumerBuilder, BeanstalkEndpointProducerBuilder {
         default AdvancedBeanstalkEndpointBuilder advanced() {
@@ -1016,7 +1016,7 @@ public interface BeanstalkEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Beanstalk component.
      */
-    public static interface AdvancedBeanstalkEndpointBuilder
+    public interface AdvancedBeanstalkEndpointBuilder
             extends
                 AdvancedBeanstalkEndpointConsumerBuilder, AdvancedBeanstalkEndpointProducerBuilder {
         default BeanstalkEndpointBuilder basic() {

@@ -245,7 +245,7 @@ public interface ZendeskEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Zendesk component.
      */
-    public static interface ZendeskEndpointProducerBuilder
+    public interface ZendeskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedZendeskEndpointProducerBuilder advanced() {
@@ -410,7 +410,7 @@ public interface ZendeskEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Zendesk component.
      */
-    public static interface ZendeskEndpointBuilder
+    public interface ZendeskEndpointBuilder
             extends
                 ZendeskEndpointConsumerBuilder, ZendeskEndpointProducerBuilder {
         default AdvancedZendeskEndpointBuilder advanced() {
@@ -484,7 +484,7 @@ public interface ZendeskEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Zendesk component.
      */
-    public static interface AdvancedZendeskEndpointBuilder
+    public interface AdvancedZendeskEndpointBuilder
             extends
                 AdvancedZendeskEndpointConsumerBuilder, AdvancedZendeskEndpointProducerBuilder {
         default ZendeskEndpointBuilder basic() {

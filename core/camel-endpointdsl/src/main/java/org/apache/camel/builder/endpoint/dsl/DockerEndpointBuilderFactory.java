@@ -445,7 +445,7 @@ public interface DockerEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Docker component.
      */
-    public static interface DockerEndpointProducerBuilder
+    public interface DockerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDockerEndpointProducerBuilder advanced() {
@@ -810,7 +810,7 @@ public interface DockerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Docker component.
      */
-    public static interface DockerEndpointBuilder
+    public interface DockerEndpointBuilder
             extends
                 DockerEndpointConsumerBuilder, DockerEndpointProducerBuilder {
         default AdvancedDockerEndpointBuilder advanced() {
@@ -960,7 +960,7 @@ public interface DockerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Docker component.
      */
-    public static interface AdvancedDockerEndpointBuilder
+    public interface AdvancedDockerEndpointBuilder
             extends
                 AdvancedDockerEndpointConsumerBuilder, AdvancedDockerEndpointProducerBuilder {
         default DockerEndpointBuilder basic() {

@@ -580,7 +580,7 @@ public interface SmppEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the SMPP component.
      */
-    public static interface SmppEndpointProducerBuilder
+    public interface SmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSmppEndpointProducerBuilder advanced() {
@@ -1386,7 +1386,7 @@ public interface SmppEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SMPP component.
      */
-    public static interface SmppEndpointBuilder
+    public interface SmppEndpointBuilder
             extends
                 SmppEndpointConsumerBuilder, SmppEndpointProducerBuilder {
         default AdvancedSmppEndpointBuilder advanced() {
@@ -1703,7 +1703,7 @@ public interface SmppEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SMPP component.
      */
-    public static interface AdvancedSmppEndpointBuilder
+    public interface AdvancedSmppEndpointBuilder
             extends
                 AdvancedSmppEndpointConsumerBuilder, AdvancedSmppEndpointProducerBuilder {
         default SmppEndpointBuilder basic() {

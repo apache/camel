@@ -227,7 +227,7 @@ public interface JGroupsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JGroups component.
      */
-    public static interface JGroupsEndpointProducerBuilder
+    public interface JGroupsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJGroupsEndpointProducerBuilder advanced() {
@@ -349,7 +349,7 @@ public interface JGroupsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JGroups component.
      */
-    public static interface JGroupsEndpointBuilder
+    public interface JGroupsEndpointBuilder
             extends
                 JGroupsEndpointConsumerBuilder, JGroupsEndpointProducerBuilder {
         default AdvancedJGroupsEndpointBuilder advanced() {
@@ -380,7 +380,7 @@ public interface JGroupsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JGroups component.
      */
-    public static interface AdvancedJGroupsEndpointBuilder
+    public interface AdvancedJGroupsEndpointBuilder
             extends
                 AdvancedJGroupsEndpointConsumerBuilder, AdvancedJGroupsEndpointProducerBuilder {
         default JGroupsEndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface LogEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Log component.
      */
-    public static interface LogEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LogEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLogEndpointBuilder advanced() {
             return (AdvancedLogEndpointBuilder) this;
         }
@@ -530,7 +528,7 @@ public interface LogEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Log component.
      */
-    public static interface AdvancedLogEndpointBuilder
+    public interface AdvancedLogEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LogEndpointBuilder basic() {

@@ -34,9 +34,7 @@ public interface MockEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Mock component.
      */
-    public static interface MockEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MockEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMockEndpointBuilder advanced() {
             return (AdvancedMockEndpointBuilder) this;
         }
@@ -54,7 +52,7 @@ public interface MockEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Mock component.
      */
-    public static interface AdvancedMockEndpointBuilder
+    public interface AdvancedMockEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MockEndpointBuilder basic() {

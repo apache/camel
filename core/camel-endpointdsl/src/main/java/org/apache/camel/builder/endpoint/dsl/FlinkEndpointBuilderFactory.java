@@ -33,9 +33,7 @@ public interface FlinkEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Apache Flink component.
      */
-    public static interface FlinkEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface FlinkEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedFlinkEndpointBuilder advanced() {
             return (AdvancedFlinkEndpointBuilder) this;
         }
@@ -167,7 +165,7 @@ public interface FlinkEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Apache Flink component.
      */
-    public static interface AdvancedFlinkEndpointBuilder
+    public interface AdvancedFlinkEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default FlinkEndpointBuilder basic() {

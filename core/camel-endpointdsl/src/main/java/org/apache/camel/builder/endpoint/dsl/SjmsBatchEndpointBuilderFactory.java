@@ -38,9 +38,7 @@ public interface SjmsBatchEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Simple JMS Batch component.
      */
-    public static interface SjmsBatchEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface SjmsBatchEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedSjmsBatchEndpointBuilder advanced() {
             return (AdvancedSjmsBatchEndpointBuilder) this;
         }
@@ -347,7 +345,7 @@ public interface SjmsBatchEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Simple JMS Batch component.
      */
-    public static interface AdvancedSjmsBatchEndpointBuilder
+    public interface AdvancedSjmsBatchEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default SjmsBatchEndpointBuilder basic() {

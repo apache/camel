@@ -33,9 +33,7 @@ public interface NagiosEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Nagios component.
      */
-    public static interface NagiosEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface NagiosEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedNagiosEndpointBuilder advanced() {
             return (AdvancedNagiosEndpointBuilder) this;
         }
@@ -183,7 +181,7 @@ public interface NagiosEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Nagios component.
      */
-    public static interface AdvancedNagiosEndpointBuilder
+    public interface AdvancedNagiosEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default NagiosEndpointBuilder basic() {

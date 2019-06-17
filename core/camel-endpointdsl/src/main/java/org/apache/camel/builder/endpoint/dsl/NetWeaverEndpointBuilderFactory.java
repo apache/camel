@@ -34,9 +34,7 @@ public interface NetWeaverEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SAP NetWeaver component.
      */
-    public static interface NetWeaverEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface NetWeaverEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedNetWeaverEndpointBuilder advanced() {
             return (AdvancedNetWeaverEndpointBuilder) this;
         }
@@ -130,7 +128,7 @@ public interface NetWeaverEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SAP NetWeaver component.
      */
-    public static interface AdvancedNetWeaverEndpointBuilder
+    public interface AdvancedNetWeaverEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default NetWeaverEndpointBuilder basic() {

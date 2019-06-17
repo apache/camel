@@ -2668,7 +2668,7 @@ public interface FtpsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the FTPS component.
      */
-    public static interface FtpsEndpointProducerBuilder
+    public interface FtpsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFtpsEndpointProducerBuilder advanced() {
@@ -3965,7 +3965,7 @@ public interface FtpsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the FTPS component.
      */
-    public static interface FtpsEndpointBuilder
+    public interface FtpsEndpointBuilder
             extends
                 FtpsEndpointConsumerBuilder, FtpsEndpointProducerBuilder {
         default AdvancedFtpsEndpointBuilder advanced() {
@@ -4436,7 +4436,7 @@ public interface FtpsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the FTPS component.
      */
-    public static interface AdvancedFtpsEndpointBuilder
+    public interface AdvancedFtpsEndpointBuilder
             extends
                 AdvancedFtpsEndpointConsumerBuilder, AdvancedFtpsEndpointProducerBuilder {
         default FtpsEndpointBuilder basic() {

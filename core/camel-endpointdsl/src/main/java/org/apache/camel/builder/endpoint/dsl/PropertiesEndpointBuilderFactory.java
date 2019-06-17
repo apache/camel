@@ -240,7 +240,7 @@ public interface PropertiesEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Properties component.
      */
-    public static interface PropertiesEndpointProducerBuilder
+    public interface PropertiesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPropertiesEndpointProducerBuilder advanced() {
@@ -398,7 +398,7 @@ public interface PropertiesEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Properties component.
      */
-    public static interface PropertiesEndpointBuilder
+    public interface PropertiesEndpointBuilder
             extends
                 PropertiesEndpointConsumerBuilder, PropertiesEndpointProducerBuilder {
         default AdvancedPropertiesEndpointBuilder advanced() {
@@ -464,7 +464,7 @@ public interface PropertiesEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Properties component.
      */
-    public static interface AdvancedPropertiesEndpointBuilder
+    public interface AdvancedPropertiesEndpointBuilder
             extends
                 AdvancedPropertiesEndpointConsumerBuilder, AdvancedPropertiesEndpointProducerBuilder {
         default PropertiesEndpointBuilder basic() {

@@ -1806,7 +1806,7 @@ public interface JmsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JMS component.
      */
-    public static interface JmsEndpointProducerBuilder
+    public interface JmsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJmsEndpointProducerBuilder advanced() {
@@ -3505,7 +3505,7 @@ public interface JmsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JMS component.
      */
-    public static interface JmsEndpointBuilder
+    public interface JmsEndpointBuilder
             extends
                 JmsEndpointConsumerBuilder, JmsEndpointProducerBuilder {
         default AdvancedJmsEndpointBuilder advanced() {
@@ -3709,7 +3709,7 @@ public interface JmsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JMS component.
      */
-    public static interface AdvancedJmsEndpointBuilder
+    public interface AdvancedJmsEndpointBuilder
             extends
                 AdvancedJmsEndpointConsumerBuilder, AdvancedJmsEndpointProducerBuilder {
         default JmsEndpointBuilder basic() {

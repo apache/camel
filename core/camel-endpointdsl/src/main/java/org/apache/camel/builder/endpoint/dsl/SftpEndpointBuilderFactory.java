@@ -2514,7 +2514,7 @@ public interface SftpEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the SFTP component.
      */
-    public static interface SftpEndpointProducerBuilder
+    public interface SftpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSftpEndpointProducerBuilder advanced() {
@@ -3731,7 +3731,7 @@ public interface SftpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SFTP component.
      */
-    public static interface SftpEndpointBuilder
+    public interface SftpEndpointBuilder
             extends
                 SftpEndpointConsumerBuilder, SftpEndpointProducerBuilder {
         default AdvancedSftpEndpointBuilder advanced() {
@@ -4119,7 +4119,7 @@ public interface SftpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SFTP component.
      */
-    public static interface AdvancedSftpEndpointBuilder
+    public interface AdvancedSftpEndpointBuilder
             extends
                 AdvancedSftpEndpointConsumerBuilder, AdvancedSftpEndpointProducerBuilder {
         default SftpEndpointBuilder basic() {

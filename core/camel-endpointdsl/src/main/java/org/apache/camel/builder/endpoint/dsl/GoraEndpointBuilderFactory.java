@@ -460,7 +460,7 @@ public interface GoraEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Gora component.
      */
-    public static interface GoraEndpointProducerBuilder
+    public interface GoraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoraEndpointProducerBuilder advanced() {
@@ -640,7 +640,7 @@ public interface GoraEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Gora component.
      */
-    public static interface GoraEndpointBuilder
+    public interface GoraEndpointBuilder
             extends
                 GoraEndpointConsumerBuilder, GoraEndpointProducerBuilder {
         default AdvancedGoraEndpointBuilder advanced() {
@@ -687,7 +687,7 @@ public interface GoraEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Gora component.
      */
-    public static interface AdvancedGoraEndpointBuilder
+    public interface AdvancedGoraEndpointBuilder
             extends
                 AdvancedGoraEndpointConsumerBuilder, AdvancedGoraEndpointProducerBuilder {
         default GoraEndpointBuilder basic() {

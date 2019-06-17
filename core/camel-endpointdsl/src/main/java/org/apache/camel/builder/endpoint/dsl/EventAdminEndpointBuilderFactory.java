@@ -213,7 +213,7 @@ public interface EventAdminEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the OSGi EventAdmin component.
      */
-    public static interface EventAdminEndpointProducerBuilder
+    public interface EventAdminEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedEventAdminEndpointProducerBuilder advanced() {
@@ -345,7 +345,7 @@ public interface EventAdminEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OSGi EventAdmin component.
      */
-    public static interface EventAdminEndpointBuilder
+    public interface EventAdminEndpointBuilder
             extends
                 EventAdminEndpointConsumerBuilder, EventAdminEndpointProducerBuilder {
         default AdvancedEventAdminEndpointBuilder advanced() {
@@ -385,7 +385,7 @@ public interface EventAdminEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OSGi EventAdmin component.
      */
-    public static interface AdvancedEventAdminEndpointBuilder
+    public interface AdvancedEventAdminEndpointBuilder
             extends
                 AdvancedEventAdminEndpointConsumerBuilder, AdvancedEventAdminEndpointProducerBuilder {
         default EventAdminEndpointBuilder basic() {

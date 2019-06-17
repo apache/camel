@@ -34,7 +34,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Atomic Number component.
      */
-    public static interface HazelcastAtomicnumberEndpointBuilder
+    public interface HazelcastAtomicnumberEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastAtomicnumberEndpointBuilder advanced() {
@@ -247,7 +247,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Atomic Number component.
      */
-    public static interface AdvancedHazelcastAtomicnumberEndpointBuilder
+    public interface AdvancedHazelcastAtomicnumberEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default HazelcastAtomicnumberEndpointBuilder basic() {

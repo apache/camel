@@ -665,7 +665,7 @@ public interface CxfEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the CXF component.
      */
-    public static interface CxfEndpointProducerBuilder
+    public interface CxfEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCxfEndpointProducerBuilder advanced() {
@@ -1355,7 +1355,7 @@ public interface CxfEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CXF component.
      */
-    public static interface CxfEndpointBuilder
+    public interface CxfEndpointBuilder
             extends
                 CxfEndpointConsumerBuilder, CxfEndpointProducerBuilder {
         default AdvancedCxfEndpointBuilder advanced() {
@@ -1585,7 +1585,7 @@ public interface CxfEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CXF component.
      */
-    public static interface AdvancedCxfEndpointBuilder
+    public interface AdvancedCxfEndpointBuilder
             extends
                 AdvancedCxfEndpointConsumerBuilder, AdvancedCxfEndpointProducerBuilder {
         default CxfEndpointBuilder basic() {

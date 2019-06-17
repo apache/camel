@@ -33,9 +33,7 @@ public interface VelocityEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Velocity component.
      */
-    public static interface VelocityEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface VelocityEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedVelocityEndpointBuilder advanced() {
             return (AdvancedVelocityEndpointBuilder) this;
         }
@@ -115,7 +113,7 @@ public interface VelocityEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Velocity component.
      */
-    public static interface AdvancedVelocityEndpointBuilder
+    public interface AdvancedVelocityEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default VelocityEndpointBuilder basic() {

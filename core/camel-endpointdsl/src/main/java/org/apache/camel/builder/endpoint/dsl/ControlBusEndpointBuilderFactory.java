@@ -36,7 +36,7 @@ public interface ControlBusEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Control Bus component.
      */
-    public static interface ControlBusEndpointBuilder
+    public interface ControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedControlBusEndpointBuilder advanced() {
@@ -167,7 +167,7 @@ public interface ControlBusEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Control Bus component.
      */
-    public static interface AdvancedControlBusEndpointBuilder
+    public interface AdvancedControlBusEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ControlBusEndpointBuilder basic() {

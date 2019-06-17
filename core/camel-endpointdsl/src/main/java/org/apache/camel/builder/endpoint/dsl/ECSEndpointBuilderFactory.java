@@ -33,9 +33,7 @@ public interface ECSEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS ECS component.
      */
-    public static interface ECSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ECSEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedECSEndpointBuilder advanced() {
             return (AdvancedECSEndpointBuilder) this;
         }
@@ -62,7 +60,7 @@ public interface ECSEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS ECS component.
      */
-    public static interface AdvancedECSEndpointBuilder
+    public interface AdvancedECSEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ECSEndpointBuilder basic() {

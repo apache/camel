@@ -256,7 +256,7 @@ public interface GitHubEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the GitHub component.
      */
-    public static interface GitHubEndpointProducerBuilder
+    public interface GitHubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGitHubEndpointProducerBuilder advanced() {
@@ -450,7 +450,7 @@ public interface GitHubEndpointBuilderFactory {
     /**
      * Builder for endpoint for the GitHub component.
      */
-    public static interface GitHubEndpointBuilder
+    public interface GitHubEndpointBuilder
             extends
                 GitHubEndpointConsumerBuilder, GitHubEndpointProducerBuilder {
         default AdvancedGitHubEndpointBuilder advanced() {
@@ -526,7 +526,7 @@ public interface GitHubEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the GitHub component.
      */
-    public static interface AdvancedGitHubEndpointBuilder
+    public interface AdvancedGitHubEndpointBuilder
             extends
                 AdvancedGitHubEndpointConsumerBuilder, AdvancedGitHubEndpointProducerBuilder {
         default GitHubEndpointBuilder basic() {

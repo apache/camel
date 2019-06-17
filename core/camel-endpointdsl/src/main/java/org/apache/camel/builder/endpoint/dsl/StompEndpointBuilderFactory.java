@@ -275,7 +275,7 @@ public interface StompEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Stomp component.
      */
-    public static interface StompEndpointProducerBuilder
+    public interface StompEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedStompEndpointProducerBuilder advanced() {
@@ -468,7 +468,7 @@ public interface StompEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Stomp component.
      */
-    public static interface StompEndpointBuilder
+    public interface StompEndpointBuilder
             extends
                 StompEndpointConsumerBuilder, StompEndpointProducerBuilder {
         default AdvancedStompEndpointBuilder advanced() {
@@ -546,7 +546,7 @@ public interface StompEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Stomp component.
      */
-    public static interface AdvancedStompEndpointBuilder
+    public interface AdvancedStompEndpointBuilder
             extends
                 AdvancedStompEndpointConsumerBuilder, AdvancedStompEndpointProducerBuilder {
         default StompEndpointBuilder basic() {

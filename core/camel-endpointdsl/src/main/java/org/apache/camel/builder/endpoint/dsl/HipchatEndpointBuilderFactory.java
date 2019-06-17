@@ -615,7 +615,7 @@ public interface HipchatEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hipchat component.
      */
-    public static interface HipchatEndpointProducerBuilder
+    public interface HipchatEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHipchatEndpointProducerBuilder advanced() {
@@ -795,7 +795,7 @@ public interface HipchatEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hipchat component.
      */
-    public static interface HipchatEndpointBuilder
+    public interface HipchatEndpointBuilder
             extends
                 HipchatEndpointConsumerBuilder, HipchatEndpointProducerBuilder {
         default AdvancedHipchatEndpointBuilder advanced() {
@@ -884,7 +884,7 @@ public interface HipchatEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hipchat component.
      */
-    public static interface AdvancedHipchatEndpointBuilder
+    public interface AdvancedHipchatEndpointBuilder
             extends
                 AdvancedHipchatEndpointConsumerBuilder, AdvancedHipchatEndpointProducerBuilder {
         default HipchatEndpointBuilder basic() {

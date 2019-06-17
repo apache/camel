@@ -460,7 +460,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes Job component.
      */
-    public static interface KubernetesJobEndpointProducerBuilder
+    public interface KubernetesJobEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesJobEndpointProducerBuilder advanced() {
@@ -792,7 +792,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Job component.
      */
-    public static interface KubernetesJobEndpointBuilder
+    public interface KubernetesJobEndpointBuilder
             extends
                 KubernetesJobEndpointConsumerBuilder, KubernetesJobEndpointProducerBuilder {
         default AdvancedKubernetesJobEndpointBuilder advanced() {
@@ -991,7 +991,7 @@ public interface KubernetesJobEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Job component.
      */
-    public static interface AdvancedKubernetesJobEndpointBuilder
+    public interface AdvancedKubernetesJobEndpointBuilder
             extends
                 AdvancedKubernetesJobEndpointConsumerBuilder, AdvancedKubernetesJobEndpointProducerBuilder {
         default KubernetesJobEndpointBuilder basic() {

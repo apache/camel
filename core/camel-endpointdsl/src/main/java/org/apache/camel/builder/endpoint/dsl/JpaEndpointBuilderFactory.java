@@ -928,7 +928,7 @@ public interface JpaEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JPA component.
      */
-    public static interface JpaEndpointProducerBuilder
+    public interface JpaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJpaEndpointProducerBuilder advanced() {
@@ -1354,7 +1354,7 @@ public interface JpaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JPA component.
      */
-    public static interface JpaEndpointBuilder
+    public interface JpaEndpointBuilder
             extends
                 JpaEndpointConsumerBuilder, JpaEndpointProducerBuilder {
         default AdvancedJpaEndpointBuilder advanced() {
@@ -1551,7 +1551,7 @@ public interface JpaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JPA component.
      */
-    public static interface AdvancedJpaEndpointBuilder
+    public interface AdvancedJpaEndpointBuilder
             extends
                 AdvancedJpaEndpointConsumerBuilder, AdvancedJpaEndpointProducerBuilder {
         default JpaEndpointBuilder basic() {

@@ -36,9 +36,7 @@ public interface AhcEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AHC component.
      */
-    public static interface AhcEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface AhcEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAhcEndpointBuilder advanced() {
             return (AdvancedAhcEndpointBuilder) this;
         }
@@ -223,7 +221,7 @@ public interface AhcEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AHC component.
      */
-    public static interface AdvancedAhcEndpointBuilder
+    public interface AdvancedAhcEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AhcEndpointBuilder basic() {

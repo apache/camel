@@ -788,7 +788,7 @@ public interface Jt400EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JT400 component.
      */
-    public static interface Jt400EndpointProducerBuilder
+    public interface Jt400EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJt400EndpointProducerBuilder advanced() {
@@ -1123,7 +1123,7 @@ public interface Jt400EndpointBuilderFactory {
     /**
      * Builder for endpoint for the JT400 component.
      */
-    public static interface Jt400EndpointBuilder
+    public interface Jt400EndpointBuilder
             extends
                 Jt400EndpointConsumerBuilder, Jt400EndpointProducerBuilder {
         default AdvancedJt400EndpointBuilder advanced() {
@@ -1367,7 +1367,7 @@ public interface Jt400EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JT400 component.
      */
-    public static interface AdvancedJt400EndpointBuilder
+    public interface AdvancedJt400EndpointBuilder
             extends
                 AdvancedJt400EndpointConsumerBuilder, AdvancedJt400EndpointProducerBuilder {
         default Jt400EndpointBuilder basic() {

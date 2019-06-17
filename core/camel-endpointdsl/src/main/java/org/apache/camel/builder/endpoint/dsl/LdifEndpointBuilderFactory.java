@@ -34,9 +34,7 @@ public interface LdifEndpointBuilderFactory {
     /**
      * Builder for endpoint for the LDIF component.
      */
-    public static interface LdifEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LdifEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLdifEndpointBuilder advanced() {
             return (AdvancedLdifEndpointBuilder) this;
         }
@@ -56,7 +54,7 @@ public interface LdifEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the LDIF component.
      */
-    public static interface AdvancedLdifEndpointBuilder
+    public interface AdvancedLdifEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LdifEndpointBuilder basic() {

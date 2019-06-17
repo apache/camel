@@ -34,9 +34,7 @@ public interface DrillEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Drill component.
      */
-    public static interface DrillEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface DrillEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedDrillEndpointBuilder advanced() {
             return (AdvancedDrillEndpointBuilder) this;
         }
@@ -117,7 +115,7 @@ public interface DrillEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Drill component.
      */
-    public static interface AdvancedDrillEndpointBuilder
+    public interface AdvancedDrillEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DrillEndpointBuilder basic() {

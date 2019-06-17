@@ -560,7 +560,7 @@ public interface FhirEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the FHIR component.
      */
-    public static interface FhirEndpointProducerBuilder
+    public interface FhirEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFhirEndpointProducerBuilder advanced() {
@@ -1040,7 +1040,7 @@ public interface FhirEndpointBuilderFactory {
     /**
      * Builder for endpoint for the FHIR component.
      */
-    public static interface FhirEndpointBuilder
+    public interface FhirEndpointBuilder
             extends
                 FhirEndpointConsumerBuilder, FhirEndpointProducerBuilder {
         default AdvancedFhirEndpointBuilder advanced() {
@@ -1248,7 +1248,7 @@ public interface FhirEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the FHIR component.
      */
-    public static interface AdvancedFhirEndpointBuilder
+    public interface AdvancedFhirEndpointBuilder
             extends
                 AdvancedFhirEndpointConsumerBuilder, AdvancedFhirEndpointProducerBuilder {
         default FhirEndpointBuilder basic() {

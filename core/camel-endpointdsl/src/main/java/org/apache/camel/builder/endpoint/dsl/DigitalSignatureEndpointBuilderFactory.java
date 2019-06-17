@@ -39,7 +39,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Crypto (JCE) component.
      */
-    public static interface DigitalSignatureEndpointBuilder
+    public interface DigitalSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDigitalSignatureEndpointBuilder advanced() {
@@ -248,7 +248,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Crypto (JCE) component.
      */
-    public static interface AdvancedDigitalSignatureEndpointBuilder
+    public interface AdvancedDigitalSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DigitalSignatureEndpointBuilder basic() {

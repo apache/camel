@@ -448,7 +448,7 @@ public interface AtomixSetEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atomix Set component.
      */
-    public static interface AtomixSetEndpointProducerBuilder
+    public interface AtomixSetEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtomixSetEndpointProducerBuilder advanced() {
@@ -813,7 +813,7 @@ public interface AtomixSetEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix Set component.
      */
-    public static interface AtomixSetEndpointBuilder
+    public interface AtomixSetEndpointBuilder
             extends
                 AtomixSetEndpointConsumerBuilder, AtomixSetEndpointProducerBuilder {
         default AdvancedAtomixSetEndpointBuilder advanced() {
@@ -949,7 +949,7 @@ public interface AtomixSetEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix Set component.
      */
-    public static interface AdvancedAtomixSetEndpointBuilder
+    public interface AdvancedAtomixSetEndpointBuilder
             extends
                 AdvancedAtomixSetEndpointConsumerBuilder, AdvancedAtomixSetEndpointProducerBuilder {
         default AtomixSetEndpointBuilder basic() {

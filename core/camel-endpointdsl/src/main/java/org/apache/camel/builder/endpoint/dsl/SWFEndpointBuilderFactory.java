@@ -473,7 +473,7 @@ public interface SWFEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AWS Simple Workflow component.
      */
-    public static interface SWFEndpointProducerBuilder
+    public interface SWFEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSWFEndpointProducerBuilder advanced() {
@@ -859,7 +859,7 @@ public interface SWFEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Simple Workflow component.
      */
-    public static interface SWFEndpointBuilder
+    public interface SWFEndpointBuilder
             extends
                 SWFEndpointConsumerBuilder, SWFEndpointProducerBuilder {
         default AdvancedSWFEndpointBuilder advanced() {
@@ -979,7 +979,7 @@ public interface SWFEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Simple Workflow component.
      */
-    public static interface AdvancedSWFEndpointBuilder
+    public interface AdvancedSWFEndpointBuilder
             extends
                 AdvancedSWFEndpointConsumerBuilder, AdvancedSWFEndpointProducerBuilder {
         default SWFEndpointBuilder basic() {

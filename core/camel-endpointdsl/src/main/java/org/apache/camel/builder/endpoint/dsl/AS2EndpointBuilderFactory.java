@@ -626,7 +626,7 @@ public interface AS2EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AS2 component.
      */
-    public static interface AS2EndpointProducerBuilder
+    public interface AS2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAS2EndpointProducerBuilder advanced() {
@@ -1169,7 +1169,7 @@ public interface AS2EndpointBuilderFactory {
     /**
      * Builder for endpoint for the AS2 component.
      */
-    public static interface AS2EndpointBuilder
+    public interface AS2EndpointBuilder
             extends
                 AS2EndpointConsumerBuilder, AS2EndpointProducerBuilder {
         default AdvancedAS2EndpointBuilder advanced() {
@@ -1614,7 +1614,7 @@ public interface AS2EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AS2 component.
      */
-    public static interface AdvancedAS2EndpointBuilder
+    public interface AdvancedAS2EndpointBuilder
             extends
                 AdvancedAS2EndpointConsumerBuilder, AdvancedAS2EndpointProducerBuilder {
         default AS2EndpointBuilder basic() {

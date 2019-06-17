@@ -571,7 +571,7 @@ public interface SlackEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Slack component.
      */
-    public static interface SlackEndpointProducerBuilder
+    public interface SlackEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSlackEndpointProducerBuilder advanced() {
@@ -721,7 +721,7 @@ public interface SlackEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Slack component.
      */
-    public static interface SlackEndpointBuilder
+    public interface SlackEndpointBuilder
             extends
                 SlackEndpointConsumerBuilder, SlackEndpointProducerBuilder {
         default AdvancedSlackEndpointBuilder advanced() {
@@ -742,7 +742,7 @@ public interface SlackEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Slack component.
      */
-    public static interface AdvancedSlackEndpointBuilder
+    public interface AdvancedSlackEndpointBuilder
             extends
                 AdvancedSlackEndpointConsumerBuilder, AdvancedSlackEndpointProducerBuilder {
         default SlackEndpointBuilder basic() {

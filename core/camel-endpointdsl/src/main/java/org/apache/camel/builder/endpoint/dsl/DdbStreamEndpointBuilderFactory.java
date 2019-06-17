@@ -33,9 +33,7 @@ public interface DdbStreamEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS DynamoDB Streams component.
      */
-    public static interface DdbStreamEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface DdbStreamEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedDdbStreamEndpointBuilder advanced() {
             return (AdvancedDdbStreamEndpointBuilder) this;
         }
@@ -99,7 +97,7 @@ public interface DdbStreamEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS DynamoDB Streams component.
      */
-    public static interface AdvancedDdbStreamEndpointBuilder
+    public interface AdvancedDdbStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default DdbStreamEndpointBuilder basic() {

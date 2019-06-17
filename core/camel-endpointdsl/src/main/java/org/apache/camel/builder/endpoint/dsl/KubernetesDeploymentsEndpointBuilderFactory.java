@@ -470,7 +470,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes Deployments component.
      */
-    public static interface KubernetesDeploymentsEndpointProducerBuilder
+    public interface KubernetesDeploymentsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesDeploymentsEndpointProducerBuilder advanced() {
@@ -809,7 +809,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Deployments component.
      */
-    public static interface KubernetesDeploymentsEndpointBuilder
+    public interface KubernetesDeploymentsEndpointBuilder
             extends
                 KubernetesDeploymentsEndpointConsumerBuilder, KubernetesDeploymentsEndpointProducerBuilder {
         default AdvancedKubernetesDeploymentsEndpointBuilder advanced() {
@@ -1018,7 +1018,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Deployments component.
      */
-    public static interface AdvancedKubernetesDeploymentsEndpointBuilder
+    public interface AdvancedKubernetesDeploymentsEndpointBuilder
             extends
                 AdvancedKubernetesDeploymentsEndpointConsumerBuilder, AdvancedKubernetesDeploymentsEndpointProducerBuilder {
         default KubernetesDeploymentsEndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface SolrEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Solr component.
      */
-    public static interface SolrEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SolrEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSolrEndpointBuilder advanced() {
             return (AdvancedSolrEndpointBuilder) this;
         }
@@ -260,7 +258,7 @@ public interface SolrEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Solr component.
      */
-    public static interface AdvancedSolrEndpointBuilder
+    public interface AdvancedSolrEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SolrEndpointBuilder basic() {

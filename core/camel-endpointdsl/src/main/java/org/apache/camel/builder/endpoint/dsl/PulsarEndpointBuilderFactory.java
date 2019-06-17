@@ -276,7 +276,7 @@ public interface PulsarEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Apache Pulsar component.
      */
-    public static interface PulsarEndpointProducerBuilder
+    public interface PulsarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPulsarEndpointProducerBuilder advanced() {
@@ -396,7 +396,7 @@ public interface PulsarEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Apache Pulsar component.
      */
-    public static interface PulsarEndpointBuilder
+    public interface PulsarEndpointBuilder
             extends
                 PulsarEndpointConsumerBuilder, PulsarEndpointProducerBuilder {
         default AdvancedPulsarEndpointBuilder advanced() {
@@ -407,7 +407,7 @@ public interface PulsarEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Apache Pulsar component.
      */
-    public static interface AdvancedPulsarEndpointBuilder
+    public interface AdvancedPulsarEndpointBuilder
             extends
                 AdvancedPulsarEndpointConsumerBuilder, AdvancedPulsarEndpointProducerBuilder {
         default PulsarEndpointBuilder basic() {

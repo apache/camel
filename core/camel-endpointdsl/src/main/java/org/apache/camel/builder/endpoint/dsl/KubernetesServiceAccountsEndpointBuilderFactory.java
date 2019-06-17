@@ -34,7 +34,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Service Account component.
      */
-    public static interface KubernetesServiceAccountsEndpointBuilder
+    public interface KubernetesServiceAccountsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesServiceAccountsEndpointBuilder advanced() {
@@ -249,7 +249,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
      * Advanced builder for endpoint for the Kubernetes Service Account
      * component.
      */
-    public static interface AdvancedKubernetesServiceAccountsEndpointBuilder
+    public interface AdvancedKubernetesServiceAccountsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesServiceAccountsEndpointBuilder basic() {

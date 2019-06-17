@@ -34,9 +34,7 @@ public interface XChangeEndpointBuilderFactory {
     /**
      * Builder for endpoint for the XChange component.
      */
-    public static interface XChangeEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface XChangeEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedXChangeEndpointBuilder advanced() {
             return (AdvancedXChangeEndpointBuilder) this;
         }
@@ -134,7 +132,7 @@ public interface XChangeEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the XChange component.
      */
-    public static interface AdvancedXChangeEndpointBuilder
+    public interface AdvancedXChangeEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default XChangeEndpointBuilder basic() {

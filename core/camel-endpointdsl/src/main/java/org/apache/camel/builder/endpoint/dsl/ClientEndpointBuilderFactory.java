@@ -502,7 +502,7 @@ public interface ClientEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IEC 60870 Client component.
      */
-    public static interface ClientEndpointProducerBuilder
+    public interface ClientEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedClientEndpointProducerBuilder advanced() {
@@ -921,7 +921,7 @@ public interface ClientEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IEC 60870 Client component.
      */
-    public static interface ClientEndpointBuilder
+    public interface ClientEndpointBuilder
             extends
                 ClientEndpointConsumerBuilder, ClientEndpointProducerBuilder {
         default AdvancedClientEndpointBuilder advanced() {
@@ -1239,7 +1239,7 @@ public interface ClientEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IEC 60870 Client component.
      */
-    public static interface AdvancedClientEndpointBuilder
+    public interface AdvancedClientEndpointBuilder
             extends
                 AdvancedClientEndpointConsumerBuilder, AdvancedClientEndpointProducerBuilder {
         default ClientEndpointBuilder basic() {

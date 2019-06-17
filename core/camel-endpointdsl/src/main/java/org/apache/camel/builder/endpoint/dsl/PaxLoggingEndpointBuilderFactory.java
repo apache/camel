@@ -34,7 +34,7 @@ public interface PaxLoggingEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OSGi PAX Logging component.
      */
-    public static interface PaxLoggingEndpointBuilder
+    public interface PaxLoggingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedPaxLoggingEndpointBuilder advanced() {
@@ -55,7 +55,7 @@ public interface PaxLoggingEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OSGi PAX Logging component.
      */
-    public static interface AdvancedPaxLoggingEndpointBuilder
+    public interface AdvancedPaxLoggingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default PaxLoggingEndpointBuilder basic() {

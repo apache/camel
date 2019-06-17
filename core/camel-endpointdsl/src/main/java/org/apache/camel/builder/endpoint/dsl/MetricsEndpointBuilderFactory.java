@@ -34,9 +34,7 @@ public interface MetricsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Metrics component.
      */
-    public static interface MetricsEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MetricsEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMetricsEndpointBuilder advanced() {
             return (AdvancedMetricsEndpointBuilder) this;
         }
@@ -186,7 +184,7 @@ public interface MetricsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Metrics component.
      */
-    public static interface AdvancedMetricsEndpointBuilder
+    public interface AdvancedMetricsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MetricsEndpointBuilder basic() {

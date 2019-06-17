@@ -34,7 +34,7 @@ public interface BeanValidatorEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Bean Validator component.
      */
-    public static interface BeanValidatorEndpointBuilder
+    public interface BeanValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBeanValidatorEndpointBuilder advanced() {
@@ -151,7 +151,7 @@ public interface BeanValidatorEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Bean Validator component.
      */
-    public static interface AdvancedBeanValidatorEndpointBuilder
+    public interface AdvancedBeanValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default BeanValidatorEndpointBuilder basic() {

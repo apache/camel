@@ -34,7 +34,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Openshift Build Config component.
      */
-    public static interface OpenshiftBuildConfigsEndpointBuilder
+    public interface OpenshiftBuildConfigsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedOpenshiftBuildConfigsEndpointBuilder advanced() {
@@ -243,7 +243,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Openshift Build Config component.
      */
-    public static interface AdvancedOpenshiftBuildConfigsEndpointBuilder
+    public interface AdvancedOpenshiftBuildConfigsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default OpenshiftBuildConfigsEndpointBuilder basic() {

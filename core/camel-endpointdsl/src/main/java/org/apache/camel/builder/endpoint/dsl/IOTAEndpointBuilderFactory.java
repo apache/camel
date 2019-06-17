@@ -283,7 +283,7 @@ public interface IOTAEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IOTA component.
      */
-    public static interface IOTAEndpointProducerBuilder
+    public interface IOTAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIOTAEndpointProducerBuilder advanced() {
@@ -486,7 +486,7 @@ public interface IOTAEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IOTA component.
      */
-    public static interface IOTAEndpointBuilder
+    public interface IOTAEndpointBuilder
             extends
                 IOTAEndpointConsumerBuilder, IOTAEndpointProducerBuilder {
         default AdvancedIOTAEndpointBuilder advanced() {
@@ -597,7 +597,7 @@ public interface IOTAEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IOTA component.
      */
-    public static interface AdvancedIOTAEndpointBuilder
+    public interface AdvancedIOTAEndpointBuilder
             extends
                 AdvancedIOTAEndpointConsumerBuilder, AdvancedIOTAEndpointProducerBuilder {
         default IOTAEndpointBuilder basic() {

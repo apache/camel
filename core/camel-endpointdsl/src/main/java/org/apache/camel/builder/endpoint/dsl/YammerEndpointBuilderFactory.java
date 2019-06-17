@@ -700,7 +700,7 @@ public interface YammerEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Yammer component.
      */
-    public static interface YammerEndpointProducerBuilder
+    public interface YammerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedYammerEndpointProducerBuilder advanced() {
@@ -873,7 +873,7 @@ public interface YammerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Yammer component.
      */
-    public static interface YammerEndpointBuilder
+    public interface YammerEndpointBuilder
             extends
                 YammerEndpointConsumerBuilder, YammerEndpointProducerBuilder {
         default AdvancedYammerEndpointBuilder advanced() {
@@ -953,7 +953,7 @@ public interface YammerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Yammer component.
      */
-    public static interface AdvancedYammerEndpointBuilder
+    public interface AdvancedYammerEndpointBuilder
             extends
                 AdvancedYammerEndpointConsumerBuilder, AdvancedYammerEndpointProducerBuilder {
         default YammerEndpointBuilder basic() {

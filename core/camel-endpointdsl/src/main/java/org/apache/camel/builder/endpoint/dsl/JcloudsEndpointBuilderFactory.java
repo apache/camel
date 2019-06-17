@@ -230,7 +230,7 @@ public interface JcloudsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JClouds component.
      */
-    public static interface JcloudsEndpointProducerBuilder
+    public interface JcloudsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJcloudsEndpointProducerBuilder advanced() {
@@ -457,7 +457,7 @@ public interface JcloudsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JClouds component.
      */
-    public static interface JcloudsEndpointBuilder
+    public interface JcloudsEndpointBuilder
             extends
                 JcloudsEndpointConsumerBuilder, JcloudsEndpointProducerBuilder {
         default AdvancedJcloudsEndpointBuilder advanced() {
@@ -507,7 +507,7 @@ public interface JcloudsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JClouds component.
      */
-    public static interface AdvancedJcloudsEndpointBuilder
+    public interface AdvancedJcloudsEndpointBuilder
             extends
                 AdvancedJcloudsEndpointConsumerBuilder, AdvancedJcloudsEndpointProducerBuilder {
         default JcloudsEndpointBuilder basic() {

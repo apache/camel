@@ -229,7 +229,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Spring Integration component.
      */
-    public static interface SpringIntegrationEndpointProducerBuilder
+    public interface SpringIntegrationEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSpringIntegrationEndpointProducerBuilder advanced() {
@@ -378,7 +378,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spring Integration component.
      */
-    public static interface SpringIntegrationEndpointBuilder
+    public interface SpringIntegrationEndpointBuilder
             extends
                 SpringIntegrationEndpointConsumerBuilder, SpringIntegrationEndpointProducerBuilder {
         default AdvancedSpringIntegrationEndpointBuilder advanced() {
@@ -424,7 +424,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spring Integration component.
      */
-    public static interface AdvancedSpringIntegrationEndpointBuilder
+    public interface AdvancedSpringIntegrationEndpointBuilder
             extends
                 AdvancedSpringIntegrationEndpointConsumerBuilder, AdvancedSpringIntegrationEndpointProducerBuilder {
         default SpringIntegrationEndpointBuilder basic() {

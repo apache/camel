@@ -34,9 +34,7 @@ public interface DozerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Dozer component.
      */
-    public static interface DozerEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface DozerEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedDozerEndpointBuilder advanced() {
             return (AdvancedDozerEndpointBuilder) this;
         }
@@ -137,7 +135,7 @@ public interface DozerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Dozer component.
      */
-    public static interface AdvancedDozerEndpointBuilder
+    public interface AdvancedDozerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DozerEndpointBuilder basic() {

@@ -35,7 +35,7 @@ public interface ServiceNowEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ServiceNow component.
      */
-    public static interface ServiceNowEndpointBuilder
+    public interface ServiceNowEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedServiceNowEndpointBuilder advanced() {
@@ -652,7 +652,7 @@ public interface ServiceNowEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ServiceNow component.
      */
-    public static interface AdvancedServiceNowEndpointBuilder
+    public interface AdvancedServiceNowEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ServiceNowEndpointBuilder basic() {

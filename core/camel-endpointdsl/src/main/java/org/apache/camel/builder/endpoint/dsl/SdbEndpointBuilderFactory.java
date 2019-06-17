@@ -34,9 +34,7 @@ public interface SdbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS SimpleDB component.
      */
-    public static interface SdbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SdbEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSdbEndpointBuilder advanced() {
             return (AdvancedSdbEndpointBuilder) this;
         }
@@ -190,7 +188,7 @@ public interface SdbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS SimpleDB component.
      */
-    public static interface AdvancedSdbEndpointBuilder
+    public interface AdvancedSdbEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SdbEndpointBuilder basic() {

@@ -192,7 +192,7 @@ public interface RefEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Ref component.
      */
-    public static interface RefEndpointProducerBuilder
+    public interface RefEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRefEndpointProducerBuilder advanced() {
@@ -303,7 +303,7 @@ public interface RefEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ref component.
      */
-    public static interface RefEndpointBuilder
+    public interface RefEndpointBuilder
             extends
                 RefEndpointConsumerBuilder, RefEndpointProducerBuilder {
         default AdvancedRefEndpointBuilder advanced() {
@@ -323,7 +323,7 @@ public interface RefEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ref component.
      */
-    public static interface AdvancedRefEndpointBuilder
+    public interface AdvancedRefEndpointBuilder
             extends
                 AdvancedRefEndpointConsumerBuilder, AdvancedRefEndpointProducerBuilder {
         default RefEndpointBuilder basic() {

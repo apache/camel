@@ -34,7 +34,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Persistent Volume component.
      */
-    public static interface KubernetesPersistentVolumesEndpointBuilder
+    public interface KubernetesPersistentVolumesEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesPersistentVolumesEndpointBuilder advanced() {
@@ -249,7 +249,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
      * Advanced builder for endpoint for the Kubernetes Persistent Volume
      * component.
      */
-    public static interface AdvancedKubernetesPersistentVolumesEndpointBuilder
+    public interface AdvancedKubernetesPersistentVolumesEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesPersistentVolumesEndpointBuilder basic() {

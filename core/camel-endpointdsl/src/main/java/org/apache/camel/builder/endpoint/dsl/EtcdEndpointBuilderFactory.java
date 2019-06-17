@@ -695,7 +695,7 @@ public interface EtcdEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the etcd component.
      */
-    public static interface EtcdEndpointProducerBuilder
+    public interface EtcdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedEtcdEndpointProducerBuilder advanced() {
@@ -939,7 +939,7 @@ public interface EtcdEndpointBuilderFactory {
     /**
      * Builder for endpoint for the etcd component.
      */
-    public static interface EtcdEndpointBuilder
+    public interface EtcdEndpointBuilder
             extends
                 EtcdEndpointConsumerBuilder, EtcdEndpointProducerBuilder {
         default AdvancedEtcdEndpointBuilder advanced() {
@@ -1073,7 +1073,7 @@ public interface EtcdEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the etcd component.
      */
-    public static interface AdvancedEtcdEndpointBuilder
+    public interface AdvancedEtcdEndpointBuilder
             extends
                 AdvancedEtcdEndpointConsumerBuilder, AdvancedEtcdEndpointProducerBuilder {
         default EtcdEndpointBuilder basic() {

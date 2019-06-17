@@ -274,7 +274,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Google Sheets component.
      */
-    public static interface GoogleSheetsEndpointProducerBuilder
+    public interface GoogleSheetsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoogleSheetsEndpointProducerBuilder advanced() {
@@ -468,7 +468,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Sheets component.
      */
-    public static interface GoogleSheetsEndpointBuilder
+    public interface GoogleSheetsEndpointBuilder
             extends
                 GoogleSheetsEndpointConsumerBuilder, GoogleSheetsEndpointProducerBuilder {
         default AdvancedGoogleSheetsEndpointBuilder advanced() {
@@ -567,7 +567,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Sheets component.
      */
-    public static interface AdvancedGoogleSheetsEndpointBuilder
+    public interface AdvancedGoogleSheetsEndpointBuilder
             extends
                 AdvancedGoogleSheetsEndpointConsumerBuilder, AdvancedGoogleSheetsEndpointProducerBuilder {
         default GoogleSheetsEndpointBuilder basic() {

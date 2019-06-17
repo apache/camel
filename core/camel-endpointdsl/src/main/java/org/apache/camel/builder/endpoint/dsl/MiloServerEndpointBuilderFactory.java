@@ -191,7 +191,7 @@ public interface MiloServerEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the OPC UA Server component.
      */
-    public static interface MiloServerEndpointProducerBuilder
+    public interface MiloServerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMiloServerEndpointProducerBuilder advanced() {
@@ -302,7 +302,7 @@ public interface MiloServerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OPC UA Server component.
      */
-    public static interface MiloServerEndpointBuilder
+    public interface MiloServerEndpointBuilder
             extends
                 MiloServerEndpointConsumerBuilder, MiloServerEndpointProducerBuilder {
         default AdvancedMiloServerEndpointBuilder advanced() {
@@ -322,7 +322,7 @@ public interface MiloServerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OPC UA Server component.
      */
-    public static interface AdvancedMiloServerEndpointBuilder
+    public interface AdvancedMiloServerEndpointBuilder
             extends
                 AdvancedMiloServerEndpointConsumerBuilder, AdvancedMiloServerEndpointProducerBuilder {
         default MiloServerEndpointBuilder basic() {

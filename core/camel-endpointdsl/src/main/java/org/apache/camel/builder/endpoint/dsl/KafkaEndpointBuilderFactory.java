@@ -1192,7 +1192,7 @@ public interface KafkaEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kafka component.
      */
-    public static interface KafkaEndpointProducerBuilder
+    public interface KafkaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKafkaEndpointProducerBuilder advanced() {
@@ -2544,7 +2544,7 @@ public interface KafkaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kafka component.
      */
-    public static interface KafkaEndpointBuilder
+    public interface KafkaEndpointBuilder
             extends
                 KafkaEndpointConsumerBuilder, KafkaEndpointProducerBuilder {
         default AdvancedKafkaEndpointBuilder advanced() {
@@ -2930,7 +2930,7 @@ public interface KafkaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kafka component.
      */
-    public static interface AdvancedKafkaEndpointBuilder
+    public interface AdvancedKafkaEndpointBuilder
             extends
                 AdvancedKafkaEndpointConsumerBuilder, AdvancedKafkaEndpointProducerBuilder {
         default KafkaEndpointBuilder basic() {

@@ -430,7 +430,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atomix Queue component.
      */
-    public static interface AtomixQueueEndpointProducerBuilder
+    public interface AtomixQueueEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtomixQueueEndpointProducerBuilder advanced() {
@@ -777,7 +777,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix Queue component.
      */
-    public static interface AtomixQueueEndpointBuilder
+    public interface AtomixQueueEndpointBuilder
             extends
                 AtomixQueueEndpointConsumerBuilder, AtomixQueueEndpointProducerBuilder {
         default AdvancedAtomixQueueEndpointBuilder advanced() {
@@ -895,7 +895,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix Queue component.
      */
-    public static interface AdvancedAtomixQueueEndpointBuilder
+    public interface AdvancedAtomixQueueEndpointBuilder
             extends
                 AdvancedAtomixQueueEndpointConsumerBuilder, AdvancedAtomixQueueEndpointProducerBuilder {
         default AtomixQueueEndpointBuilder basic() {

@@ -34,9 +34,7 @@ public interface NovaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Nova component.
      */
-    public static interface NovaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface NovaEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedNovaEndpointBuilder advanced() {
             return (AdvancedNovaEndpointBuilder) this;
         }
@@ -137,7 +135,7 @@ public interface NovaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Nova component.
      */
-    public static interface AdvancedNovaEndpointBuilder
+    public interface AdvancedNovaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default NovaEndpointBuilder basic() {

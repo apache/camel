@@ -454,7 +454,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * Builder for endpoint producers for the Hazelcast Replicated Map
      * component.
      */
-    public static interface HazelcastReplicatedmapEndpointProducerBuilder
+    public interface HazelcastReplicatedmapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder advanced() {
@@ -763,7 +763,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Replicated Map component.
      */
-    public static interface HazelcastReplicatedmapEndpointBuilder
+    public interface HazelcastReplicatedmapEndpointBuilder
             extends
                 HazelcastReplicatedmapEndpointConsumerBuilder, HazelcastReplicatedmapEndpointProducerBuilder {
         default AdvancedHazelcastReplicatedmapEndpointBuilder advanced() {
@@ -977,7 +977,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Replicated Map component.
      */
-    public static interface AdvancedHazelcastReplicatedmapEndpointBuilder
+    public interface AdvancedHazelcastReplicatedmapEndpointBuilder
             extends
                 AdvancedHazelcastReplicatedmapEndpointConsumerBuilder, AdvancedHazelcastReplicatedmapEndpointProducerBuilder {
         default HazelcastReplicatedmapEndpointBuilder basic() {

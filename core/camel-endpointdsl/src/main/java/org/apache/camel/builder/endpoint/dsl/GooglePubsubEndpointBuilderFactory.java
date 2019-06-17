@@ -300,7 +300,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Google Pubsub component.
      */
-    public static interface GooglePubsubEndpointProducerBuilder
+    public interface GooglePubsubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGooglePubsubEndpointProducerBuilder advanced() {
@@ -520,7 +520,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Pubsub component.
      */
-    public static interface GooglePubsubEndpointBuilder
+    public interface GooglePubsubEndpointBuilder
             extends
                 GooglePubsubEndpointConsumerBuilder, GooglePubsubEndpointProducerBuilder {
         default AdvancedGooglePubsubEndpointBuilder advanced() {
@@ -649,7 +649,7 @@ public interface GooglePubsubEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Pubsub component.
      */
-    public static interface AdvancedGooglePubsubEndpointBuilder
+    public interface AdvancedGooglePubsubEndpointBuilder
             extends
                 AdvancedGooglePubsubEndpointConsumerBuilder, AdvancedGooglePubsubEndpointProducerBuilder {
         default GooglePubsubEndpointBuilder basic() {
