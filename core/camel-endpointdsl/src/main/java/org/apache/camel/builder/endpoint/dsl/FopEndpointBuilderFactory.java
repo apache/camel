@@ -152,15 +152,15 @@ public interface FopEndpointBuilderFactory {
      */
     enum FopOutputType {
         pdf,
-ps,
-pcl,
-png,
-jpeg,
-svg,
-xml,
-mif,
-rtf,
-txt;
+        ps,
+        pcl,
+        png,
+        jpeg,
+        svg,
+        xml,
+        mif,
+        rtf,
+        txt;
     }
     /**
      * The fop component allows you to render a message into different output

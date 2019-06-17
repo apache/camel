@@ -1295,7 +1295,7 @@ public interface ClientEndpointBuilderFactory {
      */
     enum ASDUAddressType {
         SIZE_1,
-SIZE_2;
+        SIZE_2;
     }
 
     /**
@@ -1304,7 +1304,7 @@ SIZE_2;
      */
     enum CauseOfTransmissionType {
         SIZE_1,
-SIZE_2;
+        SIZE_2;
     }
 
     /**
@@ -1313,8 +1313,8 @@ SIZE_2;
      */
     enum InformationObjectAddressType {
         SIZE_1,
-SIZE_2,
-SIZE_3;
+        SIZE_2,
+        SIZE_3;
     }
     /**
      * IEC 60870 component used for telecontrol (supervisory control and data

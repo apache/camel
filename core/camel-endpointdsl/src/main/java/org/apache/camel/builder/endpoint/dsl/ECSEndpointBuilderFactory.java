@@ -116,9 +116,9 @@ public interface ECSEndpointBuilderFactory {
      */
     enum ECSOperations {
         listClusters,
-describeCluster,
-createCluster,
-deleteCluster;
+        describeCluster,
+        createCluster,
+        deleteCluster;
     }
     /**
      * The aws-kms is used for managing Amazon ECS Creates a builder to build

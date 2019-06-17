@@ -796,7 +796,7 @@ public interface AvroEndpointBuilderFactory {
      */
     enum AvroTransport {
         http,
-netty;
+        netty;
     }
     /**
      * Working with Apache Avro for data serialization. Creates a builder to

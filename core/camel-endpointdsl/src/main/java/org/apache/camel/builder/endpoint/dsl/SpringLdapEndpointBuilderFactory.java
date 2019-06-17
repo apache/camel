@@ -142,11 +142,11 @@ public interface SpringLdapEndpointBuilderFactory {
      */
     enum LdapOperation {
         SEARCH,
-BIND,
-UNBIND,
-AUTHENTICATE,
-MODIFY_ATTRIBUTES,
-FUNCTION_DRIVEN;
+        BIND,
+        UNBIND,
+        AUTHENTICATE,
+        MODIFY_ATTRIBUTES,
+        FUNCTION_DRIVEN;
     }
     /**
      * The spring-ldap component allows you to perform searches in LDAP servers

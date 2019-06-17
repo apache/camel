@@ -584,8 +584,8 @@ public interface LogEndpointBuilderFactory {
      */
     enum OutputStyle {
         Default,
-Tab,
-Fixed;
+        Tab,
+        Fixed;
     }
     /**
      * The log component logs message exchanges to the underlying logging

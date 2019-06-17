@@ -589,13 +589,13 @@ public interface HttpEndpointBuilderFactory {
      */
     enum HttpMethods {
         GET,
-POST,
-PUT,
-DELETE,
-HEAD,
-OPTIONS,
-TRACE,
-PATCH;
+        POST,
+        PUT,
+        DELETE,
+        HEAD,
+        OPTIONS,
+        TRACE,
+        PATCH;
     }
     /**
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.

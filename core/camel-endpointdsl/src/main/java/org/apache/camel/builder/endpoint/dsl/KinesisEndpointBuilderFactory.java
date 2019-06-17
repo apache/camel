@@ -1058,10 +1058,10 @@ public interface KinesisEndpointBuilderFactory {
      */
     enum ShardIteratorType {
         AT_SEQUENCE_NUMBER,
-AFTER_SEQUENCE_NUMBER,
-TRIM_HORIZON,
-LATEST,
-AT_TIMESTAMP;
+        AFTER_SEQUENCE_NUMBER,
+        TRIM_HORIZON,
+        LATEST,
+        AT_TIMESTAMP;
     }
 
     /**
@@ -1070,8 +1070,8 @@ AT_TIMESTAMP;
      */
     enum KinesisShardClosedStrategyEnum {
         ignore,
-fail,
-silent;
+        fail,
+        silent;
     }
     /**
      * The aws-kinesis component is for consuming and producing records from

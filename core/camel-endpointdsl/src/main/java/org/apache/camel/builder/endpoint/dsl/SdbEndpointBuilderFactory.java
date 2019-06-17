@@ -244,14 +244,14 @@ public interface SdbEndpointBuilderFactory {
      */
     enum SdbOperations {
         BatchDeleteAttributes,
-BatchPutAttributes,
-DeleteAttributes,
-DeleteDomain,
-DomainMetadata,
-GetAttributes,
-ListDomains,
-PutAttributes,
-Select;
+        BatchPutAttributes,
+        DeleteAttributes,
+        DeleteDomain,
+        DomainMetadata,
+        GetAttributes,
+        ListDomains,
+        PutAttributes,
+        Select;
     }
     /**
      * The aws-sdb component is for storing and retrieving data from/to Amazon's

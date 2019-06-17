@@ -285,8 +285,8 @@ public interface PdfEndpointBuilderFactory {
      */
     enum PdfOperation {
         create,
-append,
-extractText;
+        append,
+        extractText;
     }
 
     /**
@@ -295,7 +295,7 @@ extractText;
      */
     enum TextProcessingFactory {
         autoFormatting,
-lineTermination;
+        lineTermination;
     }
     /**
      * The pdf components provides the ability to create, modify or extract

@@ -1835,8 +1835,8 @@ public interface SmppEndpointBuilderFactory {
      */
     enum SmppSplittingPolicy {
         ALLOW,
-REJECT,
-TRUNCATE;
+        REJECT,
+        TRUNCATE;
     }
     /**
      * To send and receive SMS using a SMSC (Short Message Service Center).

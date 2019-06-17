@@ -481,8 +481,8 @@ public interface AsteriskEndpointBuilderFactory {
      */
     enum AsteriskAction {
         QUEUE_STATUS,
-SIP_PEERS,
-EXTENSION_STATE;
+        SIP_PEERS,
+        EXTENSION_STATE;
     }
     /**
      * The asterisk component is used to interact with Asterisk PBX Server.

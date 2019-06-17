@@ -1462,12 +1462,12 @@ public interface XQueryEndpointBuilderFactory {
      */
     enum ResultFormat {
         Bytes,
-BytesSource,
-DOM,
-DOMSource,
-List,
-String,
-StringSource;
+        BytesSource,
+        DOM,
+        DOMSource,
+        List,
+        String,
+        StringSource;
     }
     /**
      * Transforms the message using a XQuery template using Saxon. Creates a

@@ -1129,8 +1129,8 @@ public interface EtcdEndpointBuilderFactory {
      */
     enum EtcdNamespace {
         stats,
-watch,
-keys;
+        watch,
+        keys;
     }
     /**
      * The camel etcd component allows you to work with Etcd, a distributed

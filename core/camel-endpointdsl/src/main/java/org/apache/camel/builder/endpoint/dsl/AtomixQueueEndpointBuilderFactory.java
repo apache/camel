@@ -1084,14 +1084,14 @@ public interface AtomixQueueEndpointBuilderFactory {
      */
     enum Action {
         ADD,
-OFFER,
-PEEK,
-POLL,
-CLEAR,
-CONTAINS,
-IS_EMPTY,
-REMOVE,
-SIZE;
+        OFFER,
+        PEEK,
+        POLL,
+        CLEAR,
+        CONTAINS,
+        IS_EMPTY,
+        REMOVE,
+        SIZE;
     }
 
     /**
@@ -1099,9 +1099,9 @@ SIZE;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-queue component is used to access Atomix's distributed queue.

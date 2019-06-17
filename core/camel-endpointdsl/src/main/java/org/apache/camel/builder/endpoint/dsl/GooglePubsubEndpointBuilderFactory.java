@@ -707,7 +707,7 @@ public interface GooglePubsubEndpointBuilderFactory {
      */
     enum AckMode {
         AUTO,
-NONE;
+        NONE;
     }
     /**
      * Messaging client for Google Cloud Platform PubSub Service Creates a

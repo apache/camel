@@ -4844,8 +4844,8 @@ public interface FtpsEndpointBuilderFactory {
      */
     enum PathSeparator {
         UNIX,
-Windows,
-Auto;
+        Windows,
+        Auto;
     }
 
     /**
@@ -4854,11 +4854,11 @@ Auto;
      */
     enum GenericFileExist {
         Override,
-Append,
-Fail,
-Ignore,
-Move,
-TryRename;
+        Append,
+        Fail,
+        Ignore,
+        Move,
+        TryRename;
     }
     /**
      * The ftps (FTP secure SSL/TLS) component is used for uploading or

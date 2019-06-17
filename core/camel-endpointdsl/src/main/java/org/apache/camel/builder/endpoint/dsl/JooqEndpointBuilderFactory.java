@@ -810,8 +810,8 @@ public interface JooqEndpointBuilderFactory {
      */
     enum JooqOperation {
         EXECUTE,
-FETCH,
-NONE;
+        FETCH,
+        NONE;
     }
     /**
      * The jooq component enables you to store and retrieve entities from

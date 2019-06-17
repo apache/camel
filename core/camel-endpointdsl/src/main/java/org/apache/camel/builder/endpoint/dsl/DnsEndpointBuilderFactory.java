@@ -117,9 +117,9 @@ public interface DnsEndpointBuilderFactory {
      */
     enum DnsType {
         dig,
-ip,
-lookup,
-wikipedia;
+        ip,
+        lookup,
+        wikipedia;
     }
     /**
      * To lookup domain information and run DNS queries using DNSJava. Creates a

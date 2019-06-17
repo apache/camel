@@ -1893,12 +1893,12 @@ public interface S3EndpointBuilderFactory {
      */
     enum S3Operations {
         copyObject,
-listObjects,
-deleteObject,
-deleteBucket,
-listBuckets,
-downloadLink,
-getObject;
+        listObjects,
+        deleteObject,
+        deleteBucket,
+        listBuckets,
+        downloadLink,
+        getObject;
     }
     /**
      * The aws-s3 component is used for storing and retrieving objecct from

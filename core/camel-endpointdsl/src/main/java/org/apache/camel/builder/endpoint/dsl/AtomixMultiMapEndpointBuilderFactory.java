@@ -383,13 +383,13 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      */
     enum Action {
         PUT,
-GET,
-CLEAR,
-SIZE,
-CONTAINS_KEY,
-IS_EMPTY,
-REMOVE,
-REMOVE_VALUE;
+        GET,
+        CLEAR,
+        SIZE,
+        CONTAINS_KEY,
+        IS_EMPTY,
+        REMOVE,
+        REMOVE_VALUE;
     }
 
     /**
@@ -397,9 +397,9 @@ REMOVE_VALUE;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-multimap component is used to access Atomix's distributed

@@ -934,8 +934,8 @@ public interface MyBatisEndpointBuilderFactory {
      */
     enum ExecutorType {
         SIMPLE,
-REUSE,
-BATCH;
+        REUSE,
+        BATCH;
     }
 
     /**
@@ -944,13 +944,13 @@ BATCH;
      */
     enum StatementType {
         SelectOne,
-SelectList,
-Insert,
-InsertList,
-Update,
-UpdateList,
-Delete,
-DeleteList;
+        SelectList,
+        Insert,
+        InsertList,
+        Update,
+        UpdateList,
+        Delete,
+        DeleteList;
     }
     /**
      * Performs a query, poll, insert, update or delete in a relational database

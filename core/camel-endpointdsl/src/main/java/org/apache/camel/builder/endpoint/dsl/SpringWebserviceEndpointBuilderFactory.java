@@ -950,13 +950,13 @@ public interface SpringWebserviceEndpointBuilderFactory {
      */
     enum EndpointMappingType {
         ROOT_QNAME,
-ACTION,
-TO,
-SOAP_ACTION,
-XPATHRESULT,
-URI,
-URI_PATH,
-BEANNAME;
+        ACTION,
+        TO,
+        SOAP_ACTION,
+        XPATHRESULT,
+        URI,
+        URI_PATH,
+        BEANNAME;
     }
     /**
      * The spring-ws component is used for SOAP WebServices using Spring

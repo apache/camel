@@ -1734,10 +1734,10 @@ public interface Mina2EndpointBuilderFactory {
      */
     enum Mina2TextLineDelimiter {
         DEFAULT,
-AUTO,
-UNIX,
-WINDOWS,
-MAC;
+        AUTO,
+        UNIX,
+        WINDOWS,
+        MAC;
     }
     /**
      * Socket level networking using TCP or UDP with the Apache Mina 2.x

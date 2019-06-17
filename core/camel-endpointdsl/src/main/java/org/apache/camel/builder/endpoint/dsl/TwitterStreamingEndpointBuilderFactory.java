@@ -225,9 +225,9 @@ public interface TwitterStreamingEndpointBuilderFactory {
      */
     enum StreamingType {
         SAMPLE,
-FILTER,
-USER,
-UNKNOWN;
+        FILTER,
+        USER,
+        UNKNOWN;
     }
 
     /**
@@ -236,8 +236,8 @@ UNKNOWN;
      */
     enum EndpointType {
         POLLING,
-DIRECT,
-EVENT;
+        DIRECT,
+        EVENT;
     }
     /**
      * The Twitter Streaming component consumes twitter statuses using Streaming

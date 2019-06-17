@@ -1308,8 +1308,8 @@ public interface TwitterSearchEndpointBuilderFactory {
      */
     enum EndpointType {
         POLLING,
-DIRECT,
-EVENT;
+        DIRECT,
+        EVENT;
     }
     /**
      * The Twitter Search component consumes search results. Creates a builder

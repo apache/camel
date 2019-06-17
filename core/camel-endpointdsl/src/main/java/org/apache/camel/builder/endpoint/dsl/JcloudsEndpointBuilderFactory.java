@@ -563,7 +563,7 @@ public interface JcloudsEndpointBuilderFactory {
      */
     enum JcloudsCommand {
         blobstore,
-compute;
+        compute;
     }
     /**
      * For interacting with cloud compute & blobstore service via jclouds.

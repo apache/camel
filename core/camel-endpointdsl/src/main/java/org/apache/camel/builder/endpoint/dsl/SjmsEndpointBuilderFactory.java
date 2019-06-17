@@ -1806,9 +1806,9 @@ public interface SjmsEndpointBuilderFactory {
      */
     enum SessionAcknowledgementType {
         AUTO_ACKNOWLEDGE,
-CLIENT_ACKNOWLEDGE,
-DUPS_OK_ACKNOWLEDGE,
-SESSION_TRANSACTED;
+        CLIENT_ACKNOWLEDGE,
+        DUPS_OK_ACKNOWLEDGE,
+        SESSION_TRANSACTED;
     }
     /**
      * The sjms component (simple jms) allows messages to be sent to (or

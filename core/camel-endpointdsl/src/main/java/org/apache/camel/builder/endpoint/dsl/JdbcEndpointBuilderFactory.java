@@ -386,8 +386,8 @@ public interface JdbcEndpointBuilderFactory {
      */
     enum JdbcOutputType {
         SelectOne,
-SelectList,
-StreamList;
+        SelectList,
+        StreamList;
     }
     /**
      * The jdbc component enables you to access databases through JDBC, where

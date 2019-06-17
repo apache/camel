@@ -1162,7 +1162,7 @@ public interface FlatpackEndpointBuilderFactory {
      */
     enum FlatpackType {
         fixed,
-delim;
+        delim;
     }
     /**
      * The flatpack component supports fixed width and delimited file parsing

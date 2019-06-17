@@ -187,11 +187,11 @@ public interface MicrometerEndpointBuilderFactory {
      */
     enum Type {
         COUNTER,
-GAUGE,
-LONG_TASK_TIMER,
-TIMER,
-DISTRIBUTION_SUMMARY,
-OTHER;
+        GAUGE,
+        LONG_TASK_TIMER,
+        TIMER,
+        DISTRIBUTION_SUMMARY,
+        OTHER;
     }
     /**
      * To collect various metrics directly from Camel routes using the

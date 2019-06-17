@@ -119,7 +119,7 @@ public interface SagaEndpointBuilderFactory {
      */
     enum SagaEndpointAction {
         COMPLETE,
-COMPENSATE;
+        COMPENSATE;
     }
     /**
      * The saga component provides access to advanced options for managing the

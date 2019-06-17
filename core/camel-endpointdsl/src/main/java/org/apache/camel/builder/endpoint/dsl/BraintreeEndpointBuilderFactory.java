@@ -821,22 +821,22 @@ public interface BraintreeEndpointBuilderFactory {
      */
     enum BraintreeApiName {
         ADDON,
-ADDRESS,
-CLIENTTOKEN,
-CREDITCARDVERIFICATION,
-CUSTOMER,
-DISCOUNT,
-DISPUTE,
-DOCUMENTUPLOAD,
-MERCHANTACCOUNT,
-PAYMENTMETHOD,
-PAYMENTMETHODNONCE,
-PLAN,
-REPORT,
-SETTLEMENTBATCHSUMMARY,
-SUBSCRIPTION,
-TRANSACTION,
-WEBHOOKNOTIFICATION;
+        ADDRESS,
+        CLIENTTOKEN,
+        CREDITCARDVERIFICATION,
+        CUSTOMER,
+        DISCOUNT,
+        DISPUTE,
+        DOCUMENTUPLOAD,
+        MERCHANTACCOUNT,
+        PAYMENTMETHOD,
+        PAYMENTMETHODNONCE,
+        PLAN,
+        REPORT,
+        SETTLEMENTBATCHSUMMARY,
+        SUBSCRIPTION,
+        TRANSACTION,
+        WEBHOOKNOTIFICATION;
     }
     /**
      * The braintree component is used for integrating with the Braintree

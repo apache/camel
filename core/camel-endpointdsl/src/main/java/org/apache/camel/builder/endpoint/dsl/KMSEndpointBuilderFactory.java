@@ -116,11 +116,11 @@ public interface KMSEndpointBuilderFactory {
      */
     enum KMSOperations {
         listKeys,
-createKey,
-disableKey,
-scheduleKeyDeletion,
-describeKey,
-enableKey;
+        createKey,
+        disableKey,
+        scheduleKeyDeletion,
+        describeKey,
+        enableKey;
     }
     /**
      * The aws-kms is used for managing Amazon KMS Creates a builder to build

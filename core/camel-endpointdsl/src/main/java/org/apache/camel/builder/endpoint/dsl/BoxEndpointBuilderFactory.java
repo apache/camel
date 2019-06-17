@@ -1073,15 +1073,15 @@ public interface BoxEndpointBuilderFactory {
      */
     enum BoxApiName {
         COLLABORATIONS,
-COMMENTS,
-EVENT_LOGS,
-FILES,
-FOLDERS,
-GROUPS,
-EVENTS,
-SEARCH,
-TASKS,
-USERS;
+        COMMENTS,
+        EVENT_LOGS,
+        FILES,
+        FOLDERS,
+        GROUPS,
+        EVENTS,
+        SEARCH,
+        TASKS,
+        USERS;
     }
 
     /**
@@ -1089,8 +1089,8 @@ USERS;
      */
     enum EncryptionAlgorithm {
         RSA_SHA_256,
-RSA_SHA_384,
-RSA_SHA_512;
+        RSA_SHA_384,
+        RSA_SHA_512;
     }
     /**
      * For uploading downloading and managing files folders groups

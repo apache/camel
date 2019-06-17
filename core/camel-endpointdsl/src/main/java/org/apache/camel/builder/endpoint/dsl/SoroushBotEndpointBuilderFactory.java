@@ -1425,9 +1425,9 @@ public interface SoroushBotEndpointBuilderFactory {
      */
     enum Endpoint {
         sendMessage,
-getMessage,
-uploadFile,
-downloadFile;
+        getMessage,
+        uploadFile,
+        downloadFile;
     }
     /**
      * To integrate with the Soroush chat bot. Creates a builder to build

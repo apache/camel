@@ -1216,7 +1216,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
      */
     enum BroadcastType {
         ALL,
-RANDOM;
+        RANDOM;
     }
 
     /**
@@ -1225,7 +1225,7 @@ RANDOM;
      */
     enum Action {
         DIRECT,
-BROADCAST;
+        BROADCAST;
     }
 
     /**
@@ -1233,9 +1233,9 @@ BROADCAST;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-messaging component is used to access Atomix's group

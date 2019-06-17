@@ -819,7 +819,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
      */
     enum EvictionType {
         size_based,
-time_based;
+        time_based;
     }
     /**
      * The caffeine-cache component is used for integration with Caffeine Cache.

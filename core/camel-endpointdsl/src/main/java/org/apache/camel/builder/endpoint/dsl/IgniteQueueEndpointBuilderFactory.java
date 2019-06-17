@@ -157,20 +157,20 @@ public interface IgniteQueueEndpointBuilderFactory {
      */
     enum IgniteQueueOperation {
         CONTAINS,
-ADD,
-SIZE,
-REMOVE,
-ITERATOR,
-CLEAR,
-RETAIN_ALL,
-ARRAY,
-DRAIN,
-ELEMENT,
-PEEK,
-OFFER,
-POLL,
-TAKE,
-PUT;
+        ADD,
+        SIZE,
+        REMOVE,
+        ITERATOR,
+        CLEAR,
+        RETAIN_ALL,
+        ARRAY,
+        DRAIN,
+        ELEMENT,
+        PEEK,
+        OFFER,
+        POLL,
+        TAKE,
+        PUT;
     }
     /**
      * The Ignite Queue endpoint is one of camel-ignite endpoints which allows

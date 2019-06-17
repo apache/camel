@@ -578,7 +578,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
      */
     enum IgniteMessagingSendMode {
         ORDERED,
-UNORDERED;
+        UNORDERED;
     }
     /**
      * The Ignite Messaging endpoint is one of camel-ignite endpoints which

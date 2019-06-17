@@ -826,7 +826,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
      */
     enum EvictionType {
         size_based,
-time_based;
+        time_based;
     }
     /**
      * The caffeine-loadcache component is used for integration with Caffeine

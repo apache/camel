@@ -927,7 +927,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      */
     enum XmlCommand {
         sign,
-verify;
+        verify;
     }
     /**
      * Used to sign and verify exchanges using the XML signature specification.

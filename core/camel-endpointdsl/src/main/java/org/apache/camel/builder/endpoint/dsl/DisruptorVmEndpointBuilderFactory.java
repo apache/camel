@@ -649,9 +649,9 @@ public interface DisruptorVmEndpointBuilderFactory {
      */
     enum DisruptorWaitStrategy {
         Blocking,
-Sleeping,
-BusySpin,
-Yielding;
+        Sleeping,
+        BusySpin,
+        Yielding;
     }
 
     /**
@@ -661,7 +661,7 @@ Yielding;
      */
     enum DisruptorProducerType {
         Single,
-Multi;
+        Multi;
     }
     /**
      * The disruptor component provides asynchronous SEDA behavior using LMAX

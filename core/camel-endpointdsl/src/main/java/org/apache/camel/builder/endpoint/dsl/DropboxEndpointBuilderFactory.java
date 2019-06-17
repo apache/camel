@@ -742,10 +742,10 @@ public interface DropboxEndpointBuilderFactory {
      */
     enum DropboxOperation {
         put,
-del,
-search,
-get,
-move;
+        del,
+        search,
+        get,
+        move;
     }
 
     /**
@@ -755,7 +755,7 @@ move;
      */
     enum DropboxUploadMode {
         add,
-force;
+        force;
     }
     /**
      * For uploading, downloading and managing files, folders, groups,

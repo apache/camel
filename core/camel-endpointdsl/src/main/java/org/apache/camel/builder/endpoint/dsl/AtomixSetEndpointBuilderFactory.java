@@ -1136,11 +1136,11 @@ public interface AtomixSetEndpointBuilderFactory {
      */
     enum Action {
         ADD,
-CLEAR,
-CONTAINS,
-IS_EMPTY,
-REMOVE,
-SIZE;
+        CLEAR,
+        CONTAINS,
+        IS_EMPTY,
+        REMOVE,
+        SIZE;
     }
 
     /**
@@ -1148,9 +1148,9 @@ SIZE;
      */
     enum ReadConsistency {
         ATOMIC,
-ATOMIC_LEASE,
-SEQUENTIAL,
-LOCAL;
+        ATOMIC_LEASE,
+        SEQUENTIAL,
+        LOCAL;
     }
     /**
      * The atomix-set component is used to access Atomix's distributed set.
