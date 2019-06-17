@@ -25,7 +25,6 @@ import org.apache.camel.component.jms.DefaultTaskExecutorType;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.jms.JmsMessageType;
-import org.apache.camel.component.jms.JmsProviderMetadata;
 import org.apache.camel.component.jms.MessageCreatedStrategy;
 import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
@@ -1647,18 +1646,6 @@ public class JmsComponentConfiguration
          */
         private DestinationResolver destinationResolver;
         /**
-         * Allows the provider metadata to be explicitly configured. Typically
-         * this is not required and Camel will auto-detect the provider metadata
-         * from the underlying provider.
-         */
-        private JmsProviderMetadata providerMetadata;
-        /**
-         * Sets the {@link JmsOperations} used to deduce the {@link
-         * JmsProviderMetadata} details which if none is customized one is
-         * lazily created on demand
-         */
-        private JmsOperations metadataJmsOperations;
-        /**
          * If true, Camel will always make a JMS message copy of the message
          * when it is passed to the producer for sending. Copying the message is
          * needed in some situations, such as when a
@@ -2423,22 +2410,6 @@ public class JmsComponentConfiguration
         public void setDestinationResolver(
                 DestinationResolver destinationResolver) {
             this.destinationResolver = destinationResolver;
-        }
-
-        public JmsProviderMetadata getProviderMetadata() {
-            return providerMetadata;
-        }
-
-        public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
-            this.providerMetadata = providerMetadata;
-        }
-
-        public JmsOperations getMetadataJmsOperations() {
-            return metadataJmsOperations;
-        }
-
-        public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
-            this.metadataJmsOperations = metadataJmsOperations;
         }
 
         public Boolean getAlwaysCopyMessage() {

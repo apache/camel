@@ -289,8 +289,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "advanced",
             description = "Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.")
     private boolean useMessageIDAsCorrelationID;
-    private JmsProviderMetadata providerMetadata = new JmsProviderMetadata();
-    private JmsOperations metadataJmsOperations;
     @UriParam(label = "consumer",
             description = "Provides an explicit ReplyTo destination, which overrides any incoming value of Message.getJMSReplyTo().")
     private String replyTo;
@@ -1423,37 +1421,6 @@ public class JmsConfiguration implements Cloneable {
     public void setDestinationResolver(DestinationResolver destinationResolver) {
         this.destinationResolver = destinationResolver;
     }
-
-    public JmsProviderMetadata getProviderMetadata() {
-        return providerMetadata;
-    }
-
-    /**
-     * Allows the provider metadata to be explicitly configured. Typically this is not required
-     * and Camel will auto-detect the provider metadata from the underlying provider.
-     */
-    public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
-        this.providerMetadata = providerMetadata;
-    }
-
-    public JmsOperations getMetadataJmsOperations(JmsEndpoint endpoint) {
-        if (metadataJmsOperations == null) {
-            metadataJmsOperations = getJmsOperations();
-            if (metadataJmsOperations == null) {
-                metadataJmsOperations = createInOnlyTemplate(endpoint, false, null);
-            }
-        }
-        return metadataJmsOperations;
-    }
-
-    /**
-     * Sets the {@link JmsOperations} used to deduce the {@link JmsProviderMetadata} details which if none
-     * is customized one is lazily created on demand
-     */
-    public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
-        this.metadataJmsOperations = metadataJmsOperations;
-    }
-
 
     // Implementation methods
     // -------------------------------------------------------------------------
