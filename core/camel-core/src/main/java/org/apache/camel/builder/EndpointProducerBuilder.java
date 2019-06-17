@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 
 public interface EndpointProducerBuilder {
@@ -27,5 +28,7 @@ public interface EndpointProducerBuilder {
     String getUri();
 
     void setProperty(String name, Object value);
+
+    Expression expr();
 
 }

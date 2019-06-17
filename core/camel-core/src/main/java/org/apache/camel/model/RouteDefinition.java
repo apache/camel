@@ -169,6 +169,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return this;
     }
 
+    /**
+     * Creates an input to the route
+     *
+     * @param endpoint the from endpoint
+     * @return the builder
+     */
     public RouteDefinition from(EndpointConsumerBuilder endpoint) {
         setInput(new FromDefinition(endpoint));
         return this;

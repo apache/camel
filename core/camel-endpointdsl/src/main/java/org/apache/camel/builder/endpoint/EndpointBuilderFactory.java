@@ -17,7 +17,15 @@
 package org.apache.camel.builder.endpoint;
 
 // CHECKSTYLE:OFF
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.dsl.*;
+import org.apache.camel.support.ExpressionAdapter;
 
 public interface EndpointBuilderFactory extends
         AMQPEndpointBuilderFactory,
@@ -317,4 +325,17 @@ public interface EndpointBuilderFactory extends
         ZooKeeperEndpointBuilderFactory,
         ZooKeeperMasterEndpointBuilderFactory
 {
+
+    default Expression endpoints(EndpointProducerBuilder... endpoints) {
+        return new ExpressionAdapter() {
+            List<Expression> expressions = Stream.of(endpoints)
+                    .map(EndpointProducerBuilder::expr).collect(Collectors.toList());
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return expressions.stream().map(e -> e.evaluate(exchange, Object.class))
+                        .collect(Collectors.toList());
+            }
+        };
+    }
+
 }

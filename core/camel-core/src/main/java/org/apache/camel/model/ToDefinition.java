@@ -61,6 +61,11 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         this.pattern = pattern;
     }
 
+    public ToDefinition(EndpointProducerBuilder endpoint, ExchangePattern pattern) {
+        this(endpoint);
+        this.pattern = pattern;
+    }
+
     @Override
     public String getShortName() {
         return "to";
