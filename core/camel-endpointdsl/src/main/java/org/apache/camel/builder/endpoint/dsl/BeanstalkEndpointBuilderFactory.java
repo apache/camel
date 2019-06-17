@@ -1070,7 +1070,7 @@ public interface BeanstalkEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code> enum.
      */
-    public static enum BeanstalkCommand {
+    static enum BeanstalkCommand {
         bury, release, put, touch, delete, kick;
     }
     /**

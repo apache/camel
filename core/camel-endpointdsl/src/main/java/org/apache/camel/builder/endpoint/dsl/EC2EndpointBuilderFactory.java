@@ -114,7 +114,7 @@ public interface EC2EndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> enum.
      */
-    public static enum EC2Operations {
+    static enum EC2Operations {
         createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags;
     }
     /**

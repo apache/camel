@@ -1817,7 +1817,7 @@ public interface WeatherEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.weather.WeatherLanguage</code> enum.
      */
-    public static enum WeatherLanguage {
+    static enum WeatherLanguage {
         en, ru, it, es, sp, uk, ua, de, pt, ro, pl, fi, nl, fr, bg, sv, se, zh_tw, zh, zh_cn, tr, hr, ca;
     }
 
@@ -1825,7 +1825,7 @@ public interface WeatherEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.weather.WeatherMode</code> enum.
      */
-    public static enum WeatherMode {
+    static enum WeatherMode {
         HTML, JSON, XML;
     }
 
@@ -1833,7 +1833,7 @@ public interface WeatherEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.weather.WeatherUnits</code> enum.
      */
-    public static enum WeatherUnits {
+    static enum WeatherUnits {
         IMPERIAL, METRIC;
     }
 
@@ -1841,7 +1841,7 @@ public interface WeatherEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.weather.WeatherApi</code>
      * enum.
      */
-    public static enum WeatherApi {
+    static enum WeatherApi {
         Current, Station, Hourly, Daily;
     }
     /**

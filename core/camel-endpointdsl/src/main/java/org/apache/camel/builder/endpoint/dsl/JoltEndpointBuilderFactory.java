@@ -195,7 +195,7 @@ public interface JoltEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jolt.JoltInputOutputType</code> enum.
      */
-    public static enum JoltInputOutputType {
+    static enum JoltInputOutputType {
         Hydrated, JsonString;
     }
 
@@ -203,7 +203,7 @@ public interface JoltEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jolt.JoltTransformType</code> enum.
      */
-    public static enum JoltTransformType {
+    static enum JoltTransformType {
         Chainr, Shiftr, Defaultr, Removr, Sortr;
     }
     /**

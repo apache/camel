@@ -1007,7 +1007,7 @@ public interface YammerEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.yammer.YammerFunctionType</code> enum.
      */
-    public static enum YammerFunctionType {
+    static enum YammerFunctionType {
         MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT;
     }
     /**

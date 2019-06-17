@@ -767,7 +767,7 @@ public interface GoogleDriveEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> enum.
      */
-    public static enum GoogleDriveApiName {
+    static enum GoogleDriveApiName {
         DRIVE_ABOUT, DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS;
     }
     /**

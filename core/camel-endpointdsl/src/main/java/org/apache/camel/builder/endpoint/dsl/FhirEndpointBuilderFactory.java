@@ -1476,28 +1476,28 @@ public interface FhirEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.fhir.internal.FhirApiName</code> enum.
      */
-    public static enum FhirApiName {
+    static enum FhirApiName {
         CAPABILITIES, CREATE, DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE, VALIDATE;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.rest.api.EncodingEnum</code> enum.
      */
-    public static enum EncodingEnum {
+    static enum EncodingEnum {
         JSON, XML;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.context.FhirVersionEnum</code> enum.
      */
-    public static enum FhirVersionEnum {
+    static enum FhirVersionEnum {
         DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.rest.api.SummaryEnum</code> enum.
      */
-    public static enum SummaryEnum {
+    static enum SummaryEnum {
         COUNT, TEXT, DATA, TRUE, FALSE;
     }
 
@@ -1505,7 +1505,7 @@ public interface FhirEndpointBuilderFactory {
      * Proxy enum for
      * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code> enum.
      */
-    public static enum ServerValidationModeEnum {
+    static enum ServerValidationModeEnum {
         NEVER, ONCE;
     }
     /**

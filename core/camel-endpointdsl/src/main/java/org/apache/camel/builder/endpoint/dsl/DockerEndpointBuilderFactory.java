@@ -1133,7 +1133,7 @@ public interface DockerEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.docker.DockerOperation</code> enum.
      */
-    public static enum DockerOperation {
+    static enum DockerOperation {
         events, stats, auth, info, ping, version, imagebuild, imagecreate, imageinspect, imagelist, imagepull, imagepush, imageremove, imagesearch, imagetag, containerattach, containercommit, containercopyfile, containercreate, containerdiff, inspectcontainer, containerkill, containerlist, containerlog, containerpause, containerrestart, containerremove, containerstart, containerstop, containertop, containerunpause, networkcreate, networkremove, networkconnect, containerwait, execcreate, execstart;
     }
     /**

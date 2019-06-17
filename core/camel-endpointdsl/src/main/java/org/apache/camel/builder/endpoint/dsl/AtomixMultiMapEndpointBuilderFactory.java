@@ -381,14 +381,14 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> enum.
      */
-    public static enum Action {
+    static enum Action {
         PUT, GET, CLEAR, SIZE, CONTAINS_KEY, IS_EMPTY, REMOVE, REMOVE_VALUE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
-    public static enum ReadConsistency {
+    static enum ReadConsistency {
         ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
     }
     /**

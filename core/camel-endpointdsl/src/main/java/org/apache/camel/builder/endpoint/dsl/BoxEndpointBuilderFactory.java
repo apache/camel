@@ -1071,14 +1071,14 @@ public interface BoxEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.box.internal.BoxApiName</code> enum.
      */
-    public static enum BoxApiName {
+    static enum BoxApiName {
         COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS;
     }
 
     /**
      * Proxy enum for <code>com.box.sdk.EncryptionAlgorithm</code> enum.
      */
-    public static enum EncryptionAlgorithm {
+    static enum EncryptionAlgorithm {
         RSA_SHA_256, RSA_SHA_384, RSA_SHA_512;
     }
     /**

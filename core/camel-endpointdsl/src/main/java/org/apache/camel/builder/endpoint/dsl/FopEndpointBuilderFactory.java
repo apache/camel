@@ -150,7 +150,7 @@ public interface FopEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.fop.FopOutputType</code>
      * enum.
      */
-    public static enum FopOutputType {
+    static enum FopOutputType {
         pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt;
     }
     /**

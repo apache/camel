@@ -140,7 +140,7 @@ public interface SpringLdapEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.springldap.LdapOperation</code> enum.
      */
-    public static enum LdapOperation {
+    static enum LdapOperation {
         SEARCH, BIND, UNBIND, AUTHENTICATE, MODIFY_ATTRIBUTES, FUNCTION_DRIVEN;
     }
     /**

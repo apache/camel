@@ -450,7 +450,7 @@ public interface XsltEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.xslt.XsltOutput</code>
      * enum.
      */
-    public static enum XsltOutput {
+    static enum XsltOutput {
         string, bytes, DOM, file;
     }
     /**

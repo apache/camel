@@ -151,7 +151,7 @@ public interface IgniteSetEndpointBuilderFactory {
      * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
      * enum.
      */
-    public static enum IgniteSetOperation {
+    static enum IgniteSetOperation {
         CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY;
     }
     /**

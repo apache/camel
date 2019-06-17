@@ -623,7 +623,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> enum.
      */
-    public static enum GoogleSheetsApiName {
+    static enum GoogleSheetsApiName {
         SPREADSHEETS, DATA;
     }
     /**

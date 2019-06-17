@@ -1992,7 +1992,7 @@ public interface ElsqlEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code> enum.
      */
-    public static enum ElSqlDatabaseVendor {
+    static enum ElSqlDatabaseVendor {
         Default, Postgres, HSql, MySql, Oracle, SqlServer2008, Veritca;
     }
 
@@ -2000,7 +2000,7 @@ public interface ElsqlEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.sql.SqlOutputType</code>
      * enum.
      */
-    public static enum SqlOutputType {
+    static enum SqlOutputType {
         SelectOne, SelectList, StreamList;
     }
     /**

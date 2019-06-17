@@ -198,7 +198,7 @@ public interface LambdaEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code> enum.
      */
-    public static enum LambdaOperations {
+    static enum LambdaOperations {
         listFunctions, getFunction, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions;
     }
     /**

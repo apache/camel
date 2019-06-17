@@ -169,7 +169,7 @@ public interface DrillEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.drill.DrillConnectionMode</code> enum.
      */
-    public static enum DrillConnectionMode {
+    static enum DrillConnectionMode {
         ZK, DRILLBIT;
     }
     /**

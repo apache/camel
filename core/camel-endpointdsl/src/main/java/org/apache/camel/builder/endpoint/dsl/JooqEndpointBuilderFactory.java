@@ -808,7 +808,7 @@ public interface JooqEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.jooq.JooqOperation</code>
      * enum.
      */
-    public static enum JooqOperation {
+    static enum JooqOperation {
         EXECUTE, FETCH, NONE;
     }
     /**

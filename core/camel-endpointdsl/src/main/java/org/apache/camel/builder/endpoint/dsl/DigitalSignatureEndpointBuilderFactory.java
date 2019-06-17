@@ -452,7 +452,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.crypto.CryptoOperation</code> enum.
      */
-    public static enum CryptoOperation {
+    static enum CryptoOperation {
         sign, verify;
     }
     /**

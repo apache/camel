@@ -1293,7 +1293,7 @@ public interface SplunkEndpointBuilderFactory {
     /**
      * Proxy enum for <code>com.splunk.SSLSecurityProtocol</code> enum.
      */
-    public static enum SSLSecurityProtocol {
+    static enum SSLSecurityProtocol {
         TLSv1_2, TLSv1_1, TLSv1, SSLv3;
     }
     /**

@@ -1014,7 +1014,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.azure.blob.BlobType</code> enum.
      */
-    public static enum BlobType {
+    static enum BlobType {
         blockblob, appendblob, pageblob;
     }
 
@@ -1023,7 +1023,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code>
      * enum.
      */
-    public static enum BlobServiceOperations {
+    static enum BlobServiceOperations {
         getBlob, deleteBlob, listBlobs, updateBlockBlob, uploadBlobBlocks, commitBlobBlockList, getBlobBlockList, createAppendBlob, updateAppendBlob, createPageBlob, updatePageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges;
     }
     /**

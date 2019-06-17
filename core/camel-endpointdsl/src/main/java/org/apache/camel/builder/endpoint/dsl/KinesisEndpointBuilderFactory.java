@@ -1056,7 +1056,7 @@ public interface KinesisEndpointBuilderFactory {
      * Proxy enum for
      * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code> enum.
      */
-    public static enum ShardIteratorType {
+    static enum ShardIteratorType {
         AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP;
     }
 
@@ -1064,7 +1064,7 @@ public interface KinesisEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> enum.
      */
-    public static enum KinesisShardClosedStrategyEnum {
+    static enum KinesisShardClosedStrategyEnum {
         ignore, fail, silent;
     }
     /**

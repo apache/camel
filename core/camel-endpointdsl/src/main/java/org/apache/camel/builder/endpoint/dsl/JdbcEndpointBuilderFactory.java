@@ -384,7 +384,7 @@ public interface JdbcEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> enum.
      */
-    public static enum JdbcOutputType {
+    static enum JdbcOutputType {
         SelectOne, SelectList, StreamList;
     }
     /**

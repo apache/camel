@@ -219,7 +219,7 @@ public interface FlinkEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.flink.EndpointType</code>
      * enum.
      */
-    public static enum EndpointType {
+    static enum EndpointType {
         dataset, datastream;
     }
     /**

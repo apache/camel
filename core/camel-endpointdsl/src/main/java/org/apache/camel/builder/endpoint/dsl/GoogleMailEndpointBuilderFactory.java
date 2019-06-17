@@ -616,7 +616,7 @@ public interface GoogleMailEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> enum.
      */
-    public static enum GoogleMailApiName {
+    static enum GoogleMailApiName {
         THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS;
     }
     /**

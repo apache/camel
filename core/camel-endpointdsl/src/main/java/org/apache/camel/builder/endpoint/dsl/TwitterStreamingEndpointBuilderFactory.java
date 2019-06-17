@@ -223,7 +223,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.twitter.data.StreamingType</code> enum.
      */
-    public static enum StreamingType {
+    static enum StreamingType {
         SAMPLE, FILTER, USER, UNKNOWN;
     }
 
@@ -231,7 +231,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
-    public static enum EndpointType {
+    static enum EndpointType {
         POLLING, DIRECT, EVENT;
     }
     /**

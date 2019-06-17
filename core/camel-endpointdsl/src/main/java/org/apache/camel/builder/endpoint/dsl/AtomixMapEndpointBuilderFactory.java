@@ -1194,14 +1194,14 @@ public interface AtomixMapEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> enum.
      */
-    public static enum Action {
+    static enum Action {
         PUT, PUT_IF_ABSENT, GET, CLEAR, SIZE, CONTAINS_KEY, CONTAINS_VALUE, IS_EMPTY, ENTRY_SET, REMOVE, REPLACE, VALUES;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
-    public static enum ReadConsistency {
+    static enum ReadConsistency {
         ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
     }
     /**

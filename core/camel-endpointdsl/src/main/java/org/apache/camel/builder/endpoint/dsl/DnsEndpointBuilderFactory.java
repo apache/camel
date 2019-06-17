@@ -115,7 +115,7 @@ public interface DnsEndpointBuilderFactory {
     /**
      * Proxy enum for <code>org.apache.camel.component.dns.DnsType</code> enum.
      */
-    public static enum DnsType {
+    static enum DnsType {
         dig, ip, lookup, wikipedia;
     }
     /**

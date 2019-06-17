@@ -461,7 +461,7 @@ public interface PulsarEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> enum.
      */
-    public static enum SubscriptionType {
+    static enum SubscriptionType {
         EXCLUSIVE, SHARED, FAILOVER;
     }
     /**

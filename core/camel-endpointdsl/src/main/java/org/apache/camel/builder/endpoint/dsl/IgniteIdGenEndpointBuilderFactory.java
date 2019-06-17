@@ -155,7 +155,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code>
      * enum.
      */
-    public static enum IgniteIdGenOperation {
+    static enum IgniteIdGenOperation {
         ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET;
     }
     /**

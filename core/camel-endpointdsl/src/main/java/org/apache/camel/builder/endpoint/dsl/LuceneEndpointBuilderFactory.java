@@ -212,7 +212,7 @@ public interface LuceneEndpointBuilderFactory {
      * Proxy enum for
      * <code>org.apache.camel.component.lucene.LuceneOperation</code> enum.
      */
-    public static enum LuceneOperation {
+    static enum LuceneOperation {
         insert, query;
     }
     /**
