@@ -1709,11 +1709,11 @@
     <feature>http</feature>
     <bundle dependency='true'>mvn:org.apache.olingo/odata-commons-api/${olingo4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.olingo/odata-commons-core/${olingo4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.olingo/odata-server-api/${olingo4-version}</bundle>
-    <!--TODO remove wrap protocol when https://issues.apache.org/jira/browse/OLINGO-1206 is resolved-->
-    <bundle dependency='true'>wrap:mvn:org.apache.olingo/odata-server-core/${olingo4-version}$overwrite=merge&amp;Export-Package=org.apache.olingo.server.core;version=${olingo4-version},org.apache.olingo.server.core.uri.parser;version=${olingo4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.olingo/odata-client-api/${olingo4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.olingo/odata-client-core/${olingo4-version}</bundle>
+    <!--TODO remove wrap protocol when https://issues.apache.org/jira/browse/OLINGO-1206 is resolved-->
+    <bundle dependency='true'>wrap:mvn:org.apache.olingo/odata-server-api/${olingo4-version}$overwrite=merge&amp;Export-Package=org.apache.olingo.server.api;version=${olingo4-version},org.apache.olingo.server.api.uri;version=${olingo4-version},org.apache.olingo.server.api.processor;version=${olingo4-version},org.apache.olingo.server.api.batch;version=${olingo4-version},org.apache.olingo.server.api.debug;version=${olingo4-version},org.apache.olingo.server.api.deserializer;version=${olingo4-version},org.apache.olingo.server.api.deserializer.batch;version=${olingo4-version},org.apache.olingo.server.api.etag;version=${olingo4-version},org.apache.olingo.server.api.prefer;version=${olingo4-version},org.apache.olingo.server.api.serializer;version=${olingo4-version},org.apache.olingo.server.api.uri.queryoption;version=${olingo4-version},org.apache.olingo.server.api.uri.queryoption.apply;version=${olingo4-version},org.apache.olingo.server.api.uri.queryoption.expression;version=${olingo4-version},org.apache.olingo.server.api.uri.queryoption.search;version=${olingo4-version},org.apache.olingo.netty.server.api;version=${olingo4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.olingo/odata-server-core/${olingo4-version}$overwrite=merge&amp;Export-Package=org.apache.olingo.server.core;version=${olingo4-version},org.apache.olingo.server.core.uri.parser;version=${olingo4-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.olingo/odata-client-core/${olingo4-version}$overwrite=merge&amp;Export-Package=org.apache.olingo.client.core;version=${olingo4-version},org.apache.olingo.client.core.domain;version=${olingo4-version},org.apache.olingo.client.core.http;version=${olingo4-version},org.apache.olingo.client.core.communication.request.batch;version=${olingo4-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
