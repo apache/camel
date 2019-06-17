@@ -33,9 +33,7 @@ public interface PrinterEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Printer component.
      */
-    public static interface PrinterEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface PrinterEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedPrinterEndpointBuilder advanced() {
             return (AdvancedPrinterEndpointBuilder) this;
         }
@@ -206,7 +204,7 @@ public interface PrinterEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Printer component.
      */
-    public static interface AdvancedPrinterEndpointBuilder
+    public interface AdvancedPrinterEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default PrinterEndpointBuilder basic() {

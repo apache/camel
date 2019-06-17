@@ -296,7 +296,7 @@ public interface AtmosEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atmos component.
      */
-    public static interface AtmosEndpointProducerBuilder
+    public interface AtmosEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtmosEndpointProducerBuilder advanced() {
@@ -512,7 +512,7 @@ public interface AtmosEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atmos component.
      */
-    public static interface AtmosEndpointBuilder
+    public interface AtmosEndpointBuilder
             extends
                 AtmosEndpointConsumerBuilder, AtmosEndpointProducerBuilder {
         default AdvancedAtmosEndpointBuilder advanced() {
@@ -637,7 +637,7 @@ public interface AtmosEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atmos component.
      */
-    public static interface AdvancedAtmosEndpointBuilder
+    public interface AdvancedAtmosEndpointBuilder
             extends
                 AdvancedAtmosEndpointConsumerBuilder, AdvancedAtmosEndpointProducerBuilder {
         default AtmosEndpointBuilder basic() {

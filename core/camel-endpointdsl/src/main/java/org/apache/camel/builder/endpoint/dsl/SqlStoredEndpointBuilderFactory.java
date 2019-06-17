@@ -34,9 +34,7 @@ public interface SqlStoredEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SQL Stored Procedure component.
      */
-    public static interface SqlStoredEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SqlStoredEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSqlStoredEndpointBuilder advanced() {
             return (AdvancedSqlStoredEndpointBuilder) this;
         }
@@ -167,7 +165,7 @@ public interface SqlStoredEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SQL Stored Procedure component.
      */
-    public static interface AdvancedSqlStoredEndpointBuilder
+    public interface AdvancedSqlStoredEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SqlStoredEndpointBuilder basic() {

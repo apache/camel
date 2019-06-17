@@ -295,7 +295,7 @@ public interface DisruptorEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Disruptor component.
      */
-    public static interface DisruptorEndpointProducerBuilder
+    public interface DisruptorEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDisruptorEndpointProducerBuilder advanced() {
@@ -542,7 +542,7 @@ public interface DisruptorEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Disruptor component.
      */
-    public static interface DisruptorEndpointBuilder
+    public interface DisruptorEndpointBuilder
             extends
                 DisruptorEndpointConsumerBuilder, DisruptorEndpointProducerBuilder {
         default AdvancedDisruptorEndpointBuilder advanced() {
@@ -590,7 +590,7 @@ public interface DisruptorEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Disruptor component.
      */
-    public static interface AdvancedDisruptorEndpointBuilder
+    public interface AdvancedDisruptorEndpointBuilder
             extends
                 AdvancedDisruptorEndpointConsumerBuilder, AdvancedDisruptorEndpointProducerBuilder {
         default DisruptorEndpointBuilder basic() {

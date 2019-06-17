@@ -736,7 +736,7 @@ public interface CassandraEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Cassandra CQL component.
      */
-    public static interface CassandraEndpointProducerBuilder
+    public interface CassandraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCassandraEndpointProducerBuilder advanced() {
@@ -1036,7 +1036,7 @@ public interface CassandraEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Cassandra CQL component.
      */
-    public static interface CassandraEndpointBuilder
+    public interface CassandraEndpointBuilder
             extends
                 CassandraEndpointConsumerBuilder, CassandraEndpointProducerBuilder {
         default AdvancedCassandraEndpointBuilder advanced() {
@@ -1245,7 +1245,7 @@ public interface CassandraEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Cassandra CQL component.
      */
-    public static interface AdvancedCassandraEndpointBuilder
+    public interface AdvancedCassandraEndpointBuilder
             extends
                 AdvancedCassandraEndpointConsumerBuilder, AdvancedCassandraEndpointProducerBuilder {
         default CassandraEndpointBuilder basic() {

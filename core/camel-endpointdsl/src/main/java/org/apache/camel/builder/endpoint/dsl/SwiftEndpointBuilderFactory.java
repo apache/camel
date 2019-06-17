@@ -34,9 +34,7 @@ public interface SwiftEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Swift component.
      */
-    public static interface SwiftEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SwiftEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSwiftEndpointBuilder advanced() {
             return (AdvancedSwiftEndpointBuilder) this;
         }
@@ -137,7 +135,7 @@ public interface SwiftEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Swift component.
      */
-    public static interface AdvancedSwiftEndpointBuilder
+    public interface AdvancedSwiftEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SwiftEndpointBuilder basic() {

@@ -474,7 +474,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atomix Messaging component.
      */
-    public static interface AtomixMessagingEndpointProducerBuilder
+    public interface AtomixMessagingEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtomixMessagingEndpointProducerBuilder advanced() {
@@ -865,7 +865,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atomix Messaging component.
      */
-    public static interface AtomixMessagingEndpointBuilder
+    public interface AtomixMessagingEndpointBuilder
             extends
                 AtomixMessagingEndpointConsumerBuilder, AtomixMessagingEndpointProducerBuilder {
         default AdvancedAtomixMessagingEndpointBuilder advanced() {
@@ -1025,7 +1025,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atomix Messaging component.
      */
-    public static interface AdvancedAtomixMessagingEndpointBuilder
+    public interface AdvancedAtomixMessagingEndpointBuilder
             extends
                 AdvancedAtomixMessagingEndpointConsumerBuilder, AdvancedAtomixMessagingEndpointProducerBuilder {
         default AtomixMessagingEndpointBuilder basic() {

@@ -265,7 +265,7 @@ public interface GitEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Git component.
      */
-    public static interface GitEndpointProducerBuilder
+    public interface GitEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGitEndpointProducerBuilder advanced() {
@@ -457,7 +457,7 @@ public interface GitEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Git component.
      */
-    public static interface GitEndpointBuilder
+    public interface GitEndpointBuilder
             extends
                 GitEndpointConsumerBuilder, GitEndpointProducerBuilder {
         default AdvancedGitEndpointBuilder advanced() {
@@ -531,7 +531,7 @@ public interface GitEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Git component.
      */
-    public static interface AdvancedGitEndpointBuilder
+    public interface AdvancedGitEndpointBuilder
             extends
                 AdvancedGitEndpointConsumerBuilder, AdvancedGitEndpointProducerBuilder {
         default GitEndpointBuilder basic() {

@@ -618,7 +618,7 @@ public interface JBPMEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JBPM component.
      */
-    public static interface JBPMEndpointProducerBuilder
+    public interface JBPMEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJBPMEndpointProducerBuilder advanced() {
@@ -1161,7 +1161,7 @@ public interface JBPMEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JBPM component.
      */
-    public static interface JBPMEndpointBuilder
+    public interface JBPMEndpointBuilder
             extends
                 JBPMEndpointConsumerBuilder, JBPMEndpointProducerBuilder {
         default AdvancedJBPMEndpointBuilder advanced() {
@@ -1535,7 +1535,7 @@ public interface JBPMEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JBPM component.
      */
-    public static interface AdvancedJBPMEndpointBuilder
+    public interface AdvancedJBPMEndpointBuilder
             extends
                 AdvancedJBPMEndpointConsumerBuilder, AdvancedJBPMEndpointProducerBuilder {
         default JBPMEndpointBuilder basic() {

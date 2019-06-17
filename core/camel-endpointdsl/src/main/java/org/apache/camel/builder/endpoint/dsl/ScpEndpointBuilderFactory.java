@@ -34,9 +34,7 @@ public interface ScpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SCP component.
      */
-    public static interface ScpEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ScpEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedScpEndpointBuilder advanced() {
             return (AdvancedScpEndpointBuilder) this;
         }
@@ -283,7 +281,7 @@ public interface ScpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SCP component.
      */
-    public static interface AdvancedScpEndpointBuilder
+    public interface AdvancedScpEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ScpEndpointBuilder basic() {

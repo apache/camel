@@ -34,7 +34,7 @@ public interface LumberjackEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Lumberjack component.
      */
-    public static interface LumberjackEndpointBuilder
+    public interface LumberjackEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedLumberjackEndpointBuilder advanced() {
@@ -94,7 +94,7 @@ public interface LumberjackEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Lumberjack component.
      */
-    public static interface AdvancedLumberjackEndpointBuilder
+    public interface AdvancedLumberjackEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default LumberjackEndpointBuilder basic() {

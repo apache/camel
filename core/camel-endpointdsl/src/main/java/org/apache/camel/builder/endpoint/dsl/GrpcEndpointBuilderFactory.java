@@ -503,7 +503,7 @@ public interface GrpcEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the gRPC component.
      */
-    public static interface GrpcEndpointProducerBuilder
+    public interface GrpcEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGrpcEndpointProducerBuilder advanced() {
@@ -887,7 +887,7 @@ public interface GrpcEndpointBuilderFactory {
     /**
      * Builder for endpoint for the gRPC component.
      */
-    public static interface GrpcEndpointBuilder
+    public interface GrpcEndpointBuilder
             extends
                 GrpcEndpointConsumerBuilder, GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
@@ -1114,7 +1114,7 @@ public interface GrpcEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the gRPC component.
      */
-    public static interface AdvancedGrpcEndpointBuilder
+    public interface AdvancedGrpcEndpointBuilder
             extends
                 AdvancedGrpcEndpointConsumerBuilder, AdvancedGrpcEndpointProducerBuilder {
         default GrpcEndpointBuilder basic() {

@@ -34,9 +34,7 @@ public interface ServiceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Service component.
      */
-    public static interface ServiceEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface ServiceEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedServiceEndpointBuilder advanced() {
             return (AdvancedServiceEndpointBuilder) this;
         }
@@ -54,7 +52,7 @@ public interface ServiceEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Service component.
      */
-    public static interface AdvancedServiceEndpointBuilder
+    public interface AdvancedServiceEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default ServiceEndpointBuilder basic() {

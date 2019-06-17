@@ -34,9 +34,7 @@ public interface LdapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the LDAP component.
      */
-    public static interface LdapEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LdapEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLdapEndpointBuilder advanced() {
             return (AdvancedLdapEndpointBuilder) this;
         }
@@ -118,7 +116,7 @@ public interface LdapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the LDAP component.
      */
-    public static interface AdvancedLdapEndpointBuilder
+    public interface AdvancedLdapEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LdapEndpointBuilder basic() {

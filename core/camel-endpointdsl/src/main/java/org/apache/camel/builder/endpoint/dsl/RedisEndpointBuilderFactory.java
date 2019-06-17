@@ -330,7 +330,7 @@ public interface RedisEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Spring Redis component.
      */
-    public static interface RedisEndpointProducerBuilder
+    public interface RedisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRedisEndpointProducerBuilder advanced() {
@@ -556,7 +556,7 @@ public interface RedisEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Spring Redis component.
      */
-    public static interface RedisEndpointBuilder
+    public interface RedisEndpointBuilder
             extends
                 RedisEndpointConsumerBuilder, RedisEndpointProducerBuilder {
         default AdvancedRedisEndpointBuilder advanced() {
@@ -689,7 +689,7 @@ public interface RedisEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Spring Redis component.
      */
-    public static interface AdvancedRedisEndpointBuilder
+    public interface AdvancedRedisEndpointBuilder
             extends
                 AdvancedRedisEndpointConsumerBuilder, AdvancedRedisEndpointProducerBuilder {
         default RedisEndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface MustacheEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Mustache component.
      */
-    public static interface MustacheEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MustacheEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMustacheEndpointBuilder advanced() {
             return (AdvancedMustacheEndpointBuilder) this;
         }
@@ -103,7 +101,7 @@ public interface MustacheEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Mustache component.
      */
-    public static interface AdvancedMustacheEndpointBuilder
+    public interface AdvancedMustacheEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MustacheEndpointBuilder basic() {

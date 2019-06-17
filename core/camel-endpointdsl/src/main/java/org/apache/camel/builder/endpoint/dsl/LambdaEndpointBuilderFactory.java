@@ -34,9 +34,7 @@ public interface LambdaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Lambda component.
      */
-    public static interface LambdaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LambdaEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLambdaEndpointBuilder advanced() {
             return (AdvancedLambdaEndpointBuilder) this;
         }
@@ -124,7 +122,7 @@ public interface LambdaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Lambda component.
      */
-    public static interface AdvancedLambdaEndpointBuilder
+    public interface AdvancedLambdaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LambdaEndpointBuilder basic() {

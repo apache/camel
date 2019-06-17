@@ -34,9 +34,7 @@ public interface RestApiEndpointBuilderFactory {
     /**
      * Builder for endpoint for the REST API component.
      */
-    public static interface RestApiEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface RestApiEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedRestApiEndpointBuilder advanced() {
             return (AdvancedRestApiEndpointBuilder) this;
         }
@@ -89,7 +87,7 @@ public interface RestApiEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the REST API component.
      */
-    public static interface AdvancedRestApiEndpointBuilder
+    public interface AdvancedRestApiEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default RestApiEndpointBuilder basic() {

@@ -332,7 +332,7 @@ public interface AvroEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Avro component.
      */
-    public static interface AvroEndpointProducerBuilder
+    public interface AvroEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAvroEndpointProducerBuilder advanced() {
@@ -584,7 +584,7 @@ public interface AvroEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Avro component.
      */
-    public static interface AvroEndpointBuilder
+    public interface AvroEndpointBuilder
             extends
                 AvroEndpointConsumerBuilder, AvroEndpointProducerBuilder {
         default AdvancedAvroEndpointBuilder advanced() {
@@ -740,7 +740,7 @@ public interface AvroEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Avro component.
      */
-    public static interface AdvancedAvroEndpointBuilder
+    public interface AdvancedAvroEndpointBuilder
             extends
                 AdvancedAvroEndpointConsumerBuilder, AdvancedAvroEndpointProducerBuilder {
         default AvroEndpointBuilder basic() {

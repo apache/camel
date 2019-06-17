@@ -33,7 +33,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google BigQuery Standard SQL component.
      */
-    public static interface GoogleBigQuerySQLEndpointBuilder
+    public interface GoogleBigQuerySQLEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoogleBigQuerySQLEndpointBuilder advanced() {
@@ -87,7 +87,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Advanced builder for endpoint for the Google BigQuery Standard SQL
      * component.
      */
-    public static interface AdvancedGoogleBigQuerySQLEndpointBuilder
+    public interface AdvancedGoogleBigQuerySQLEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default GoogleBigQuerySQLEndpointBuilder basic() {

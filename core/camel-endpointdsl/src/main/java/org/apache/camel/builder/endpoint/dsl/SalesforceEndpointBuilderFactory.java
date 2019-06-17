@@ -857,7 +857,7 @@ public interface SalesforceEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Salesforce component.
      */
-    public static interface SalesforceEndpointProducerBuilder
+    public interface SalesforceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSalesforceEndpointProducerBuilder advanced() {
@@ -1627,7 +1627,7 @@ public interface SalesforceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Salesforce component.
      */
-    public static interface SalesforceEndpointBuilder
+    public interface SalesforceEndpointBuilder
             extends
                 SalesforceEndpointConsumerBuilder, SalesforceEndpointProducerBuilder {
         default AdvancedSalesforceEndpointBuilder advanced() {
@@ -2263,7 +2263,7 @@ public interface SalesforceEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Salesforce component.
      */
-    public static interface AdvancedSalesforceEndpointBuilder
+    public interface AdvancedSalesforceEndpointBuilder
             extends
                 AdvancedSalesforceEndpointConsumerBuilder, AdvancedSalesforceEndpointProducerBuilder {
         default SalesforceEndpointBuilder basic() {

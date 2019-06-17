@@ -34,9 +34,7 @@ public interface CinderEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Cinder component.
      */
-    public static interface CinderEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface CinderEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedCinderEndpointBuilder advanced() {
             return (AdvancedCinderEndpointBuilder) this;
         }
@@ -137,7 +135,7 @@ public interface CinderEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Cinder component.
      */
-    public static interface AdvancedCinderEndpointBuilder
+    public interface AdvancedCinderEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default CinderEndpointBuilder basic() {

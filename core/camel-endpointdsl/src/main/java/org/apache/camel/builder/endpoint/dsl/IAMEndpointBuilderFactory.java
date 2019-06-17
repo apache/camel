@@ -33,9 +33,7 @@ public interface IAMEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS IAM component.
      */
-    public static interface IAMEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface IAMEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedIAMEndpointBuilder advanced() {
             return (AdvancedIAMEndpointBuilder) this;
         }
@@ -62,7 +60,7 @@ public interface IAMEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS IAM component.
      */
-    public static interface AdvancedIAMEndpointBuilder
+    public interface AdvancedIAMEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IAMEndpointBuilder basic() {

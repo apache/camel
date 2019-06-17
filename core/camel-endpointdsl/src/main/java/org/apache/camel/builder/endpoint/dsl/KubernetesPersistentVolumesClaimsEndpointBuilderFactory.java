@@ -35,7 +35,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * Builder for endpoint for the Kubernetes Persistent Volume Claim
      * component.
      */
-    public static interface KubernetesPersistentVolumesClaimsEndpointBuilder
+    public interface KubernetesPersistentVolumesClaimsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder advanced() {
@@ -250,7 +250,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * Advanced builder for endpoint for the Kubernetes Persistent Volume Claim
      * component.
      */
-    public static interface AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder
+    public interface AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesPersistentVolumesClaimsEndpointBuilder basic() {

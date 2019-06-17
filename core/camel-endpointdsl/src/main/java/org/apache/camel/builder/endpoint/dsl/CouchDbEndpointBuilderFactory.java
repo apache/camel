@@ -341,7 +341,7 @@ public interface CouchDbEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the CouchDB component.
      */
-    public static interface CouchDbEndpointProducerBuilder
+    public interface CouchDbEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCouchDbEndpointProducerBuilder advanced() {
@@ -526,7 +526,7 @@ public interface CouchDbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CouchDB component.
      */
-    public static interface CouchDbEndpointBuilder
+    public interface CouchDbEndpointBuilder
             extends
                 CouchDbEndpointConsumerBuilder, CouchDbEndpointProducerBuilder {
         default AdvancedCouchDbEndpointBuilder advanced() {
@@ -618,7 +618,7 @@ public interface CouchDbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CouchDB component.
      */
-    public static interface AdvancedCouchDbEndpointBuilder
+    public interface AdvancedCouchDbEndpointBuilder
             extends
                 AdvancedCouchDbEndpointConsumerBuilder, AdvancedCouchDbEndpointProducerBuilder {
         default CouchDbEndpointBuilder basic() {

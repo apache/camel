@@ -35,9 +35,7 @@ public interface ServletEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Servlet component.
      */
-    public static interface ServletEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface ServletEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedServletEndpointBuilder advanced() {
             return (AdvancedServletEndpointBuilder) this;
         }
@@ -176,7 +174,7 @@ public interface ServletEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Servlet component.
      */
-    public static interface AdvancedServletEndpointBuilder
+    public interface AdvancedServletEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default ServletEndpointBuilder basic() {

@@ -674,7 +674,7 @@ public interface Mina2EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Mina2 component.
      */
-    public static interface Mina2EndpointProducerBuilder
+    public interface Mina2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMina2EndpointProducerBuilder advanced() {
@@ -1245,7 +1245,7 @@ public interface Mina2EndpointBuilderFactory {
     /**
      * Builder for endpoint for the Mina2 component.
      */
-    public static interface Mina2EndpointBuilder
+    public interface Mina2EndpointBuilder
             extends
                 Mina2EndpointConsumerBuilder, Mina2EndpointProducerBuilder {
         default AdvancedMina2EndpointBuilder advanced() {
@@ -1606,7 +1606,7 @@ public interface Mina2EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Mina2 component.
      */
-    public static interface AdvancedMina2EndpointBuilder
+    public interface AdvancedMina2EndpointBuilder
             extends
                 AdvancedMina2EndpointConsumerBuilder, AdvancedMina2EndpointProducerBuilder {
         default Mina2EndpointBuilder basic() {

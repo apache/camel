@@ -319,7 +319,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Google Calendar component.
      */
-    public static interface GoogleCalendarEndpointProducerBuilder
+    public interface GoogleCalendarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGoogleCalendarEndpointProducerBuilder advanced() {
@@ -558,7 +558,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Calendar component.
      */
-    public static interface GoogleCalendarEndpointBuilder
+    public interface GoogleCalendarEndpointBuilder
             extends
                 GoogleCalendarEndpointConsumerBuilder, GoogleCalendarEndpointProducerBuilder {
         default AdvancedGoogleCalendarEndpointBuilder advanced() {
@@ -699,7 +699,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Calendar component.
      */
-    public static interface AdvancedGoogleCalendarEndpointBuilder
+    public interface AdvancedGoogleCalendarEndpointBuilder
             extends
                 AdvancedGoogleCalendarEndpointConsumerBuilder, AdvancedGoogleCalendarEndpointProducerBuilder {
         default GoogleCalendarEndpointBuilder basic() {

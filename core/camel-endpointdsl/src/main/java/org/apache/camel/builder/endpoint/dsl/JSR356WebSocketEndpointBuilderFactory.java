@@ -225,7 +225,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Javax Websocket component.
      */
-    public static interface JSR356WebSocketEndpointProducerBuilder
+    public interface JSR356WebSocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJSR356WebSocketEndpointProducerBuilder advanced() {
@@ -370,7 +370,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Javax Websocket component.
      */
-    public static interface JSR356WebSocketEndpointBuilder
+    public interface JSR356WebSocketEndpointBuilder
             extends
                 JSR356WebSocketEndpointConsumerBuilder, JSR356WebSocketEndpointProducerBuilder {
         default AdvancedJSR356WebSocketEndpointBuilder advanced() {
@@ -421,7 +421,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Javax Websocket component.
      */
-    public static interface AdvancedJSR356WebSocketEndpointBuilder
+    public interface AdvancedJSR356WebSocketEndpointBuilder
             extends
                 AdvancedJSR356WebSocketEndpointConsumerBuilder, AdvancedJSR356WebSocketEndpointProducerBuilder {
         default JSR356WebSocketEndpointBuilder basic() {

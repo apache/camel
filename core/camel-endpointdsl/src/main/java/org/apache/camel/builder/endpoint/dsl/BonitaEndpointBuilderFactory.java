@@ -33,9 +33,7 @@ public interface BonitaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Bonita component.
      */
-    public static interface BonitaEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface BonitaEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedBonitaEndpointBuilder advanced() {
             return (AdvancedBonitaEndpointBuilder) this;
         }
@@ -111,7 +109,7 @@ public interface BonitaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Bonita component.
      */
-    public static interface AdvancedBonitaEndpointBuilder
+    public interface AdvancedBonitaEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default BonitaEndpointBuilder basic() {

@@ -489,7 +489,7 @@ public interface MongoDbEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the MongoDB component.
      */
-    public static interface MongoDbEndpointProducerBuilder
+    public interface MongoDbEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMongoDbEndpointProducerBuilder advanced() {
@@ -889,7 +889,7 @@ public interface MongoDbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MongoDB component.
      */
-    public static interface MongoDbEndpointBuilder
+    public interface MongoDbEndpointBuilder
             extends
                 MongoDbEndpointConsumerBuilder, MongoDbEndpointProducerBuilder {
         default AdvancedMongoDbEndpointBuilder advanced() {
@@ -1105,7 +1105,7 @@ public interface MongoDbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MongoDB component.
      */
-    public static interface AdvancedMongoDbEndpointBuilder
+    public interface AdvancedMongoDbEndpointBuilder
             extends
                 AdvancedMongoDbEndpointConsumerBuilder, AdvancedMongoDbEndpointProducerBuilder {
         default MongoDbEndpointBuilder basic() {

@@ -998,7 +998,7 @@ public interface S3EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AWS S3 Storage Service component.
      */
-    public static interface S3EndpointProducerBuilder
+    public interface S3EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedS3EndpointProducerBuilder advanced() {
@@ -1531,7 +1531,7 @@ public interface S3EndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS S3 Storage Service component.
      */
-    public static interface S3EndpointBuilder
+    public interface S3EndpointBuilder
             extends
                 S3EndpointConsumerBuilder, S3EndpointProducerBuilder {
         default AdvancedS3EndpointBuilder advanced() {
@@ -1693,7 +1693,7 @@ public interface S3EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS S3 Storage Service component.
      */
-    public static interface AdvancedS3EndpointBuilder
+    public interface AdvancedS3EndpointBuilder
             extends
                 AdvancedS3EndpointConsumerBuilder, AdvancedS3EndpointProducerBuilder {
         default S3EndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface ValidatorEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Validator component.
      */
-    public static interface ValidatorEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ValidatorEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedValidatorEndpointBuilder advanced() {
             return (AdvancedValidatorEndpointBuilder) this;
         }
@@ -102,7 +100,7 @@ public interface ValidatorEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Validator component.
      */
-    public static interface AdvancedValidatorEndpointBuilder
+    public interface AdvancedValidatorEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ValidatorEndpointBuilder basic() {

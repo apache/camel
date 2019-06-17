@@ -460,7 +460,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes HPA component.
      */
-    public static interface KubernetesHPAEndpointProducerBuilder
+    public interface KubernetesHPAEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesHPAEndpointProducerBuilder advanced() {
@@ -792,7 +792,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes HPA component.
      */
-    public static interface KubernetesHPAEndpointBuilder
+    public interface KubernetesHPAEndpointBuilder
             extends
                 KubernetesHPAEndpointConsumerBuilder, KubernetesHPAEndpointProducerBuilder {
         default AdvancedKubernetesHPAEndpointBuilder advanced() {
@@ -991,7 +991,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes HPA component.
      */
-    public static interface AdvancedKubernetesHPAEndpointBuilder
+    public interface AdvancedKubernetesHPAEndpointBuilder
             extends
                 AdvancedKubernetesHPAEndpointConsumerBuilder, AdvancedKubernetesHPAEndpointProducerBuilder {
         default KubernetesHPAEndpointBuilder basic() {

@@ -306,7 +306,7 @@ public interface PubNubEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the PubNub component.
      */
-    public static interface PubNubEndpointProducerBuilder
+    public interface PubNubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPubNubEndpointProducerBuilder advanced() {
@@ -533,7 +533,7 @@ public interface PubNubEndpointBuilderFactory {
     /**
      * Builder for endpoint for the PubNub component.
      */
-    public static interface PubNubEndpointBuilder
+    public interface PubNubEndpointBuilder
             extends
                 PubNubEndpointConsumerBuilder, PubNubEndpointProducerBuilder {
         default AdvancedPubNubEndpointBuilder advanced() {
@@ -630,7 +630,7 @@ public interface PubNubEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the PubNub component.
      */
-    public static interface AdvancedPubNubEndpointBuilder
+    public interface AdvancedPubNubEndpointBuilder
             extends
                 AdvancedPubNubEndpointConsumerBuilder, AdvancedPubNubEndpointProducerBuilder {
         default PubNubEndpointBuilder basic() {

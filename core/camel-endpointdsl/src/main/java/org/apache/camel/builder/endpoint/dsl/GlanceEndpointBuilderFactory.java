@@ -34,9 +34,7 @@ public interface GlanceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OpenStack Glance component.
      */
-    public static interface GlanceEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface GlanceEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedGlanceEndpointBuilder advanced() {
             return (AdvancedGlanceEndpointBuilder) this;
         }
@@ -128,7 +126,7 @@ public interface GlanceEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OpenStack Glance component.
      */
-    public static interface AdvancedGlanceEndpointBuilder
+    public interface AdvancedGlanceEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default GlanceEndpointBuilder basic() {

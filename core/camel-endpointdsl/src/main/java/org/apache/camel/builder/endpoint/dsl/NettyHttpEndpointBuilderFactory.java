@@ -1668,7 +1668,7 @@ public interface NettyHttpEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Netty4 HTTP component.
      */
-    public static interface NettyHttpEndpointProducerBuilder
+    public interface NettyHttpEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedNettyHttpEndpointProducerBuilder advanced() {
@@ -3009,7 +3009,7 @@ public interface NettyHttpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Netty4 HTTP component.
      */
-    public static interface NettyHttpEndpointBuilder
+    public interface NettyHttpEndpointBuilder
             extends
                 NettyHttpEndpointConsumerBuilder, NettyHttpEndpointProducerBuilder {
         default AdvancedNettyHttpEndpointBuilder advanced() {
@@ -3513,7 +3513,7 @@ public interface NettyHttpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Netty4 HTTP component.
      */
-    public static interface AdvancedNettyHttpEndpointBuilder
+    public interface AdvancedNettyHttpEndpointBuilder
             extends
                 AdvancedNettyHttpEndpointConsumerBuilder, AdvancedNettyHttpEndpointProducerBuilder {
         default NettyHttpEndpointBuilder basic() {

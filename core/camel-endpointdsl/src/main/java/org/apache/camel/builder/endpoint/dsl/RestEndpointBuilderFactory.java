@@ -281,7 +281,7 @@ public interface RestEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the REST component.
      */
-    public static interface RestEndpointProducerBuilder
+    public interface RestEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRestEndpointProducerBuilder advanced() {
@@ -531,7 +531,7 @@ public interface RestEndpointBuilderFactory {
     /**
      * Builder for endpoint for the REST component.
      */
-    public static interface RestEndpointBuilder
+    public interface RestEndpointBuilder
             extends
                 RestEndpointConsumerBuilder, RestEndpointProducerBuilder {
         default AdvancedRestEndpointBuilder advanced() {
@@ -616,7 +616,7 @@ public interface RestEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the REST component.
      */
-    public static interface AdvancedRestEndpointBuilder
+    public interface AdvancedRestEndpointBuilder
             extends
                 AdvancedRestEndpointConsumerBuilder, AdvancedRestEndpointProducerBuilder {
         default RestEndpointBuilder basic() {

@@ -372,7 +372,7 @@ public interface NsqEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the NSQ component.
      */
-    public static interface NsqEndpointProducerBuilder
+    public interface NsqEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedNsqEndpointProducerBuilder advanced() {
@@ -560,7 +560,7 @@ public interface NsqEndpointBuilderFactory {
     /**
      * Builder for endpoint for the NSQ component.
      */
-    public static interface NsqEndpointBuilder
+    public interface NsqEndpointBuilder
             extends
                 NsqEndpointConsumerBuilder, NsqEndpointProducerBuilder {
         default AdvancedNsqEndpointBuilder advanced() {
@@ -639,7 +639,7 @@ public interface NsqEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the NSQ component.
      */
-    public static interface AdvancedNsqEndpointBuilder
+    public interface AdvancedNsqEndpointBuilder
             extends
                 AdvancedNsqEndpointConsumerBuilder, AdvancedNsqEndpointProducerBuilder {
         default NsqEndpointBuilder basic() {

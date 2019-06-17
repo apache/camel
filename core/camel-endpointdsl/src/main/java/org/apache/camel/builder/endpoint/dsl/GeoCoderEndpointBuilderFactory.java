@@ -34,9 +34,7 @@ public interface GeoCoderEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Geocoder component.
      */
-    public static interface GeoCoderEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface GeoCoderEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedGeoCoderEndpointBuilder advanced() {
             return (AdvancedGeoCoderEndpointBuilder) this;
         }
@@ -194,7 +192,7 @@ public interface GeoCoderEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Geocoder component.
      */
-    public static interface AdvancedGeoCoderEndpointBuilder
+    public interface AdvancedGeoCoderEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default GeoCoderEndpointBuilder basic() {

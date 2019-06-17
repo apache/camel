@@ -717,7 +717,7 @@ public interface KinesisEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AWS Kinesis component.
      */
-    public static interface KinesisEndpointProducerBuilder
+    public interface KinesisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKinesisEndpointProducerBuilder advanced() {
@@ -905,7 +905,7 @@ public interface KinesisEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Kinesis component.
      */
-    public static interface KinesisEndpointBuilder
+    public interface KinesisEndpointBuilder
             extends
                 KinesisEndpointConsumerBuilder, KinesisEndpointProducerBuilder {
         default AdvancedKinesisEndpointBuilder advanced() {
@@ -1002,7 +1002,7 @@ public interface KinesisEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Kinesis component.
      */
-    public static interface AdvancedKinesisEndpointBuilder
+    public interface AdvancedKinesisEndpointBuilder
             extends
                 AdvancedKinesisEndpointConsumerBuilder, AdvancedKinesisEndpointProducerBuilder {
         default KinesisEndpointBuilder basic() {

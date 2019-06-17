@@ -33,9 +33,7 @@ public interface MsvEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MSV component.
      */
-    public static interface MsvEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface MsvEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMsvEndpointBuilder advanced() {
             return (AdvancedMsvEndpointBuilder) this;
         }
@@ -100,7 +98,7 @@ public interface MsvEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MSV component.
      */
-    public static interface AdvancedMsvEndpointBuilder
+    public interface AdvancedMsvEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MsvEndpointBuilder basic() {

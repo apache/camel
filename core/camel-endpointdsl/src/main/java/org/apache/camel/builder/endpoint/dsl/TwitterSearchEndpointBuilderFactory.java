@@ -923,7 +923,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Twitter Search component.
      */
-    public static interface TwitterSearchEndpointProducerBuilder
+    public interface TwitterSearchEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedTwitterSearchEndpointProducerBuilder advanced() {
@@ -1135,7 +1135,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Twitter Search component.
      */
-    public static interface TwitterSearchEndpointBuilder
+    public interface TwitterSearchEndpointBuilder
             extends
                 TwitterSearchEndpointConsumerBuilder, TwitterSearchEndpointProducerBuilder {
         default AdvancedTwitterSearchEndpointBuilder advanced() {
@@ -1250,7 +1250,7 @@ public interface TwitterSearchEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Twitter Search component.
      */
-    public static interface AdvancedTwitterSearchEndpointBuilder
+    public interface AdvancedTwitterSearchEndpointBuilder
             extends
                 AdvancedTwitterSearchEndpointConsumerBuilder, AdvancedTwitterSearchEndpointProducerBuilder {
         default TwitterSearchEndpointBuilder basic() {

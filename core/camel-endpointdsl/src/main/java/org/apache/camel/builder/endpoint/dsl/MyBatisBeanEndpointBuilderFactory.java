@@ -34,7 +34,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MyBatis Bean component.
      */
-    public static interface MyBatisBeanEndpointBuilder
+    public interface MyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMyBatisBeanEndpointBuilder advanced() {
@@ -64,7 +64,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MyBatis Bean component.
      */
-    public static interface AdvancedMyBatisBeanEndpointBuilder
+    public interface AdvancedMyBatisBeanEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MyBatisBeanEndpointBuilder basic() {

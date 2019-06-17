@@ -255,7 +255,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Guava EventBus component.
      */
-    public static interface GuavaEventBusEndpointProducerBuilder
+    public interface GuavaEventBusEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedGuavaEventBusEndpointProducerBuilder advanced() {
@@ -429,7 +429,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Guava EventBus component.
      */
-    public static interface GuavaEventBusEndpointBuilder
+    public interface GuavaEventBusEndpointBuilder
             extends
                 GuavaEventBusEndpointConsumerBuilder, GuavaEventBusEndpointProducerBuilder {
         default AdvancedGuavaEventBusEndpointBuilder advanced() {
@@ -509,7 +509,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Guava EventBus component.
      */
-    public static interface AdvancedGuavaEventBusEndpointBuilder
+    public interface AdvancedGuavaEventBusEndpointBuilder
             extends
                 AdvancedGuavaEventBusEndpointConsumerBuilder, AdvancedGuavaEventBusEndpointProducerBuilder {
         default GuavaEventBusEndpointBuilder basic() {

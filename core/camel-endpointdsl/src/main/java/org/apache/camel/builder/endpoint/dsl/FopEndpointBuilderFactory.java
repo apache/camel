@@ -34,9 +34,7 @@ public interface FopEndpointBuilderFactory {
     /**
      * Builder for endpoint for the FOP component.
      */
-    public static interface FopEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface FopEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedFopEndpointBuilder advanced() {
             return (AdvancedFopEndpointBuilder) this;
         }
@@ -98,7 +96,7 @@ public interface FopEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the FOP component.
      */
-    public static interface AdvancedFopEndpointBuilder
+    public interface AdvancedFopEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default FopEndpointBuilder basic() {

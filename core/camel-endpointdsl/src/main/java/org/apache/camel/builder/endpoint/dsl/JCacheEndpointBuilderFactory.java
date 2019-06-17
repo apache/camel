@@ -528,7 +528,7 @@ public interface JCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JCache component.
      */
-    public static interface JCacheEndpointProducerBuilder
+    public interface JCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJCacheEndpointProducerBuilder advanced() {
@@ -898,7 +898,7 @@ public interface JCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JCache component.
      */
-    public static interface JCacheEndpointBuilder
+    public interface JCacheEndpointBuilder
             extends
                 JCacheEndpointConsumerBuilder, JCacheEndpointProducerBuilder {
         default AdvancedJCacheEndpointBuilder advanced() {
@@ -1074,7 +1074,7 @@ public interface JCacheEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JCache component.
      */
-    public static interface AdvancedJCacheEndpointBuilder
+    public interface AdvancedJCacheEndpointBuilder
             extends
                 AdvancedJCacheEndpointConsumerBuilder, AdvancedJCacheEndpointProducerBuilder {
         default JCacheEndpointBuilder basic() {

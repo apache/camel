@@ -1806,7 +1806,7 @@ public interface AMQPEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AMQP component.
      */
-    public static interface AMQPEndpointProducerBuilder
+    public interface AMQPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAMQPEndpointProducerBuilder advanced() {
@@ -3506,7 +3506,7 @@ public interface AMQPEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AMQP component.
      */
-    public static interface AMQPEndpointBuilder
+    public interface AMQPEndpointBuilder
             extends
                 AMQPEndpointConsumerBuilder, AMQPEndpointProducerBuilder {
         default AdvancedAMQPEndpointBuilder advanced() {
@@ -3710,7 +3710,7 @@ public interface AMQPEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AMQP component.
      */
-    public static interface AdvancedAMQPEndpointBuilder
+    public interface AdvancedAMQPEndpointBuilder
             extends
                 AdvancedAMQPEndpointConsumerBuilder, AdvancedAMQPEndpointProducerBuilder {
         default AMQPEndpointBuilder basic() {

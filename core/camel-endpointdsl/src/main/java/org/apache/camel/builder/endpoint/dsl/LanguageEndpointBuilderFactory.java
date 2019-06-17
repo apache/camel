@@ -34,9 +34,7 @@ public interface LanguageEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Language component.
      */
-    public static interface LanguageEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface LanguageEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedLanguageEndpointBuilder advanced() {
             return (AdvancedLanguageEndpointBuilder) this;
         }
@@ -153,7 +151,7 @@ public interface LanguageEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Language component.
      */
-    public static interface AdvancedLanguageEndpointBuilder
+    public interface AdvancedLanguageEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default LanguageEndpointBuilder basic() {

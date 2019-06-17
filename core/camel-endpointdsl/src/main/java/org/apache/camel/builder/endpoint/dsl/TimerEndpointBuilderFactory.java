@@ -36,9 +36,7 @@ public interface TimerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Timer component.
      */
-    public static interface TimerEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface TimerEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedTimerEndpointBuilder advanced() {
             return (AdvancedTimerEndpointBuilder) this;
         }
@@ -148,7 +146,7 @@ public interface TimerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Timer component.
      */
-    public static interface AdvancedTimerEndpointBuilder
+    public interface AdvancedTimerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default TimerEndpointBuilder basic() {

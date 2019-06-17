@@ -260,7 +260,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Caffeine LoadCache component.
      */
-    public static interface CaffeineLoadCacheEndpointProducerBuilder
+    public interface CaffeineLoadCacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCaffeineLoadCacheEndpointProducerBuilder advanced() {
@@ -683,7 +683,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Caffeine LoadCache component.
      */
-    public static interface CaffeineLoadCacheEndpointBuilder
+    public interface CaffeineLoadCacheEndpointBuilder
             extends
                 CaffeineLoadCacheEndpointConsumerBuilder, CaffeineLoadCacheEndpointProducerBuilder {
         default AdvancedCaffeineLoadCacheEndpointBuilder advanced() {
@@ -725,7 +725,7 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Caffeine LoadCache component.
      */
-    public static interface AdvancedCaffeineLoadCacheEndpointBuilder
+    public interface AdvancedCaffeineLoadCacheEndpointBuilder
             extends
                 AdvancedCaffeineLoadCacheEndpointConsumerBuilder, AdvancedCaffeineLoadCacheEndpointProducerBuilder {
         default CaffeineLoadCacheEndpointBuilder basic() {

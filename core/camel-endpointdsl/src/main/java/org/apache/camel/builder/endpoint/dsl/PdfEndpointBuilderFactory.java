@@ -34,9 +34,7 @@ public interface PdfEndpointBuilderFactory {
     /**
      * Builder for endpoint for the PDF component.
      */
-    public static interface PdfEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface PdfEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedPdfEndpointBuilder advanced() {
             return (AdvancedPdfEndpointBuilder) this;
         }
@@ -231,7 +229,7 @@ public interface PdfEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the PDF component.
      */
-    public static interface AdvancedPdfEndpointBuilder
+    public interface AdvancedPdfEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default PdfEndpointBuilder basic() {

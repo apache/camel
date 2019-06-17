@@ -33,9 +33,7 @@ public interface ChunkEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Chunk component.
      */
-    public static interface ChunkEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ChunkEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedChunkEndpointBuilder advanced() {
             return (AdvancedChunkEndpointBuilder) this;
         }
@@ -121,7 +119,7 @@ public interface ChunkEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Chunk component.
      */
-    public static interface AdvancedChunkEndpointBuilder
+    public interface AdvancedChunkEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ChunkEndpointBuilder basic() {

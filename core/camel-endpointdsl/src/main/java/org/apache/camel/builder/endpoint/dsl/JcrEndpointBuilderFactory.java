@@ -360,7 +360,7 @@ public interface JcrEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the JCR component.
      */
-    public static interface JcrEndpointProducerBuilder
+    public interface JcrEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJcrEndpointProducerBuilder advanced() {
@@ -639,7 +639,7 @@ public interface JcrEndpointBuilderFactory {
     /**
      * Builder for endpoint for the JCR component.
      */
-    public static interface JcrEndpointBuilder
+    public interface JcrEndpointBuilder
             extends
                 JcrEndpointConsumerBuilder, JcrEndpointProducerBuilder {
         default AdvancedJcrEndpointBuilder advanced() {
@@ -827,7 +827,7 @@ public interface JcrEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the JCR component.
      */
-    public static interface AdvancedJcrEndpointBuilder
+    public interface AdvancedJcrEndpointBuilder
             extends
                 AdvancedJcrEndpointConsumerBuilder, AdvancedJcrEndpointProducerBuilder {
         default JcrEndpointBuilder basic() {

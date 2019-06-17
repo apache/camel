@@ -34,7 +34,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Resources Quota component.
      */
-    public static interface KubernetesResourcesQuotaEndpointBuilder
+    public interface KubernetesResourcesQuotaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesResourcesQuotaEndpointBuilder advanced() {
@@ -246,7 +246,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
      * Advanced builder for endpoint for the Kubernetes Resources Quota
      * component.
      */
-    public static interface AdvancedKubernetesResourcesQuotaEndpointBuilder
+    public interface AdvancedKubernetesResourcesQuotaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KubernetesResourcesQuotaEndpointBuilder basic() {

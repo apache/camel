@@ -341,7 +341,7 @@ public interface BraintreeEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Braintree component.
      */
-    public static interface BraintreeEndpointProducerBuilder
+    public interface BraintreeEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBraintreeEndpointProducerBuilder advanced() {
@@ -600,7 +600,7 @@ public interface BraintreeEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Braintree component.
      */
-    public static interface BraintreeEndpointBuilder
+    public interface BraintreeEndpointBuilder
             extends
                 BraintreeEndpointConsumerBuilder, BraintreeEndpointProducerBuilder {
         default AdvancedBraintreeEndpointBuilder advanced() {
@@ -713,7 +713,7 @@ public interface BraintreeEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Braintree component.
      */
-    public static interface AdvancedBraintreeEndpointBuilder
+    public interface AdvancedBraintreeEndpointBuilder
             extends
                 AdvancedBraintreeEndpointConsumerBuilder, AdvancedBraintreeEndpointProducerBuilder {
         default BraintreeEndpointBuilder basic() {

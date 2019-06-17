@@ -472,7 +472,7 @@ public interface XmppEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the XMPP component.
      */
-    public static interface XmppEndpointProducerBuilder
+    public interface XmppEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedXmppEndpointProducerBuilder advanced() {
@@ -815,7 +815,7 @@ public interface XmppEndpointBuilderFactory {
     /**
      * Builder for endpoint for the XMPP component.
      */
-    public static interface XmppEndpointBuilder
+    public interface XmppEndpointBuilder
             extends
                 XmppEndpointConsumerBuilder, XmppEndpointProducerBuilder {
         default AdvancedXmppEndpointBuilder advanced() {
@@ -1010,7 +1010,7 @@ public interface XmppEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the XMPP component.
      */
-    public static interface AdvancedXmppEndpointBuilder
+    public interface AdvancedXmppEndpointBuilder
             extends
                 AdvancedXmppEndpointConsumerBuilder, AdvancedXmppEndpointProducerBuilder {
         default XmppEndpointBuilder basic() {

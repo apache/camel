@@ -215,7 +215,7 @@ public interface DirectVmEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Direct VM component.
      */
-    public static interface DirectVmEndpointProducerBuilder
+    public interface DirectVmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDirectVmEndpointProducerBuilder advanced() {
@@ -436,7 +436,7 @@ public interface DirectVmEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Direct VM component.
      */
-    public static interface DirectVmEndpointBuilder
+    public interface DirectVmEndpointBuilder
             extends
                 DirectVmEndpointConsumerBuilder, DirectVmEndpointProducerBuilder {
         default AdvancedDirectVmEndpointBuilder advanced() {
@@ -456,7 +456,7 @@ public interface DirectVmEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Direct VM component.
      */
-    public static interface AdvancedDirectVmEndpointBuilder
+    public interface AdvancedDirectVmEndpointBuilder
             extends
                 AdvancedDirectVmEndpointConsumerBuilder, AdvancedDirectVmEndpointProducerBuilder {
         default DirectVmEndpointBuilder basic() {

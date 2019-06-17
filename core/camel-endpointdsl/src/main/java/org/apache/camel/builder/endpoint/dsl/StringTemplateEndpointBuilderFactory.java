@@ -33,7 +33,7 @@ public interface StringTemplateEndpointBuilderFactory {
     /**
      * Builder for endpoint for the String Template component.
      */
-    public static interface StringTemplateEndpointBuilder
+    public interface StringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedStringTemplateEndpointBuilder advanced() {
@@ -113,7 +113,7 @@ public interface StringTemplateEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the String Template component.
      */
-    public static interface AdvancedStringTemplateEndpointBuilder
+    public interface AdvancedStringTemplateEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default StringTemplateEndpointBuilder basic() {

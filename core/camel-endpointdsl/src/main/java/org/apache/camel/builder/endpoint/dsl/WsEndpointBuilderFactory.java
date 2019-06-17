@@ -397,7 +397,7 @@ public interface WsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the AHC Websocket component.
      */
-    public static interface WsEndpointProducerBuilder
+    public interface WsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedWsEndpointProducerBuilder advanced() {
@@ -831,7 +831,7 @@ public interface WsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AHC Websocket component.
      */
-    public static interface WsEndpointBuilder
+    public interface WsEndpointBuilder
             extends
                 WsEndpointConsumerBuilder, WsEndpointProducerBuilder {
         default AdvancedWsEndpointBuilder advanced() {
@@ -1018,7 +1018,7 @@ public interface WsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AHC Websocket component.
      */
-    public static interface AdvancedWsEndpointBuilder
+    public interface AdvancedWsEndpointBuilder
             extends
                 AdvancedWsEndpointConsumerBuilder, AdvancedWsEndpointProducerBuilder {
         default WsEndpointBuilder basic() {

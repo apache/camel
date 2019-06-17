@@ -33,7 +33,7 @@ public interface MQEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS MQ component.
      */
-    public static interface MQEndpointBuilder extends EndpointProducerBuilder {
+    public interface MQEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedMQEndpointBuilder advanced() {
             return (AdvancedMQEndpointBuilder) this;
         }
@@ -60,7 +60,7 @@ public interface MQEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS MQ component.
      */
-    public static interface AdvancedMQEndpointBuilder
+    public interface AdvancedMQEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MQEndpointBuilder basic() {

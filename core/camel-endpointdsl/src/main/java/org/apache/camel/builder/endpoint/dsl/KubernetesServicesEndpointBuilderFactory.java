@@ -469,7 +469,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Kubernetes Services component.
      */
-    public static interface KubernetesServicesEndpointProducerBuilder
+    public interface KubernetesServicesEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKubernetesServicesEndpointProducerBuilder advanced() {
@@ -808,7 +808,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Kubernetes Services component.
      */
-    public static interface KubernetesServicesEndpointBuilder
+    public interface KubernetesServicesEndpointBuilder
             extends
                 KubernetesServicesEndpointConsumerBuilder, KubernetesServicesEndpointProducerBuilder {
         default AdvancedKubernetesServicesEndpointBuilder advanced() {
@@ -1011,7 +1011,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Kubernetes Services component.
      */
-    public static interface AdvancedKubernetesServicesEndpointBuilder
+    public interface AdvancedKubernetesServicesEndpointBuilder
             extends
                 AdvancedKubernetesServicesEndpointConsumerBuilder, AdvancedKubernetesServicesEndpointProducerBuilder {
         default KubernetesServicesEndpointBuilder basic() {

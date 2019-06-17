@@ -459,7 +459,7 @@ public interface WebsocketEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Jetty Websocket component.
      */
-    public static interface WebsocketEndpointProducerBuilder
+    public interface WebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedWebsocketEndpointProducerBuilder advanced() {
@@ -844,7 +844,7 @@ public interface WebsocketEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Jetty Websocket component.
      */
-    public static interface WebsocketEndpointBuilder
+    public interface WebsocketEndpointBuilder
             extends
                 WebsocketEndpointConsumerBuilder, WebsocketEndpointProducerBuilder {
         default AdvancedWebsocketEndpointBuilder advanced() {
@@ -1000,7 +1000,7 @@ public interface WebsocketEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Jetty Websocket component.
      */
-    public static interface AdvancedWebsocketEndpointBuilder
+    public interface AdvancedWebsocketEndpointBuilder
             extends
                 AdvancedWebsocketEndpointConsumerBuilder, AdvancedWebsocketEndpointProducerBuilder {
         default WebsocketEndpointBuilder basic() {

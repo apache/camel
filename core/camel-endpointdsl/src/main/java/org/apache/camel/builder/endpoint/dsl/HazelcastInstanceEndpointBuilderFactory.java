@@ -34,7 +34,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Instance component.
      */
-    public static interface HazelcastInstanceEndpointBuilder
+    public interface HazelcastInstanceEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedHazelcastInstanceEndpointBuilder advanced() {
@@ -243,7 +243,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Instance component.
      */
-    public static interface AdvancedHazelcastInstanceEndpointBuilder
+    public interface AdvancedHazelcastInstanceEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default HazelcastInstanceEndpointBuilder basic() {

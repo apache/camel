@@ -444,7 +444,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hazelcast SEDA component.
      */
-    public static interface HazelcastSedaEndpointProducerBuilder
+    public interface HazelcastSedaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastSedaEndpointProducerBuilder advanced() {
@@ -748,7 +748,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast SEDA component.
      */
-    public static interface HazelcastSedaEndpointBuilder
+    public interface HazelcastSedaEndpointBuilder
             extends
                 HazelcastSedaEndpointConsumerBuilder, HazelcastSedaEndpointProducerBuilder {
         default AdvancedHazelcastSedaEndpointBuilder advanced() {
@@ -956,7 +956,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast SEDA component.
      */
-    public static interface AdvancedHazelcastSedaEndpointBuilder
+    public interface AdvancedHazelcastSedaEndpointBuilder
             extends
                 AdvancedHazelcastSedaEndpointConsumerBuilder, AdvancedHazelcastSedaEndpointProducerBuilder {
         default HazelcastSedaEndpointBuilder basic() {

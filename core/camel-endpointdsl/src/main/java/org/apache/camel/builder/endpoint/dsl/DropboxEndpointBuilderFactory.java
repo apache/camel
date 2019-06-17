@@ -314,7 +314,7 @@ public interface DropboxEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Dropbox component.
      */
-    public static interface DropboxEndpointProducerBuilder
+    public interface DropboxEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDropboxEndpointProducerBuilder advanced() {
@@ -547,7 +547,7 @@ public interface DropboxEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Dropbox component.
      */
-    public static interface DropboxEndpointBuilder
+    public interface DropboxEndpointBuilder
             extends
                 DropboxEndpointConsumerBuilder, DropboxEndpointProducerBuilder {
         default AdvancedDropboxEndpointBuilder advanced() {
@@ -685,7 +685,7 @@ public interface DropboxEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Dropbox component.
      */
-    public static interface AdvancedDropboxEndpointBuilder
+    public interface AdvancedDropboxEndpointBuilder
             extends
                 AdvancedDropboxEndpointConsumerBuilder, AdvancedDropboxEndpointProducerBuilder {
         default DropboxEndpointBuilder basic() {

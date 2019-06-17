@@ -34,7 +34,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite ID Generator component.
      */
-    public static interface IgniteIdGenEndpointBuilder
+    public interface IgniteIdGenEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIgniteIdGenEndpointBuilder advanced() {
@@ -98,7 +98,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite ID Generator component.
      */
-    public static interface AdvancedIgniteIdGenEndpointBuilder
+    public interface AdvancedIgniteIdGenEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IgniteIdGenEndpointBuilder basic() {

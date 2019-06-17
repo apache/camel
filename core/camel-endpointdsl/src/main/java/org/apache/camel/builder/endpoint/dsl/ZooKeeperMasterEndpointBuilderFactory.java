@@ -34,7 +34,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ZooKeeper Master component.
      */
-    public static interface ZooKeeperMasterEndpointBuilder
+    public interface ZooKeeperMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedZooKeeperMasterEndpointBuilder advanced() {
@@ -64,7 +64,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ZooKeeper Master component.
      */
-    public static interface AdvancedZooKeeperMasterEndpointBuilder
+    public interface AdvancedZooKeeperMasterEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default ZooKeeperMasterEndpointBuilder basic() {

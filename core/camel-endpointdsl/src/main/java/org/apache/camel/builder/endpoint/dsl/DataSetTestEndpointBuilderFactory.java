@@ -34,7 +34,7 @@ public interface DataSetTestEndpointBuilderFactory {
     /**
      * Builder for endpoint for the DataSet Test component.
      */
-    public static interface DataSetTestEndpointBuilder
+    public interface DataSetTestEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDataSetTestEndpointBuilder advanced() {
@@ -128,7 +128,7 @@ public interface DataSetTestEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the DataSet Test component.
      */
-    public static interface AdvancedDataSetTestEndpointBuilder
+    public interface AdvancedDataSetTestEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DataSetTestEndpointBuilder basic() {

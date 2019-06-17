@@ -34,9 +34,7 @@ public interface InfluxDbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the InfluxDB component.
      */
-    public static interface InfluxDbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface InfluxDbEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedInfluxDbEndpointBuilder advanced() {
             return (AdvancedInfluxDbEndpointBuilder) this;
         }
@@ -109,7 +107,7 @@ public interface InfluxDbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the InfluxDB component.
      */
-    public static interface AdvancedInfluxDbEndpointBuilder
+    public interface AdvancedInfluxDbEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default InfluxDbEndpointBuilder basic() {

@@ -370,7 +370,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Builder for endpoint producers for the Azure Storage Blob Service
      * component.
      */
-    public static interface BlobServiceEndpointProducerBuilder
+    public interface BlobServiceEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedBlobServiceEndpointProducerBuilder advanced() {
@@ -769,7 +769,7 @@ public interface BlobServiceEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Azure Storage Blob Service component.
      */
-    public static interface BlobServiceEndpointBuilder
+    public interface BlobServiceEndpointBuilder
             extends
                 BlobServiceEndpointConsumerBuilder, BlobServiceEndpointProducerBuilder {
         default AdvancedBlobServiceEndpointBuilder advanced() {
@@ -958,7 +958,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Advanced builder for endpoint for the Azure Storage Blob Service
      * component.
      */
-    public static interface AdvancedBlobServiceEndpointBuilder
+    public interface AdvancedBlobServiceEndpointBuilder
             extends
                 AdvancedBlobServiceEndpointConsumerBuilder, AdvancedBlobServiceEndpointProducerBuilder {
         default BlobServiceEndpointBuilder basic() {

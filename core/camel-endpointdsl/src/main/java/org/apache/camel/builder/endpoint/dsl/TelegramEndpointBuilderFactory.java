@@ -627,7 +627,7 @@ public interface TelegramEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Telegram component.
      */
-    public static interface TelegramEndpointProducerBuilder
+    public interface TelegramEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedTelegramEndpointProducerBuilder advanced() {
@@ -790,7 +790,7 @@ public interface TelegramEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Telegram component.
      */
-    public static interface TelegramEndpointBuilder
+    public interface TelegramEndpointBuilder
             extends
                 TelegramEndpointConsumerBuilder, TelegramEndpointProducerBuilder {
         default AdvancedTelegramEndpointBuilder advanced() {
@@ -848,7 +848,7 @@ public interface TelegramEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Telegram component.
      */
-    public static interface AdvancedTelegramEndpointBuilder
+    public interface AdvancedTelegramEndpointBuilder
             extends
                 AdvancedTelegramEndpointConsumerBuilder, AdvancedTelegramEndpointProducerBuilder {
         default TelegramEndpointBuilder basic() {

@@ -313,7 +313,7 @@ public interface CMISEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the CMIS component.
      */
-    public static interface CMISEndpointProducerBuilder
+    public interface CMISEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCMISEndpointProducerBuilder advanced() {
@@ -554,7 +554,7 @@ public interface CMISEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CMIS component.
      */
-    public static interface CMISEndpointBuilder
+    public interface CMISEndpointBuilder
             extends
                 CMISEndpointConsumerBuilder, CMISEndpointProducerBuilder {
         default AdvancedCMISEndpointBuilder advanced() {
@@ -658,7 +658,7 @@ public interface CMISEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CMIS component.
      */
-    public static interface AdvancedCMISEndpointBuilder
+    public interface AdvancedCMISEndpointBuilder
             extends
                 AdvancedCMISEndpointConsumerBuilder, AdvancedCMISEndpointProducerBuilder {
         default CMISEndpointBuilder basic() {

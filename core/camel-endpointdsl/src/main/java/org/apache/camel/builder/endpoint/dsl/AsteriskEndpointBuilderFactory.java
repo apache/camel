@@ -218,7 +218,7 @@ public interface AsteriskEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Asterisk component.
      */
-    public static interface AsteriskEndpointProducerBuilder
+    public interface AsteriskEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAsteriskEndpointProducerBuilder advanced() {
@@ -378,7 +378,7 @@ public interface AsteriskEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Asterisk component.
      */
-    public static interface AsteriskEndpointBuilder
+    public interface AsteriskEndpointBuilder
             extends
                 AsteriskEndpointConsumerBuilder, AsteriskEndpointProducerBuilder {
         default AdvancedAsteriskEndpointBuilder advanced() {
@@ -425,7 +425,7 @@ public interface AsteriskEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Asterisk component.
      */
-    public static interface AdvancedAsteriskEndpointBuilder
+    public interface AdvancedAsteriskEndpointBuilder
             extends
                 AdvancedAsteriskEndpointConsumerBuilder, AdvancedAsteriskEndpointProducerBuilder {
         default AsteriskEndpointBuilder basic() {

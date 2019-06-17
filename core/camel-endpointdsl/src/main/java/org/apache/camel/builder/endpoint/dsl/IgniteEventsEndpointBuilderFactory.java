@@ -34,7 +34,7 @@ public interface IgniteEventsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Events component.
      */
-    public static interface IgniteEventsEndpointBuilder
+    public interface IgniteEventsEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedIgniteEventsEndpointBuilder advanced() {
@@ -98,7 +98,7 @@ public interface IgniteEventsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Events component.
      */
-    public static interface AdvancedIgniteEventsEndpointBuilder
+    public interface AdvancedIgniteEventsEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default IgniteEventsEndpointBuilder basic() {

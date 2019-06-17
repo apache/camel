@@ -421,7 +421,7 @@ public interface EhcacheEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Ehcache component.
      */
-    public static interface EhcacheEndpointProducerBuilder
+    public interface EhcacheEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedEhcacheEndpointProducerBuilder advanced() {
@@ -727,7 +727,7 @@ public interface EhcacheEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ehcache component.
      */
-    public static interface EhcacheEndpointBuilder
+    public interface EhcacheEndpointBuilder
             extends
                 EhcacheEndpointConsumerBuilder, EhcacheEndpointProducerBuilder {
         default AdvancedEhcacheEndpointBuilder advanced() {
@@ -819,7 +819,7 @@ public interface EhcacheEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ehcache component.
      */
-    public static interface AdvancedEhcacheEndpointBuilder
+    public interface AdvancedEhcacheEndpointBuilder
             extends
                 AdvancedEhcacheEndpointConsumerBuilder, AdvancedEhcacheEndpointProducerBuilder {
         default EhcacheEndpointBuilder basic() {

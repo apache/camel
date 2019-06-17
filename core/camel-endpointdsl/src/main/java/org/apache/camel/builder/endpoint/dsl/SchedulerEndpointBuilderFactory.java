@@ -34,9 +34,7 @@ public interface SchedulerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Scheduler component.
      */
-    public static interface SchedulerEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface SchedulerEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedSchedulerEndpointBuilder advanced() {
             return (AdvancedSchedulerEndpointBuilder) this;
         }
@@ -74,7 +72,7 @@ public interface SchedulerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Scheduler component.
      */
-    public static interface AdvancedSchedulerEndpointBuilder
+    public interface AdvancedSchedulerEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default SchedulerEndpointBuilder basic() {

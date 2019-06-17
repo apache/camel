@@ -1079,7 +1079,7 @@ public interface SqsEndpointBuilderFactory {
      * Builder for endpoint producers for the AWS Simple Queue Service
      * component.
      */
-    public static interface SqsEndpointProducerBuilder
+    public interface SqsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSqsEndpointProducerBuilder advanced() {
@@ -1550,7 +1550,7 @@ public interface SqsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Simple Queue Service component.
      */
-    public static interface SqsEndpointBuilder
+    public interface SqsEndpointBuilder
             extends
                 SqsEndpointConsumerBuilder, SqsEndpointProducerBuilder {
         default AdvancedSqsEndpointBuilder advanced() {
@@ -1794,7 +1794,7 @@ public interface SqsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Simple Queue Service component.
      */
-    public static interface AdvancedSqsEndpointBuilder
+    public interface AdvancedSqsEndpointBuilder
             extends
                 AdvancedSqsEndpointConsumerBuilder, AdvancedSqsEndpointProducerBuilder {
         default SqsEndpointBuilder basic() {

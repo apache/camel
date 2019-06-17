@@ -360,7 +360,7 @@ public interface StubEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Stub component.
      */
-    public static interface StubEndpointProducerBuilder
+    public interface StubEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedStubEndpointProducerBuilder advanced() {
@@ -670,7 +670,7 @@ public interface StubEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Stub component.
      */
-    public static interface StubEndpointBuilder
+    public interface StubEndpointBuilder
             extends
                 StubEndpointConsumerBuilder, StubEndpointProducerBuilder {
         default AdvancedStubEndpointBuilder advanced() {
@@ -712,7 +712,7 @@ public interface StubEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Stub component.
      */
-    public static interface AdvancedStubEndpointBuilder
+    public interface AdvancedStubEndpointBuilder
             extends
                 AdvancedStubEndpointConsumerBuilder, AdvancedStubEndpointProducerBuilder {
         default StubEndpointBuilder basic() {

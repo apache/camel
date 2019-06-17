@@ -655,7 +655,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Atmosphere Websocket component.
      */
-    public static interface AtmosphereWebsocketEndpointProducerBuilder
+    public interface AtmosphereWebsocketEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder advanced() {
@@ -1000,7 +1000,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atmosphere Websocket component.
      */
-    public static interface AtmosphereWebsocketEndpointBuilder
+    public interface AtmosphereWebsocketEndpointBuilder
             extends
                 AtmosphereWebsocketEndpointConsumerBuilder, AtmosphereWebsocketEndpointProducerBuilder {
         default AdvancedAtmosphereWebsocketEndpointBuilder advanced() {
@@ -1189,7 +1189,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atmosphere Websocket component.
      */
-    public static interface AdvancedAtmosphereWebsocketEndpointBuilder
+    public interface AdvancedAtmosphereWebsocketEndpointBuilder
             extends
                 AdvancedAtmosphereWebsocketEndpointConsumerBuilder, AdvancedAtmosphereWebsocketEndpointProducerBuilder {
         default AtmosphereWebsocketEndpointBuilder basic() {

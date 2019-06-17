@@ -34,9 +34,7 @@ public interface GangliaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ganglia component.
      */
-    public static interface GangliaEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface GangliaEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedGangliaEndpointBuilder advanced() {
             return (AdvancedGangliaEndpointBuilder) this;
         }
@@ -261,7 +259,7 @@ public interface GangliaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ganglia component.
      */
-    public static interface AdvancedGangliaEndpointBuilder
+    public interface AdvancedGangliaEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default GangliaEndpointBuilder basic() {

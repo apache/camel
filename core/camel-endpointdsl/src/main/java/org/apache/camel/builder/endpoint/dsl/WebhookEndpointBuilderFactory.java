@@ -35,9 +35,7 @@ public interface WebhookEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Webhook component.
      */
-    public static interface WebhookEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface WebhookEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedWebhookEndpointBuilder advanced() {
             return (AdvancedWebhookEndpointBuilder) this;
         }
@@ -119,7 +117,7 @@ public interface WebhookEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Webhook component.
      */
-    public static interface AdvancedWebhookEndpointBuilder
+    public interface AdvancedWebhookEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default WebhookEndpointBuilder basic() {

@@ -34,9 +34,7 @@ public interface IgniteSetEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Sets component.
      */
-    public static interface IgniteSetEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface IgniteSetEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedIgniteSetEndpointBuilder advanced() {
             return (AdvancedIgniteSetEndpointBuilder) this;
         }
@@ -98,7 +96,7 @@ public interface IgniteSetEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Sets component.
      */
-    public static interface AdvancedIgniteSetEndpointBuilder
+    public interface AdvancedIgniteSetEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IgniteSetEndpointBuilder basic() {

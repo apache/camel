@@ -690,7 +690,7 @@ public interface FlatpackEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Flatpack component.
      */
-    public static interface FlatpackEndpointProducerBuilder
+    public interface FlatpackEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFlatpackEndpointProducerBuilder advanced() {
@@ -945,7 +945,7 @@ public interface FlatpackEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Flatpack component.
      */
-    public static interface FlatpackEndpointBuilder
+    public interface FlatpackEndpointBuilder
             extends
                 FlatpackEndpointConsumerBuilder, FlatpackEndpointProducerBuilder {
         default AdvancedFlatpackEndpointBuilder advanced() {
@@ -1106,7 +1106,7 @@ public interface FlatpackEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Flatpack component.
      */
-    public static interface AdvancedFlatpackEndpointBuilder
+    public interface AdvancedFlatpackEndpointBuilder
             extends
                 AdvancedFlatpackEndpointConsumerBuilder, AdvancedFlatpackEndpointProducerBuilder {
         default FlatpackEndpointBuilder basic() {

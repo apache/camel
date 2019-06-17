@@ -446,7 +446,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hazelcast Queue component.
      */
-    public static interface HazelcastQueueEndpointProducerBuilder
+    public interface HazelcastQueueEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastQueueEndpointProducerBuilder advanced() {
@@ -752,7 +752,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Queue component.
      */
-    public static interface HazelcastQueueEndpointBuilder
+    public interface HazelcastQueueEndpointBuilder
             extends
                 HazelcastQueueEndpointConsumerBuilder, HazelcastQueueEndpointProducerBuilder {
         default AdvancedHazelcastQueueEndpointBuilder advanced() {
@@ -960,7 +960,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Queue component.
      */
-    public static interface AdvancedHazelcastQueueEndpointBuilder
+    public interface AdvancedHazelcastQueueEndpointBuilder
             extends
                 AdvancedHazelcastQueueEndpointConsumerBuilder, AdvancedHazelcastQueueEndpointProducerBuilder {
         default HazelcastQueueEndpointBuilder basic() {

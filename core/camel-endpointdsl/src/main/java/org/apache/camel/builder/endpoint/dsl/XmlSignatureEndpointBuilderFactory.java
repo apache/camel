@@ -35,7 +35,7 @@ public interface XmlSignatureEndpointBuilderFactory {
     /**
      * Builder for endpoint for the XML Security component.
      */
-    public static interface XmlSignatureEndpointBuilder
+    public interface XmlSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedXmlSignatureEndpointBuilder advanced() {
@@ -840,7 +840,7 @@ public interface XmlSignatureEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the XML Security component.
      */
-    public static interface AdvancedXmlSignatureEndpointBuilder
+    public interface AdvancedXmlSignatureEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default XmlSignatureEndpointBuilder basic() {

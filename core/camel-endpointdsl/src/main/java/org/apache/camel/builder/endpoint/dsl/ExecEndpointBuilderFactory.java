@@ -33,9 +33,7 @@ public interface ExecEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Exec component.
      */
-    public static interface ExecEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface ExecEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedExecEndpointBuilder advanced() {
             return (AdvancedExecEndpointBuilder) this;
         }
@@ -178,7 +176,7 @@ public interface ExecEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Exec component.
      */
-    public static interface AdvancedExecEndpointBuilder
+    public interface AdvancedExecEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ExecEndpointBuilder basic() {

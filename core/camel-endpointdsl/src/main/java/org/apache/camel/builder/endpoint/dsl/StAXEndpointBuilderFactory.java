@@ -34,9 +34,7 @@ public interface StAXEndpointBuilderFactory {
     /**
      * Builder for endpoint for the StAX component.
      */
-    public static interface StAXEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface StAXEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedStAXEndpointBuilder advanced() {
             return (AdvancedStAXEndpointBuilder) this;
         }
@@ -55,7 +53,7 @@ public interface StAXEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the StAX component.
      */
-    public static interface AdvancedStAXEndpointBuilder
+    public interface AdvancedStAXEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default StAXEndpointBuilder basic() {

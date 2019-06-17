@@ -33,7 +33,7 @@ public interface FreemarkerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Freemarker component.
      */
-    public static interface FreemarkerEndpointBuilder
+    public interface FreemarkerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFreemarkerEndpointBuilder advanced() {
@@ -126,7 +126,7 @@ public interface FreemarkerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Freemarker component.
      */
-    public static interface AdvancedFreemarkerEndpointBuilder
+    public interface AdvancedFreemarkerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default FreemarkerEndpointBuilder basic() {

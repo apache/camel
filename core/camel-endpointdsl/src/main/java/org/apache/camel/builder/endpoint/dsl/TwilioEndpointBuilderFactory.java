@@ -223,7 +223,7 @@ public interface TwilioEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Twilio component.
      */
-    public static interface TwilioEndpointProducerBuilder
+    public interface TwilioEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedTwilioEndpointProducerBuilder advanced() {
@@ -365,7 +365,7 @@ public interface TwilioEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Twilio component.
      */
-    public static interface TwilioEndpointBuilder
+    public interface TwilioEndpointBuilder
             extends
                 TwilioEndpointConsumerBuilder, TwilioEndpointProducerBuilder {
         default AdvancedTwilioEndpointBuilder advanced() {
@@ -416,7 +416,7 @@ public interface TwilioEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Twilio component.
      */
-    public static interface AdvancedTwilioEndpointBuilder
+    public interface AdvancedTwilioEndpointBuilder
             extends
                 AdvancedTwilioEndpointConsumerBuilder, AdvancedTwilioEndpointProducerBuilder {
         default TwilioEndpointBuilder basic() {

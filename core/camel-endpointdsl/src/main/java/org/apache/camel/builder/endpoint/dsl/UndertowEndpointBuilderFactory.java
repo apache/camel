@@ -427,7 +427,7 @@ public interface UndertowEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Undertow component.
      */
-    public static interface UndertowEndpointProducerBuilder
+    public interface UndertowEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedUndertowEndpointProducerBuilder advanced() {
@@ -858,7 +858,7 @@ public interface UndertowEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Undertow component.
      */
-    public static interface UndertowEndpointBuilder
+    public interface UndertowEndpointBuilder
             extends
                 UndertowEndpointConsumerBuilder, UndertowEndpointProducerBuilder {
         default AdvancedUndertowEndpointBuilder advanced() {
@@ -909,7 +909,7 @@ public interface UndertowEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Undertow component.
      */
-    public static interface AdvancedUndertowEndpointBuilder
+    public interface AdvancedUndertowEndpointBuilder
             extends
                 AdvancedUndertowEndpointConsumerBuilder, AdvancedUndertowEndpointProducerBuilder {
         default UndertowEndpointBuilder basic() {

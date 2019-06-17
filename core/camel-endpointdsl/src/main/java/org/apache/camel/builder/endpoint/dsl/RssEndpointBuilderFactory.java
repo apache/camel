@@ -34,9 +34,7 @@ public interface RssEndpointBuilderFactory {
     /**
      * Builder for endpoint for the RSS component.
      */
-    public static interface RssEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface RssEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedRssEndpointBuilder advanced() {
             return (AdvancedRssEndpointBuilder) this;
         }
@@ -192,7 +190,7 @@ public interface RssEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the RSS component.
      */
-    public static interface AdvancedRssEndpointBuilder
+    public interface AdvancedRssEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default RssEndpointBuilder basic() {

@@ -446,7 +446,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hazelcast Topic component.
      */
-    public static interface HazelcastTopicEndpointProducerBuilder
+    public interface HazelcastTopicEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastTopicEndpointProducerBuilder advanced() {
@@ -752,7 +752,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Topic component.
      */
-    public static interface HazelcastTopicEndpointBuilder
+    public interface HazelcastTopicEndpointBuilder
             extends
                 HazelcastTopicEndpointConsumerBuilder, HazelcastTopicEndpointProducerBuilder {
         default AdvancedHazelcastTopicEndpointBuilder advanced() {
@@ -960,7 +960,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Topic component.
      */
-    public static interface AdvancedHazelcastTopicEndpointBuilder
+    public interface AdvancedHazelcastTopicEndpointBuilder
             extends
                 AdvancedHazelcastTopicEndpointConsumerBuilder, AdvancedHazelcastTopicEndpointProducerBuilder {
         default HazelcastTopicEndpointBuilder basic() {

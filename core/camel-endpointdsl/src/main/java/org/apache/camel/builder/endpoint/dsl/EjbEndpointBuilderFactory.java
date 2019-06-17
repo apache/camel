@@ -34,9 +34,7 @@ public interface EjbEndpointBuilderFactory {
     /**
      * Builder for endpoint for the EJB component.
      */
-    public static interface EjbEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface EjbEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedEjbEndpointBuilder advanced() {
             return (AdvancedEjbEndpointBuilder) this;
         }
@@ -107,7 +105,7 @@ public interface EjbEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the EJB component.
      */
-    public static interface AdvancedEjbEndpointBuilder
+    public interface AdvancedEjbEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default EjbEndpointBuilder basic() {

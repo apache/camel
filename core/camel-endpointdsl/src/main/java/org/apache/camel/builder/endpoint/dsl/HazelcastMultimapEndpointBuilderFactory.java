@@ -451,7 +451,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Hazelcast Multimap component.
      */
-    public static interface HazelcastMultimapEndpointProducerBuilder
+    public interface HazelcastMultimapEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHazelcastMultimapEndpointProducerBuilder advanced() {
@@ -760,7 +760,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Hazelcast Multimap component.
      */
-    public static interface HazelcastMultimapEndpointBuilder
+    public interface HazelcastMultimapEndpointBuilder
             extends
                 HazelcastMultimapEndpointConsumerBuilder, HazelcastMultimapEndpointProducerBuilder {
         default AdvancedHazelcastMultimapEndpointBuilder advanced() {
@@ -969,7 +969,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Hazelcast Multimap component.
      */
-    public static interface AdvancedHazelcastMultimapEndpointBuilder
+    public interface AdvancedHazelcastMultimapEndpointBuilder
             extends
                 AdvancedHazelcastMultimapEndpointConsumerBuilder, AdvancedHazelcastMultimapEndpointProducerBuilder {
         default HazelcastMultimapEndpointBuilder basic() {

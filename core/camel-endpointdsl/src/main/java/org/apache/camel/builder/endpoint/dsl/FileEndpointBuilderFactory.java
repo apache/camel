@@ -1979,7 +1979,7 @@ public interface FileEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the File component.
      */
-    public static interface FileEndpointProducerBuilder
+    public interface FileEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFileEndpointProducerBuilder advanced() {
@@ -2647,7 +2647,7 @@ public interface FileEndpointBuilderFactory {
     /**
      * Builder for endpoint for the File component.
      */
-    public static interface FileEndpointBuilder
+    public interface FileEndpointBuilder
             extends
                 FileEndpointConsumerBuilder, FileEndpointProducerBuilder {
         default AdvancedFileEndpointBuilder advanced() {
@@ -2761,7 +2761,7 @@ public interface FileEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the File component.
      */
-    public static interface AdvancedFileEndpointBuilder
+    public interface AdvancedFileEndpointBuilder
             extends
                 AdvancedFileEndpointConsumerBuilder, AdvancedFileEndpointProducerBuilder {
         default FileEndpointBuilder basic() {

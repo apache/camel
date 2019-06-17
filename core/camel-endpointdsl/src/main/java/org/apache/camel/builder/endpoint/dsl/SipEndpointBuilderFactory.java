@@ -919,7 +919,7 @@ public interface SipEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the SIP component.
      */
-    public static interface SipEndpointProducerBuilder
+    public interface SipEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSipEndpointProducerBuilder advanced() {
@@ -1711,7 +1711,7 @@ public interface SipEndpointBuilderFactory {
     /**
      * Builder for endpoint for the SIP component.
      */
-    public static interface SipEndpointBuilder
+    public interface SipEndpointBuilder
             extends
                 SipEndpointConsumerBuilder, SipEndpointProducerBuilder {
         default AdvancedSipEndpointBuilder advanced() {
@@ -2012,7 +2012,7 @@ public interface SipEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the SIP component.
      */
-    public static interface AdvancedSipEndpointBuilder
+    public interface AdvancedSipEndpointBuilder
             extends
                 AdvancedSipEndpointConsumerBuilder, AdvancedSipEndpointProducerBuilder {
         default SipEndpointBuilder basic() {

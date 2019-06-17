@@ -419,7 +419,7 @@ public interface HBaseEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the HBase component.
      */
-    public static interface HBaseEndpointProducerBuilder
+    public interface HBaseEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedHBaseEndpointProducerBuilder advanced() {
@@ -697,7 +697,7 @@ public interface HBaseEndpointBuilderFactory {
     /**
      * Builder for endpoint for the HBase component.
      */
-    public static interface HBaseEndpointBuilder
+    public interface HBaseEndpointBuilder
             extends
                 HBaseEndpointConsumerBuilder, HBaseEndpointProducerBuilder {
         default AdvancedHBaseEndpointBuilder advanced() {
@@ -865,7 +865,7 @@ public interface HBaseEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the HBase component.
      */
-    public static interface AdvancedHBaseEndpointBuilder
+    public interface AdvancedHBaseEndpointBuilder
             extends
                 AdvancedHBaseEndpointConsumerBuilder, AdvancedHBaseEndpointProducerBuilder {
         default HBaseEndpointBuilder basic() {

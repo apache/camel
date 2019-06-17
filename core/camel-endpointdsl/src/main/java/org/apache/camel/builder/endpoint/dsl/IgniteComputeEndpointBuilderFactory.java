@@ -36,7 +36,7 @@ public interface IgniteComputeEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Ignite Compute component.
      */
-    public static interface IgniteComputeEndpointBuilder
+    public interface IgniteComputeEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIgniteComputeEndpointBuilder advanced() {
@@ -100,7 +100,7 @@ public interface IgniteComputeEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Ignite Compute component.
      */
-    public static interface AdvancedIgniteComputeEndpointBuilder
+    public interface AdvancedIgniteComputeEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default IgniteComputeEndpointBuilder basic() {

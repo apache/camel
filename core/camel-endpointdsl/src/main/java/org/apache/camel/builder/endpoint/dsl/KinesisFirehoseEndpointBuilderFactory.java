@@ -34,7 +34,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Kinesis Firehose component.
      */
-    public static interface KinesisFirehoseEndpointBuilder
+    public interface KinesisFirehoseEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedKinesisFirehoseEndpointBuilder advanced() {
@@ -133,7 +133,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Kinesis Firehose component.
      */
-    public static interface AdvancedKinesisFirehoseEndpointBuilder
+    public interface AdvancedKinesisFirehoseEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default KinesisFirehoseEndpointBuilder basic() {

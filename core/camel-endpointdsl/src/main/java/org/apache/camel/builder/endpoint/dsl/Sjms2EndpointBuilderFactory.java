@@ -782,7 +782,7 @@ public interface Sjms2EndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Simple JMS2 component.
      */
-    public static interface Sjms2EndpointProducerBuilder
+    public interface Sjms2EndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedSjms2EndpointProducerBuilder advanced() {
@@ -1401,7 +1401,7 @@ public interface Sjms2EndpointBuilderFactory {
     /**
      * Builder for endpoint for the Simple JMS2 component.
      */
-    public static interface Sjms2EndpointBuilder
+    public interface Sjms2EndpointBuilder
             extends
                 Sjms2EndpointConsumerBuilder, Sjms2EndpointProducerBuilder {
         default AdvancedSjms2EndpointBuilder advanced() {
@@ -1477,7 +1477,7 @@ public interface Sjms2EndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Simple JMS2 component.
      */
-    public static interface AdvancedSjms2EndpointBuilder
+    public interface AdvancedSjms2EndpointBuilder
             extends
                 AdvancedSjms2EndpointConsumerBuilder, AdvancedSjms2EndpointProducerBuilder {
         default Sjms2EndpointBuilder basic() {

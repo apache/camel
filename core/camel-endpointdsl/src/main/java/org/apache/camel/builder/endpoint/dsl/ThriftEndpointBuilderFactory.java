@@ -368,7 +368,7 @@ public interface ThriftEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Thrift component.
      */
-    public static interface ThriftEndpointProducerBuilder
+    public interface ThriftEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedThriftEndpointProducerBuilder advanced() {
@@ -610,7 +610,7 @@ public interface ThriftEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Thrift component.
      */
-    public static interface ThriftEndpointBuilder
+    public interface ThriftEndpointBuilder
             extends
                 ThriftEndpointConsumerBuilder, ThriftEndpointProducerBuilder {
         default AdvancedThriftEndpointBuilder advanced() {
@@ -749,7 +749,7 @@ public interface ThriftEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Thrift component.
      */
-    public static interface AdvancedThriftEndpointBuilder
+    public interface AdvancedThriftEndpointBuilder
             extends
                 AdvancedThriftEndpointConsumerBuilder, AdvancedThriftEndpointProducerBuilder {
         default ThriftEndpointBuilder basic() {

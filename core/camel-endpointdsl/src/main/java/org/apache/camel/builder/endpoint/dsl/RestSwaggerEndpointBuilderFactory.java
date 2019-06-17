@@ -33,7 +33,7 @@ public interface RestSwaggerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the REST Swagger component.
      */
-    public static interface RestSwaggerEndpointBuilder
+    public interface RestSwaggerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRestSwaggerEndpointBuilder advanced() {
@@ -44,7 +44,7 @@ public interface RestSwaggerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the REST Swagger component.
      */
-    public static interface AdvancedRestSwaggerEndpointBuilder
+    public interface AdvancedRestSwaggerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default RestSwaggerEndpointBuilder basic() {

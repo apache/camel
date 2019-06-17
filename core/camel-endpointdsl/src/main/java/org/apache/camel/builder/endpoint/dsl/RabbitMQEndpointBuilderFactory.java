@@ -1015,7 +1015,7 @@ public interface RabbitMQEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the RabbitMQ component.
      */
-    public static interface RabbitMQEndpointProducerBuilder
+    public interface RabbitMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRabbitMQEndpointProducerBuilder advanced() {
@@ -1977,7 +1977,7 @@ public interface RabbitMQEndpointBuilderFactory {
     /**
      * Builder for endpoint for the RabbitMQ component.
      */
-    public static interface RabbitMQEndpointBuilder
+    public interface RabbitMQEndpointBuilder
             extends
                 RabbitMQEndpointConsumerBuilder, RabbitMQEndpointProducerBuilder {
         default AdvancedRabbitMQEndpointBuilder advanced() {
@@ -2366,7 +2366,7 @@ public interface RabbitMQEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the RabbitMQ component.
      */
-    public static interface AdvancedRabbitMQEndpointBuilder
+    public interface AdvancedRabbitMQEndpointBuilder
             extends
                 AdvancedRabbitMQEndpointConsumerBuilder, AdvancedRabbitMQEndpointProducerBuilder {
         default RabbitMQEndpointBuilder basic() {

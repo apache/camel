@@ -34,7 +34,7 @@ public interface CwEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS CloudWatch component.
      */
-    public static interface CwEndpointBuilder extends EndpointProducerBuilder {
+    public interface CwEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedCwEndpointBuilder advanced() {
             return (AdvancedCwEndpointBuilder) this;
         }
@@ -181,7 +181,7 @@ public interface CwEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS CloudWatch component.
      */
-    public static interface AdvancedCwEndpointBuilder
+    public interface AdvancedCwEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default CwEndpointBuilder basic() {

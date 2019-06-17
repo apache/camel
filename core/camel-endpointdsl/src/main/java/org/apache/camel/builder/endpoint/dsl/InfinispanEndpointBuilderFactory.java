@@ -490,7 +490,7 @@ public interface InfinispanEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Infinispan component.
      */
-    public static interface InfinispanEndpointProducerBuilder
+    public interface InfinispanEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedInfinispanEndpointProducerBuilder advanced() {
@@ -812,7 +812,7 @@ public interface InfinispanEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Infinispan component.
      */
-    public static interface InfinispanEndpointBuilder
+    public interface InfinispanEndpointBuilder
             extends
                 InfinispanEndpointConsumerBuilder, InfinispanEndpointProducerBuilder {
         default AdvancedInfinispanEndpointBuilder advanced() {
@@ -861,7 +861,7 @@ public interface InfinispanEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Infinispan component.
      */
-    public static interface AdvancedInfinispanEndpointBuilder
+    public interface AdvancedInfinispanEndpointBuilder
             extends
                 AdvancedInfinispanEndpointConsumerBuilder, AdvancedInfinispanEndpointProducerBuilder {
         default InfinispanEndpointBuilder basic() {

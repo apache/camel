@@ -568,7 +568,7 @@ public interface IrcEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the IRC component.
      */
-    public static interface IrcEndpointProducerBuilder
+    public interface IrcEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedIrcEndpointProducerBuilder advanced() {
@@ -1056,7 +1056,7 @@ public interface IrcEndpointBuilderFactory {
     /**
      * Builder for endpoint for the IRC component.
      */
-    public static interface IrcEndpointBuilder
+    public interface IrcEndpointBuilder
             extends
                 IrcEndpointConsumerBuilder, IrcEndpointProducerBuilder {
         default AdvancedIrcEndpointBuilder advanced() {
@@ -1435,7 +1435,7 @@ public interface IrcEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the IRC component.
      */
-    public static interface AdvancedIrcEndpointBuilder
+    public interface AdvancedIrcEndpointBuilder
             extends
                 AdvancedIrcEndpointConsumerBuilder, AdvancedIrcEndpointProducerBuilder {
         default IrcEndpointBuilder basic() {

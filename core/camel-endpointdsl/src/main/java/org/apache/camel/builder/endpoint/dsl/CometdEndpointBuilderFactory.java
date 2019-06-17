@@ -419,7 +419,7 @@ public interface CometdEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the CometD component.
      */
-    public static interface CometdEndpointProducerBuilder
+    public interface CometdEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCometdEndpointProducerBuilder advanced() {
@@ -759,7 +759,7 @@ public interface CometdEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CometD component.
      */
-    public static interface CometdEndpointBuilder
+    public interface CometdEndpointBuilder
             extends
                 CometdEndpointConsumerBuilder, CometdEndpointProducerBuilder {
         default AdvancedCometdEndpointBuilder advanced() {
@@ -981,7 +981,7 @@ public interface CometdEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CometD component.
      */
-    public static interface AdvancedCometdEndpointBuilder
+    public interface AdvancedCometdEndpointBuilder
             extends
                 AdvancedCometdEndpointConsumerBuilder, AdvancedCometdEndpointProducerBuilder {
         default CometdEndpointBuilder basic() {

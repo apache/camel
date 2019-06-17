@@ -1556,7 +1556,7 @@ public interface FacebookEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Facebook component.
      */
-    public static interface FacebookEndpointProducerBuilder
+    public interface FacebookEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedFacebookEndpointProducerBuilder advanced() {
@@ -3027,7 +3027,7 @@ public interface FacebookEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Facebook component.
      */
-    public static interface FacebookEndpointBuilder
+    public interface FacebookEndpointBuilder
             extends
                 FacebookEndpointConsumerBuilder, FacebookEndpointProducerBuilder {
         default AdvancedFacebookEndpointBuilder advanced() {
@@ -4379,7 +4379,7 @@ public interface FacebookEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Facebook component.
      */
-    public static interface AdvancedFacebookEndpointBuilder
+    public interface AdvancedFacebookEndpointBuilder
             extends
                 AdvancedFacebookEndpointConsumerBuilder, AdvancedFacebookEndpointProducerBuilder {
         default FacebookEndpointBuilder basic() {

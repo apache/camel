@@ -34,7 +34,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Twitter Streaming component.
      */
-    public static interface TwitterStreamingEndpointBuilder
+    public interface TwitterStreamingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedTwitterStreamingEndpointBuilder advanced() {
@@ -167,7 +167,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Twitter Streaming component.
      */
-    public static interface AdvancedTwitterStreamingEndpointBuilder
+    public interface AdvancedTwitterStreamingEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default TwitterStreamingEndpointBuilder basic() {

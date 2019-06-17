@@ -211,7 +211,7 @@ public interface DataSetEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Dataset component.
      */
-    public static interface DataSetEndpointProducerBuilder
+    public interface DataSetEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDataSetEndpointProducerBuilder advanced() {
@@ -637,7 +637,7 @@ public interface DataSetEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Dataset component.
      */
-    public static interface DataSetEndpointBuilder
+    public interface DataSetEndpointBuilder
             extends
                 DataSetEndpointConsumerBuilder, DataSetEndpointProducerBuilder {
         default AdvancedDataSetEndpointBuilder advanced() {
@@ -683,7 +683,7 @@ public interface DataSetEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Dataset component.
      */
-    public static interface AdvancedDataSetEndpointBuilder
+    public interface AdvancedDataSetEndpointBuilder
             extends
                 AdvancedDataSetEndpointConsumerBuilder, AdvancedDataSetEndpointProducerBuilder {
         default DataSetEndpointBuilder basic() {

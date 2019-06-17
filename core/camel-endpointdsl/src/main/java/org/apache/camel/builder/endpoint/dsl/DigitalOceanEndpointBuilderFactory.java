@@ -34,7 +34,7 @@ public interface DigitalOceanEndpointBuilderFactory {
     /**
      * Builder for endpoint for the DigitalOcean component.
      */
-    public static interface DigitalOceanEndpointBuilder
+    public interface DigitalOceanEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedDigitalOceanEndpointBuilder advanced() {
@@ -183,7 +183,7 @@ public interface DigitalOceanEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the DigitalOcean component.
      */
-    public static interface AdvancedDigitalOceanEndpointBuilder
+    public interface AdvancedDigitalOceanEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default DigitalOceanEndpointBuilder basic() {

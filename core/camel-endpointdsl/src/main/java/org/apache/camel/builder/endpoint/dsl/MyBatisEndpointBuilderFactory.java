@@ -668,7 +668,7 @@ public interface MyBatisEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the MyBatis component.
      */
-    public static interface MyBatisEndpointProducerBuilder
+    public interface MyBatisEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMyBatisEndpointProducerBuilder advanced() {
@@ -858,7 +858,7 @@ public interface MyBatisEndpointBuilderFactory {
     /**
      * Builder for endpoint for the MyBatis component.
      */
-    public static interface MyBatisEndpointBuilder
+    public interface MyBatisEndpointBuilder
             extends
                 MyBatisEndpointConsumerBuilder, MyBatisEndpointProducerBuilder {
         default AdvancedMyBatisEndpointBuilder advanced() {
@@ -879,7 +879,7 @@ public interface MyBatisEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the MyBatis component.
      */
-    public static interface AdvancedMyBatisEndpointBuilder
+    public interface AdvancedMyBatisEndpointBuilder
             extends
                 AdvancedMyBatisEndpointConsumerBuilder, AdvancedMyBatisEndpointProducerBuilder {
         default MyBatisEndpointBuilder basic() {

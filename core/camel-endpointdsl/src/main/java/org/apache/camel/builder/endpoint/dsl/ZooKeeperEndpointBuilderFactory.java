@@ -319,7 +319,7 @@ public interface ZooKeeperEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the ZooKeeper component.
      */
-    public static interface ZooKeeperEndpointProducerBuilder
+    public interface ZooKeeperEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedZooKeeperEndpointProducerBuilder advanced() {
@@ -527,7 +527,7 @@ public interface ZooKeeperEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ZooKeeper component.
      */
-    public static interface ZooKeeperEndpointBuilder
+    public interface ZooKeeperEndpointBuilder
             extends
                 ZooKeeperEndpointConsumerBuilder, ZooKeeperEndpointProducerBuilder {
         default AdvancedZooKeeperEndpointBuilder advanced() {
@@ -613,7 +613,7 @@ public interface ZooKeeperEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ZooKeeper component.
      */
-    public static interface AdvancedZooKeeperEndpointBuilder
+    public interface AdvancedZooKeeperEndpointBuilder
             extends
                 AdvancedZooKeeperEndpointConsumerBuilder, AdvancedZooKeeperEndpointProducerBuilder {
         default ZooKeeperEndpointBuilder basic() {

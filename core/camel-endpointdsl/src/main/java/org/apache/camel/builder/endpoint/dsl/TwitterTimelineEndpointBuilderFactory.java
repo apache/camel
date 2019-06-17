@@ -952,7 +952,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Twitter Timeline component.
      */
-    public static interface TwitterTimelineEndpointProducerBuilder
+    public interface TwitterTimelineEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedTwitterTimelineEndpointProducerBuilder advanced() {
@@ -1188,7 +1188,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Twitter Timeline component.
      */
-    public static interface TwitterTimelineEndpointBuilder
+    public interface TwitterTimelineEndpointBuilder
             extends
                 TwitterTimelineEndpointConsumerBuilder, TwitterTimelineEndpointProducerBuilder {
         default AdvancedTwitterTimelineEndpointBuilder advanced() {
@@ -1329,7 +1329,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Twitter Timeline component.
      */
-    public static interface AdvancedTwitterTimelineEndpointBuilder
+    public interface AdvancedTwitterTimelineEndpointBuilder
             extends
                 AdvancedTwitterTimelineEndpointConsumerBuilder, AdvancedTwitterTimelineEndpointProducerBuilder {
         default TwitterTimelineEndpointBuilder basic() {

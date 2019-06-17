@@ -327,7 +327,7 @@ public interface JiraEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Jira component.
      */
-    public static interface JiraEndpointProducerBuilder
+    public interface JiraEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedJiraEndpointProducerBuilder advanced() {
@@ -542,7 +542,7 @@ public interface JiraEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Jira component.
      */
-    public static interface JiraEndpointBuilder
+    public interface JiraEndpointBuilder
             extends
                 JiraEndpointConsumerBuilder, JiraEndpointProducerBuilder {
         default AdvancedJiraEndpointBuilder advanced() {
@@ -665,7 +665,7 @@ public interface JiraEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Jira component.
      */
-    public static interface AdvancedJiraEndpointBuilder
+    public interface AdvancedJiraEndpointBuilder
             extends
                 AdvancedJiraEndpointConsumerBuilder, AdvancedJiraEndpointProducerBuilder {
         default JiraEndpointBuilder basic() {

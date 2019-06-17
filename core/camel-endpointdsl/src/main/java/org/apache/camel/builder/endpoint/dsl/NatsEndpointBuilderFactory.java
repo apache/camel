@@ -555,7 +555,7 @@ public interface NatsEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Nats component.
      */
-    public static interface NatsEndpointProducerBuilder
+    public interface NatsEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedNatsEndpointProducerBuilder advanced() {
@@ -1002,7 +1002,7 @@ public interface NatsEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Nats component.
      */
-    public static interface NatsEndpointBuilder
+    public interface NatsEndpointBuilder
             extends
                 NatsEndpointConsumerBuilder, NatsEndpointProducerBuilder {
         default AdvancedNatsEndpointBuilder advanced() {
@@ -1342,7 +1342,7 @@ public interface NatsEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Nats component.
      */
-    public static interface AdvancedNatsEndpointBuilder
+    public interface AdvancedNatsEndpointBuilder
             extends
                 AdvancedNatsEndpointConsumerBuilder, AdvancedNatsEndpointProducerBuilder {
         default NatsEndpointBuilder basic() {

@@ -34,9 +34,7 @@ public interface SesEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS Simple Email Service component.
      */
-    public static interface SesEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface SesEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedSesEndpointBuilder advanced() {
             return (AdvancedSesEndpointBuilder) this;
         }
@@ -194,7 +192,7 @@ public interface SesEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS Simple Email Service component.
      */
-    public static interface AdvancedSesEndpointBuilder
+    public interface AdvancedSesEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default SesEndpointBuilder basic() {

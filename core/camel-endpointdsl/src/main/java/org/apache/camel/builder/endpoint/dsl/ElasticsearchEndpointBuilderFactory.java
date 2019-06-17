@@ -34,7 +34,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Elastichsearch Rest component.
      */
-    public static interface ElasticsearchEndpointBuilder
+    public interface ElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedElasticsearchEndpointBuilder advanced() {
@@ -256,7 +256,7 @@ public interface ElasticsearchEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Elastichsearch Rest component.
      */
-    public static interface AdvancedElasticsearchEndpointBuilder
+    public interface AdvancedElasticsearchEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default ElasticsearchEndpointBuilder basic() {

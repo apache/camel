@@ -34,7 +34,7 @@ public interface MicrometerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Micrometer component.
      */
-    public static interface MicrometerEndpointBuilder
+    public interface MicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedMicrometerEndpointBuilder advanced() {
@@ -130,7 +130,7 @@ public interface MicrometerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Micrometer component.
      */
-    public static interface AdvancedMicrometerEndpointBuilder
+    public interface AdvancedMicrometerEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default MicrometerEndpointBuilder basic() {

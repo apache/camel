@@ -324,7 +324,7 @@ public interface WordpressEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Wordpress component.
      */
-    public static interface WordpressEndpointProducerBuilder
+    public interface WordpressEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedWordpressEndpointProducerBuilder advanced() {
@@ -567,7 +567,7 @@ public interface WordpressEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Wordpress component.
      */
-    public static interface WordpressEndpointBuilder
+    public interface WordpressEndpointBuilder
             extends
                 WordpressEndpointConsumerBuilder, WordpressEndpointProducerBuilder {
         default AdvancedWordpressEndpointBuilder advanced() {
@@ -715,7 +715,7 @@ public interface WordpressEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Wordpress component.
      */
-    public static interface AdvancedWordpressEndpointBuilder
+    public interface AdvancedWordpressEndpointBuilder
             extends
                 AdvancedWordpressEndpointConsumerBuilder, AdvancedWordpressEndpointProducerBuilder {
         default WordpressEndpointBuilder basic() {

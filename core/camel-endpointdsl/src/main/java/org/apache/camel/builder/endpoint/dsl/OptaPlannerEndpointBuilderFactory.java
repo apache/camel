@@ -200,7 +200,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the OptaPlanner component.
      */
-    public static interface OptaPlannerEndpointProducerBuilder
+    public interface OptaPlannerEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedOptaPlannerEndpointProducerBuilder advanced() {
@@ -358,7 +358,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     /**
      * Builder for endpoint for the OptaPlanner component.
      */
-    public static interface OptaPlannerEndpointBuilder
+    public interface OptaPlannerEndpointBuilder
             extends
                 OptaPlannerEndpointConsumerBuilder, OptaPlannerEndpointProducerBuilder {
         default AdvancedOptaPlannerEndpointBuilder advanced() {
@@ -387,7 +387,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the OptaPlanner component.
      */
-    public static interface AdvancedOptaPlannerEndpointBuilder
+    public interface AdvancedOptaPlannerEndpointBuilder
             extends
                 AdvancedOptaPlannerEndpointConsumerBuilder, AdvancedOptaPlannerEndpointProducerBuilder {
         default OptaPlannerEndpointBuilder basic() {

@@ -35,7 +35,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Calendar Stream component.
      */
-    public static interface GoogleCalendarStreamEndpointBuilder
+    public interface GoogleCalendarStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedGoogleCalendarStreamEndpointBuilder advanced() {
@@ -210,7 +210,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Calendar Stream component.
      */
-    public static interface AdvancedGoogleCalendarStreamEndpointBuilder
+    public interface AdvancedGoogleCalendarStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default GoogleCalendarStreamEndpointBuilder basic() {

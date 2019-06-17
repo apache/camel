@@ -33,7 +33,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Mail Stream component.
      */
-    public static interface GoogleMailStreamEndpointBuilder
+    public interface GoogleMailStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedGoogleMailStreamEndpointBuilder advanced() {
@@ -156,7 +156,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Mail Stream component.
      */
-    public static interface AdvancedGoogleMailStreamEndpointBuilder
+    public interface AdvancedGoogleMailStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default GoogleMailStreamEndpointBuilder basic() {

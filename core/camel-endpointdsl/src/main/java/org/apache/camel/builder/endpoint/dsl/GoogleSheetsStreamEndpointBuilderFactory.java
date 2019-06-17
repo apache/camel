@@ -34,7 +34,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Google Sheets Stream component.
      */
-    public static interface GoogleSheetsStreamEndpointBuilder
+    public interface GoogleSheetsStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedGoogleSheetsStreamEndpointBuilder advanced() {
@@ -240,7 +240,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Google Sheets Stream component.
      */
-    public static interface AdvancedGoogleSheetsStreamEndpointBuilder
+    public interface AdvancedGoogleSheetsStreamEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default GoogleSheetsStreamEndpointBuilder basic() {

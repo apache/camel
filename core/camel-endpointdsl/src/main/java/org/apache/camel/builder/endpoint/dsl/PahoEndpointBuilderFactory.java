@@ -357,7 +357,7 @@ public interface PahoEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Paho component.
      */
-    public static interface PahoEndpointProducerBuilder
+    public interface PahoEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPahoEndpointProducerBuilder advanced() {
@@ -633,7 +633,7 @@ public interface PahoEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Paho component.
      */
-    public static interface PahoEndpointBuilder
+    public interface PahoEndpointBuilder
             extends
                 PahoEndpointConsumerBuilder, PahoEndpointProducerBuilder {
         default AdvancedPahoEndpointBuilder advanced() {
@@ -817,7 +817,7 @@ public interface PahoEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Paho component.
      */
-    public static interface AdvancedPahoEndpointBuilder
+    public interface AdvancedPahoEndpointBuilder
             extends
                 AdvancedPahoEndpointConsumerBuilder, AdvancedPahoEndpointProducerBuilder {
         default PahoEndpointBuilder basic() {

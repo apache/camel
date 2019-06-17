@@ -269,7 +269,7 @@ public interface PgEventEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the PostgresSQL Event component.
      */
-    public static interface PgEventEndpointProducerBuilder
+    public interface PgEventEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPgEventEndpointProducerBuilder advanced() {
@@ -457,7 +457,7 @@ public interface PgEventEndpointBuilderFactory {
     /**
      * Builder for endpoint for the PostgresSQL Event component.
      */
-    public static interface PgEventEndpointBuilder
+    public interface PgEventEndpointBuilder
             extends
                 PgEventEndpointConsumerBuilder, PgEventEndpointProducerBuilder {
         default AdvancedPgEventEndpointBuilder advanced() {
@@ -553,7 +553,7 @@ public interface PgEventEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the PostgresSQL Event component.
      */
-    public static interface AdvancedPgEventEndpointBuilder
+    public interface AdvancedPgEventEndpointBuilder
             extends
                 AdvancedPgEventEndpointConsumerBuilder, AdvancedPgEventEndpointProducerBuilder {
         default PgEventEndpointBuilder basic() {

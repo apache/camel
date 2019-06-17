@@ -34,9 +34,7 @@ public interface AtomEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Atom component.
      */
-    public static interface AtomEndpointBuilder
-            extends
-                EndpointConsumerBuilder {
+    public interface AtomEndpointBuilder extends EndpointConsumerBuilder {
         default AdvancedAtomEndpointBuilder advanced() {
             return (AdvancedAtomEndpointBuilder) this;
         }
@@ -192,7 +190,7 @@ public interface AtomEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Atom component.
      */
-    public static interface AdvancedAtomEndpointBuilder
+    public interface AdvancedAtomEndpointBuilder
             extends
                 EndpointConsumerBuilder {
         default AtomEndpointBuilder basic() {

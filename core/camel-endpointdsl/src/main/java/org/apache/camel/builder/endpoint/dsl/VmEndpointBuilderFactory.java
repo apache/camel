@@ -358,7 +358,7 @@ public interface VmEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the VM component.
      */
-    public static interface VmEndpointProducerBuilder
+    public interface VmEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedVmEndpointProducerBuilder advanced() {
@@ -667,7 +667,7 @@ public interface VmEndpointBuilderFactory {
     /**
      * Builder for endpoint for the VM component.
      */
-    public static interface VmEndpointBuilder
+    public interface VmEndpointBuilder
             extends
                 VmEndpointConsumerBuilder, VmEndpointProducerBuilder {
         default AdvancedVmEndpointBuilder advanced() {
@@ -709,7 +709,7 @@ public interface VmEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the VM component.
      */
-    public static interface AdvancedVmEndpointBuilder
+    public interface AdvancedVmEndpointBuilder
             extends
                 AdvancedVmEndpointConsumerBuilder, AdvancedVmEndpointProducerBuilder {
         default VmEndpointBuilder basic() {

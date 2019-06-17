@@ -364,7 +364,7 @@ public interface CoAPEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the CoAP component.
      */
-    public static interface CoAPEndpointProducerBuilder
+    public interface CoAPEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCoAPEndpointProducerBuilder advanced() {
@@ -633,7 +633,7 @@ public interface CoAPEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CoAP component.
      */
-    public static interface CoAPEndpointBuilder
+    public interface CoAPEndpointBuilder
             extends
                 CoAPEndpointConsumerBuilder, CoAPEndpointProducerBuilder {
         default AdvancedCoAPEndpointBuilder advanced() {
@@ -809,7 +809,7 @@ public interface CoAPEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CoAP component.
      */
-    public static interface AdvancedCoAPEndpointBuilder
+    public interface AdvancedCoAPEndpointBuilder
             extends
                 AdvancedCoAPEndpointConsumerBuilder, AdvancedCoAPEndpointProducerBuilder {
         default CoAPEndpointBuilder basic() {

@@ -33,9 +33,7 @@ public interface EKSEndpointBuilderFactory {
     /**
      * Builder for endpoint for the AWS EKS component.
      */
-    public static interface EKSEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface EKSEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedEKSEndpointBuilder advanced() {
             return (AdvancedEKSEndpointBuilder) this;
         }
@@ -62,7 +60,7 @@ public interface EKSEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the AWS EKS component.
      */
-    public static interface AdvancedEKSEndpointBuilder
+    public interface AdvancedEKSEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default EKSEndpointBuilder basic() {

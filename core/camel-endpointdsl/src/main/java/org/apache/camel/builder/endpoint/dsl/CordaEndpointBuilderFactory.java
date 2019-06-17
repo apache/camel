@@ -204,7 +204,7 @@ public interface CordaEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the corda component.
      */
-    public static interface CordaEndpointProducerBuilder
+    public interface CordaEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedCordaEndpointProducerBuilder advanced() {
@@ -328,7 +328,7 @@ public interface CordaEndpointBuilderFactory {
     /**
      * Builder for endpoint for the corda component.
      */
-    public static interface CordaEndpointBuilder
+    public interface CordaEndpointBuilder
             extends
                 CordaEndpointConsumerBuilder, CordaEndpointProducerBuilder {
         default AdvancedCordaEndpointBuilder advanced() {
@@ -361,7 +361,7 @@ public interface CordaEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the corda component.
      */
-    public static interface AdvancedCordaEndpointBuilder
+    public interface AdvancedCordaEndpointBuilder
             extends
                 AdvancedCordaEndpointConsumerBuilder, AdvancedCordaEndpointProducerBuilder {
         default CordaEndpointBuilder basic() {

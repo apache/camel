@@ -1812,7 +1812,7 @@ public interface ActiveMQEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the ActiveMQ component.
      */
-    public static interface ActiveMQEndpointProducerBuilder
+    public interface ActiveMQEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedActiveMQEndpointProducerBuilder advanced() {
@@ -3518,7 +3518,7 @@ public interface ActiveMQEndpointBuilderFactory {
     /**
      * Builder for endpoint for the ActiveMQ component.
      */
-    public static interface ActiveMQEndpointBuilder
+    public interface ActiveMQEndpointBuilder
             extends
                 ActiveMQEndpointConsumerBuilder, ActiveMQEndpointProducerBuilder {
         default AdvancedActiveMQEndpointBuilder advanced() {
@@ -3725,7 +3725,7 @@ public interface ActiveMQEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the ActiveMQ component.
      */
-    public static interface AdvancedActiveMQEndpointBuilder
+    public interface AdvancedActiveMQEndpointBuilder
             extends
                 AdvancedActiveMQEndpointConsumerBuilder, AdvancedActiveMQEndpointProducerBuilder {
         default ActiveMQEndpointBuilder basic() {

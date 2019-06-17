@@ -399,7 +399,7 @@ public interface Web3jEndpointBuilderFactory {
      * Builder for endpoint producers for the Web3j Ethereum Blockchain
      * component.
      */
-    public static interface Web3jEndpointProducerBuilder
+    public interface Web3jEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedWeb3jEndpointProducerBuilder advanced() {
@@ -1011,7 +1011,7 @@ public interface Web3jEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Web3j Ethereum Blockchain component.
      */
-    public static interface Web3jEndpointBuilder
+    public interface Web3jEndpointBuilder
             extends
                 Web3jEndpointConsumerBuilder, Web3jEndpointProducerBuilder {
         default AdvancedWeb3jEndpointBuilder advanced() {
@@ -1234,7 +1234,7 @@ public interface Web3jEndpointBuilderFactory {
      * Advanced builder for endpoint for the Web3j Ethereum Blockchain
      * component.
      */
-    public static interface AdvancedWeb3jEndpointBuilder
+    public interface AdvancedWeb3jEndpointBuilder
             extends
                 AdvancedWeb3jEndpointConsumerBuilder, AdvancedWeb3jEndpointProducerBuilder {
         default Web3jEndpointBuilder basic() {

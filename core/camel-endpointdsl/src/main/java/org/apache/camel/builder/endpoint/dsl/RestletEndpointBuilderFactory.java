@@ -414,7 +414,7 @@ public interface RestletEndpointBuilderFactory {
     /**
      * Builder for endpoint producers for the Restlet component.
      */
-    public static interface RestletEndpointProducerBuilder
+    public interface RestletEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedRestletEndpointProducerBuilder advanced() {
@@ -831,7 +831,7 @@ public interface RestletEndpointBuilderFactory {
     /**
      * Builder for endpoint for the Restlet component.
      */
-    public static interface RestletEndpointBuilder
+    public interface RestletEndpointBuilder
             extends
                 RestletEndpointConsumerBuilder, RestletEndpointProducerBuilder {
         default AdvancedRestletEndpointBuilder advanced() {
@@ -954,7 +954,7 @@ public interface RestletEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the Restlet component.
      */
-    public static interface AdvancedRestletEndpointBuilder
+    public interface AdvancedRestletEndpointBuilder
             extends
                 AdvancedRestletEndpointConsumerBuilder, AdvancedRestletEndpointProducerBuilder {
         default RestletEndpointBuilder basic() {

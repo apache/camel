@@ -33,7 +33,7 @@ public interface CMEndpointBuilderFactory {
     /**
      * Builder for endpoint for the CM SMS Gateway component.
      */
-    public static interface CMEndpointBuilder extends EndpointProducerBuilder {
+    public interface CMEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedCMEndpointBuilder advanced() {
             return (AdvancedCMEndpointBuilder) this;
         }
@@ -115,7 +115,7 @@ public interface CMEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the CM SMS Gateway component.
      */
-    public static interface AdvancedCMEndpointBuilder
+    public interface AdvancedCMEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default CMEndpointBuilder basic() {

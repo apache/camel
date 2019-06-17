@@ -34,9 +34,7 @@ public interface XsltEndpointBuilderFactory {
     /**
      * Builder for endpoint for the XSLT component.
      */
-    public static interface XsltEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface XsltEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedXsltEndpointBuilder advanced() {
             return (AdvancedXsltEndpointBuilder) this;
         }
@@ -222,7 +220,7 @@ public interface XsltEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the XSLT component.
      */
-    public static interface AdvancedXsltEndpointBuilder
+    public interface AdvancedXsltEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default XsltEndpointBuilder basic() {

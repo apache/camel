@@ -36,9 +36,7 @@ public interface HttpEndpointBuilderFactory {
     /**
      * Builder for endpoint for the HTTP4 component.
      */
-    public static interface HttpEndpointBuilder
-            extends
-                EndpointProducerBuilder {
+    public interface HttpEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedHttpEndpointBuilder advanced() {
             return (AdvancedHttpEndpointBuilder) this;
         }
@@ -245,7 +243,7 @@ public interface HttpEndpointBuilderFactory {
     /**
      * Advanced builder for endpoint for the HTTP4 component.
      */
-    public static interface AdvancedHttpEndpointBuilder
+    public interface AdvancedHttpEndpointBuilder
             extends
                 EndpointProducerBuilder {
         default HttpEndpointBuilder basic() {
