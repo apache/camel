@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint;
 
+// CHECKSTYLE:OFF
 import org.apache.camel.builder.endpoint.dsl.*;
 
 public interface EndpointBuilderFactory extends
