@@ -27,5 +27,7 @@ public class MyRouteBuilder extends RouteBuilder {
             .log("${body}")
             .bean("myBean", "bye")
             .log("${body}");
+
+        from("jms:queue:cheese").to("log:cheese");
     }
 }

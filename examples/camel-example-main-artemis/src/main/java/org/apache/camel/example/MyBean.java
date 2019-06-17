@@ -16,16 +16,21 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.builder.RouteBuilder;
+public class MyBean {
 
-public class MyRouteBuilder extends RouteBuilder {
+    private String hi;
+    private String bye;
 
-    @Override
-    public void configure() throws Exception {
-        from("quartz2:foo?cron={{myCron}}")
-            .bean("myBean", "hello")
-            .log("${body}")
-            .bean("myBean", "bye")
-            .log("${body}");
+    public MyBean(String hi, String bye) {
+        this.hi = hi;
+        this.bye = bye;
+    }
+
+    public String hello() {
+        return hi + " how are you?";
+    }
+
+    public String bye() {
+        return bye + " World";
     }
 }

@@ -16,16 +16,22 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.PropertyInject;
 
-public class MyRouteBuilder extends RouteBuilder {
+/**
+ * Class to configure the Camel application.
+ */
+public class MyConfiguration {
 
-    @Override
-    public void configure() throws Exception {
-        from("quartz2:foo?cron={{myCron}}")
-            .bean("myBean", "hello")
-            .log("${body}")
-            .bean("myBean", "bye")
-            .log("${body}");
+    @BindToRegistry
+    public MyBean myBean(@PropertyInject("hi") String hi, @PropertyInject("bye") String bye) {
+        // this will create an instance of this bean with the name of the method (eg myBean)
+        return new MyBean(hi, bye);
     }
+
+    public void configure() {
+        // this method is optional and can be removed if no additional configuration is needed.
+    }
+
 }

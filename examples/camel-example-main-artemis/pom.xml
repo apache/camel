@@ -28,10 +28,10 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-example-main</artifactId>
+    <artifactId>camel-example-main-artemis</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Main</name>
-    <description>An example for showing standalone Camel</description>
+    <name>Camel :: Example :: Main :: Artemis</name>
+    <description>An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)</description>
 
     <properties>
         <category>Beginner</category>
@@ -50,6 +50,15 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-quartz2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jms-client</artifactId>
+            <version>${activemq-artemis-version}</version>
         </dependency>
 
         <!-- logging -->
@@ -86,6 +95,26 @@
                 <configuration>
                     <mainClass>org.apache.camel.example.MyApplication</mainClass>
                 </configuration>
+            </plugin>
+
+            <!-- generate autowire.properties file that can automatic detect resources
+                 from the classpath to make convention over configuration for Camel components -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-main-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <logClasspath>false</logClasspath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>autowire</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
