@@ -1892,7 +1892,13 @@ public interface S3EndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.s3.S3Operations</code> enum.
      */
     enum S3Operations {
-        copyObject, listObjects, deleteObject, deleteBucket, listBuckets, downloadLink, getObject;
+        copyObject,
+listObjects,
+deleteObject,
+deleteBucket,
+listBuckets,
+downloadLink,
+getObject;
     }
     /**
      * The aws-s3 component is used for storing and retrieving objecct from

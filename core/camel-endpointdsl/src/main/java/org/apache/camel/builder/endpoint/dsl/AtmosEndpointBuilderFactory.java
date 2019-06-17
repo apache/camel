@@ -692,7 +692,11 @@ public interface AtmosEndpointBuilderFactory {
      * <code>org.apache.camel.component.atmos.util.AtmosOperation</code> enum.
      */
     enum AtmosOperation {
-        put, del, search, get, move;
+        put,
+del,
+search,
+get,
+move;
     }
     /**
      * The atmos component is used for integrating with EMC's Atomos Storage.

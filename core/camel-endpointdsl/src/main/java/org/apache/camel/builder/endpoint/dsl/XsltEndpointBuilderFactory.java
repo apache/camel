@@ -451,7 +451,10 @@ public interface XsltEndpointBuilderFactory {
      * enum.
      */
     enum XsltOutput {
-        string, bytes, DOM, file;
+        string,
+bytes,
+DOM,
+file;
     }
     /**
      * Transforms the message using a XSLT template. Creates a builder to build

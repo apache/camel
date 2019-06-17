@@ -220,7 +220,8 @@ public interface FlinkEndpointBuilderFactory {
      * enum.
      */
     enum EndpointType {
-        dataset, datastream;
+        dataset,
+datastream;
     }
     /**
      * The flink component can be used to send DataSet jobs to Apache Flink

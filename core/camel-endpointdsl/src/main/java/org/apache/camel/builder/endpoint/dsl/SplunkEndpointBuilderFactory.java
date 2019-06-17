@@ -1294,7 +1294,10 @@ public interface SplunkEndpointBuilderFactory {
      * Proxy enum for <code>com.splunk.SSLSecurityProtocol</code> enum.
      */
     enum SSLSecurityProtocol {
-        TLSv1_2, TLSv1_1, TLSv1, SSLv3;
+        TLSv1_2,
+TLSv1_1,
+TLSv1,
+SSLv3;
     }
     /**
      * The splunk component allows to publish or search for events in Splunk.

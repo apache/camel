@@ -1993,7 +1993,13 @@ public interface ElsqlEndpointBuilderFactory {
      * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code> enum.
      */
     enum ElSqlDatabaseVendor {
-        Default, Postgres, HSql, MySql, Oracle, SqlServer2008, Veritca;
+        Default,
+Postgres,
+HSql,
+MySql,
+Oracle,
+SqlServer2008,
+Veritca;
     }
 
     /**
@@ -2001,7 +2007,9 @@ public interface ElsqlEndpointBuilderFactory {
      * enum.
      */
     enum SqlOutputType {
-        SelectOne, SelectList, StreamList;
+        SelectOne,
+SelectList,
+StreamList;
     }
     /**
      * The elsql component is an extension to the existing SQL Component that

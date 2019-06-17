@@ -385,7 +385,9 @@ public interface JdbcEndpointBuilderFactory {
      * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> enum.
      */
     enum JdbcOutputType {
-        SelectOne, SelectList, StreamList;
+        SelectOne,
+SelectList,
+StreamList;
     }
     /**
      * The jdbc component enables you to access databases through JDBC, where

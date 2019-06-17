@@ -1169,7 +1169,8 @@ public interface GrpcEndpointBuilderFactory {
      * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code> enum.
      */
     enum GrpcConsumerStrategy {
-        AGGREGATION, PROPAGATION;
+        AGGREGATION,
+PROPAGATION;
     }
 
     /**
@@ -1177,7 +1178,8 @@ public interface GrpcEndpointBuilderFactory {
      * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code> enum.
      */
     enum GrpcProducerStrategy {
-        SIMPLE, STREAMING;
+        SIMPLE,
+STREAMING;
     }
 
     /**
@@ -1185,7 +1187,9 @@ public interface GrpcEndpointBuilderFactory {
      * enum.
      */
     enum GrpcAuthType {
-        NONE, GOOGLE, JWT;
+        NONE,
+GOOGLE,
+JWT;
     }
 
     /**
@@ -1193,14 +1197,18 @@ public interface GrpcEndpointBuilderFactory {
      * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code> enum.
      */
     enum JwtAlgorithm {
-        HMAC256, HMAC384, HMAC512;
+        HMAC256,
+HMAC384,
+HMAC512;
     }
 
     /**
      * Proxy enum for <code>io.grpc.netty.NegotiationType</code> enum.
      */
     enum NegotiationType {
-        TLS, PLAINTEXT_UPGRADE, PLAINTEXT;
+        TLS,
+PLAINTEXT_UPGRADE,
+PLAINTEXT;
     }
     /**
      * The gRPC component allows to call and expose remote procedures via HTTP/2

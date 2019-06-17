@@ -157,7 +157,13 @@ public interface IgniteComputeEndpointBuilderFactory {
      * <code>org.apache.camel.component.ignite.compute.IgniteComputeExecutionType</code> enum.
      */
     enum IgniteComputeExecutionType {
-        CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN;
+        CALL,
+BROADCAST,
+APPLY,
+EXECUTE,
+RUN,
+AFFINITY_CALL,
+AFFINITY_RUN;
     }
     /**
      * The Ignite Compute endpoint is one of camel-ignite endpoints which allows

@@ -1244,7 +1244,20 @@ public interface MongoDbEndpointBuilderFactory {
      * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code> enum.
      */
     enum MongoDbOperation {
-        findById, findOneByQuery, findAll, findDistinct, insert, save, update, remove, bulkWrite, aggregate, getDbStats, getColStats, count, command;
+        findById,
+findOneByQuery,
+findAll,
+findDistinct,
+insert,
+save,
+update,
+remove,
+bulkWrite,
+aggregate,
+getDbStats,
+getColStats,
+count,
+command;
     }
 
     /**
@@ -1252,7 +1265,9 @@ public interface MongoDbEndpointBuilderFactory {
      * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code> enum.
      */
     enum MongoDbOutputType {
-        DocumentList, Document, MongoIterable;
+        DocumentList,
+Document,
+MongoIterable;
     }
     /**
      * Component for working with documents stored in MongoDB database. Creates

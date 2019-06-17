@@ -1352,7 +1352,8 @@ public interface ServerEndpointBuilderFactory {
      * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code> enum.
      */
     enum ASDUAddressType {
-        SIZE_1, SIZE_2;
+        SIZE_1,
+SIZE_2;
     }
 
     /**
@@ -1360,7 +1361,8 @@ public interface ServerEndpointBuilderFactory {
      * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> enum.
      */
     enum CauseOfTransmissionType {
-        SIZE_1, SIZE_2;
+        SIZE_1,
+SIZE_2;
     }
 
     /**
@@ -1368,7 +1370,9 @@ public interface ServerEndpointBuilderFactory {
      * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> enum.
      */
     enum InformationObjectAddressType {
-        SIZE_1, SIZE_2, SIZE_3;
+        SIZE_1,
+SIZE_2,
+SIZE_3;
     }
     /**
      * IEC 60870 component used for telecontrol (supervisory control and data

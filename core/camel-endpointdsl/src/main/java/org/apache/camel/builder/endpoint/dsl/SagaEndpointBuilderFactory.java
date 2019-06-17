@@ -118,7 +118,8 @@ public interface SagaEndpointBuilderFactory {
      * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> enum.
      */
     enum SagaEndpointAction {
-        COMPLETE, COMPENSATE;
+        COMPLETE,
+COMPENSATE;
     }
     /**
      * The saga component provides access to advanced options for managing the

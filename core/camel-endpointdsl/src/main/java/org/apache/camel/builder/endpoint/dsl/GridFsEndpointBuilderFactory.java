@@ -791,7 +791,11 @@ public interface GridFsEndpointBuilderFactory {
      * enum.
      */
     enum QueryStrategy {
-        TimeStamp, PersistentTimestamp, FileAttribute, TimeStampAndFileAttribute, PersistentTimestampAndFileAttribute;
+        TimeStamp,
+PersistentTimestamp,
+FileAttribute,
+TimeStampAndFileAttribute,
+PersistentTimestampAndFileAttribute;
     }
     /**
      * Component for working with MongoDB GridFS. Creates a builder to build

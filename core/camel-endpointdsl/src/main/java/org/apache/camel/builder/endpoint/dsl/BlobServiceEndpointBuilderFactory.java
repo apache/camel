@@ -1015,7 +1015,9 @@ public interface BlobServiceEndpointBuilderFactory {
      * <code>org.apache.camel.component.azure.blob.BlobType</code> enum.
      */
     enum BlobType {
-        blockblob, appendblob, pageblob;
+        blockblob,
+appendblob,
+pageblob;
     }
 
     /**
@@ -1024,7 +1026,20 @@ public interface BlobServiceEndpointBuilderFactory {
      * enum.
      */
     enum BlobServiceOperations {
-        getBlob, deleteBlob, listBlobs, updateBlockBlob, uploadBlobBlocks, commitBlobBlockList, getBlobBlockList, createAppendBlob, updateAppendBlob, createPageBlob, updatePageBlob, resizePageBlob, clearPageBlob, getPageBlobRanges;
+        getBlob,
+deleteBlob,
+listBlobs,
+updateBlockBlob,
+uploadBlobBlocks,
+commitBlobBlockList,
+getBlobBlockList,
+createAppendBlob,
+updateAppendBlob,
+createPageBlob,
+updatePageBlob,
+resizePageBlob,
+clearPageBlob,
+getPageBlobRanges;
     }
     /**
      * The azure-blob component is used for storing and retrieving blobs from

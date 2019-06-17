@@ -726,7 +726,12 @@ public interface IgniteCacheEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.ignite.cache.CachePeekMode</code> enum.
      */
     enum CachePeekMode {
-        ALL, NEAR, PRIMARY, BACKUP, ONHEAP, OFFHEAP;
+        ALL,
+NEAR,
+PRIMARY,
+BACKUP,
+ONHEAP,
+OFFHEAP;
     }
 
     /**
@@ -735,7 +740,13 @@ public interface IgniteCacheEndpointBuilderFactory {
      * enum.
      */
     enum IgniteCacheOperation {
-        GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR;
+        GET,
+PUT,
+REMOVE,
+SIZE,
+REBALANCE,
+QUERY,
+CLEAR;
     }
     /**
      * The Ignite Cache endpoint is one of camel-ignite endpoints which allows

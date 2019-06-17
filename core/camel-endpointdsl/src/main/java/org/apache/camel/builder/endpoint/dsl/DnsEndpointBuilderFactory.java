@@ -116,7 +116,10 @@ public interface DnsEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.camel.component.dns.DnsType</code> enum.
      */
     enum DnsType {
-        dig, ip, lookup, wikipedia;
+        dig,
+ip,
+lookup,
+wikipedia;
     }
     /**
      * To lookup domain information and run DNS queries using DNSJava. Creates a

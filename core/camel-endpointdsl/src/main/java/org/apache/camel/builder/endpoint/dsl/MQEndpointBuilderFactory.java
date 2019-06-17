@@ -115,7 +115,12 @@ public interface MQEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.mq.MQOperations</code> enum.
      */
     enum MQOperations {
-        listBrokers, createBroker, deleteBroker, rebootBroker, updateBroker, describeBroker;
+        listBrokers,
+createBroker,
+deleteBroker,
+rebootBroker,
+updateBroker,
+describeBroker;
     }
     /**
      * The aws-mq is used for managing Amazon MQ instances. Creates a builder to

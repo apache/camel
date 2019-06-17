@@ -1422,7 +1422,9 @@ public interface Jt400EndpointBuilderFactory {
      * enum.
      */
     enum Jt400Type {
-        DTAQ, PGM, SRVPGM;
+        DTAQ,
+PGM,
+SRVPGM;
     }
 
     /**
@@ -1431,7 +1433,8 @@ public interface Jt400EndpointBuilderFactory {
      * enum.
      */
     enum Format {
-        text, binary;
+        text,
+binary;
     }
 
     /**
@@ -1439,7 +1442,12 @@ public interface Jt400EndpointBuilderFactory {
      * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> enum.
      */
     enum SearchType {
-        EQ, NE, LT, LE, GT, GE;
+        EQ,
+NE,
+LT,
+LE,
+GT,
+GE;
     }
     /**
      * The jt400 component allows you to exchanges messages with an AS/400

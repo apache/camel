@@ -586,7 +586,9 @@ public interface GitEndpointBuilderFactory {
      * <code>org.apache.camel.component.git.consumer.GitType</code> enum.
      */
     enum GitType {
-        COMMIT, TAG, BRANCH;
+        COMMIT,
+TAG,
+BRANCH;
     }
     /**
      * The git component is used for working with git repositories. Creates a

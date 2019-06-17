@@ -1424,7 +1424,10 @@ public interface SoroushBotEndpointBuilderFactory {
      * <code>org.apache.camel.component.soroushbot.models.Endpoint</code> enum.
      */
     enum Endpoint {
-        sendMessage, getMessage, uploadFile, downloadFile;
+        sendMessage,
+getMessage,
+uploadFile,
+downloadFile;
     }
     /**
      * To integrate with the Soroush chat bot. Creates a builder to build

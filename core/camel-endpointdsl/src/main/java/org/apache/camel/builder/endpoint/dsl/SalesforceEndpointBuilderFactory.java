@@ -2320,7 +2320,49 @@ public interface SalesforceEndpointBuilderFactory {
      * enum.
      */
     enum OperationName {
-        GET_VERSIONS, GET_RESOURCES, GET_GLOBAL_OBJECTS, GET_BASIC_INFO, GET_DESCRIPTION, GET_SOBJECT, CREATE_SOBJECT, UPDATE_SOBJECT, DELETE_SOBJECT, GET_SOBJECT_WITH_ID, UPSERT_SOBJECT, DELETE_SOBJECT_WITH_ID, GET_BLOB_FIELD, QUERY, QUERY_MORE, QUERY_ALL, SEARCH, APEX_CALL, RECENT, CREATE_JOB, GET_JOB, CLOSE_JOB, ABORT_JOB, CREATE_BATCH, GET_BATCH, GET_ALL_BATCHES, GET_REQUEST, GET_RESULTS, CREATE_BATCH_QUERY, GET_QUERY_RESULT_IDS, GET_QUERY_RESULT, GET_RECENT_REPORTS, GET_REPORT_DESCRIPTION, EXECUTE_SYNCREPORT, EXECUTE_ASYNCREPORT, GET_REPORT_INSTANCES, GET_REPORT_RESULTS, LIMITS, APPROVAL, APPROVALS, COMPOSITE_TREE, COMPOSITE_BATCH, COMPOSITE;
+        GET_VERSIONS,
+GET_RESOURCES,
+GET_GLOBAL_OBJECTS,
+GET_BASIC_INFO,
+GET_DESCRIPTION,
+GET_SOBJECT,
+CREATE_SOBJECT,
+UPDATE_SOBJECT,
+DELETE_SOBJECT,
+GET_SOBJECT_WITH_ID,
+UPSERT_SOBJECT,
+DELETE_SOBJECT_WITH_ID,
+GET_BLOB_FIELD,
+QUERY,
+QUERY_MORE,
+QUERY_ALL,
+SEARCH,
+APEX_CALL,
+RECENT,
+CREATE_JOB,
+GET_JOB,
+CLOSE_JOB,
+ABORT_JOB,
+CREATE_BATCH,
+GET_BATCH,
+GET_ALL_BATCHES,
+GET_REQUEST,
+GET_RESULTS,
+CREATE_BATCH_QUERY,
+GET_QUERY_RESULT_IDS,
+GET_QUERY_RESULT,
+GET_RECENT_REPORTS,
+GET_REPORT_DESCRIPTION,
+EXECUTE_SYNCREPORT,
+EXECUTE_ASYNCREPORT,
+GET_REPORT_INSTANCES,
+GET_REPORT_RESULTS,
+LIMITS,
+APPROVAL,
+APPROVALS,
+COMPOSITE_TREE,
+COMPOSITE_BATCH,
+COMPOSITE;
     }
 
     /**
@@ -2328,7 +2370,12 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> enum.
      */
     enum ContentType {
-        XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON;
+        XML,
+CSV,
+JSON,
+ZIP_XML,
+ZIP_CSV,
+ZIP_JSON;
     }
 
     /**
@@ -2337,7 +2384,8 @@ public interface SalesforceEndpointBuilderFactory {
      * enum.
      */
     enum PayloadFormat {
-        JSON, XML;
+        JSON,
+XML;
     }
 
     /**
@@ -2346,7 +2394,8 @@ public interface SalesforceEndpointBuilderFactory {
      * enum.
      */
     enum NotFoundBehaviour {
-        EXCEPTION, NULL;
+        EXCEPTION,
+NULL;
     }
 
     /**
@@ -2354,7 +2403,10 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> enum.
      */
     enum NotifyForFieldsEnum {
-        ALL, REFERENCED, SELECT, WHERE;
+        ALL,
+REFERENCED,
+SELECT,
+WHERE;
     }
 
     /**
@@ -2362,7 +2414,10 @@ public interface SalesforceEndpointBuilderFactory {
      * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> enum.
      */
     enum NotifyForOperationsEnum {
-        ALL, CREATE, EXTENDED, UPDATE;
+        ALL,
+CREATE,
+EXTENDED,
+UPDATE;
     }
     /**
      * The salesforce component is used for integrating Camel with the massive

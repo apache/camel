@@ -199,7 +199,20 @@ public interface LambdaEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code> enum.
      */
     enum LambdaOperations {
-        listFunctions, getFunction, createFunction, deleteFunction, invokeFunction, updateFunction, createEventSourceMapping, deleteEventSourceMapping, listEventSourceMapping, listTags, tagResource, untagResource, publishVersion, listVersions;
+        listFunctions,
+getFunction,
+createFunction,
+deleteFunction,
+invokeFunction,
+updateFunction,
+createEventSourceMapping,
+deleteEventSourceMapping,
+listEventSourceMapping,
+listTags,
+tagResource,
+untagResource,
+publishVersion,
+listVersions;
     }
     /**
      * The aws-lambda is used for managing and invoking functions from Amazon

@@ -1461,7 +1461,13 @@ public interface XQueryEndpointBuilderFactory {
      * <code>org.apache.camel.component.xquery.ResultFormat</code> enum.
      */
     enum ResultFormat {
-        Bytes, BytesSource, DOM, DOMSource, List, String, StringSource;
+        Bytes,
+BytesSource,
+DOM,
+DOMSource,
+List,
+String,
+StringSource;
     }
     /**
      * Transforms the message using a XQuery template using Saxon. Creates a

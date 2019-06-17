@@ -617,7 +617,13 @@ public interface GoogleMailEndpointBuilderFactory {
      * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> enum.
      */
     enum GoogleMailApiName {
-        THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS;
+        THREADS,
+MESSAGES,
+ATTACHMENTS,
+LABELS,
+HISTORY,
+DRAFTS,
+USERS;
     }
     /**
      * The google-mail component provides access to Google Mail. Creates a

@@ -1724,7 +1724,9 @@ public interface CxfRsEndpointBuilderFactory {
      * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> enum.
      */
     enum BindingStyle {
-        SimpleConsumer, Default, Custom;
+        SimpleConsumer,
+Default,
+Custom;
     }
     /**
      * The cxfrs component is used for JAX-RS REST services using Apache CXF.

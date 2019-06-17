@@ -589,7 +589,14 @@ public interface QueueServiceEndpointBuilderFactory {
      * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> enum.
      */
     enum QueueServiceOperations {
-        listQueues, createQueue, deleteQueue, addMessage, retrieveMessage, peekMessage, updateMessage, deleteMessage;
+        listQueues,
+createQueue,
+deleteQueue,
+addMessage,
+retrieveMessage,
+peekMessage,
+updateMessage,
+deleteMessage;
     }
     /**
      * The azure-queue component is used for storing and retrieving messages

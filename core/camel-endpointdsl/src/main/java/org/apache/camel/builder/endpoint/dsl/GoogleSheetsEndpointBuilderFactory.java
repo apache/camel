@@ -624,7 +624,8 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> enum.
      */
     enum GoogleSheetsApiName {
-        SPREADSHEETS, DATA;
+        SPREADSHEETS,
+DATA;
     }
     /**
      * The google-sheets component provides access to Google Sheets. Creates a

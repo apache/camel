@@ -720,7 +720,15 @@ public interface JiraEndpointBuilderFactory {
      * enum.
      */
     enum JiraType {
-        ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS;
+        ADDCOMMENT,
+ADDISSUE,
+ATTACH,
+DELETEISSUE,
+NEWISSUES,
+NEWCOMMENTS,
+UPDATEISSUE,
+TRANSITIONISSUE,
+WATCHERS;
     }
     /**
      * The jira component interacts with the JIRA issue tracker. Creates a

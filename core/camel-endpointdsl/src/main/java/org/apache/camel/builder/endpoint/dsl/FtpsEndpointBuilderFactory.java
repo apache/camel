@@ -4843,7 +4843,9 @@ public interface FtpsEndpointBuilderFactory {
      * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> enum.
      */
     enum PathSeparator {
-        UNIX, Windows, Auto;
+        UNIX,
+Windows,
+Auto;
     }
 
     /**
@@ -4851,7 +4853,12 @@ public interface FtpsEndpointBuilderFactory {
      * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
      */
     enum GenericFileExist {
-        Override, Append, Fail, Ignore, Move, TryRename;
+        Override,
+Append,
+Fail,
+Ignore,
+Move,
+TryRename;
     }
     /**
      * The ftps (FTP secure SSL/TLS) component is used for uploading or

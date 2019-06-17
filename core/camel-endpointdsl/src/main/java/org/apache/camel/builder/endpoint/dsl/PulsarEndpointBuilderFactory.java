@@ -462,7 +462,9 @@ public interface PulsarEndpointBuilderFactory {
      * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> enum.
      */
     enum SubscriptionType {
-        EXCLUSIVE, SHARED, FAILOVER;
+        EXCLUSIVE,
+SHARED,
+FAILOVER;
     }
     /**
      * Camel Apache Pulsar Component Creates a builder to build endpoints for

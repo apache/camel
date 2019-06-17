@@ -170,7 +170,8 @@ public interface DrillEndpointBuilderFactory {
      * <code>org.apache.camel.component.drill.DrillConnectionMode</code> enum.
      */
     enum DrillConnectionMode {
-        ZK, DRILLBIT;
+        ZK,
+DRILLBIT;
     }
     /**
      * The drill component gives you the ability to quering into apache drill

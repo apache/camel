@@ -1327,7 +1327,9 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
     enum EndpointType {
-        POLLING, DIRECT, EVENT;
+        POLLING,
+DIRECT,
+EVENT;
     }
     /**
      * The Twitter Direct Message Component consumes/produces user's direct

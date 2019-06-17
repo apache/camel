@@ -115,7 +115,19 @@ public interface IAMEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.iam.IAMOperations</code> enum.
      */
     enum IAMOperations {
-        listAccessKeys, createUser, deleteUser, getUser, listUsers, createAccessKey, deleteAccessKey, updateAccessKey, createGroup, deleteGroup, listGroups, addUserToGroup, removeUserFromGroup;
+        listAccessKeys,
+createUser,
+deleteUser,
+getUser,
+listUsers,
+createAccessKey,
+deleteAccessKey,
+updateAccessKey,
+createGroup,
+deleteGroup,
+listGroups,
+addUserToGroup,
+removeUserFromGroup;
     }
     /**
      * The aws-iam is used for managing Amazon IAM Creates a builder to build

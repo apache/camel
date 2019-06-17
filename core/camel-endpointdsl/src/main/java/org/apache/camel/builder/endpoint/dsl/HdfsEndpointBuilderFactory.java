@@ -1789,7 +1789,8 @@ public interface HdfsEndpointBuilderFactory {
      * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code> enum.
      */
     enum HdfsFileSystemType {
-        LOCAL, HDFS;
+        LOCAL,
+HDFS;
     }
 
     /**
@@ -1797,7 +1798,11 @@ public interface HdfsEndpointBuilderFactory {
      * enum.
      */
     enum HdfsFileType {
-        NORMAL_FILE, SEQUENCE_FILE, MAP_FILE, BLOOMMAP_FILE, ARRAY_FILE;
+        NORMAL_FILE,
+SEQUENCE_FILE,
+MAP_FILE,
+BLOOMMAP_FILE,
+ARRAY_FILE;
     }
 
     /**
@@ -1805,7 +1810,15 @@ public interface HdfsEndpointBuilderFactory {
      * enum.
      */
     enum WritableType {
-        NULL, BOOLEAN, BYTE, INT, FLOAT, LONG, DOUBLE, TEXT, BYTES;
+        NULL,
+BOOLEAN,
+BYTE,
+INT,
+FLOAT,
+LONG,
+DOUBLE,
+TEXT,
+BYTES;
     }
 
     /**
@@ -1813,7 +1826,9 @@ public interface HdfsEndpointBuilderFactory {
      * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code> enum.
      */
     enum HdfsCompressionCodec {
-        DEFAULT, GZIP, BZIP2;
+        DEFAULT,
+GZIP,
+BZIP2;
     }
 
     /**
@@ -1821,7 +1836,9 @@ public interface HdfsEndpointBuilderFactory {
      * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> enum.
      */
     enum CompressionType {
-        NONE, RECORD, BLOCK;
+        NONE,
+RECORD,
+BLOCK;
     }
     /**
      * For reading/writing from/to an HDFS filesystem using Hadoop 2.x. Creates

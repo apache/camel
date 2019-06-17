@@ -141,7 +141,12 @@ public interface SpringLdapEndpointBuilderFactory {
      * <code>org.apache.camel.component.springldap.LdapOperation</code> enum.
      */
     enum LdapOperation {
-        SEARCH, BIND, UNBIND, AUTHENTICATE, MODIFY_ATTRIBUTES, FUNCTION_DRIVEN;
+        SEARCH,
+BIND,
+UNBIND,
+AUTHENTICATE,
+MODIFY_ATTRIBUTES,
+FUNCTION_DRIVEN;
     }
     /**
      * The spring-ldap component allows you to perform searches in LDAP servers

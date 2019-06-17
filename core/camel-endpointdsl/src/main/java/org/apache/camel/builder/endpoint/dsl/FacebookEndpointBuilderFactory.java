@@ -4433,7 +4433,12 @@ public interface FacebookEndpointBuilderFactory {
      * Proxy enum for <code>facebook4j.PictureSize</code> enum.
      */
     enum PictureSize {
-        square, small, normal, large, thumbnail, album;
+        square,
+small,
+normal,
+large,
+thumbnail,
+album;
     }
     /**
      * The Facebook component provides access to all of the Facebook APIs

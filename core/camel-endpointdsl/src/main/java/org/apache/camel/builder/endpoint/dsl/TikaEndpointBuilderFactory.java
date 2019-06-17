@@ -187,7 +187,8 @@ public interface TikaEndpointBuilderFactory {
      * enum.
      */
     enum TikaOperation {
-        parse, detect;
+        parse,
+detect;
     }
 
     /**
@@ -195,7 +196,10 @@ public interface TikaEndpointBuilderFactory {
      * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code> enum.
      */
     enum TikaParseOutputFormat {
-        xml, html, text, textMain;
+        xml,
+html,
+text,
+textMain;
     }
     /**
      * This component integrates with Apache Tika to extract content and

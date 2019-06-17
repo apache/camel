@@ -196,7 +196,8 @@ public interface JoltEndpointBuilderFactory {
      * <code>org.apache.camel.component.jolt.JoltInputOutputType</code> enum.
      */
     enum JoltInputOutputType {
-        Hydrated, JsonString;
+        Hydrated,
+JsonString;
     }
 
     /**
@@ -204,7 +205,11 @@ public interface JoltEndpointBuilderFactory {
      * <code>org.apache.camel.component.jolt.JoltTransformType</code> enum.
      */
     enum JoltTransformType {
-        Chainr, Shiftr, Defaultr, Removr, Sortr;
+        Chainr,
+Shiftr,
+Defaultr,
+Removr,
+Sortr;
     }
     /**
      * The jolt component allows you to process a JSON messages using an JOLT

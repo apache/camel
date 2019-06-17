@@ -1135,14 +1135,22 @@ public interface AtomixSetEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> enum.
      */
     enum Action {
-        ADD, CLEAR, CONTAINS, IS_EMPTY, REMOVE, SIZE;
+        ADD,
+CLEAR,
+CONTAINS,
+IS_EMPTY,
+REMOVE,
+SIZE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
     enum ReadConsistency {
-        ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
+        ATOMIC,
+ATOMIC_LEASE,
+SEQUENTIAL,
+LOCAL;
     }
     /**
      * The atomix-set component is used to access Atomix's distributed set.

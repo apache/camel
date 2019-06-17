@@ -4600,7 +4600,12 @@ public interface AMQPEndpointBuilderFactory {
      * enum.
      */
     enum JmsMessageType {
-        Bytes, Map, Object, Stream, Text, Blob;
+        Bytes,
+Map,
+Object,
+Stream,
+Text,
+Blob;
     }
 
     /**
@@ -4608,7 +4613,9 @@ public interface AMQPEndpointBuilderFactory {
      * enum.
      */
     enum ConsumerType {
-        Simple, Default, Custom;
+        Simple,
+Default,
+Custom;
     }
 
     /**
@@ -4616,7 +4623,8 @@ public interface AMQPEndpointBuilderFactory {
      * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code> enum.
      */
     enum DefaultTaskExecutorType {
-        ThreadPool, SimpleAsync;
+        ThreadPool,
+SimpleAsync;
     }
 
     /**
@@ -4624,7 +4632,9 @@ public interface AMQPEndpointBuilderFactory {
      * enum.
      */
     enum ReplyToType {
-        Temporary, Shared, Exclusive;
+        Temporary,
+Shared,
+Exclusive;
     }
     /**
      * Messaging with AMQP protocol using Apache QPid Client. Creates a builder

@@ -1057,7 +1057,11 @@ public interface KinesisEndpointBuilderFactory {
      * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code> enum.
      */
     enum ShardIteratorType {
-        AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, TRIM_HORIZON, LATEST, AT_TIMESTAMP;
+        AT_SEQUENCE_NUMBER,
+AFTER_SEQUENCE_NUMBER,
+TRIM_HORIZON,
+LATEST,
+AT_TIMESTAMP;
     }
 
     /**
@@ -1065,7 +1069,9 @@ public interface KinesisEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> enum.
      */
     enum KinesisShardClosedStrategyEnum {
-        ignore, fail, silent;
+        ignore,
+fail,
+silent;
     }
     /**
      * The aws-kinesis component is for consuming and producing records from

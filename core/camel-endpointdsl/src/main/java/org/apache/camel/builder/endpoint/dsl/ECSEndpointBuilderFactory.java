@@ -115,7 +115,10 @@ public interface ECSEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> enum.
      */
     enum ECSOperations {
-        listClusters, describeCluster, createCluster, deleteCluster;
+        listClusters,
+describeCluster,
+createCluster,
+deleteCluster;
     }
     /**
      * The aws-kms is used for managing Amazon ECS Creates a builder to build
