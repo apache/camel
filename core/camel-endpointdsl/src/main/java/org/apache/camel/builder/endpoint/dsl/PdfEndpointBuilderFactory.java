@@ -284,7 +284,9 @@ public interface PdfEndpointBuilderFactory {
      * enum.
      */
     enum PdfOperation {
-        create, append, extractText;
+        create,
+append,
+extractText;
     }
 
     /**
@@ -292,7 +294,8 @@ public interface PdfEndpointBuilderFactory {
      * <code>org.apache.camel.component.pdf.TextProcessingFactory</code> enum.
      */
     enum TextProcessingFactory {
-        autoFormatting, lineTermination;
+        autoFormatting,
+lineTermination;
     }
     /**
      * The pdf components provides the ability to create, modify or extract

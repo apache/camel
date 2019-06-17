@@ -1071,7 +1071,12 @@ public interface BeanstalkEndpointBuilderFactory {
      * <code>org.apache.camel.component.beanstalk.BeanstalkCommand</code> enum.
      */
     enum BeanstalkCommand {
-        bury, release, put, touch, delete, kick;
+        bury,
+release,
+put,
+touch,
+delete,
+kick;
     }
     /**
      * The beanstalk component is used for job retrieval and post-processing of

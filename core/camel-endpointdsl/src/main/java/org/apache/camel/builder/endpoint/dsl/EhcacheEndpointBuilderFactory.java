@@ -962,21 +962,27 @@ public interface EhcacheEndpointBuilderFactory {
      * Proxy enum for <code>org.ehcache.event.EventFiring</code> enum.
      */
     enum EventFiring {
-        ASYNCHRONOUS, SYNCHRONOUS;
+        ASYNCHRONOUS,
+SYNCHRONOUS;
     }
 
     /**
      * Proxy enum for <code>org.ehcache.event.EventOrdering</code> enum.
      */
     enum EventOrdering {
-        UNORDERED, ORDERED;
+        UNORDERED,
+ORDERED;
     }
 
     /**
      * Proxy enum for <code>org.ehcache.event.EventType</code> enum.
      */
     enum EventType {
-        EVICTED, EXPIRED, REMOVED, CREATED, UPDATED;
+        EVICTED,
+EXPIRED,
+REMOVED,
+CREATED,
+UPDATED;
     }
     /**
      * The ehcache component enables you to perform caching operations using

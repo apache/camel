@@ -361,7 +361,9 @@ public interface SnmpEndpointBuilderFactory {
      * <code>org.apache.camel.component.snmp.SnmpActionType</code> enum.
      */
     enum SnmpActionType {
-        TRAP, POLL, GET_NEXT;
+        TRAP,
+POLL,
+GET_NEXT;
     }
     /**
      * The snmp component gives you the ability to poll SNMP capable devices or

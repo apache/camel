@@ -583,7 +583,9 @@ public interface LogEndpointBuilderFactory {
      * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> enum.
      */
     enum OutputStyle {
-        Default, Tab, Fixed;
+        Default,
+Tab,
+Fixed;
     }
     /**
      * The log component logs message exchanges to the underlying logging

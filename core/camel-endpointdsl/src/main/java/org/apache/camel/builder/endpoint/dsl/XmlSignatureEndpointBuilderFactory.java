@@ -926,7 +926,8 @@ public interface XmlSignatureEndpointBuilderFactory {
      * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> enum.
      */
     enum XmlCommand {
-        sign, verify;
+        sign,
+verify;
     }
     /**
      * Used to sign and verify exchanges using the XML signature specification.

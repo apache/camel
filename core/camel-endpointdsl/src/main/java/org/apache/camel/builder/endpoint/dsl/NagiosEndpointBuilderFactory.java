@@ -236,7 +236,13 @@ public interface NagiosEndpointBuilderFactory {
      * <code>com.googlecode.jsendnsca.encryption.Encryption</code> enum.
      */
     enum Encryption {
-        NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH;
+        NONE,
+TRIPLE_DES,
+XOR,
+RIJNDAEL128,
+RIJNDAEL192,
+RIJNDAEL256,
+BLOWFISH;
     }
 
     /**
@@ -245,7 +251,9 @@ public interface NagiosEndpointBuilderFactory {
      * enum.
      */
     enum NagiosEncryptionMethod {
-        No, Xor, TripleDes;
+        No,
+Xor,
+TripleDes;
     }
     /**
      * To send passive checks to Nagios using JSendNSCA. Creates a builder to

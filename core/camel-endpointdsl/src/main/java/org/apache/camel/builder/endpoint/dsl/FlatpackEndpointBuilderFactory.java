@@ -1161,7 +1161,8 @@ public interface FlatpackEndpointBuilderFactory {
      * <code>org.apache.camel.component.flatpack.FlatpackType</code> enum.
      */
     enum FlatpackType {
-        fixed, delim;
+        fixed,
+delim;
     }
     /**
      * The flatpack component supports fixed width and delimited file parsing

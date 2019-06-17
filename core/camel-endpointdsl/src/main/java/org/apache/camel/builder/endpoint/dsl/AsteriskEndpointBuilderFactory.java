@@ -480,7 +480,9 @@ public interface AsteriskEndpointBuilderFactory {
      * <code>org.apache.camel.component.asterisk.AsteriskAction</code> enum.
      */
     enum AsteriskAction {
-        QUEUE_STATUS, SIP_PEERS, EXTENSION_STATE;
+        QUEUE_STATUS,
+SIP_PEERS,
+EXTENSION_STATE;
     }
     /**
      * The asterisk component is used to interact with Asterisk PBX Server.

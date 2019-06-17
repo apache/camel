@@ -1215,7 +1215,8 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> enum.
      */
     enum BroadcastType {
-        ALL, RANDOM;
+        ALL,
+RANDOM;
     }
 
     /**
@@ -1223,14 +1224,18 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> enum.
      */
     enum Action {
-        DIRECT, BROADCAST;
+        DIRECT,
+BROADCAST;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
     enum ReadConsistency {
-        ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
+        ATOMIC,
+ATOMIC_LEASE,
+SEQUENTIAL,
+LOCAL;
     }
     /**
      * The atomix-messaging component is used to access Atomix's group

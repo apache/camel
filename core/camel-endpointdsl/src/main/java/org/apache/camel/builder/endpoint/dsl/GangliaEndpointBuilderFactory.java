@@ -315,7 +315,8 @@ public interface GangliaEndpointBuilderFactory {
      * enum.
      */
     enum UDPAddressingMode {
-        MULTICAST, UNICAST;
+        MULTICAST,
+UNICAST;
     }
 
     /**
@@ -323,7 +324,10 @@ public interface GangliaEndpointBuilderFactory {
      * enum.
      */
     enum GMetricSlope {
-        ZERO, POSITIVE, NEGATIVE, BOTH;
+        ZERO,
+POSITIVE,
+NEGATIVE,
+BOTH;
     }
 
     /**
@@ -331,7 +335,15 @@ public interface GangliaEndpointBuilderFactory {
      * enum.
      */
     enum GMetricType {
-        STRING, INT8, UINT8, INT16, UINT16, INT32, UINT32, FLOAT, DOUBLE;
+        STRING,
+INT8,
+UINT8,
+INT16,
+UINT16,
+INT32,
+UINT32,
+FLOAT,
+DOUBLE;
     }
     /**
      * The ganglia component is used for sending metrics to the Ganglia

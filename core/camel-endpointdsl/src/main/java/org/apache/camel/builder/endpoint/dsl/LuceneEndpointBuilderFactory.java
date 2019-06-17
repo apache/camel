@@ -213,7 +213,8 @@ public interface LuceneEndpointBuilderFactory {
      * <code>org.apache.camel.component.lucene.LuceneOperation</code> enum.
      */
     enum LuceneOperation {
-        insert, query;
+        insert,
+query;
     }
     /**
      * To insert or query from Apache Lucene databases. Creates a builder to

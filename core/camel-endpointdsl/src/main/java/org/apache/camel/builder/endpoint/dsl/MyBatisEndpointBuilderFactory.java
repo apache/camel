@@ -933,7 +933,9 @@ public interface MyBatisEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
      */
     enum ExecutorType {
-        SIMPLE, REUSE, BATCH;
+        SIMPLE,
+REUSE,
+BATCH;
     }
 
     /**
@@ -941,7 +943,14 @@ public interface MyBatisEndpointBuilderFactory {
      * <code>org.apache.camel.component.mybatis.StatementType</code> enum.
      */
     enum StatementType {
-        SelectOne, SelectList, Insert, InsertList, Update, UpdateList, Delete, DeleteList;
+        SelectOne,
+SelectList,
+Insert,
+InsertList,
+Update,
+UpdateList,
+Delete,
+DeleteList;
     }
     /**
      * Performs a query, poll, insert, update or delete in a relational database

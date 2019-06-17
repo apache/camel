@@ -153,7 +153,10 @@ public interface DdbStreamEndpointBuilderFactory {
      * enum.
      */
     enum ShardIteratorType {
-        TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER;
+        TRIM_HORIZON,
+LATEST,
+AT_SEQUENCE_NUMBER,
+AFTER_SEQUENCE_NUMBER;
     }
     /**
      * The aws-ddbstream component is used for working with Amazon DynamoDB

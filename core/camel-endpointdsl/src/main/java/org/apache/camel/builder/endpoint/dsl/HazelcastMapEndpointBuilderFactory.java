@@ -1012,7 +1012,42 @@ public interface HazelcastMapEndpointBuilderFactory {
      * enum.
      */
     enum HazelcastOperation {
-        put, delete, get, update, query, getAll, clear, putIfAbsent, allAll, removeAll, retainAll, evict, evictAll, valueCount, containsKey, containsValue, keySet, removevalue, increment, decrement, setvalue, destroy, compareAndSet, getAndAdd, add, offer, peek, poll, remainingCapacity, drainTo, removeIf, take, publish, readOnceHeal, readOnceTail, capacity;
+        put,
+delete,
+get,
+update,
+query,
+getAll,
+clear,
+putIfAbsent,
+allAll,
+removeAll,
+retainAll,
+evict,
+evictAll,
+valueCount,
+containsKey,
+containsValue,
+keySet,
+removevalue,
+increment,
+decrement,
+setvalue,
+destroy,
+compareAndSet,
+getAndAdd,
+add,
+offer,
+peek,
+poll,
+remainingCapacity,
+drainTo,
+removeIf,
+take,
+publish,
+readOnceHeal,
+readOnceTail,
+capacity;
     }
 
     /**
@@ -1020,7 +1055,8 @@ public interface HazelcastMapEndpointBuilderFactory {
      * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
      */
     enum HazelcastQueueConsumerMode {
-        listen, poll;
+        listen,
+poll;
     }
     /**
      * The hazelcast-map component is used to access Hazelcast distributed map.

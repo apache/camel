@@ -1072,14 +1072,25 @@ public interface BoxEndpointBuilderFactory {
      * <code>org.apache.camel.component.box.internal.BoxApiName</code> enum.
      */
     enum BoxApiName {
-        COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS;
+        COLLABORATIONS,
+COMMENTS,
+EVENT_LOGS,
+FILES,
+FOLDERS,
+GROUPS,
+EVENTS,
+SEARCH,
+TASKS,
+USERS;
     }
 
     /**
      * Proxy enum for <code>com.box.sdk.EncryptionAlgorithm</code> enum.
      */
     enum EncryptionAlgorithm {
-        RSA_SHA_256, RSA_SHA_384, RSA_SHA_512;
+        RSA_SHA_256,
+RSA_SHA_384,
+RSA_SHA_512;
     }
     /**
      * For uploading downloading and managing files folders groups

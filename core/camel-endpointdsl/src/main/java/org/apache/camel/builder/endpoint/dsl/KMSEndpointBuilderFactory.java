@@ -115,7 +115,12 @@ public interface KMSEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.kms.KMSOperations</code> enum.
      */
     enum KMSOperations {
-        listKeys, createKey, disableKey, scheduleKeyDeletion, describeKey, enableKey;
+        listKeys,
+createKey,
+disableKey,
+scheduleKeyDeletion,
+describeKey,
+enableKey;
     }
     /**
      * The aws-kms is used for managing Amazon KMS Creates a builder to build

@@ -2912,7 +2912,12 @@ public interface FileEndpointBuilderFactory {
      * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
      */
     enum GenericFileExist {
-        Override, Append, Fail, Ignore, Move, TryRename;
+        Override,
+Append,
+Fail,
+Ignore,
+Move,
+TryRename;
     }
     /**
      * The file component is used for reading or writing files. Creates a

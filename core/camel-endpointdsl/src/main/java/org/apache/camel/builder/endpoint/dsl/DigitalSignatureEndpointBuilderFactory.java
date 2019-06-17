@@ -453,7 +453,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * <code>org.apache.camel.component.crypto.CryptoOperation</code> enum.
      */
     enum CryptoOperation {
-        sign, verify;
+        sign,
+verify;
     }
     /**
      * The crypto component is used for signing and verifying exchanges using

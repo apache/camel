@@ -706,7 +706,8 @@ public interface GooglePubsubEndpointBuilderFactory {
      * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> enum.
      */
     enum AckMode {
-        AUTO, NONE;
+        AUTO,
+NONE;
     }
     /**
      * Messaging client for Google Cloud Platform PubSub Service Creates a

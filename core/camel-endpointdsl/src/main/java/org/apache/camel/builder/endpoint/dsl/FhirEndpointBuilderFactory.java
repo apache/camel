@@ -1477,28 +1477,49 @@ public interface FhirEndpointBuilderFactory {
      * <code>org.apache.camel.component.fhir.internal.FhirApiName</code> enum.
      */
     enum FhirApiName {
-        CAPABILITIES, CREATE, DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE, VALIDATE;
+        CAPABILITIES,
+CREATE,
+DELETE,
+HISTORY,
+LOAD_PAGE,
+META,
+OPERATION,
+PATCH,
+READ,
+SEARCH,
+TRANSACTION,
+UPDATE,
+VALIDATE;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.rest.api.EncodingEnum</code> enum.
      */
     enum EncodingEnum {
-        JSON, XML;
+        JSON,
+XML;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.context.FhirVersionEnum</code> enum.
      */
     enum FhirVersionEnum {
-        DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4;
+        DSTU2,
+DSTU2_HL7ORG,
+DSTU2_1,
+DSTU3,
+R4;
     }
 
     /**
      * Proxy enum for <code>ca.uhn.fhir.rest.api.SummaryEnum</code> enum.
      */
     enum SummaryEnum {
-        COUNT, TEXT, DATA, TRUE, FALSE;
+        COUNT,
+TEXT,
+DATA,
+TRUE,
+FALSE;
     }
 
     /**
@@ -1506,7 +1527,8 @@ public interface FhirEndpointBuilderFactory {
      * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code> enum.
      */
     enum ServerValidationModeEnum {
-        NEVER, ONCE;
+        NEVER,
+ONCE;
     }
     /**
      * The fhir component is used for working with the FHIR protocol (health

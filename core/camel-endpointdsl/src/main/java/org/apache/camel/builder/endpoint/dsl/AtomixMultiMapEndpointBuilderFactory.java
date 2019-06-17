@@ -382,14 +382,24 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> enum.
      */
     enum Action {
-        PUT, GET, CLEAR, SIZE, CONTAINS_KEY, IS_EMPTY, REMOVE, REMOVE_VALUE;
+        PUT,
+GET,
+CLEAR,
+SIZE,
+CONTAINS_KEY,
+IS_EMPTY,
+REMOVE,
+REMOVE_VALUE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
     enum ReadConsistency {
-        ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
+        ATOMIC,
+ATOMIC_LEASE,
+SEQUENTIAL,
+LOCAL;
     }
     /**
      * The atomix-multimap component is used to access Atomix's distributed

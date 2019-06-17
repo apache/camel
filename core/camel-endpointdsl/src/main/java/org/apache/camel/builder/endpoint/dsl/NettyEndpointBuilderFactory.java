@@ -3618,7 +3618,8 @@ public interface NettyEndpointBuilderFactory {
      * <code>org.apache.camel.component.netty4.TextLineDelimiter</code> enum.
      */
     enum TextLineDelimiter {
-        LINE, NULL;
+        LINE,
+NULL;
     }
     /**
      * Socket level networking using TCP or UDP with the Netty 4.x library.

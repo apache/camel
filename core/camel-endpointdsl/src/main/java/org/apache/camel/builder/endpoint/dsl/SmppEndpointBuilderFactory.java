@@ -1834,7 +1834,9 @@ public interface SmppEndpointBuilderFactory {
      * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code> enum.
      */
     enum SmppSplittingPolicy {
-        ALLOW, REJECT, TRUNCATE;
+        ALLOW,
+REJECT,
+TRUNCATE;
     }
     /**
      * To send and receive SMS using a SMSC (Short Message Service Center).

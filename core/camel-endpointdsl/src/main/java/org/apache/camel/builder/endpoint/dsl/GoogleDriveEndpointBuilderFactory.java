@@ -768,7 +768,19 @@ public interface GoogleDriveEndpointBuilderFactory {
      * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> enum.
      */
     enum GoogleDriveApiName {
-        DRIVE_ABOUT, DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS;
+        DRIVE_ABOUT,
+DRIVE_APPS,
+DRIVE_CHANGES,
+DRIVE_CHANNELS,
+DRIVE_CHILDREN,
+DRIVE_COMMENTS,
+DRIVE_FILES,
+DRIVE_PARENTS,
+DRIVE_PERMISSIONS,
+DRIVE_PROPERTIES,
+DRIVE_REALTIME,
+DRIVE_REPLIES,
+DRIVE_REVISIONS;
     }
     /**
      * The google-drive component provides access to Google Drive file storage

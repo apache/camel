@@ -479,7 +479,10 @@ public interface CryptoCmsEndpointBuilderFactory {
      * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code> enum.
      */
     enum CryptoOperation {
-        sign, verify, encrypt, decrypt;
+        sign,
+verify,
+encrypt,
+decrypt;
     }
     /**
      * The crypto cms component is used for encrypting data in CMS Enveloped

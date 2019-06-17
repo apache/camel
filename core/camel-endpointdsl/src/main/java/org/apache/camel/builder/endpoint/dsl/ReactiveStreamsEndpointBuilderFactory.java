@@ -528,7 +528,9 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> enum.
      */
     enum ReactiveStreamsBackpressureStrategy {
-        BUFFER, OLDEST, LATEST;
+        BUFFER,
+OLDEST,
+LATEST;
     }
     /**
      * Reactive Camel using reactive streams Creates a builder to build

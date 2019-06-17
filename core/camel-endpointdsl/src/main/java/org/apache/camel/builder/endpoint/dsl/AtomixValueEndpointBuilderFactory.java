@@ -1137,14 +1137,20 @@ public interface AtomixValueEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> enum.
      */
     enum Action {
-        SET, GET, GET_AND_SET, COMPARE_AND_SET;
+        SET,
+GET,
+GET_AND_SET,
+COMPARE_AND_SET;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
     enum ReadConsistency {
-        ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
+        ATOMIC,
+ATOMIC_LEASE,
+SEQUENTIAL,
+LOCAL;
     }
     /**
      * The atomix-value component is used to access Atomix's distributed value.

@@ -262,7 +262,42 @@ public interface DigitalOceanEndpointBuilderFactory {
      * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> enum.
      */
     enum DigitalOceanOperations {
-        create, update, delete, list, ownList, get, listBackups, listActions, listNeighbors, listSnapshots, listKernels, listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild, rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach, assign, unassign, tag, untag;
+        create,
+update,
+delete,
+list,
+ownList,
+get,
+listBackups,
+listActions,
+listNeighbors,
+listSnapshots,
+listKernels,
+listAllNeighbors,
+enableBackups,
+disableBackups,
+reboot,
+powerCycle,
+shutdown,
+powerOn,
+powerOff,
+restore,
+resetPassword,
+resize,
+rebuild,
+rename,
+changeKernel,
+enableIpv6,
+enablePrivateNetworking,
+takeSnapshot,
+transfer,
+convert,
+attach,
+detach,
+assign,
+unassign,
+tag,
+untag;
     }
 
     /**
@@ -270,7 +305,17 @@ public interface DigitalOceanEndpointBuilderFactory {
      * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> enum.
      */
     enum DigitalOceanResources {
-        account, actions, blockStorages, droplets, images, snapshots, keys, regions, sizes, floatingIPs, tags;
+        account,
+actions,
+blockStorages,
+droplets,
+images,
+snapshots,
+keys,
+regions,
+sizes,
+floatingIPs,
+tags;
     }
     /**
      * The DigitalOcean component allows you to manage Droplets and resources

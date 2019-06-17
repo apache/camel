@@ -120,7 +120,9 @@ public interface MyBatisBeanEndpointBuilderFactory {
      * Proxy enum for <code>org.apache.ibatis.session.ExecutorType</code> enum.
      */
     enum ExecutorType {
-        SIMPLE, REUSE, BATCH;
+        SIMPLE,
+REUSE,
+BATCH;
     }
     /**
      * Performs a query, insert, update or delete in a relational database using

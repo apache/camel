@@ -1386,7 +1386,12 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.TimelineType</code> enum.
      */
     enum TimelineType {
-        PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME, UNKNOWN;
+        PUBLIC,
+HOME,
+USER,
+MENTIONS,
+RETWEETSOFME,
+UNKNOWN;
     }
 
     /**
@@ -1394,7 +1399,9 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
     enum EndpointType {
-        POLLING, DIRECT, EVENT;
+        POLLING,
+DIRECT,
+EVENT;
     }
     /**
      * The Twitter Timeline component consumes twitter timeline or update the

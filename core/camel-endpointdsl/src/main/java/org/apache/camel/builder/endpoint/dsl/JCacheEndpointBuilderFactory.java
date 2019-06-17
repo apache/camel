@@ -1218,7 +1218,10 @@ public interface JCacheEndpointBuilderFactory {
      * Proxy enum for <code>javax.cache.event.EventType</code> enum.
      */
     enum EventType {
-        CREATED, UPDATED, REMOVED, EXPIRED;
+        CREATED,
+UPDATED,
+REMOVED,
+EXPIRED;
     }
     /**
      * The jcache component enables you to perform caching operations using

@@ -756,7 +756,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> enum.
      */
     enum GoogleCalendarApiName {
-        ACL, LIST, CALENDARS, CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS;
+        ACL,
+LIST,
+CALENDARS,
+CHANNELS,
+COLORS,
+FREEBUSY,
+EVENTS,
+SETTINGS;
     }
     /**
      * The google-calendar component provides access to Google Calendar. Creates

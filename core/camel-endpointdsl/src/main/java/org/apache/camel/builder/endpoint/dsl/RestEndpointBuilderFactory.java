@@ -671,7 +671,11 @@ public interface RestEndpointBuilderFactory {
      * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code> enum.
      */
     enum RestBindingMode {
-        auto, off, json, xml, json_xml;
+        auto,
+off,
+json,
+xml,
+json_xml;
     }
     /**
      * The rest component is used for either hosting REST services (consumer) or

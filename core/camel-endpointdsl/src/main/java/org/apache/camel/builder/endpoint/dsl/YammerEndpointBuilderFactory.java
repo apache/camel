@@ -1008,7 +1008,15 @@ public interface YammerEndpointBuilderFactory {
      * <code>org.apache.camel.component.yammer.YammerFunctionType</code> enum.
      */
     enum YammerFunctionType {
-        MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT;
+        MESSAGES,
+MY_FEED,
+ALGO,
+FOLLOWING,
+SENT,
+PRIVATE,
+RECEIVED,
+USERS,
+CURRENT;
     }
     /**
      * The yammer component allows you to interact with the Yammer enterprise

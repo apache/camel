@@ -949,7 +949,14 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> enum.
      */
     enum EndpointMappingType {
-        ROOT_QNAME, ACTION, TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME;
+        ROOT_QNAME,
+ACTION,
+TO,
+SOAP_ACTION,
+XPATHRESULT,
+URI,
+URI_PATH,
+BEANNAME;
     }
     /**
      * The spring-ws component is used for SOAP WebServices using Spring

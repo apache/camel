@@ -115,7 +115,10 @@ public interface MSKEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.msk.MSKOperations</code> enum.
      */
     enum MSKOperations {
-        listClusters, createCluster, deleteCluster, describeCluster;
+        listClusters,
+createCluster,
+deleteCluster,
+describeCluster;
     }
     /**
      * The aws-kms is used for managing Amazon KMS Creates a builder to build

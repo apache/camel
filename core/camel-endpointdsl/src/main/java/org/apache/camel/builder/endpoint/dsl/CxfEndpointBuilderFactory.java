@@ -1894,7 +1894,11 @@ public interface CxfEndpointBuilderFactory {
      * enum.
      */
     enum DataFormat {
-        PAYLOAD, RAW, MESSAGE, CXF_MESSAGE, POJO;
+        PAYLOAD,
+RAW,
+MESSAGE,
+CXF_MESSAGE,
+POJO;
     }
     /**
      * The cxf component is used for SOAP WebServices using Apache CXF. Creates

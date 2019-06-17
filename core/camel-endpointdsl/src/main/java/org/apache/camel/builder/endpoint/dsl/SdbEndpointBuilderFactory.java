@@ -243,7 +243,15 @@ public interface SdbEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> enum.
      */
     enum SdbOperations {
-        BatchDeleteAttributes, BatchPutAttributes, DeleteAttributes, DeleteDomain, DomainMetadata, GetAttributes, ListDomains, PutAttributes, Select;
+        BatchDeleteAttributes,
+BatchPutAttributes,
+DeleteAttributes,
+DeleteDomain,
+DomainMetadata,
+GetAttributes,
+ListDomains,
+PutAttributes,
+Select;
     }
     /**
      * The aws-sdb component is for storing and retrieving data from/to Amazon's

@@ -581,7 +581,15 @@ public interface GitHubEndpointBuilderFactory {
      * enum.
      */
     enum GitHubType {
-        CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE;
+        CLOSEPULLREQUEST,
+PULLREQUESTCOMMENT,
+COMMIT,
+PULLREQUEST,
+TAG,
+PULLREQUESTSTATE,
+PULLREQUESTFILES,
+GETCOMMITFILE,
+CREATEISSUE;
     }
     /**
      * The github component is used for integrating Camel with github. Creates a

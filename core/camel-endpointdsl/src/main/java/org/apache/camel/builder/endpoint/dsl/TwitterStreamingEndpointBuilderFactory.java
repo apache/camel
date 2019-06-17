@@ -224,7 +224,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.StreamingType</code> enum.
      */
     enum StreamingType {
-        SAMPLE, FILTER, USER, UNKNOWN;
+        SAMPLE,
+FILTER,
+USER,
+UNKNOWN;
     }
 
     /**
@@ -232,7 +235,9 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
     enum EndpointType {
-        POLLING, DIRECT, EVENT;
+        POLLING,
+DIRECT,
+EVENT;
     }
     /**
      * The Twitter Streaming component consumes twitter statuses using Streaming

@@ -1881,7 +1881,9 @@ public interface SqsEndpointBuilderFactory {
      * <code>org.apache.camel.component.aws.sqs.SqsOperations</code> enum.
      */
     enum SqsOperations {
-        sendBatchMessage, deleteMessage, listQueues;
+        sendBatchMessage,
+deleteMessage,
+listQueues;
     }
     /**
      * The aws-sqs component is used for sending and receiving messages to

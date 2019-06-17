@@ -4623,7 +4623,12 @@ public interface ActiveMQEndpointBuilderFactory {
      * enum.
      */
     enum JmsMessageType {
-        Bytes, Map, Object, Stream, Text, Blob;
+        Bytes,
+Map,
+Object,
+Stream,
+Text,
+Blob;
     }
 
     /**
@@ -4631,7 +4636,9 @@ public interface ActiveMQEndpointBuilderFactory {
      * enum.
      */
     enum ConsumerType {
-        Simple, Default, Custom;
+        Simple,
+Default,
+Custom;
     }
 
     /**
@@ -4639,7 +4646,8 @@ public interface ActiveMQEndpointBuilderFactory {
      * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code> enum.
      */
     enum DefaultTaskExecutorType {
-        ThreadPool, SimpleAsync;
+        ThreadPool,
+SimpleAsync;
     }
 
     /**
@@ -4647,7 +4655,9 @@ public interface ActiveMQEndpointBuilderFactory {
      * enum.
      */
     enum ReplyToType {
-        Temporary, Shared, Exclusive;
+        Temporary,
+Shared,
+Exclusive;
     }
     /**
      * The activemq component allows messages to be sent to (or consumed from)

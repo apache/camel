@@ -562,7 +562,8 @@ public interface JcloudsEndpointBuilderFactory {
      * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> enum.
      */
     enum JcloudsCommand {
-        blobstore, compute;
+        blobstore,
+compute;
     }
     /**
      * For interacting with cloud compute & blobstore service via jclouds.

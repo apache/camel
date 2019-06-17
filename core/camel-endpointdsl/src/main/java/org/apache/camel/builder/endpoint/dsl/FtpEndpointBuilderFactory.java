@@ -4249,7 +4249,9 @@ public interface FtpEndpointBuilderFactory {
      * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> enum.
      */
     enum PathSeparator {
-        UNIX, Windows, Auto;
+        UNIX,
+Windows,
+Auto;
     }
 
     /**
@@ -4257,7 +4259,12 @@ public interface FtpEndpointBuilderFactory {
      * <code>org.apache.camel.component.file.GenericFileExist</code> enum.
      */
     enum GenericFileExist {
-        Override, Append, Fail, Ignore, Move, TryRename;
+        Override,
+Append,
+Fail,
+Ignore,
+Move,
+TryRename;
     }
     /**
      * The ftp component is used for uploading or downloading files from FTP

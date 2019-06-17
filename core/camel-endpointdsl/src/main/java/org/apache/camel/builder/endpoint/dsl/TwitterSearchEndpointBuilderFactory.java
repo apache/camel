@@ -1307,7 +1307,9 @@ public interface TwitterSearchEndpointBuilderFactory {
      * <code>org.apache.camel.component.twitter.data.EndpointType</code> enum.
      */
     enum EndpointType {
-        POLLING, DIRECT, EVENT;
+        POLLING,
+DIRECT,
+EVENT;
     }
     /**
      * The Twitter Search component consumes search results. Creates a builder

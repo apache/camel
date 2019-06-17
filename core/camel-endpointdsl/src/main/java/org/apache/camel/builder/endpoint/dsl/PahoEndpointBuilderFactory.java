@@ -872,7 +872,8 @@ public interface PahoEndpointBuilderFactory {
      * <code>org.apache.camel.component.paho.PahoPersistence</code> enum.
      */
     enum PahoPersistence {
-        FILE, MEMORY;
+        FILE,
+MEMORY;
     }
     /**
      * Component for communicating with MQTT M2M message brokers using Eclipse

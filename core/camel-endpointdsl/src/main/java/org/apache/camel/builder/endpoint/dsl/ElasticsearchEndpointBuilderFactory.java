@@ -313,7 +313,19 @@ public interface ElasticsearchEndpointBuilderFactory {
      * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> enum.
      */
     enum ElasticsearchOperation {
-        Index, Update, Bulk, BulkIndex, GetById, MultiGet, MultiSearch, Delete, DeleteIndex, Search, Exists, Ping, Info;
+        Index,
+Update,
+Bulk,
+BulkIndex,
+GetById,
+MultiGet,
+MultiSearch,
+Delete,
+DeleteIndex,
+Search,
+Exists,
+Ping,
+Info;
     }
     /**
      * The elasticsearch component is used for interfacing with ElasticSearch

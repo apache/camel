@@ -1083,14 +1083,25 @@ public interface AtomixQueueEndpointBuilderFactory {
      * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> enum.
      */
     enum Action {
-        ADD, OFFER, PEEK, POLL, CLEAR, CONTAINS, IS_EMPTY, REMOVE, SIZE;
+        ADD,
+OFFER,
+PEEK,
+POLL,
+CLEAR,
+CONTAINS,
+IS_EMPTY,
+REMOVE,
+SIZE;
     }
 
     /**
      * Proxy enum for <code>io.atomix.resource.ReadConsistency</code> enum.
      */
     enum ReadConsistency {
-        ATOMIC, ATOMIC_LEASE, SEQUENTIAL, LOCAL;
+        ATOMIC,
+ATOMIC_LEASE,
+SEQUENTIAL,
+LOCAL;
     }
     /**
      * The atomix-queue component is used to access Atomix's distributed queue.

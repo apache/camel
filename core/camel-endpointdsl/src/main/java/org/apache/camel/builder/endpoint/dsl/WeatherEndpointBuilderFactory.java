@@ -1818,7 +1818,29 @@ public interface WeatherEndpointBuilderFactory {
      * <code>org.apache.camel.component.weather.WeatherLanguage</code> enum.
      */
     enum WeatherLanguage {
-        en, ru, it, es, sp, uk, ua, de, pt, ro, pl, fi, nl, fr, bg, sv, se, zh_tw, zh, zh_cn, tr, hr, ca;
+        en,
+ru,
+it,
+es,
+sp,
+uk,
+ua,
+de,
+pt,
+ro,
+pl,
+fi,
+nl,
+fr,
+bg,
+sv,
+se,
+zh_tw,
+zh,
+zh_cn,
+tr,
+hr,
+ca;
     }
 
     /**
@@ -1826,7 +1848,9 @@ public interface WeatherEndpointBuilderFactory {
      * <code>org.apache.camel.component.weather.WeatherMode</code> enum.
      */
     enum WeatherMode {
-        HTML, JSON, XML;
+        HTML,
+JSON,
+XML;
     }
 
     /**
@@ -1834,7 +1858,8 @@ public interface WeatherEndpointBuilderFactory {
      * <code>org.apache.camel.component.weather.WeatherUnits</code> enum.
      */
     enum WeatherUnits {
-        IMPERIAL, METRIC;
+        IMPERIAL,
+METRIC;
     }
 
     /**
@@ -1842,7 +1867,10 @@ public interface WeatherEndpointBuilderFactory {
      * enum.
      */
     enum WeatherApi {
-        Current, Station, Hourly, Daily;
+        Current,
+Station,
+Hourly,
+Daily;
     }
     /**
      * Polls the weather information from Open Weather Map. Creates a builder to

@@ -1805,7 +1805,10 @@ public interface SjmsEndpointBuilderFactory {
      * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> enum.
      */
     enum SessionAcknowledgementType {
-        AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE, SESSION_TRANSACTED;
+        AUTO_ACKNOWLEDGE,
+CLIENT_ACKNOWLEDGE,
+DUPS_OK_ACKNOWLEDGE,
+SESSION_TRANSACTED;
     }
     /**
      * The sjms component (simple jms) allows messages to be sent to (or
