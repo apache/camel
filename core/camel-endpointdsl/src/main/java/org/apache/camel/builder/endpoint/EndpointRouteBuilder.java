@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.function.ThrowingConsumer;
 
 /**
- * A route builder which gives access to the endpoint DSL
+ * A {@link RouteBuilder} which gives access to the endpoint DSL.
  */
 public abstract class EndpointRouteBuilder extends RouteBuilder implements EndpointBuilderFactory {
 
@@ -41,7 +41,7 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
      * </pre>
      *
      * @param context the camel context to add routes
-     * @param rbc a lambda expression receiving the {@code RouteBuilder} to use to create routes
+     * @param rbc a lambda expression receiving the {@code RouteBuilder} to use for creating routes
      * @throws Exception if an error occurs
      */
     public static void addEndpointRoutes(CamelContext context, ThrowingConsumer<EndpointRouteBuilder, Exception> rbc) throws Exception {
