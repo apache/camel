@@ -1285,8 +1285,8 @@ public interface Web3jEndpointBuilderFactory {
     }
     /**
      * The web3j component uses the Web3j client API and allows you to add/read
-     * nodes to/from a web3j compliant content repositories. Creates a builder
-     * to build endpoints for the Web3j Ethereum Blockchain component.
+     * nodes to/from a web3j compliant content repositories.
+     * Maven coordinates: org.apache.camel:camel-web3j
      */
     default Web3jEndpointBuilder web3j(String path) {
         class Web3jEndpointBuilderImpl extends AbstractEndpointBuilder implements Web3jEndpointBuilder, AdvancedWeb3jEndpointBuilder {

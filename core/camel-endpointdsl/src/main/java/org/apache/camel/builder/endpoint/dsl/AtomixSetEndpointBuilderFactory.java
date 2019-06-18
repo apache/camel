@@ -1154,7 +1154,7 @@ public interface AtomixSetEndpointBuilderFactory {
     }
     /**
      * The atomix-set component is used to access Atomix's distributed set.
-     * Creates a builder to build endpoints for the Atomix Set component.
+     * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixSetEndpointBuilder atomixSet(String path) {
         class AtomixSetEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixSetEndpointBuilder, AdvancedAtomixSetEndpointBuilder {

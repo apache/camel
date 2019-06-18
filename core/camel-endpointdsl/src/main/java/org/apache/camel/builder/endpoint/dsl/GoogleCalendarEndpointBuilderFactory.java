@@ -766,8 +766,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
         SETTINGS;
     }
     /**
-     * The google-calendar component provides access to Google Calendar. Creates
-     * a builder to build endpoints for the Google Calendar component.
+     * The google-calendar component provides access to Google Calendar.
+     * Maven coordinates: org.apache.camel:camel-google-calendar
      */
     default GoogleCalendarEndpointBuilder googleCalendar(String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {

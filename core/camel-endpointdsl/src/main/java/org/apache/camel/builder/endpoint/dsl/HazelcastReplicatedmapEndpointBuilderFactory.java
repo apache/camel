@@ -1083,8 +1083,8 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
     }
     /**
      * The hazelcast-replicatedmap component is used to access Hazelcast
-     * replicated map. Creates a builder to build endpoints for the Hazelcast
-     * Replicated Map component.
+     * replicated map.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String path) {

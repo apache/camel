@@ -123,8 +123,8 @@ public interface IPFSEndpointBuilderFactory {
     }
     /**
      * The camel-ipfs component provides access to the Interplanetary File
-     * System (IPFS). Creates a builder to build endpoints for the IPFS
-     * component.
+     * System (IPFS).
+     * Maven coordinates: org.apache.camel:camel-ipfs
      */
     default IPFSEndpointBuilder iPFS(String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {

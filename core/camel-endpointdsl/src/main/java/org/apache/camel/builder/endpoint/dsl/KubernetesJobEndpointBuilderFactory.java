@@ -1067,8 +1067,8 @@ public interface KubernetesJobEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Jobs component provides a producer to execute kubernetes
-     * job operations Creates a builder to build endpoints for the Kubernetes
-     * Job component.
+     * job operations
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesJobEndpointBuilder kubernetesJob(String path) {
         class KubernetesJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesJobEndpointBuilder, AdvancedKubernetesJobEndpointBuilder {

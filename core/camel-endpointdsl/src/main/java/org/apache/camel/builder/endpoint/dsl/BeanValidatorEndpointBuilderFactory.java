@@ -204,8 +204,8 @@ public interface BeanValidatorEndpointBuilderFactory {
     }
     /**
      * The Validator component performs bean validation of the message body
-     * using the Java Bean Validation API. Creates a builder to build endpoints
-     * for the Bean Validator component.
+     * using the Java Bean Validation API.
+     * Maven coordinates: org.apache.camel:camel-bean-validator
      */
     default BeanValidatorEndpointBuilder beanValidator(String path) {
         class BeanValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanValidatorEndpointBuilder, AdvancedBeanValidatorEndpointBuilder {

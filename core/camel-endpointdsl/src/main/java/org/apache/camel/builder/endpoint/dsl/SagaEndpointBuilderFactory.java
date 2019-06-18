@@ -123,8 +123,8 @@ public interface SagaEndpointBuilderFactory {
     }
     /**
      * The saga component provides access to advanced options for managing the
-     * flow in the Saga EIP. Creates a builder to build endpoints for the Saga
-     * component.
+     * flow in the Saga EIP.
+     * Maven coordinates: org.apache.camel:camel-saga
      */
     default SagaEndpointBuilder saga(String path) {
         class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {

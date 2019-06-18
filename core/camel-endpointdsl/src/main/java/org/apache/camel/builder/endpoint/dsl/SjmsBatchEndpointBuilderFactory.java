@@ -610,8 +610,8 @@ public interface SjmsBatchEndpointBuilderFactory {
     }
     /**
      * The sjms-batch component is a specialized for highly performant,
-     * transactional batch consumption from a JMS queue. Creates a builder to
-     * build endpoints for the Simple JMS Batch component.
+     * transactional batch consumption from a JMS queue.
+     * Maven coordinates: org.apache.camel:camel-sjms
      */
     default SjmsBatchEndpointBuilder sjmsBatch(String path) {
         class SjmsBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsBatchEndpointBuilder, AdvancedSjmsBatchEndpointBuilder {

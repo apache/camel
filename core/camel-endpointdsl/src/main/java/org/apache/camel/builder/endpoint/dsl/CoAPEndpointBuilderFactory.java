@@ -860,8 +860,8 @@ public interface CoAPEndpointBuilderFactory {
     }
     /**
      * The coap component is used for sending and receiving messages from COAP
-     * capable devices. Creates a builder to build endpoints for the CoAP
-     * component.
+     * capable devices.
+     * Maven coordinates: org.apache.camel:camel-coap
      */
     default CoAPEndpointBuilder coAP(String path) {
         class CoAPEndpointBuilderImpl extends AbstractEndpointBuilder implements CoAPEndpointBuilder, AdvancedCoAPEndpointBuilder {

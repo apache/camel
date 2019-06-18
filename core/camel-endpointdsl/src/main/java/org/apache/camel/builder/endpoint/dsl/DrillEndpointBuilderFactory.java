@@ -175,7 +175,8 @@ public interface DrillEndpointBuilderFactory {
     }
     /**
      * The drill component gives you the ability to quering into apache drill
-     * cluster. Creates a builder to build endpoints for the Drill component.
+     * cluster.
+     * Maven coordinates: org.apache.camel:camel-drill
      */
     default DrillEndpointBuilder drill(String path) {
         class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {

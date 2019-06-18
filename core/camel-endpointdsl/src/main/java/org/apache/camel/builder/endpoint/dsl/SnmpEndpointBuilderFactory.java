@@ -367,8 +367,8 @@ public interface SnmpEndpointBuilderFactory {
     }
     /**
      * The snmp component gives you the ability to poll SNMP capable devices or
-     * receiving traps. Creates a builder to build endpoints for the SNMP
-     * component.
+     * receiving traps.
+     * Maven coordinates: org.apache.camel:camel-snmp
      */
     default SnmpEndpointBuilder snmp(String path) {
         class SnmpEndpointBuilderImpl extends AbstractEndpointBuilder implements SnmpEndpointBuilder, AdvancedSnmpEndpointBuilder {

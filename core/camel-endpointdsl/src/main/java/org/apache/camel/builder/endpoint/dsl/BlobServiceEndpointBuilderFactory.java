@@ -1043,8 +1043,8 @@ public interface BlobServiceEndpointBuilderFactory {
     }
     /**
      * The azure-blob component is used for storing and retrieving blobs from
-     * Azure Storage Blob Service. Creates a builder to build endpoints for the
-     * Azure Storage Blob Service component.
+     * Azure Storage Blob Service.
+     * Maven coordinates: org.apache.camel:camel-azure
      */
     default BlobServiceEndpointBuilder blobService(String path) {
         class BlobServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobServiceEndpointBuilder, AdvancedBlobServiceEndpointBuilder {

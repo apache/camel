@@ -4442,8 +4442,8 @@ public interface FacebookEndpointBuilderFactory {
     }
     /**
      * The Facebook component provides access to all of the Facebook APIs
-     * accessible using Facebook4J. Creates a builder to build endpoints for the
-     * Facebook component.
+     * accessible using Facebook4J.
+     * Maven coordinates: org.apache.camel:camel-facebook
      */
     default FacebookEndpointBuilder facebook(String path) {
         class FacebookEndpointBuilderImpl extends AbstractEndpointBuilder implements FacebookEndpointBuilder, AdvancedFacebookEndpointBuilder {

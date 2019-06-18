@@ -1075,8 +1075,8 @@ public interface HazelcastMultimapEndpointBuilderFactory {
     }
     /**
      * The hazelcast-multimap component is used to to access Hazelcast
-     * distributed multimap. Creates a builder to build endpoints for the
-     * Hazelcast Multimap component.
+     * distributed multimap.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
         class HazelcastMultimapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMultimapEndpointBuilder, AdvancedHazelcastMultimapEndpointBuilder {

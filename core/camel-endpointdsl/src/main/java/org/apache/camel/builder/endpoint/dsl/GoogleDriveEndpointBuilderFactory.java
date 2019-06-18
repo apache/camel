@@ -784,8 +784,8 @@ public interface GoogleDriveEndpointBuilderFactory {
     }
     /**
      * The google-drive component provides access to Google Drive file storage
-     * service. Creates a builder to build endpoints for the Google Drive
-     * component.
+     * service.
+     * Maven coordinates: org.apache.camel:camel-google-drive
      */
     default GoogleDriveEndpointBuilder googleDrive(String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {

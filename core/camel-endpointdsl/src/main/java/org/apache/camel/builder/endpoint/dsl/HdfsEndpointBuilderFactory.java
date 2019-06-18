@@ -1841,8 +1841,8 @@ public interface HdfsEndpointBuilderFactory {
         BLOCK;
     }
     /**
-     * For reading/writing from/to an HDFS filesystem using Hadoop 2.x. Creates
-     * a builder to build endpoints for the HDFS2 component.
+     * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+     * Maven coordinates: org.apache.camel:camel-hdfs2
      */
     default HdfsEndpointBuilder hdfs(String path) {
         class HdfsEndpointBuilderImpl extends AbstractEndpointBuilder implements HdfsEndpointBuilder, AdvancedHdfsEndpointBuilder {

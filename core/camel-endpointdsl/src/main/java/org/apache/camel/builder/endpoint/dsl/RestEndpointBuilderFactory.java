@@ -679,8 +679,8 @@ public interface RestEndpointBuilderFactory {
     }
     /**
      * The rest component is used for either hosting REST services (consumer) or
-     * calling external REST services (producer). Creates a builder to build
-     * endpoints for the REST component.
+     * calling external REST services (producer).
+     * Maven coordinates: org.apache.camel:camel-rest
      */
     default RestEndpointBuilder restEndpoint(String path) {
         class RestEndpointBuilderImpl extends AbstractEndpointBuilder implements RestEndpointBuilder, AdvancedRestEndpointBuilder {

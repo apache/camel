@@ -1059,8 +1059,8 @@ public interface HazelcastSetEndpointBuilderFactory {
         poll;
     }
     /**
-     * The camel Endpoint to access Hazelcast distributed set. Creates a builder
-     * to build endpoints for the Hazelcast Set component.
+     * The camel Endpoint to access Hazelcast distributed set.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastSetEndpointBuilder hazelcastSet(String path) {
         class HazelcastSetEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSetEndpointBuilder, AdvancedHazelcastSetEndpointBuilder {

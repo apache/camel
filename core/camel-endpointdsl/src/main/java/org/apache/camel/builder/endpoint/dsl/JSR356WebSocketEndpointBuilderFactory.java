@@ -473,8 +473,8 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
     }
     /**
-     * Camel WebSocket using JSR356 (javax) Creates a builder to build endpoints
-     * for the Javax Websocket component.
+     * Camel WebSocket using JSR356 (javax)
+     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
      */
     default JSR356WebSocketEndpointBuilder jSR356WebSocket(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {

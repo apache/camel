@@ -160,8 +160,8 @@ public interface DdbStreamEndpointBuilderFactory {
     }
     /**
      * The aws-ddbstream component is used for working with Amazon DynamoDB
-     * Streams. Creates a builder to build endpoints for the AWS DynamoDB
-     * Streams component.
+     * Streams.
+     * Maven coordinates: org.apache.camel:camel-aws-ddb
      */
     default DdbStreamEndpointBuilder ddbStream(String path) {
         class DdbStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbStreamEndpointBuilder, AdvancedDdbStreamEndpointBuilder {

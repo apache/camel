@@ -293,8 +293,8 @@ public interface DdbEndpointBuilderFactory {
     }
     /**
      * The aws-ddb component is used for storing and retrieving data from
-     * Amazon's DynamoDB service. Creates a builder to build endpoints for the
-     * AWS DynamoDB component.
+     * Amazon's DynamoDB service.
+     * Maven coordinates: org.apache.camel:camel-aws-ddb
      */
     default DdbEndpointBuilder ddb(String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {

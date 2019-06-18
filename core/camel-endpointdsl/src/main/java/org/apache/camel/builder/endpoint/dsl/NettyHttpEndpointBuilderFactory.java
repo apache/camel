@@ -3994,8 +3994,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
     }
     /**
-     * Netty HTTP server and client using the Netty 4.x library. Creates a
-     * builder to build endpoints for the Netty4 HTTP component.
+     * Netty HTTP server and client using the Netty 4.x library.
+     * Maven coordinates: org.apache.camel:camel-netty4-http
      */
     default NettyHttpEndpointBuilder nettyHttp(String path) {
         class NettyHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyHttpEndpointBuilder, AdvancedNettyHttpEndpointBuilder {

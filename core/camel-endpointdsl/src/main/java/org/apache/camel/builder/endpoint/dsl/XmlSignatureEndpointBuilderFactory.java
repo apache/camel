@@ -931,7 +931,7 @@ public interface XmlSignatureEndpointBuilderFactory {
     }
     /**
      * Used to sign and verify exchanges using the XML signature specification.
-     * Creates a builder to build endpoints for the XML Security component.
+     * Maven coordinates: org.apache.camel:camel-xmlsecurity
      */
     default XmlSignatureEndpointBuilder xmlSignature(String path) {
         class XmlSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlSignatureEndpointBuilder, AdvancedXmlSignatureEndpointBuilder {

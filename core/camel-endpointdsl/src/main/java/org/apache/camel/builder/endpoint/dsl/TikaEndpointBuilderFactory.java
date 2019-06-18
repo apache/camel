@@ -203,8 +203,8 @@ public interface TikaEndpointBuilderFactory {
     }
     /**
      * This component integrates with Apache Tika to extract content and
-     * metadata from thousands of file types. Creates a builder to build
-     * endpoints for the Tika component.
+     * metadata from thousands of file types.
+     * Maven coordinates: org.apache.camel:camel-tika
      */
     default TikaEndpointBuilder tika(String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {

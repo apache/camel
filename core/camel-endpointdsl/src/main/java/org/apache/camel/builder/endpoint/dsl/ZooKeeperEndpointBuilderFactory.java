@@ -664,7 +664,7 @@ public interface ZooKeeperEndpointBuilderFactory {
     }
     /**
      * The zookeeper component allows interaction with a ZooKeeper cluster.
-     * Creates a builder to build endpoints for the ZooKeeper component.
+     * Maven coordinates: org.apache.camel:camel-zookeeper
      */
     default ZooKeeperEndpointBuilder zooKeeper(String path) {
         class ZooKeeperEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperEndpointBuilder, AdvancedZooKeeperEndpointBuilder {

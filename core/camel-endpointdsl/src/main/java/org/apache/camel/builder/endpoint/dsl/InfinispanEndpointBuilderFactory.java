@@ -1138,8 +1138,8 @@ public interface InfinispanEndpointBuilderFactory {
     }
     /**
      * For reading/writing from/to Infinispan distributed key/value store and
-     * data grid. Creates a builder to build endpoints for the Infinispan
-     * component.
+     * data grid.
+     * Maven coordinates: org.apache.camel:camel-infinispan
      */
     default InfinispanEndpointBuilder infinispan(String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {

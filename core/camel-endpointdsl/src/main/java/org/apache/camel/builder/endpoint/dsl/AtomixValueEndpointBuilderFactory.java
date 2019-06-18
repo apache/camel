@@ -1154,7 +1154,7 @@ public interface AtomixValueEndpointBuilderFactory {
     }
     /**
      * The atomix-value component is used to access Atomix's distributed value.
-     * Creates a builder to build endpoints for the Atomix Value component.
+     * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixValueEndpointBuilder atomixValue(String path) {
         class AtomixValueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixValueEndpointBuilder, AdvancedAtomixValueEndpointBuilder {

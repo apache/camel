@@ -267,7 +267,8 @@ public interface TimerEndpointBuilderFactory {
     }
     /**
      * The timer component is used for generating message exchanges when a timer
-     * fires. Creates a builder to build endpoints for the Timer component.
+     * fires.
+     * Maven coordinates: org.apache.camel:camel-timer
      */
     default TimerEndpointBuilder timer(String path) {
         class TimerEndpointBuilderImpl extends AbstractEndpointBuilder implements TimerEndpointBuilder, AdvancedTimerEndpointBuilder {

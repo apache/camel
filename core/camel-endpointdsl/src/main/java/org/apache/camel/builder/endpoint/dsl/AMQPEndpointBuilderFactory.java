@@ -4637,8 +4637,8 @@ public interface AMQPEndpointBuilderFactory {
         Exclusive;
     }
     /**
-     * Messaging with AMQP protocol using Apache QPid Client. Creates a builder
-     * to build endpoints for the AMQP component.
+     * Messaging with AMQP protocol using Apache QPid Client.
+     * Maven coordinates: org.apache.camel:camel-amqp
      */
     default AMQPEndpointBuilder aMQP(String path) {
         class AMQPEndpointBuilderImpl extends AbstractEndpointBuilder implements AMQPEndpointBuilder, AdvancedAMQPEndpointBuilder {

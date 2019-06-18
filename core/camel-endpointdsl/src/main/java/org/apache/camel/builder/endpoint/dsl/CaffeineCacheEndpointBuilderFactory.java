@@ -823,7 +823,8 @@ public interface CaffeineCacheEndpointBuilderFactory {
     }
     /**
      * The caffeine-cache component is used for integration with Caffeine Cache.
-     * Creates a builder to build endpoints for the Caffeine Cache component.
+     * 
+     * Maven coordinates: org.apache.camel:camel-caffeine
      */
     default CaffeineCacheEndpointBuilder caffeineCache(String path) {
         class CaffeineCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineCacheEndpointBuilder, AdvancedCaffeineCacheEndpointBuilder {

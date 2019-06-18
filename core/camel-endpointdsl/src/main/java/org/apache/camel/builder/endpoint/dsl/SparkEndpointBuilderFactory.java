@@ -282,8 +282,8 @@ public interface SparkEndpointBuilderFactory {
     }
     /**
      * The spark-rest component is used for hosting REST services which has been
-     * defined using Camel rest-dsl. Creates a builder to build endpoints for
-     * the Spark Rest component.
+     * defined using Camel rest-dsl.
+     * Maven coordinates: org.apache.camel:camel-spark-rest
      */
     default SparkEndpointBuilder spark(String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {

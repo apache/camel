@@ -105,8 +105,8 @@ public interface GrapeEndpointBuilderFactory {
     }
     /**
      * The grape component allows you to fetch, load and manage additional jars
-     * when CamelContext is running. Creates a builder to build endpoints for
-     * the Grape component.
+     * when CamelContext is running.
+     * Maven coordinates: org.apache.camel:camel-grape
      */
     default GrapeEndpointBuilder grape(String path) {
         class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {

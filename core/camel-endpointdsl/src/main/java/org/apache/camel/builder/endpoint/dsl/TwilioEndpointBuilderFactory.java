@@ -531,8 +531,8 @@ public interface TwilioEndpointBuilderFactory {
     }
     /**
      * The Twilio component allows you to interact with the Twilio REST APIs
-     * using Twilio Java SDK. Creates a builder to build endpoints for the
-     * Twilio component.
+     * using Twilio Java SDK.
+     * Maven coordinates: org.apache.camel:camel-twilio
      */
     default TwilioEndpointBuilder twilio(String path) {
         class TwilioEndpointBuilderImpl extends AbstractEndpointBuilder implements TwilioEndpointBuilder, AdvancedTwilioEndpointBuilder {

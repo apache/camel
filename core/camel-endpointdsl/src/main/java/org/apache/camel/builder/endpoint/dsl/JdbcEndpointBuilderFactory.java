@@ -391,8 +391,8 @@ public interface JdbcEndpointBuilderFactory {
     }
     /**
      * The jdbc component enables you to access databases through JDBC, where
-     * SQL queries are sent in the message body. Creates a builder to build
-     * endpoints for the JDBC component.
+     * SQL queries are sent in the message body.
+     * Maven coordinates: org.apache.camel:camel-jdbc
      */
     default JdbcEndpointBuilder jdbc(String path) {
         class JdbcEndpointBuilderImpl extends AbstractEndpointBuilder implements JdbcEndpointBuilder, AdvancedJdbcEndpointBuilder {

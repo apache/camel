@@ -1314,8 +1314,8 @@ public interface CassandraEndpointBuilderFactory {
     }
     /**
      * The cql component aims at integrating Cassandra 2.0 using the CQL3 API
-     * (not the Thrift API). Creates a builder to build endpoints for the
-     * Cassandra CQL component.
+     * (not the Thrift API).
+     * Maven coordinates: org.apache.camel:camel-cassandraql
      */
     default CassandraEndpointBuilder cassandra(String path) {
         class CassandraEndpointBuilderImpl extends AbstractEndpointBuilder implements CassandraEndpointBuilder, AdvancedCassandraEndpointBuilder {

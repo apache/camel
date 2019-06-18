@@ -216,8 +216,8 @@ public interface SqlStoredEndpointBuilderFactory {
     }
     /**
      * The sql component allows you to work with databases using JDBC Stored
-     * Procedure queries. Creates a builder to build endpoints for the SQL
-     * Stored Procedure component.
+     * Procedure queries.
+     * Maven coordinates: org.apache.camel:camel-sql
      */
     default SqlStoredEndpointBuilder sqlStored(String path) {
         class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {

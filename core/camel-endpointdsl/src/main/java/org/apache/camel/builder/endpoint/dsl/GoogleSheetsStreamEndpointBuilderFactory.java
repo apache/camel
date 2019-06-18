@@ -292,8 +292,8 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
     }
     /**
-     * The google-sheets component provides access to Google Sheets. Creates a
-     * builder to build endpoints for the Google Sheets Stream component.
+     * The google-sheets component provides access to Google Sheets.
+     * Maven coordinates: org.apache.camel:camel-google-sheets
      */
     default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
         class GoogleSheetsStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsStreamEndpointBuilder, AdvancedGoogleSheetsStreamEndpointBuilder {

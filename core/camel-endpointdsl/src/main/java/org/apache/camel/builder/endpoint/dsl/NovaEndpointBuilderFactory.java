@@ -186,8 +186,8 @@ public interface NovaEndpointBuilderFactory {
     }
     /**
      * The openstack-nova component allows messages to be sent to an OpenStack
-     * compute services. Creates a builder to build endpoints for the OpenStack
-     * Nova component.
+     * compute services.
+     * Maven coordinates: org.apache.camel:camel-openstack
      */
     default NovaEndpointBuilder nova(String path) {
         class NovaEndpointBuilderImpl extends AbstractEndpointBuilder implements NovaEndpointBuilder, AdvancedNovaEndpointBuilder {

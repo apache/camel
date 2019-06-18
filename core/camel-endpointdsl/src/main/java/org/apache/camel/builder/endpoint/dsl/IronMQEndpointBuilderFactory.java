@@ -1071,8 +1071,8 @@ public interface IronMQEndpointBuilderFactory {
     }
     /**
      * The ironmq provides integration with IronMQ an elastic and durable hosted
-     * message queue as a service. Creates a builder to build endpoints for the
-     * IronMQ component.
+     * message queue as a service.
+     * Maven coordinates: org.apache.camel:camel-ironmq
      */
     default IronMQEndpointBuilder ironMQ(String path) {
         class IronMQEndpointBuilderImpl extends AbstractEndpointBuilder implements IronMQEndpointBuilder, AdvancedIronMQEndpointBuilder {

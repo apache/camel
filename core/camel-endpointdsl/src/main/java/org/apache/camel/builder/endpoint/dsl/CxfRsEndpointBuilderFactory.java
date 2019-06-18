@@ -1730,7 +1730,7 @@ public interface CxfRsEndpointBuilderFactory {
     }
     /**
      * The cxfrs component is used for JAX-RS REST services using Apache CXF.
-     * Creates a builder to build endpoints for the CXF-RS component.
+     * Maven coordinates: org.apache.camel:camel-cxf
      */
     default CxfRsEndpointBuilder cxfRs(String path) {
         class CxfRsEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfRsEndpointBuilder, AdvancedCxfRsEndpointBuilder {

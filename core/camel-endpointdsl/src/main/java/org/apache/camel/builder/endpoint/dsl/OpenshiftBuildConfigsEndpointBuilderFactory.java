@@ -319,8 +319,8 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Build Config component provides a producer to execute
-     * kubernetes build config operations. Creates a builder to build endpoints
-     * for the Openshift Build Config component.
+     * kubernetes build config operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {

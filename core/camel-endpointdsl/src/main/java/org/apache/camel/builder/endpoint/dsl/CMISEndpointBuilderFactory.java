@@ -735,8 +735,8 @@ public interface CMISEndpointBuilderFactory {
     }
     /**
      * The cmis component uses the Apache Chemistry client API and allows you to
-     * add/read nodes to/from a CMIS compliant content repositories. Creates a
-     * builder to build endpoints for the CMIS component.
+     * add/read nodes to/from a CMIS compliant content repositories.
+     * Maven coordinates: org.apache.camel:camel-cmis
      */
     default CMISEndpointBuilder cMIS(String path) {
         class CMISEndpointBuilderImpl extends AbstractEndpointBuilder implements CMISEndpointBuilder, AdvancedCMISEndpointBuilder {

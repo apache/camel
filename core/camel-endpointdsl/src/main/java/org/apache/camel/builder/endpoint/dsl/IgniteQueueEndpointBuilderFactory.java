@@ -174,8 +174,8 @@ public interface IgniteQueueEndpointBuilderFactory {
     }
     /**
      * The Ignite Queue endpoint is one of camel-ignite endpoints which allows
-     * you to interact with Ignite Queue data structures. Creates a builder to
-     * build endpoints for the Ignite Queues component.
+     * you to interact with Ignite Queue data structures.
+     * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteQueueEndpointBuilder igniteQueue(String path) {
         class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder, AdvancedIgniteQueueEndpointBuilder {

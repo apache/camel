@@ -365,8 +365,8 @@ public interface AhcEndpointBuilderFactory {
         }
     }
     /**
-     * To call external HTTP services using Async Http Client. Creates a builder
-     * to build endpoints for the AHC component.
+     * To call external HTTP services using Async Http Client.
+     * Maven coordinates: org.apache.camel:camel-ahc
      */
     default AhcEndpointBuilder ahc(String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {

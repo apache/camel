@@ -582,8 +582,8 @@ public interface IgniteMessagingEndpointBuilderFactory {
     }
     /**
      * The Ignite Messaging endpoint is one of camel-ignite endpoints which
-     * allows you to send and consume messages from an Ignite topic. Creates a
-     * builder to build endpoints for the Ignite Messaging component.
+     * allows you to send and consume messages from an Ignite topic.
+     * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
         class IgniteMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteMessagingEndpointBuilder, AdvancedIgniteMessagingEndpointBuilder {

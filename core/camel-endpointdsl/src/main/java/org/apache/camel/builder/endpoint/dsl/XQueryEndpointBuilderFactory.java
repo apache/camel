@@ -1470,8 +1470,8 @@ public interface XQueryEndpointBuilderFactory {
         StringSource;
     }
     /**
-     * Transforms the message using a XQuery template using Saxon. Creates a
-     * builder to build endpoints for the XQuery component.
+     * Transforms the message using a XQuery template using Saxon.
+     * Maven coordinates: org.apache.camel:camel-saxon
      */
     default XQueryEndpointBuilder xQuery(String path) {
         class XQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements XQueryEndpointBuilder, AdvancedXQueryEndpointBuilder {

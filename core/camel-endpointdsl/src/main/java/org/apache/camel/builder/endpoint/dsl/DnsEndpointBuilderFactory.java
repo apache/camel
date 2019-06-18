@@ -122,8 +122,8 @@ public interface DnsEndpointBuilderFactory {
         wikipedia;
     }
     /**
-     * To lookup domain information and run DNS queries using DNSJava. Creates a
-     * builder to build endpoints for the DNS component.
+     * To lookup domain information and run DNS queries using DNSJava.
+     * Maven coordinates: org.apache.camel:camel-dns
      */
     default DnsEndpointBuilder dns(String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {

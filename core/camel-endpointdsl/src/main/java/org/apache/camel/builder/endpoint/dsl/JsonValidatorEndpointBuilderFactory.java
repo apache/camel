@@ -228,8 +228,7 @@ public interface JsonValidatorEndpointBuilderFactory {
     }
     /**
      * Validates the payload of a message using NetworkNT JSON Schema library.
-     * Creates a builder to build endpoints for the JSON Schema Validator
-     * component.
+     * Maven coordinates: org.apache.camel:camel-json-validator
      */
     default JsonValidatorEndpointBuilder jsonValidator(String path) {
         class JsonValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonValidatorEndpointBuilder, AdvancedJsonValidatorEndpointBuilder {

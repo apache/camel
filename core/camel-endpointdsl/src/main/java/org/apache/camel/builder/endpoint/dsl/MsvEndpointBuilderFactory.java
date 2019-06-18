@@ -275,8 +275,8 @@ public interface MsvEndpointBuilderFactory {
         }
     }
     /**
-     * Validates the payload of a message using the MSV Library. Creates a
-     * builder to build endpoints for the MSV component.
+     * Validates the payload of a message using the MSV Library.
+     * Maven coordinates: org.apache.camel:camel-msv
      */
     default MsvEndpointBuilder msv(String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {

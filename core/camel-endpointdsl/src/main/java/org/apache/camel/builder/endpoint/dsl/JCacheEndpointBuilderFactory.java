@@ -1225,8 +1225,8 @@ public interface JCacheEndpointBuilderFactory {
     }
     /**
      * The jcache component enables you to perform caching operations using
-     * JSR107/JCache as cache implementation. Creates a builder to build
-     * endpoints for the JCache component.
+     * JSR107/JCache as cache implementation.
+     * Maven coordinates: org.apache.camel:camel-jcache
      */
     default JCacheEndpointBuilder jCache(String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {

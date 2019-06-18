@@ -386,8 +386,8 @@ public class EndpointDslMojo extends AbstractMojo {
             .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
             .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + ", Advanced" + builderName + " {\n" + "    public " + builderName
                      + "Impl(String path) {\n" + "        super(\"" + model.getScheme() + "\", path);\n" + "    }\n" + "}\n" + "return new " + builderName + "Impl(path);\n");
-        method.getJavaDoc().setText((StringHelper.isEmpty(model.getDescription()) ? "" : model.getDescription() + " ") + "Creates a builder to build endpoints for the "
-                                    + model.getTitle() + " component.");
+        method.getJavaDoc().setText((StringHelper.isEmpty(model.getDescription()) ? "" : model.getDescription() + " ") + "\nMaven coordinates: "
+                                    + project.getGroupId() + ":" + project.getArtifactId());
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);

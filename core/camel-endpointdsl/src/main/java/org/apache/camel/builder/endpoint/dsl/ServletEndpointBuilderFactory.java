@@ -319,8 +319,8 @@ public interface ServletEndpointBuilderFactory {
     }
     /**
      * To use a HTTP Servlet as entry for Camel routes when running in a servlet
-     * container. Creates a builder to build endpoints for the Servlet
-     * component.
+     * container.
+     * Maven coordinates: org.apache.camel:camel-servlet
      */
     default ServletEndpointBuilder servlet(String path) {
         class ServletEndpointBuilderImpl extends AbstractEndpointBuilder implements ServletEndpointBuilder, AdvancedServletEndpointBuilder {

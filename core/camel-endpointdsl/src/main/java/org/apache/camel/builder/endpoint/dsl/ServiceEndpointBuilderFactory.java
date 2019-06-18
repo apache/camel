@@ -103,8 +103,8 @@ public interface ServiceEndpointBuilderFactory {
     }
     /**
      * Represents an endpoint which is registered to a Service Registry such as
-     * Consul, Etcd. Creates a builder to build endpoints for the Service
-     * component.
+     * Consul, Etcd.
+     * Maven coordinates: org.apache.camel:camel-service
      */
     default ServiceEndpointBuilder service(String path) {
         class ServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceEndpointBuilder, AdvancedServiceEndpointBuilder {

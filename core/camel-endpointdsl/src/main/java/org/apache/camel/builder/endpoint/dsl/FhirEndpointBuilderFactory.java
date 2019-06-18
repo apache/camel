@@ -1532,7 +1532,8 @@ public interface FhirEndpointBuilderFactory {
     }
     /**
      * The fhir component is used for working with the FHIR protocol (health
-     * care). Creates a builder to build endpoints for the FHIR component.
+     * care).
+     * Maven coordinates: org.apache.camel:camel-fhir
      */
     default FhirEndpointBuilder fhir(String path) {
         class FhirEndpointBuilderImpl extends AbstractEndpointBuilder implements FhirEndpointBuilder, AdvancedFhirEndpointBuilder {

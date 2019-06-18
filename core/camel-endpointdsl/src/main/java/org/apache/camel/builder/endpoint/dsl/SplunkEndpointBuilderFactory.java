@@ -1301,7 +1301,7 @@ public interface SplunkEndpointBuilderFactory {
     }
     /**
      * The splunk component allows to publish or search for events in Splunk.
-     * Creates a builder to build endpoints for the Splunk component.
+     * Maven coordinates: org.apache.camel:camel-splunk
      */
     default SplunkEndpointBuilder splunk(String path) {
         class SplunkEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkEndpointBuilder, AdvancedSplunkEndpointBuilder {

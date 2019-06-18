@@ -158,8 +158,8 @@ public interface InfluxDbEndpointBuilderFactory {
     }
     /**
      * The influxdb component allows you to interact with InfluxDB, a time
-     * series database. Creates a builder to build endpoints for the InfluxDB
-     * component.
+     * series database.
+     * Maven coordinates: org.apache.camel:camel-influxdb
      */
     default InfluxDbEndpointBuilder influxDb(String path) {
         class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {

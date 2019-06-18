@@ -1105,7 +1105,7 @@ public interface AtomixQueueEndpointBuilderFactory {
     }
     /**
      * The atomix-queue component is used to access Atomix's distributed queue.
-     * Creates a builder to build endpoints for the Atomix Queue component.
+     * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixQueueEndpointBuilder atomixQueue(String path) {
         class AtomixQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixQueueEndpointBuilder, AdvancedAtomixQueueEndpointBuilder {

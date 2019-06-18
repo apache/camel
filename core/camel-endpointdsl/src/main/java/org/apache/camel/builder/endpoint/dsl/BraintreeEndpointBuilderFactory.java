@@ -840,8 +840,8 @@ public interface BraintreeEndpointBuilderFactory {
     }
     /**
      * The braintree component is used for integrating with the Braintree
-     * Payment System. Creates a builder to build endpoints for the Braintree
-     * component.
+     * Payment System.
+     * Maven coordinates: org.apache.camel:camel-braintree
      */
     default BraintreeEndpointBuilder braintree(String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {

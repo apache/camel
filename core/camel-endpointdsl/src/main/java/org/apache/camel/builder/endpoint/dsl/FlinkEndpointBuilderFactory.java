@@ -225,8 +225,8 @@ public interface FlinkEndpointBuilderFactory {
     }
     /**
      * The flink component can be used to send DataSet jobs to Apache Flink
-     * cluster. Creates a builder to build endpoints for the Apache Flink
-     * component.
+     * cluster.
+     * Maven coordinates: org.apache.camel:camel-flink
      */
     default FlinkEndpointBuilder flink(String path) {
         class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {

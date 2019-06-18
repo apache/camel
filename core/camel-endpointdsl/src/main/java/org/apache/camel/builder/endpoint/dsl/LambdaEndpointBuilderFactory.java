@@ -216,8 +216,8 @@ public interface LambdaEndpointBuilderFactory {
     }
     /**
      * The aws-lambda is used for managing and invoking functions from Amazon
-     * Lambda. Creates a builder to build endpoints for the AWS Lambda
-     * component.
+     * Lambda.
+     * Maven coordinates: org.apache.camel:camel-aws-lambda
      */
     default LambdaEndpointBuilder lambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {

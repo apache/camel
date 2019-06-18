@@ -516,8 +516,8 @@ public interface JMXEndpointBuilderFactory {
         }
     }
     /**
-     * The jmx component allows to receive JMX notifications. Creates a builder
-     * to build endpoints for the JMX component.
+     * The jmx component allows to receive JMX notifications.
+     * Maven coordinates: org.apache.camel:camel-jmx
      */
     default JMXEndpointBuilder jMX(String path) {
         class JMXEndpointBuilderImpl extends AbstractEndpointBuilder implements JMXEndpointBuilder, AdvancedJMXEndpointBuilder {

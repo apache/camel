@@ -243,8 +243,8 @@ public interface GeoCoderEndpointBuilderFactory {
     }
     /**
      * The geocoder component is used for looking up geocodes (latitude and
-     * longitude) for a given address, or reverse lookup. Creates a builder to
-     * build endpoints for the Geocoder component.
+     * longitude) for a given address, or reverse lookup.
+     * Maven coordinates: org.apache.camel:camel-geocoder
      */
     default GeoCoderEndpointBuilder geoCoder(String path) {
         class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {

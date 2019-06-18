@@ -159,8 +159,8 @@ public interface ChatScriptEndpointBuilderFactory {
         }
     }
     /**
-     * Represents a ChatScript endpoint. Creates a builder to build endpoints
-     * for the ChatScript component.
+     * Represents a ChatScript endpoint.
+     * Maven coordinates: org.apache.camel:camel-chatscript
      */
     default ChatScriptEndpointBuilder chatScript(String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {

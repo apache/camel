@@ -155,8 +155,8 @@ public interface BeanEndpointBuilderFactory {
         }
     }
     /**
-     * The bean component is for invoking Java beans from Camel. Creates a
-     * builder to build endpoints for the Bean component.
+     * The bean component is for invoking Java beans from Camel.
+     * Maven coordinates: org.apache.camel:camel-bean
      */
     default BeanEndpointBuilder bean(String path) {
         class BeanEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanEndpointBuilder, AdvancedBeanEndpointBuilder {

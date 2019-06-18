@@ -476,8 +476,8 @@ public interface SpringIntegrationEndpointBuilderFactory {
         }
     }
     /**
-     * Bridges Camel with Spring Integration. Creates a builder to build
-     * endpoints for the Spring Integration component.
+     * Bridges Camel with Spring Integration.
+     * Maven coordinates: org.apache.camel:camel-spring-integration
      */
     default SpringIntegrationEndpointBuilder springIntegration(String path) {
         class SpringIntegrationEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringIntegrationEndpointBuilder, AdvancedSpringIntegrationEndpointBuilder {

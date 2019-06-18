@@ -96,8 +96,8 @@ public interface RestSwaggerEndpointBuilderFactory {
         }
     }
     /**
-     * An awesome REST endpoint backed by Swagger specifications. Creates a
-     * builder to build endpoints for the REST Swagger component.
+     * An awesome REST endpoint backed by Swagger specifications.
+     * Maven coordinates: org.apache.camel:camel-rest-swagger
      */
     default RestSwaggerEndpointBuilder restSwagger(String path) {
         class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder, AdvancedRestSwaggerEndpointBuilder {

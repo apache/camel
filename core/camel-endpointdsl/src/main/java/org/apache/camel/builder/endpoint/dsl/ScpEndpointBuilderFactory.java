@@ -407,8 +407,8 @@ public interface ScpEndpointBuilderFactory {
         }
     }
     /**
-     * To copy files using the secure copy protocol (SCP). Creates a builder to
-     * build endpoints for the SCP component.
+     * To copy files using the secure copy protocol (SCP).
+     * Maven coordinates: org.apache.camel:camel-jsch
      */
     default ScpEndpointBuilder scp(String path) {
         class ScpEndpointBuilderImpl extends AbstractEndpointBuilder implements ScpEndpointBuilder, AdvancedScpEndpointBuilder {

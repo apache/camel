@@ -169,8 +169,8 @@ public interface IgniteComputeEndpointBuilderFactory {
      * The Ignite Compute endpoint is one of camel-ignite endpoints which allows
      * you to run compute operations on the cluster by passing in an
      * IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of
-     * them, along with their parameters if necessary. Creates a builder to
-     * build endpoints for the Ignite Compute component.
+     * them, along with their parameters if necessary.
+     * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteComputeEndpointBuilder igniteCompute(String path) {
         class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {

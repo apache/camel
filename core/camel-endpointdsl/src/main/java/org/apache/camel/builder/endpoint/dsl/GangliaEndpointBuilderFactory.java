@@ -347,8 +347,8 @@ public interface GangliaEndpointBuilderFactory {
     }
     /**
      * The ganglia component is used for sending metrics to the Ganglia
-     * monitoring system. Creates a builder to build endpoints for the Ganglia
-     * component.
+     * monitoring system.
+     * Maven coordinates: org.apache.camel:camel-ganglia
      */
     default GangliaEndpointBuilder ganglia(String path) {
         class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {

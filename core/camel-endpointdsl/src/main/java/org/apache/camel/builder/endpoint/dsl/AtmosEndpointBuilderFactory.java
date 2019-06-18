@@ -700,7 +700,7 @@ public interface AtmosEndpointBuilderFactory {
     }
     /**
      * The atmos component is used for integrating with EMC's Atomos Storage.
-     * Creates a builder to build endpoints for the Atmos component.
+     * Maven coordinates: org.apache.camel:camel-atmos
      */
     default AtmosEndpointBuilder atmos(String path) {
         class AtmosEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosEndpointBuilder, AdvancedAtmosEndpointBuilder {

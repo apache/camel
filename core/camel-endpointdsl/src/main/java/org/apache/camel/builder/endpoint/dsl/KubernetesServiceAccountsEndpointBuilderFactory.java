@@ -325,8 +325,8 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Service Accounts component provides a producer to execute
-     * service account operations. Creates a builder to build endpoints for the
-     * Kubernetes Service Account component.
+     * service account operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
             String path) {

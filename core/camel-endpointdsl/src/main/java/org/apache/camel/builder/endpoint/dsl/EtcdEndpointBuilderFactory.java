@@ -1134,8 +1134,8 @@ public interface EtcdEndpointBuilderFactory {
     }
     /**
      * The camel etcd component allows you to work with Etcd, a distributed
-     * reliable key-value store. Creates a builder to build endpoints for the
-     * etcd component.
+     * reliable key-value store.
+     * Maven coordinates: org.apache.camel:camel-etcd
      */
     default EtcdEndpointBuilder etcd(String path) {
         class EtcdEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdEndpointBuilder, AdvancedEtcdEndpointBuilder {

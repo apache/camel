@@ -283,7 +283,7 @@ public interface ValidatorEndpointBuilderFactory {
     }
     /**
      * Validates the payload of a message using XML Schema and JAXP Validation.
-     * Creates a builder to build endpoints for the Validator component.
+     * Maven coordinates: org.apache.camel:camel-validator
      */
     default ValidatorEndpointBuilder validator(String path) {
         class ValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements ValidatorEndpointBuilder, AdvancedValidatorEndpointBuilder {

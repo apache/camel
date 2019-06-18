@@ -146,8 +146,8 @@ public interface LumberjackEndpointBuilderFactory {
     }
     /**
      * The lumberjack retrieves logs sent over the network using the Lumberjack
-     * protocol. Creates a builder to build endpoints for the Lumberjack
-     * component.
+     * protocol.
+     * Maven coordinates: org.apache.camel:camel-lumberjack
      */
     default LumberjackEndpointBuilder lumberjack(String path) {
         class LumberjackEndpointBuilderImpl extends AbstractEndpointBuilder implements LumberjackEndpointBuilder, AdvancedLumberjackEndpointBuilder {

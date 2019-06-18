@@ -167,8 +167,8 @@ public interface BonitaEndpointBuilderFactory {
         startCase;
     }
     /**
-     * Used for communicating with a remote Bonita BPM process engine. Creates a
-     * builder to build endpoints for the Bonita component.
+     * Used for communicating with a remote Bonita BPM process engine.
+     * Maven coordinates: org.apache.camel:camel-bonita
      */
     default BonitaEndpointBuilder bonita(String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {

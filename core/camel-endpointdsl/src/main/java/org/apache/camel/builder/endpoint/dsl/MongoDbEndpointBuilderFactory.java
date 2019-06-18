@@ -1270,8 +1270,8 @@ public interface MongoDbEndpointBuilderFactory {
         MongoIterable;
     }
     /**
-     * Component for working with documents stored in MongoDB database. Creates
-     * a builder to build endpoints for the MongoDB component.
+     * Component for working with documents stored in MongoDB database.
+     * Maven coordinates: org.apache.camel:camel-mongodb3
      */
     default MongoDbEndpointBuilder mongoDb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {

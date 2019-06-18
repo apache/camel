@@ -1067,8 +1067,8 @@ public interface KubernetesHPAEndpointBuilderFactory {
     }
     /**
      * The Kubernetes HPA component provides a producer to execute kubernetes
-     * hpa operations and a consumer to consume HPA events. Creates a builder to
-     * build endpoints for the Kubernetes HPA component.
+     * hpa operations and a consumer to consume HPA events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesHPAEndpointBuilder kubernetesHPA(String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {

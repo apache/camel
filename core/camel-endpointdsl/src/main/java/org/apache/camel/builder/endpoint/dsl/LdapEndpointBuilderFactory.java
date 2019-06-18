@@ -167,8 +167,8 @@ public interface LdapEndpointBuilderFactory {
     }
     /**
      * The ldap component allows you to perform searches in LDAP servers using
-     * filters as the message payload. Creates a builder to build endpoints for
-     * the LDAP component.
+     * filters as the message payload.
+     * Maven coordinates: org.apache.camel:camel-ldap
      */
     default LdapEndpointBuilder ldap(String path) {
         class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder, AdvancedLdapEndpointBuilder {

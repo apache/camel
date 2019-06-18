@@ -960,8 +960,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
     }
     /**
      * The spring-ws component is used for SOAP WebServices using Spring
-     * WebServices. Creates a builder to build endpoints for the Spring
-     * WebService component.
+     * WebServices.
+     * Maven coordinates: org.apache.camel:camel-spring-ws
      */
     default SpringWebserviceEndpointBuilder springWebservice(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {

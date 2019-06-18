@@ -240,8 +240,8 @@ public interface RssEndpointBuilderFactory {
         }
     }
     /**
-     * The rss component is used for consuming RSS feeds. Creates a builder to
-     * build endpoints for the RSS component.
+     * The rss component is used for consuming RSS feeds.
+     * Maven coordinates: org.apache.camel:camel-rss
      */
     default RssEndpointBuilder rss(String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {

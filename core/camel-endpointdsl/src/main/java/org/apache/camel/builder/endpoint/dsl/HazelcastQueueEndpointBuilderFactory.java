@@ -1066,8 +1066,8 @@ public interface HazelcastQueueEndpointBuilderFactory {
     }
     /**
      * The hazelcast-queue component is used to access Hazelcast distributed
-     * queue. Creates a builder to build endpoints for the Hazelcast Queue
-     * component.
+     * queue.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
         class HazelcastQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastQueueEndpointBuilder, AdvancedHazelcastQueueEndpointBuilder {

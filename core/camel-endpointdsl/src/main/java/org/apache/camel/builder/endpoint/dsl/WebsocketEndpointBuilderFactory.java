@@ -1137,8 +1137,8 @@ public interface WebsocketEndpointBuilderFactory {
     }
     /**
      * The websocket component provides websocket endpoints with Jetty for
-     * communicating with clients using websocket. Creates a builder to build
-     * endpoints for the Jetty Websocket component.
+     * communicating with clients using websocket.
+     * Maven coordinates: org.apache.camel:camel-websocket
      */
     default WebsocketEndpointBuilder websocket(String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {

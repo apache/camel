@@ -186,8 +186,8 @@ public interface CinderEndpointBuilderFactory {
     }
     /**
      * The openstack-cinder component allows messages to be sent to an OpenStack
-     * block storage services. Creates a builder to build endpoints for the
-     * OpenStack Cinder component.
+     * block storage services.
+     * Maven coordinates: org.apache.camel:camel-openstack
      */
     default CinderEndpointBuilder cinder(String path) {
         class CinderEndpointBuilderImpl extends AbstractEndpointBuilder implements CinderEndpointBuilder, AdvancedCinderEndpointBuilder {

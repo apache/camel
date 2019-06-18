@@ -1032,8 +1032,8 @@ public interface CometdEndpointBuilderFactory {
     }
     /**
      * The cometd component is a transport for working with the Jetty
-     * implementation of the cometd/bayeux protocol. Creates a builder to build
-     * endpoints for the CometD component.
+     * implementation of the cometd/bayeux protocol.
+     * Maven coordinates: org.apache.camel:camel-cometd
      */
     default CometdEndpointBuilder cometd(String path) {
         class CometdEndpointBuilderImpl extends AbstractEndpointBuilder implements CometdEndpointBuilder, AdvancedCometdEndpointBuilder {

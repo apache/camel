@@ -152,8 +152,8 @@ public interface IgniteEventsEndpointBuilderFactory {
     /**
      * The Ignite Events endpoint is one of camel-ignite endpoints which allows
      * you to receive events from the Ignite cluster by creating a local event
-     * listener. Creates a builder to build endpoints for the Ignite Events
-     * component.
+     * listener.
+     * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteEventsEndpointBuilder igniteEvents(String path) {
         class IgniteEventsEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteEventsEndpointBuilder, AdvancedIgniteEventsEndpointBuilder {

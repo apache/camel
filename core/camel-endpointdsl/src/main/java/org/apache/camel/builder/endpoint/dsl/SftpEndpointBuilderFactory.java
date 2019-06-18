@@ -4545,8 +4545,8 @@ public interface SftpEndpointBuilderFactory {
     }
     /**
      * The sftp (FTP over SSH) component is used for uploading or downloading
-     * files from SFTP servers. Creates a builder to build endpoints for the
-     * SFTP component.
+     * files from SFTP servers.
+     * Maven coordinates: org.apache.camel:camel-ftp
      */
     default SftpEndpointBuilder sftp(String path) {
         class SftpEndpointBuilderImpl extends AbstractEndpointBuilder implements SftpEndpointBuilder, AdvancedSftpEndpointBuilder {

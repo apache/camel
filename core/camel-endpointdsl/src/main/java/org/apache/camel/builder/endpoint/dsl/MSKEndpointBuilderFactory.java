@@ -121,8 +121,8 @@ public interface MSKEndpointBuilderFactory {
         describeCluster;
     }
     /**
-     * The aws-kms is used for managing Amazon KMS Creates a builder to build
-     * endpoints for the AWS MSK component.
+     * The aws-kms is used for managing Amazon KMS
+     * Maven coordinates: org.apache.camel:camel-aws-msk
      */
     default MSKEndpointBuilder mSK(String path) {
         class MSKEndpointBuilderImpl extends AbstractEndpointBuilder implements MSKEndpointBuilder, AdvancedMSKEndpointBuilder {

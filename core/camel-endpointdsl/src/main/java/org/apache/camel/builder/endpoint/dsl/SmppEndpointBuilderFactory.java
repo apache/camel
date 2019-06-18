@@ -1840,7 +1840,7 @@ public interface SmppEndpointBuilderFactory {
     }
     /**
      * To send and receive SMS using a SMSC (Short Message Service Center).
-     * Creates a builder to build endpoints for the SMPP component.
+     * Maven coordinates: org.apache.camel:camel-smpp
      */
     default SmppEndpointBuilder smpp(String path) {
         class SmppEndpointBuilderImpl extends AbstractEndpointBuilder implements SmppEndpointBuilder, AdvancedSmppEndpointBuilder {

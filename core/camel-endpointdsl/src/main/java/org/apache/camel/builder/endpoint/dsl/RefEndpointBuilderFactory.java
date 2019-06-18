@@ -374,7 +374,8 @@ public interface RefEndpointBuilderFactory {
     }
     /**
      * The ref component is used for lookup of existing endpoints bound in the
-     * Registry. Creates a builder to build endpoints for the Ref component.
+     * Registry.
+     * Maven coordinates: org.apache.camel:camel-ref
      */
     default RefEndpointBuilder ref(String path) {
         class RefEndpointBuilderImpl extends AbstractEndpointBuilder implements RefEndpointBuilder, AdvancedRefEndpointBuilder {

@@ -1069,8 +1069,8 @@ public interface KubernetesPodsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Pods component provides a producer to execute kubernetes
-     * pod operations and a consumer to consume pod events. Creates a builder to
-     * build endpoints for the Kubernetes Pods component.
+     * pod operations and a consumer to consume pod events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesPodsEndpointBuilder kubernetesPods(String path) {
         class KubernetesPodsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPodsEndpointBuilder, AdvancedKubernetesPodsEndpointBuilder {

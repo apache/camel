@@ -753,8 +753,8 @@ public interface ApnsEndpointBuilderFactory {
         }
     }
     /**
-     * For sending notifications to Apple iOS devices. Creates a builder to
-     * build endpoints for the APNS component.
+     * For sending notifications to Apple iOS devices.
+     * Maven coordinates: org.apache.camel:camel-apns
      */
     default ApnsEndpointBuilder apns(String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {

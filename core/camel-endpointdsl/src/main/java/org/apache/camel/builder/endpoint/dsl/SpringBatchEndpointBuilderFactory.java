@@ -169,8 +169,8 @@ public interface SpringBatchEndpointBuilderFactory {
     }
     /**
      * The spring-batch component allows to send messages to Spring Batch for
-     * further processing. Creates a builder to build endpoints for the Spring
-     * Batch component.
+     * further processing.
+     * Maven coordinates: org.apache.camel:camel-spring-batch
      */
     default SpringBatchEndpointBuilder springBatch(String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {

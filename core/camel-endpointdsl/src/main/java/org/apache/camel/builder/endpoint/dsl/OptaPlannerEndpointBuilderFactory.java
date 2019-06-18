@@ -440,7 +440,7 @@ public interface OptaPlannerEndpointBuilderFactory {
     }
     /**
      * Solves the planning problem contained in a message with OptaPlanner.
-     * Creates a builder to build endpoints for the OptaPlanner component.
+     * Maven coordinates: org.apache.camel:camel-optaplanner
      */
     default OptaPlannerEndpointBuilder optaPlanner(String path) {
         class OptaPlannerEndpointBuilderImpl extends AbstractEndpointBuilder implements OptaPlannerEndpointBuilder, AdvancedOptaPlannerEndpointBuilder {

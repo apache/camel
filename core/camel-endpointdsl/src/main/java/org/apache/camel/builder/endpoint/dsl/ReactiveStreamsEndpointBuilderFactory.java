@@ -533,8 +533,8 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         LATEST;
     }
     /**
-     * Reactive Camel using reactive streams Creates a builder to build
-     * endpoints for the Reactive Streams component.
+     * Reactive Camel using reactive streams
+     * Maven coordinates: org.apache.camel:camel-reactive-streams
      */
     default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {

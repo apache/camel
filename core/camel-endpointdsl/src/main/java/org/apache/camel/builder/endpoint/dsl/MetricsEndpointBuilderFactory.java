@@ -256,8 +256,8 @@ public interface MetricsEndpointBuilderFactory {
     }
     /**
      * To collect various metrics directly from Camel routes using the
-     * DropWizard metrics library. Creates a builder to build endpoints for the
-     * Metrics component.
+     * DropWizard metrics library.
+     * Maven coordinates: org.apache.camel:camel-metrics
      */
     default MetricsEndpointBuilder metrics(String path) {
         class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder, AdvancedMetricsEndpointBuilder {

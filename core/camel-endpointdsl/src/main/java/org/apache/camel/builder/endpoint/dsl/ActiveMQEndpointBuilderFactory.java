@@ -4661,8 +4661,8 @@ public interface ActiveMQEndpointBuilderFactory {
     }
     /**
      * The activemq component allows messages to be sent to (or consumed from)
-     * Apache ActiveMQ. This component extends the Camel JMS component. Creates
-     * a builder to build endpoints for the ActiveMQ component.
+     * Apache ActiveMQ. This component extends the Camel JMS component.
+     * Maven coordinates: org.apache.camel:camel-activemq
      */
     default ActiveMQEndpointBuilder activeMQ(String path) {
         class ActiveMQEndpointBuilderImpl extends AbstractEndpointBuilder implements ActiveMQEndpointBuilder, AdvancedActiveMQEndpointBuilder {

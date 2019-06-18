@@ -345,8 +345,8 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
     /**
      * The hazelcast-atomicvalue component is used to access Hazelcast atomic
      * number, which is an object that simply provides a grid wide number
-     * (long). Creates a builder to build endpoints for the Hazelcast Atomic
-     * Number component.
+     * (long).
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicnumber(
             String path) {

@@ -1020,8 +1020,8 @@ public interface YammerEndpointBuilderFactory {
     }
     /**
      * The yammer component allows you to interact with the Yammer enterprise
-     * social network. Creates a builder to build endpoints for the Yammer
-     * component.
+     * social network.
+     * Maven coordinates: org.apache.camel:camel-yammer
      */
     default YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {

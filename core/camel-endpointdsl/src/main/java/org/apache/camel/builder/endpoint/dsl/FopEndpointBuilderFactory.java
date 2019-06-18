@@ -164,8 +164,8 @@ public interface FopEndpointBuilderFactory {
     }
     /**
      * The fop component allows you to render a message into different output
-     * formats using Apache FOP. Creates a builder to build endpoints for the
-     * FOP component.
+     * formats using Apache FOP.
+     * Maven coordinates: org.apache.camel:camel-fop
      */
     default FopEndpointBuilder fop(String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {

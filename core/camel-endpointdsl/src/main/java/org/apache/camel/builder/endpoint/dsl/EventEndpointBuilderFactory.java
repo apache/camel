@@ -373,8 +373,8 @@ public interface EventEndpointBuilderFactory {
     }
     /**
      * The spring-event component allows to listen for Spring Application
-     * Events. Creates a builder to build endpoints for the Spring Event
-     * component.
+     * Events.
+     * Maven coordinates: org.apache.camel:camel-spring
      */
     default EventEndpointBuilder event(String path) {
         class EventEndpointBuilderImpl extends AbstractEndpointBuilder implements EventEndpointBuilder, AdvancedEventEndpointBuilder {

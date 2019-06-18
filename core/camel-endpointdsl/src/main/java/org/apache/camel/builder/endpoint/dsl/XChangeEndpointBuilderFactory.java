@@ -208,8 +208,8 @@ public interface XChangeEndpointBuilderFactory {
     }
     /**
      * The camel-xchange component provide access to many bitcoin and altcoin
-     * exchanges for trading and accessing market data. Creates a builder to
-     * build endpoints for the XChange component.
+     * exchanges for trading and accessing market data.
+     * Maven coordinates: org.apache.camel:camel-xchange
      */
     default XChangeEndpointBuilder xChange(String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {

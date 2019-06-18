@@ -107,8 +107,8 @@ public interface PaxLoggingEndpointBuilderFactory {
     }
     /**
      * The paxlogging component can be used in an OSGi environment to receive
-     * PaxLogging events and process them. Creates a builder to build endpoints
-     * for the OSGi PAX Logging component.
+     * PaxLogging events and process them.
+     * Maven coordinates: org.apache.camel:camel-paxlogging
      */
     default PaxLoggingEndpointBuilder paxLogging(String path) {
         class PaxLoggingEndpointBuilderImpl extends AbstractEndpointBuilder implements PaxLoggingEndpointBuilder, AdvancedPaxLoggingEndpointBuilder {

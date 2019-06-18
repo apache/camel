@@ -429,7 +429,8 @@ public interface QuartzEndpointBuilderFactory {
     }
     /**
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
-     * Creates a builder to build endpoints for the Quartz2 component.
+     * 
+     * Maven coordinates: org.apache.camel:camel-quartz2
      */
     default QuartzEndpointBuilder quartz(String path) {
         class QuartzEndpointBuilderImpl extends AbstractEndpointBuilder implements QuartzEndpointBuilder, AdvancedQuartzEndpointBuilder {

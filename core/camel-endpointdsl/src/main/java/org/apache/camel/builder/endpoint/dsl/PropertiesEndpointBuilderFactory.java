@@ -516,8 +516,8 @@ public interface PropertiesEndpointBuilderFactory {
     }
     /**
      * The properties component is used for using property placeholders in
-     * endpoint uris. Creates a builder to build endpoints for the Properties
-     * component.
+     * endpoint uris.
+     * Maven coordinates: org.apache.camel:camel-properties
      */
     default PropertiesEndpointBuilder properties(String path) {
         class PropertiesEndpointBuilderImpl extends AbstractEndpointBuilder implements PropertiesEndpointBuilder, AdvancedPropertiesEndpointBuilder {

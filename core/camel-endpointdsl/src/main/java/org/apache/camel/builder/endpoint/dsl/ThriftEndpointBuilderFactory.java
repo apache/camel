@@ -833,8 +833,8 @@ public interface ThriftEndpointBuilderFactory {
     }
     /**
      * The Thrift component allows to call and expose remote procedures (RPC)
-     * with Apache Thrift data format and serialization mechanism Creates a
-     * builder to build endpoints for the Thrift component.
+     * with Apache Thrift data format and serialization mechanism
+     * Maven coordinates: org.apache.camel:camel-thrift
      */
     default ThriftEndpointBuilder thrift(String path) {
         class ThriftEndpointBuilderImpl extends AbstractEndpointBuilder implements ThriftEndpointBuilder, AdvancedThriftEndpointBuilder {

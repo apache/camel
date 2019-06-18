@@ -341,8 +341,8 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
     }
     /**
      * The hazelcast-ringbuffer component is used to access Hazelcast
-     * distributed ringbuffer. Creates a builder to build endpoints for the
-     * Hazelcast Ringbuffer component.
+     * distributed ringbuffer.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
         class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {

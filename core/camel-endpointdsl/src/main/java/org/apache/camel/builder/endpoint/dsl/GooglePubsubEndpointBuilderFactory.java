@@ -710,8 +710,8 @@ public interface GooglePubsubEndpointBuilderFactory {
         NONE;
     }
     /**
-     * Messaging client for Google Cloud Platform PubSub Service Creates a
-     * builder to build endpoints for the Google Pubsub component.
+     * Messaging client for Google Cloud Platform PubSub Service
+     * Maven coordinates: org.apache.camel:camel-google-pubsub
      */
     default GooglePubsubEndpointBuilder googlePubsub(String path) {
         class GooglePubsubEndpointBuilderImpl extends AbstractEndpointBuilder implements GooglePubsubEndpointBuilder, AdvancedGooglePubsubEndpointBuilder {

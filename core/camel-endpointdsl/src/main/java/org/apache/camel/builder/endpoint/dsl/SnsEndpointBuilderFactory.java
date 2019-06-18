@@ -327,8 +327,8 @@ public interface SnsEndpointBuilderFactory {
     }
     /**
      * The aws-sns component is used for sending messages to an Amazon Simple
-     * Notification Topic. Creates a builder to build endpoints for the AWS
-     * Simple Notification System component.
+     * Notification Topic.
+     * Maven coordinates: org.apache.camel:camel-aws-sns
      */
     default SnsEndpointBuilder sns(String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {

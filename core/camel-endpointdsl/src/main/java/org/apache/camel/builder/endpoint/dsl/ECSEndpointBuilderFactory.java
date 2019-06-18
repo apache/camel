@@ -121,8 +121,8 @@ public interface ECSEndpointBuilderFactory {
         deleteCluster;
     }
     /**
-     * The aws-kms is used for managing Amazon ECS Creates a builder to build
-     * endpoints for the AWS ECS component.
+     * The aws-kms is used for managing Amazon ECS
+     * Maven coordinates: org.apache.camel:camel-aws-ecs
      */
     default ECSEndpointBuilder eCS(String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {
