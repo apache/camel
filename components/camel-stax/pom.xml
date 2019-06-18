@@ -44,8 +44,9 @@
         <dependency>
             <groupId>com.fasterxml.woodstox</groupId>
             <artifactId>woodstox-core</artifactId>
-            <version>5.1.0</version>
+            <version>${woodstox-core-version}</version>
         </dependency>
+        
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
