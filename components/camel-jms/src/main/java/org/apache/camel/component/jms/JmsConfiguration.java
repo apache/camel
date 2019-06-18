@@ -1608,7 +1608,7 @@ public class JmsConfiguration implements Cloneable {
      * creation
      */
     protected ConnectionFactory createListenerConnectionFactory() {
-        return getConnectionFactory();
+        return getOrCreateConnectionFactory();
     }
 
     /**
@@ -1616,7 +1616,7 @@ public class JmsConfiguration implements Cloneable {
      * creation
      */
     protected ConnectionFactory createTemplateConnectionFactory() {
-        return getConnectionFactory();
+        return getOrCreateConnectionFactory();
     }
 
     /**
