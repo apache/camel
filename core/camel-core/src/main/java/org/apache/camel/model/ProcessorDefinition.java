@@ -115,8 +115,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition<?>> getOutputs();
 
-    public abstract boolean isOutputSupported();
-
     /**
      * Whether this definition can only be added as top-level directly on the route itself (such as onException,onCompletion,intercept, etc.)
      * <p/>
@@ -162,7 +160,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
-        if (!isOutputSupported()) {
+        if (!(this instanceof OutputNode)) {
             getParent().addOutput(output);
             return;
         }
@@ -730,7 +728,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public Type id(String id) {
-        if (isOutputSupported() && getOutputs().isEmpty()) {
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
             // set id on this
             setId(id);
         } else {

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
+public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute @Metadata(defaultValue = ",")

@@ -41,7 +41,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
+public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> implements OutputNode {
     @Metadata(required = false)
     @XmlElements({
         @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
@@ -72,11 +72,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
-    }
-
-    @Override
-    public boolean isOutputSupported() {
-        return true;
     }
 
     // Fluent API

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
@@ -28,45 +28,37 @@ import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
- * An {@link org.apache.camel.model.ExpressionNode} which does <b>not</b> support any outputs.
- * <p/>
- * This node is to be extended by definitions which need to support an expression but the definition should not
- * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
+ * A base class for nodes which contain an expression and a number of outputs.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class NoOutputExpressionNode extends ExpressionNode {
+public abstract class OutputExpressionNode extends ExpressionNode implements OutputNode {
 
-    public NoOutputExpressionNode() {
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
+
+    public OutputExpressionNode() {
     }
 
-    public NoOutputExpressionNode(ExpressionDefinition expression) {
+    public OutputExpressionNode(ExpressionDefinition expression) {
         super(expression);
     }
 
-    public NoOutputExpressionNode(Expression expression) {
+    public OutputExpressionNode(Expression expression) {
         super(expression);
     }
 
-    public NoOutputExpressionNode(Predicate predicate) {
+    public OutputExpressionNode(Predicate predicate) {
         super(predicate);
     }
 
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
-        return Collections.emptyList();
+        return outputs;
     }
 
-    @Override
-    public boolean isOutputSupported() {
-        return false;
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        this.outputs = outputs;
     }
 
-    @Override
-    public ExpressionNode id(String id) {
-        // let parent handle assigning the id, as we do not support outputs
-        getParent().id(id);
-        return this;
-    }
 }
-

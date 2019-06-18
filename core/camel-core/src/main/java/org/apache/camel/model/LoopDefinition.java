@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "loop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoopDefinition extends ExpressionNode {
+public class LoopDefinition extends OutputExpressionNode {
 
     @XmlAttribute
     private Boolean copy;

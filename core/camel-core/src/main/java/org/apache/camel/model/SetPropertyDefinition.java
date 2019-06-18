@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetPropertyDefinition extends NoOutputExpressionNode {
+public class SetPropertyDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String propertyName;
     

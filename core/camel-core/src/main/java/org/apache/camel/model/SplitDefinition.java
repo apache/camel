@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
+public class SplitDefinition extends OutputExpressionNode implements ExecutorServiceAwareDefinition<SplitDefinition> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient

@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "dynamicRouter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode {
+public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode {
 
     public static final String DEFAULT_DELIMITER = ",";
 

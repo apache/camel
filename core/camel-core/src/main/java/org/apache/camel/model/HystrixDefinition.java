@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "hystrix")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
+public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> implements OutputNode {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
@@ -67,10 +67,6 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
 
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

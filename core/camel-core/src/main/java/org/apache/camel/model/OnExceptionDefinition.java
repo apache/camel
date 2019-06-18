@@ -45,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "error")
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> {
+public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefinition> implements OutputNode {
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen") @AsPredicate
@@ -710,10 +710,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public List<String> getExceptions() {

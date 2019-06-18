@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setFaultBody")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetFaultBodyDefinition extends NoOutputExpressionNode {
+public class SetFaultBodyDefinition extends ExpressionNode {
 
     public SetFaultBodyDefinition() {
     }

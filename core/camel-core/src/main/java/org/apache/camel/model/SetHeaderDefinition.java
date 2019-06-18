@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SetHeaderDefinition extends NoOutputExpressionNode {
+public class SetHeaderDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;
 

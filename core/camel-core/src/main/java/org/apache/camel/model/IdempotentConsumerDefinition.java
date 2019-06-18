@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class IdempotentConsumerDefinition extends ExpressionNode {
+public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
     @XmlAttribute(required = true)
     private String messageIdRepositoryRef;

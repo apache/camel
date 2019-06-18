@@ -49,7 +49,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
+public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements OutputNode, ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate") @AsPredicate
@@ -941,10 +941,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @Override
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

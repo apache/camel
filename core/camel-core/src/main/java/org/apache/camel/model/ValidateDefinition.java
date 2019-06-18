@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation") @AsPredicate
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ValidateDefinition extends NoOutputExpressionNode {
+public class ValidateDefinition extends ExpressionNode {
 
     public ValidateDefinition() {
     }
