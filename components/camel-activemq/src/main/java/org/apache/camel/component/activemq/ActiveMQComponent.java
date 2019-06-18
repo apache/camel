@@ -198,7 +198,7 @@ public class ActiveMQComponent extends JmsComponent {
         }
 
         // use OriginalDestinationPropagateStrategy by default if no custom
-        // stategy has been set
+        // strategy has been set
         if (getMessageCreatedStrategy() == null) {
             setMessageCreatedStrategy(new OriginalDestinationPropagateStrategy());
         }
@@ -208,7 +208,7 @@ public class ActiveMQComponent extends JmsComponent {
         try {
             if (source == null) {
                 if (connection == null) {
-                    Connection value = getConfiguration().getConnectionFactory().createConnection();
+                    Connection value = getConfiguration().getOrCreateConnectionFactory().createConnection();
                     if (value instanceof EnhancedConnection) {
                         connection = (EnhancedConnection)value;
                     } else {

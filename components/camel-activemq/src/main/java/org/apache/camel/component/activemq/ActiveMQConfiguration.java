@@ -134,7 +134,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      */
     @Override
     protected PlatformTransactionManager createTransactionManager() {
-        JmsTransactionManager answer = new JmsTransactionManager(getConnectionFactory());
+        JmsTransactionManager answer = new JmsTransactionManager(getOrCreateConnectionFactory());
         answer.afterPropertiesSet();
         return answer;
     }
