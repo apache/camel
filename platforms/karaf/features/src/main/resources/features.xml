@@ -2422,6 +2422,8 @@
   </feature>
   <feature name='camel-stax' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.fasterxml.woodstox/woodstox-core/${woodstox-core-version}</bundle>
+    <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stax/${project.version}</bundle>
   </feature>
   <feature name='camel-stream' version='${project.version}' start-level='50'>
