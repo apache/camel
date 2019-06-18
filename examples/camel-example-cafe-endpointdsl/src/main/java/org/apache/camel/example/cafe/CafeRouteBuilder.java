@@ -20,8 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.example.cafe.stuff.Barista;
 import org.apache.camel.example.cafe.stuff.CafeAggregationStrategy;
 import org.apache.camel.example.cafe.stuff.DrinkRouter;
@@ -37,6 +37,8 @@ import org.apache.camel.spi.Registry;
  * for Camel Endpoint DSL.
  */
 public class CafeRouteBuilder extends EndpointRouteBuilder {
+
+    protected AtomicInteger orderId = new AtomicInteger();
     
     public static void main(String[] args) throws Exception {
         CafeRouteBuilder builder = new CafeRouteBuilder();
@@ -79,8 +81,6 @@ public class CafeRouteBuilder extends EndpointRouteBuilder {
         // stop and shutdown Camel
         camelContext.stop();
     }
-
-    protected AtomicInteger orderId = new AtomicInteger();
 
     protected void newOrder(Exchange exchange) {
         Order order = new Order(orderId.incrementAndGet());
