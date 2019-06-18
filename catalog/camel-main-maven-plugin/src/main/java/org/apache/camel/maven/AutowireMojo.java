@@ -46,16 +46,10 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Exclusion;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -64,6 +58,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -123,7 +118,7 @@ public class AutowireMojo extends AbstractExecMojo {
     private boolean downloadVersion;
 
     @Component
-    private ArtifactFactory artifactFactory;
+    private RepositorySystem repositorySystem;
 
     @Component
     private ArtifactResolver artifactResolver;
@@ -488,49 +483,12 @@ public class AutowireMojo extends AbstractExecMojo {
     }
 
     // generic method to retrieve all the transitive dependencies
-    private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
+    private Collection<Artifact> getAllDependencies() {
         List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
-
-            String groupId = dependency.getGroupId();
-            String artifactId = dependency.getArtifactId();
-
-            VersionRange versionRange;
-            try {
-                versionRange = VersionRange.createFromVersionSpec(dependency.getVersion());
-            } catch (InvalidVersionSpecificationException e) {
-                throw new MojoExecutionException("unable to parse version", e);
-            }
-
-            String type = dependency.getType();
-            if (type == null) {
-                type = "jar";
-            }
-            String classifier = dependency.getClassifier();
-            boolean optional = dependency.isOptional();
-            String scope = dependency.getScope();
-            if (scope == null) {
-                scope = Artifact.SCOPE_COMPILE;
-            }
-
-            Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
-                    type, classifier, scope, null, optional);
-
-            if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
-                art.setFile(new File(dependency.getSystemPath()));
-            }
-
-            List<String> exclusions = new ArrayList<>();
-            for (Exclusion exclusion : dependency.getExclusions()) {
-                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
-            }
-
-            ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
-
-            art.setDependencyFilter(newFilter);
-
+            Artifact art = repositorySystem.createDependencyArtifact(dependency);
             artifacts.add(art);
         }
 
