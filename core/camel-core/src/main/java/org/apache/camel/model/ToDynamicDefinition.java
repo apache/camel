@@ -40,10 +40,10 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {
 
-    @XmlAttribute @Metadata(required = true)
-    private String uri;
     @XmlTransient
     protected EndpointProducerBuilder endpointProducerBuilder;
+    @XmlAttribute @Metadata(required = true)
+    private String uri;
     @XmlAttribute
     private ExchangePattern pattern;
     @XmlAttribute
