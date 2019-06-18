@@ -1157,8 +1157,8 @@ public interface SoroushBotEndpointBuilderFactory {
         downloadFile;
     }
     /**
-     * To integrate with the Soroush chat bot.
-     * Maven coordinates: org.apache.camel:camel-soroush
+     * To integrate with the Soroush chat bot. Creates a builder to build
+     * endpoints for the Soroush component.
      */
     default SoroushBotEndpointBuilder soroushBot(String path) {
         class SoroushBotEndpointBuilderImpl extends AbstractEndpointBuilder implements SoroushBotEndpointBuilder, AdvancedSoroushBotEndpointBuilder {

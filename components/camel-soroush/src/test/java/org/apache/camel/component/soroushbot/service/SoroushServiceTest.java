@@ -28,8 +28,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.component.soroushbot.IOUtils;
-import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.camel.component.soroushbot.utils.SoroushException;
