@@ -34,6 +34,7 @@
     <description>Camel Infinispan support</description>
 
     <properties>
+      <jgroups-infinispan-version>4.0.18.Final</jgroups-infinispan-version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,17 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jgroups</groupId>
+                    <artifactId>jgroups</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${jgroups-infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
