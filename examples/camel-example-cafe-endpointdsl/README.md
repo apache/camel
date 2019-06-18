@@ -1,11 +1,15 @@
-# Cafe Example
+# Cafe Example with Endpoint DSL
 
 ### Introduction
 
+This example uses the Camel Endpoint DSL to configure Camel endpoints using a type-safe Java endpoint DSL
+(eg fluent builder style).
+
 This example shows how to work with splitter and aggregator to implement a Cafe demo.
 
-First It uses the splitter to dispatch the order, then sends the orders to barista by checking 
+First it uses the splitter to dispatch the order, then sends the orders to barista by checking 
 if the coffee is hot or cold. When the coffee is ready, we use a aggregate to gather the drinks for waiter to deliver.
+
 
 ### Build
 
@@ -20,8 +24,7 @@ To run the example type
 	mvn camel:run
 
 You can see the routing rules by looking at the java code in the
-`src/main/java directory` and the Spring XML configuration lives in
-`src/main/resources/META-INF/spring`
+`src/main/java` directory.
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
