@@ -73,7 +73,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.57</version>
+        <version>1.2.58</version>
       </dependency>
       <dependency>
         <groupId>com.cloudbees.thirdparty</groupId>
@@ -167,6 +167,11 @@
         <version>1.7</version>
       </dependency>
       <dependency>
+        <groupId>io.krakens</groupId>
+        <artifactId>java-grok</artifactId>
+        <version>0.1.9</version>
+      </dependency>
+      <dependency>
         <groupId>io.nessus</groupId>
         <artifactId>nessus-ipfs-client</artifactId>
         <version>1.0.0.Beta4</version>
@@ -203,7 +208,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.9.1-2</version>
+        <version>9.9.1-3</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
@@ -753,6 +758,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cbor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cbor-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1099,6 +1114,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-endpointdsl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-etcd</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1344,6 +1364,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-grok</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-grok-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1415,11 +1445,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-headersmap</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-headersmap-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1980,6 +2005,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mail-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-main</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3351,142 +3381,142 @@
       <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf.services.ws-discovery</groupId>
         <artifactId>cxf-services-ws-discovery-api</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-clustering</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-logging</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http-jetty</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-jms</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-local</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-mex</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-rm</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security-oauth2</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-testutils</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
@@ -3566,12 +3596,12 @@
       <dependency>
         <groupId>org.apache.pulsar</groupId>
         <artifactId>pulsar-client</artifactId>
-        <version>2.2.1</version>
+        <version>2.3.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pulsar</groupId>
         <artifactId>pulsar-client-admin</artifactId>
-        <version>2.2.1</version>
+        <version>2.3.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
@@ -3656,11 +3686,6 @@
         <version>2.0.0.0</version>
       </dependency>
       <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom</artifactId>
-        <version>1.1.3</version>
-      </dependency>
-      <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby</artifactId>
         <version>1.7.18</version>
@@ -3673,7 +3698,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.18</version>
+        <version>4.3.19</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>
@@ -3683,359 +3708,359 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core-gwt</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>gwt-lib</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-distribution</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-docs</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-ui</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-core</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
@@ -4086,7 +4111,7 @@
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
+        <version>2.12.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

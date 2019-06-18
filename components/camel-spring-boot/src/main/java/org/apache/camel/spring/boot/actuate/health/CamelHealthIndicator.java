@@ -28,7 +28,7 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 public class CamelHealthIndicator extends AbstractHealthIndicator {
 
     private final CamelContext camelContext;
-    private final  HealthCheckVerboseConfiguration properties;
+    private final HealthCheckVerboseConfiguration properties;
 
     public CamelHealthIndicator(CamelContext camelContext, HealthCheckVerboseConfiguration properties) {
         this.camelContext = camelContext;

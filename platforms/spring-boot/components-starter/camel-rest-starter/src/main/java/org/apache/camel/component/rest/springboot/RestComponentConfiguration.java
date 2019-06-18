@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.springboot;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The rest component is used for either hosting REST services (consumer) or
@@ -38,13 +39,30 @@ public class RestComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The Camel Rest component to use for the REST transport, such as restlet,
-     * spark-rest. If no component has been explicit configured, then Camel will
-     * lookup if there is a Camel component that integrates with the Rest DSL,
-     * or if a org.apache.camel.spi.RestConsumerFactory (consumer) or
-     * org.apache.camel.spi.RestProducerFactory (producer) is registered in the
-     * registry. If either one is found, then that is being used.
+     * The Camel Rest component to use for (consumer) the REST transport, such
+     * as jetty, servlet, undertow. If no component has been explicit
+     * configured, then Camel will lookup if there is a Camel component that
+     * integrates with the Rest DSL, or if a
+     * org.apache.camel.spi.RestConsumerFactory is registered in the registry.
+     * If either one is found, then that is being used.
      */
+    private String consumerComponentName;
+    /**
+     * The Camel Rest component to use for (producer) the REST transport, such
+     * as http, undertow. If no component has been explicit configured, then
+     * Camel will lookup if there is a Camel component that integrates with the
+     * Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered
+     * in the registry. If either one is found, then that is being used.
+     */
+    private String producerComponentName;
+    /**
+     * The Camel Rest component to use for (producer) the REST transport, such
+     * as http, undertow. If no component has been explicit configured, then
+     * Camel will lookup if there is a Camel component that integrates with the
+     * Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered
+     * in the registry. If either one is found, then that is being used.
+     */
+    @Deprecated
     private String componentName;
     /**
      * The swagger api doc resource to use. The resource is loaded from
@@ -67,10 +85,29 @@ public class RestComponentConfiguration
      */
     private Boolean basicPropertyBinding = false;
 
+    public String getConsumerComponentName() {
+        return consumerComponentName;
+    }
+
+    public void setConsumerComponentName(String consumerComponentName) {
+        this.consumerComponentName = consumerComponentName;
+    }
+
+    public String getProducerComponentName() {
+        return producerComponentName;
+    }
+
+    public void setProducerComponentName(String producerComponentName) {
+        this.producerComponentName = producerComponentName;
+    }
+
+    @Deprecated
+    @DeprecatedConfigurationProperty
     public String getComponentName() {
         return componentName;
     }
 
+    @Deprecated
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }

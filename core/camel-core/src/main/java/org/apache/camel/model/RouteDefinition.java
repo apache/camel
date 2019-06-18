@@ -33,9 +33,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RoutePolicy;
@@ -168,6 +170,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Creates an input to the route
+     *
+     * @param endpoint the from endpoint
+     * @return the builder
+     */
+    public RouteDefinition from(EndpointConsumerBuilder endpoint) {
+        setInput(new FromDefinition(endpoint));
+        return this;
+    }
+
+    /**
      * Set the group name for this route
      *
      * @param name the group name
@@ -196,6 +209,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition routeId(String id) {
+        if (hasCustomIdAssigned()) {
+            throw new IllegalArgumentException("You can only set routeId one time per route.");
+        }
         setId(id);
         return this;
     }
@@ -909,7 +925,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
+        return new ErrorHandlerBuilderRef(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     @XmlTransient

@@ -35,23 +35,22 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * The google-sheets component provides access to Google Sheets.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", 
-             syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
-    @UriParam
-    private GoogleSheetsConfiguration configuration;
+    @UriParam(name = "configuration")
+    private GoogleSheetsConfiguration endpointConfiguration;
 
     private Object apiProxy;
 
     public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName, GoogleSheetsConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
-        this.configuration = endpointConfiguration;
+        this.endpointConfiguration = endpointConfiguration;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new org.apache.camel.component.google.sheets.GoogleSheetsProducer(this);
+        return new GoogleSheetsProducer(this);
     }
 
     @Override
@@ -91,7 +90,7 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     }
 
     public Sheets getClient() {
-        return ((GoogleSheetsComponent)getComponent()).getClient(configuration);
+        return ((GoogleSheetsComponent)getComponent()).getClient(endpointConfiguration);
     }
 
     @Override

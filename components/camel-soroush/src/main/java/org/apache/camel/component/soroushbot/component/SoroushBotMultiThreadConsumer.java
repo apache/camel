@@ -25,7 +25,7 @@ import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool
 /**
  * create a thread pool and process each message using one of threads,
  * it is guaranteed that all message from a same person will processed by the same thread.
- * thread pool size could be configured using {@link SoroushBotEndpoint#concurrentConsumers}
+ * thread pool size could be configured using {@link SoroushBotEndpoint#getConcurrentConsumers()}
  * this consumer support both Sync and Async processors.
  */
 public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
@@ -40,7 +40,7 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
 
     public SoroushBotMultiThreadConsumer(SoroushBotEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        threadPool = new MultiQueueWithTopicThreadPool(endpoint.concurrentConsumers, endpoint.queueCapacityPerThread, "Soroush Thread");
+        threadPool = new MultiQueueWithTopicThreadPool(endpoint.getConcurrentConsumers(), endpoint.getQueueCapacityPerThread(), "Soroush Thread");
     }
 
     @Override

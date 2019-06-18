@@ -30,6 +30,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
+import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelHelper;
@@ -326,7 +327,12 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // resolve endpoint
         Endpoint endpoint = definition.getInput().getEndpoint();
         if (endpoint == null) {
-            endpoint = routeContext.resolveEndpoint(definition.getInput().getUri());
+            EndpointConsumerBuilder def = definition.getInput().getEndpointConsumerBuilder();
+            if (def != null) {
+                endpoint = def.resolve(routeContext.getCamelContext());
+            } else {
+                endpoint = routeContext.resolveEndpoint(definition.getInput().getEndpointUri());
+            }
         }
         routeContext.setEndpoint(endpoint);
 

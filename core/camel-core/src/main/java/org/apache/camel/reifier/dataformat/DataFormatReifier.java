@@ -31,6 +31,7 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BoonDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -38,6 +39,7 @@ import org.apache.camel.model.dataformat.FhirDataformat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -72,9 +74,9 @@ import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 public abstract class DataFormatReifier<T extends DataFormatDefinition> {
 
-    private static final Map<Class<?>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
+    private static final Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
     static {
-        Map<Class<?>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
+        Map<Class<? extends DataFormatDefinition>, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map = new HashMap<>();
         map.put(ASN1DataFormat.class, ASN1DataFormatReifier::new);
         map.put(AvroDataFormat.class, AvroDataFormatReifier::new);
         map.put(BarcodeDataFormat.class, BarcodeDataFormatReifier::new);
@@ -82,6 +84,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         map.put(BeanioDataFormat.class, BeanioDataFormatReifier::new);
         map.put(BindyDataFormat.class, BindyDataFormatReifier::new);
         map.put(BoonDataFormat.class, BoonDataFormatReifier::new);
+        map.put(CBORDataFormat.class, CBORDataFormatReifier::new);
         map.put(CryptoDataFormat.class, CryptoDataFormatReifier::new);
         map.put(CsvDataFormat.class, CsvDataFormatReifier::new);
         map.put(CustomDataFormat.class, CustomDataFormatReifier::new);
@@ -89,6 +92,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
         map.put(FhirJsonDataFormat.class, FhirJsonDataFormatReifier::new);
         map.put(FhirXmlDataFormat.class, FhirXmlDataFormatReifier::new);
         map.put(FlatpackDataFormat.class, FlatpackDataFormatReifier::new);
+        map.put(GrokDataFormat.class, GrokDataFormatReifier::new);
         map.put(GzipDataFormat.class, GzipDataFormatReifier::new);
         map.put(HL7DataFormat.class, HL7DataFormatReifier::new);
         map.put(IcalDataFormat.class, IcalDataFormatReifier::new);
@@ -122,6 +126,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> {
 
     public DataFormatReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<? extends DataFormatDefinition> dataFormatClass, Function<DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+        DATAFORMATS.put(dataFormatClass, creator);
     }
 
     /**

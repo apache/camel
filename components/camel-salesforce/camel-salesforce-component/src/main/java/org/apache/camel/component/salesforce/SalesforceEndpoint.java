@@ -42,7 +42,7 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         + "executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,"
         + "composite-batch,composite")
     private final OperationName operationName;
-    @UriPath(label = "consumer", description = "The name of the topic to use")
+    @UriPath(label = "consumer", description = "The name of the topic/channel to use")
     private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;

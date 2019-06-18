@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -73,13 +72,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.processor.interceptor.DefaultDebugger;
 import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.EndpointHelper;
@@ -88,6 +88,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
+    // CHECKSTYLE:OFF
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
@@ -115,13 +117,16 @@ public abstract class CamelTestSupport extends TestSupport {
     protected volatile FluentProducerTemplate fluentTemplate;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
-    protected boolean dumpRouteStats;
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<>();
-    private final AtomicInteger tests = new AtomicInteger(0);
+    private static final ThreadLocal<AtomicInteger> TESTS = new ThreadLocal<>();
+    private static final ThreadLocal<CamelTestSupport> INSTANCE = new ThreadLocal<>();
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
+    @ClassRule
+    public static final CamelTearDownRule CAMEL_TEAR_DOWN_RULE = new CamelTearDownRule(INSTANCE);
+    // CHECKSTYLE:ON
 
     /**
      * Use the RouteBuilder or not
@@ -211,6 +216,44 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    public String getRouteFilterIncludePattern() {
+        return null;
+    }
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
+     *
+     * Exclude takes precedence over include.
+     */
+    public String getRouteFilterExcludePattern() {
+        return null;
+    }
+
+    /**
      * Override to enable debugger
      * <p/>
      * Is default <tt>false</tt>
@@ -260,24 +303,25 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            while (true) {
-                int v = tests.get();
-                if (tests.compareAndSet(v, v + 1)) {
-                    if (v == 0) {
-                        // test is per class, so only setup once (the first time)
-                        doSpringBootCheck();
-                        setupResources();
-                        doPreSetup();
-                        doSetUp();
-                        doPostSetup();
-                    } else {
-                        // and in between tests we must do IoC and reset mocks
-                        postProcessTest();
-                        resetMocks();
-                    }
-
-                    break;
-                }
+            INSTANCE.set(this);
+            AtomicInteger v = TESTS.get();
+            if (v == null) {
+                v = new AtomicInteger();
+                TESTS.set(v);
+            }
+            if (v.getAndIncrement() == 0) {
+                LOG.debug("Setup CamelContext before running first test");
+                // test is per class, so only setup once (the first time)
+                doSpringBootCheck();
+                setupResources();
+                doPreSetup();
+                doSetUp();
+                doPostSetup();
+            } else {
+                LOG.debug("Reset between test methods");
+                // and in between tests we must do IoC and reset mocks
+                postProcessTest();
+                resetMocks();
             }
         } else {
             // test is per test so always setup
@@ -383,6 +427,13 @@ public abstract class CamelTestSupport extends TestSupport {
             pc.setIgnoreMissingLocation(ignore);
         }
 
+        String include = getRouteFilterIncludePattern();
+        String exclude = getRouteFilterExcludePattern();
+        if (include != null || exclude != null) {
+            log.info("Route filtering pattern: include={}, exclude={}", include, exclude);
+            context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
+        }
+
         // prepare for in-between tests
         postProcessTest();
 
@@ -465,32 +516,23 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            while (true) {
-                int v = tests.get();
-                if (v <= 0) {
-                    LOG.warn("Test already teared down");
-                    break;
-                }
-
-                if (tests.compareAndSet(v, v - 1)) {
-                    if (v == 1) {
-                        LOG.debug("tearDown test");
-                        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
-                        doStopCamelContext(threadCamelContext.get(), threadService.get());
-                        doPostTearDown();
-                        cleanupResources();
-                    }
-
-                    break;
-                }
-            }
+            // will tear down test specially in CamelTearDownRule
         } else {
-            LOG.debug("tearDown test");
+            LOG.debug("tearDown()");
             doStopTemplates(consumer, template, fluentTemplate);
             doStopCamelContext(context, camelContextService);
             doPostTearDown();
             cleanupResources();
         }
+    }
+
+    void tearDownCreateCamelContextPerClass() throws Exception {
+        LOG.debug("tearDownCreateCamelContextPerClass()");
+        TESTS.remove();
+        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
+        doStopCamelContext(threadCamelContext.get(), threadService.get());
+        doPostTearDown();
+        cleanupResources();
     }
 
     /**
@@ -691,18 +733,17 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Applies the {@link DefaultCamelBeanPostProcessor} to this instance.
+     * Applies the {@link CamelBeanPostProcessor} to this instance.
      *
      * Derived classes using IoC / DI frameworks may wish to turn this into a NoOp such as for CDI
      * we would just use CDI to inject this
      */
     protected void applyCamelPostProcessor() throws Exception {
-        // use the default bean post processor from camel-core if the test class is not dependency injected already by Spring
+        // use the bean post processor if the test class is not dependency injected already by Spring Framework
         boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest", "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
-            processor.postProcessBeforeInitialization(this, getClass().getName());
-            processor.postProcessAfterInitialization(this, getClass().getName());
+            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(this, getClass().getName());
+            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(this, getClass().getName());
         }
     }
 

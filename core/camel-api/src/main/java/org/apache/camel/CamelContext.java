@@ -38,7 +38,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
@@ -421,6 +420,17 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the endpoint
      */
     Endpoint getEndpoint(String uri);
+
+    /**
+     * Resolves the given name to an {@link Endpoint} of the specified type.
+     * If the name has a singleton endpoint registered, then the singleton is returned.
+     * Otherwise, a new {@link Endpoint} is created and registered in the {@link org.apache.camel.spi.EndpointRegistry}.
+     *
+     * @param uri the URI of the endpoint
+     * @param parameters the parameters to customize the endpoint
+     * @return the endpoint
+     */
+    Endpoint getEndpoint(String uri, Map<String, Object> parameters);
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
@@ -1197,18 +1207,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
      */
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
-
-    /**
-     * Returns the {@link ReloadStrategy} if in use.
-     *
-     * @return the strategy, or <tt>null</tt> if none has been configured.
-     */
-    ReloadStrategy getReloadStrategy();
-
-    /**
-     * Sets a custom {@link ReloadStrategy} to be used
-     */
-    void setReloadStrategy(ReloadStrategy reloadStrategy);
 
     /**
      * Sets the global SSL context parameters.

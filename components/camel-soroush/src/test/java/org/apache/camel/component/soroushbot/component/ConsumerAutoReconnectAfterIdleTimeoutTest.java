@@ -20,7 +20,7 @@ package org.apache.camel.component.soroushbot.component;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public class ConsumerAutoReconnectAfterIdleTimeoutTest extends SoroushBotTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + Endpoint.getMessage + "/7 delay 100?reconnectIdleConnectionTimeout=200&maxConnectionRetry=0")
+                from("soroush://" + SoroushAction.getMessage + "/7 delay 100?reconnectIdleConnectionTimeout=200&maxConnectionRetry=0")
                         .to("mock:result");
             }
         };

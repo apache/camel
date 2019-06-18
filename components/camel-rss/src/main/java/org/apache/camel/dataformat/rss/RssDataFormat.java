@@ -19,7 +19,8 @@ package org.apache.camel.dataformat.rss;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;

@@ -133,6 +133,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         this.exceptionHandler = exceptionHandler;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        log.debug("Init consumer: {}", this);
+        ServiceHelper.initService(processor);
+    }
+
     protected void doStop() throws Exception {
         log.debug("Stopping consumer: {}", this);
         ServiceHelper.stopService(processor);

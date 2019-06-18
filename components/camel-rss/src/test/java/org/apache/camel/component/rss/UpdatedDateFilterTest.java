@@ -18,9 +18,10 @@ package org.apache.camel.component.rss;
 
 import java.util.Date;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntryImpl;
+import com.rometools.rome.feed.synd.SyndFeedImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 

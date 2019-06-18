@@ -19,7 +19,9 @@ package org.apache.camel.component.rss;
 import java.util.Arrays;
 import java.util.Date;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -44,7 +46,7 @@ public class RssEndpoint extends FeedEndpoint {
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("RssProducer is not implemented");
@@ -63,11 +65,11 @@ public class RssEndpoint extends FeedEndpoint {
         SyndFeed newFeed;
         try {
             newFeed = (SyndFeed)((SyndFeed) feed).clone();
-            newFeed.setEntries(Arrays.asList(entry));
+            newFeed.setEntries(Arrays.asList((SyndEntry)entry));
         } catch (CloneNotSupportedException e) {
             LOG.debug("Could not create a new feed. This exception will be ignored.", e);
             newFeed = null;
-        }        
+        }
         exchange.getIn().setBody(newFeed);
         return exchange;
     }
@@ -78,8 +80,8 @@ public class RssEndpoint extends FeedEndpoint {
         RssEntryPollingConsumer answer = new RssEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         configureConsumer(answer);
         return answer;
-    }  
-    
+    }
+
     @Override
     protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception {
         RssPollingConsumer answer = new RssPollingConsumer(this, processor);

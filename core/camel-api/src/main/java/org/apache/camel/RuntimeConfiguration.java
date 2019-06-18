@@ -37,7 +37,7 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
-     * Sets whether tracing is enabled or not (default is disabled).
+     * Sets whether tracing is enabled or not (default is enabled).
      *
      * @param tracing whether to enable tracing.
      */
@@ -49,6 +49,20 @@ public interface RuntimeConfiguration {
      * @return <tt>true</tt> if tracing is enabled
      */
     Boolean isTracing();
+
+    /**
+     * Sets whether debugging is enabled or not (default is enabled).
+     *
+     * @param debugging whether to enable debugging.
+     */
+    void setDebugging(Boolean debugging);
+
+    /**
+     * Returns whether debugging enabled
+     *
+     * @return <tt>true</tt> if tracing is enabled
+     */
+    Boolean isDebugging();
 
     /**
      * Sets whether message history is enabled or not (default is enabled).

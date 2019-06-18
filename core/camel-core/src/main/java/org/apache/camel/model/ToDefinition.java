@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -46,12 +47,21 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
         setEndpoint(endpoint);
     }
 
+    public ToDefinition(EndpointProducerBuilder endpointDefinition) {
+        setEndpointProducerBuilder(endpointDefinition);
+    }
+
     public ToDefinition(String uri, ExchangePattern pattern) {
         this(uri);
         this.pattern = pattern;
     }
 
     public ToDefinition(Endpoint endpoint, ExchangePattern pattern) {
+        this(endpoint);
+        this.pattern = pattern;
+    }
+
+    public ToDefinition(EndpointProducerBuilder endpoint, ExchangePattern pattern) {
         this(endpoint);
         this.pattern = pattern;
     }

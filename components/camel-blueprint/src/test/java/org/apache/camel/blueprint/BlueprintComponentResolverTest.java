@@ -16,6 +16,8 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -75,6 +77,11 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
         @Override
         public Endpoint createEndpoint(String uri) throws Exception {
+            throw new UnsupportedOperationException("Should not be called");
+        }
+
+        @Override
+        public Endpoint createEndpoint(String uri, Map<String, Object> parameters) throws Exception {
             throw new UnsupportedOperationException("Should not be called");
         }
 

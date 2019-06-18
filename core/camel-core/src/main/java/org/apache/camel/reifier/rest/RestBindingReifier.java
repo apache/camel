@@ -27,8 +27,8 @@ import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier {
 
@@ -200,9 +200,7 @@ public class RestBindingReifier {
                 }
             }
 
-            // set reference properties first as they use # syntax that fools the regular properties setter
-            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
-            EndpointHelper.setProperties(context, dataFormat, copy);
+            PropertyBindingSupport.bindProperties(context, dataFormat, copy);
         }
     }
 

@@ -33,7 +33,7 @@ public class OsgiClassResolverTest extends CamelOsgiTestSupport {
     @Test
     public void testResolverResource() {
         ClassResolver classResolver = getClassResolver();
-        InputStream is = classResolver.loadResourceAsStream("META-INF/services/org/apache/camel/TypeConverter");
+        InputStream is = classResolver.loadResourceAsStream("META-INF/services/org/apache/camel/TypeConverterLoader");
         assertNotNull("The InputStream should not be null.", is);
     }
 

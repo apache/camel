@@ -182,15 +182,19 @@ public final class PackageHelper {
     }
 
     public static File findCamelCoreDirectory(File dir) {
+        return findCamelDirectory(dir, "core/camel-core");
+    }
+
+    public static File findCamelDirectory(File dir, String path) {
         if (dir == null) {
             return null;
         }
-        Path p = dir.toPath().resolve("core/camel-core");
+        Path p = dir.toPath().resolve(path);
         if (Files.isDirectory(p)) {
             return p.toFile();
         } else {
             // okay walk up the parent dir
-            return findCamelCoreDirectory(dir.getParentFile());
+            return findCamelDirectory(dir.getParentFile(), path);
         }
     }
 

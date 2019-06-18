@@ -32,7 +32,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.ExchangeHelper;

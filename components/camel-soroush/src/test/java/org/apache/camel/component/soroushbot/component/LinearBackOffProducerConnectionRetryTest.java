@@ -20,8 +20,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.Endpoint;
 import org.apache.camel.component.soroushbot.models.MinorType;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
@@ -46,7 +46,7 @@ public class LinearBackOffProducerConnectionRetryTest extends SoroushBotTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + Endpoint.sendMessage + "/retry 5?maxConnectionRetry=5"
+                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/retry 5?maxConnectionRetry=5"
                         + "&retryWaitingTime=500&retryLinearIncrement=1000&backOffStrategy=linear")
                         .to("mock:afterAllRetry")
                         .to("mock:beforeAllRetry");

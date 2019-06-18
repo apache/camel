@@ -58,7 +58,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // enable async consumer to process messages faster
                 from("activemq:queue:inbox?asyncConsumer=false")
-                    .to("jetty:http://0.0.0.0:" + port + "/myapp")
+                    .to("http://0.0.0.0:" + port + "/myapp")
                     .to("log:result?groupSize=10", "mock:result");
 
                 from("jetty:http://0.0.0.0:" + port + "/myapp")

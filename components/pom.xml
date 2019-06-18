@@ -130,6 +130,7 @@
         <module>camel-braintree</module>
         <module>camel-caffeine</module>
         <module>camel-cassandraql</module>
+        <module>camel-cbor</module>
         <module>camel-cdi</module>
         <module>camel-chatscript</module>
         <module>camel-chunk</module>
@@ -179,6 +180,7 @@
         <module>camel-google-pubsub</module>
         <module>camel-gora</module>
         <module>camel-grape</module>
+        <module>camel-grok</module>
         <module>camel-grpc</module>
         <module>camel-gson</module>
         <module>camel-guava-eventbus</module>
@@ -366,6 +368,7 @@
                             <goal>prepare-spring-boot-starter</goal>
                             <goal>prepare-spring-boot-auto-configuration</goal>
                             <goal>generate-legal</goal>
+                            <goal>generate-endpoint-dsl</goal>
                         </goals>
                         <phase>prepare-package</phase>
                     </execution>

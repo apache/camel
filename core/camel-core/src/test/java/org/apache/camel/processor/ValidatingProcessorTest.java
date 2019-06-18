@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StringSource;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.NoXmlBodyValidationException;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
+import org.apache.camel.util.xml.StringSource;
 import org.junit.Before;
 import org.junit.Test;
 

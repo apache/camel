@@ -240,14 +240,6 @@ and this Java route definition
 
 [source,java]
 -------------------------------------------------------
-// Camel version < 2.15
-CsvDataFormat oldCSV = new CsvDataFormat();
-oldCSV.setDelimiter("|");
-from("direct:start")
-    .marshal(oldCSV)
-    .to("mock:result")
- 
-// Camel version >= 2.15
 from("direct:start")
     .marshal(new CsvDataFormat().setDelimiter(&#39;|&#39;))
     .to("mock:result")

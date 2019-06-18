@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
@@ -25,7 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyKey;
+import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.junit.Test;
 
 /**
@@ -43,12 +44,12 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     // START SNIPPET e2
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
-        public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
-                                                Exchange exchange,
-                                                Throwable exception) {
+        public ExceptionPolicyKey getExceptionPolicy(Set<ExceptionPolicyKey> exceptionPolicices,
+                                                     Exchange exchange,
+                                                     Throwable exception) {
             // This is just an example that always forces the exception type configured
             // with MyPolicyException to win.
-            return exceptionPolicices.get(new ExceptionPolicyKey(null, MyPolicyException.class, null));
+            return new ExceptionPolicyKey(null, MyPolicyException.class, null);
         }
     }
     // END SNIPPET e2

@@ -40,11 +40,17 @@ class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        StringHelper.notEmpty(definition.getUri(), "uri", this);
+        String uri;
+        Expression exp;
+        if (definition.getEndpointProducerBuilder() != null) {
+            uri = definition.getEndpointProducerBuilder().getUri();
+            exp = definition.getEndpointProducerBuilder().expr();
+        } else {
+            uri = StringHelper.notEmpty(definition.getUri(), "uri", this);
+            exp = createExpression(routeContext, uri);
+        }
 
-        Expression exp = createExpression(routeContext);
-
-        SendDynamicProcessor processor = new SendDynamicProcessor(definition.getUri(), exp);
+        SendDynamicProcessor processor = new SendDynamicProcessor(uri, exp);
         processor.setCamelContext(routeContext.getCamelContext());
         processor.setPattern(definition.getPattern());
         if (definition.getCacheSize() != null) {
@@ -56,10 +62,10 @@ class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T
         return processor;
     }
 
-    protected Expression createExpression(RouteContext routeContext) {
+    protected Expression createExpression(RouteContext routeContext, String uri) {
         List<Expression> list = new ArrayList<>();
 
-        String[] parts = safeSplitRaw(definition.getUri());
+        String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
             // the part may have optional language to use, so you can mix languages
             String value = StringHelper.after(part, "language:");

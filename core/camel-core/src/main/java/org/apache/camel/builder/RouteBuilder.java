@@ -240,6 +240,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return answer;
     }
 
+    public RouteDefinition from(EndpointConsumerBuilder endpointDefinition) {
+        getRouteCollection().setCamelContext(getContext());
+        RouteDefinition answer = getRouteCollection().from(endpointDefinition);
+        configureRoute(answer);
+        return answer;
+    }
+
     /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
@@ -479,7 +486,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 boolean hasRestApi = false;
                 for (RouteDefinition route : camelContext.getExtension(Model.class).getRouteDefinitions()) {
                     FromDefinition from = route.getInput();
-                    if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                    if (from.getEndpointUri() != null && from.getEndpointUri().startsWith("rest-api:")) {
                         hasRestApi = true;
                     }
                 }

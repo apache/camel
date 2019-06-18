@@ -37,6 +37,7 @@
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-cloud</include>
+        <include>org.apache.camel:camel-main</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -89,6 +90,7 @@
         <include>org.apache.camel:camel-browse</include>
         <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
+        <include>org.apache.camel:camel-cbor</include>
         <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-chatscript</include>
         <include>org.apache.camel:camel-chunk</include>
@@ -146,6 +148,7 @@
         <include>org.apache.camel:camel-google-sheets</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-grape</include>
+        <include>org.apache.camel:camel-grok</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-grpc</include>
         <include>org.apache.camel:camel-gson</include>
@@ -427,6 +430,7 @@
         <include>org.apache.camel:camel-browse-starter</include>
         <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
+        <include>org.apache.camel:camel-cbor-starter</include>
         <include>org.apache.camel:camel-chatscript-starter</include>
         <include>org.apache.camel:camel-chunk-starter</include>
         <include>org.apache.camel:camel-cm-sms-starter</include>
@@ -481,6 +485,7 @@
         <include>org.apache.camel:camel-google-sheets-starter</include>
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
+        <include>org.apache.camel:camel-grok-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>
         <include>org.apache.camel:camel-grpc-starter</include>
         <include>org.apache.camel:camel-gson-starter</include>
@@ -488,7 +493,6 @@
         <include>org.apache.camel:camel-hazelcast-starter</include>
         <include>org.apache.camel:camel-hbase-starter</include>
         <include>org.apache.camel:camel-hdfs2-starter</include>
-        <include>org.apache.camel:camel-headersmap-starter</include>
         <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>

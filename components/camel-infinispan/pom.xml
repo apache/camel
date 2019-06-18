@@ -34,6 +34,7 @@
     <description>Camel Infinispan support</description>
 
     <properties>
+      <jgroups-infinispan-version>4.0.18.Final</jgroups-infinispan-version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,17 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jgroups</groupId>
+                    <artifactId>jgroups</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${jgroups-infinispan-version}</version>
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
@@ -119,6 +131,10 @@
                     <groupId>org.infinispan</groupId>
                     <artifactId>infinispan-remote-query-client</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>apache-karaf</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -151,6 +167,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>infinispan.test.jgroups.protocol</name>
+                            <value>tcp</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
@@ -290,6 +323,14 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

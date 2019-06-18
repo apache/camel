@@ -3,9 +3,6 @@
 
 *Available as of Camel version 3.0*
 
-*Available as of Camel version 3.0*
-
-
 The *Soroush* component provides access to the https://soroush-app.ir/developer.html[Soroush Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, i.e. participating in direct conversation with normal users and send and receive message and files
 
@@ -51,7 +48,7 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-
+### Options
 
 // component options: START
 The Soroush component supports 3 options, which are listed below.
@@ -85,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +93,7 @@ with the following path and query parameters:
 | *queueCapacityPerThread* (consumer) | Maximum capacity of each queue when concurrentConsumers is greater than 1. if a queue become full, every message that should go to that queue will be dropped. If bridgeErrorHandler is set to true, an exchange with CongestionException is directed to ErrorHandler. You can then processed the error using onException(CongestionException.class) route. Default value notice: infinite capacity | 0 | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *autoDownload* (getMessage) | Automatically download SoroushMessage.fileUrl and SoroushMessage.thumbnailUrl if exists for the message and store them in SoroushMessage.file and SoroushMessage.thumbnail field | false | Boolean
@@ -222,7 +220,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .to("soroush:sendMessage/YourAuthorizationToken");
 -------------
 
-====== Auto Upload Attachments
+#### Auto Upload Attachments
 This endpoint can help you to automatically upload files and thumbnails of a message to the server
 and set `fileUrl` and `thumbnailUrl` of that message to proper values taken from Soroush Upload File Api.
 The only thing you need to do is setting `SoroushMessage.file` and `SoroushMessage.thumbnail` properties.

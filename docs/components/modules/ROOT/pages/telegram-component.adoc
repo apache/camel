@@ -75,11 +75,11 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *type* | *Required* The endpoint type. Currently, only the 'bots' type is supported. |  | String
-| *authorizationToken* | *Required* The authorization token for using the bot (ask the BotFather), eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H. |  | String
+| *authorizationToken* | *Required* The authorization token for using the bot (ask the BotFather) |  | String
 |===
 
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (26 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,6 +93,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *chatId* (producer) | The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages (eg. when a telegram user starts a conversation with a bot, its client sends automatically a '/start' message containing the chat id). It is an optional parameter, as the chat id can be set dynamically for each outgoing message (using body or headers). |  | String
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -108,6 +109,8 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *proxyHost* (proxy) | HTTP proxy host which could be used when sending out the message. |  | String
+| *proxyPort* (proxy) | HTTP proxy port which could be used when sending out the message. |  | Integer
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -358,16 +361,16 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Choose one option!");
-        
+
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
                 .text("Option One - I").build();
-        
+
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
                 .text("Option One - II").build();
-        
+
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
                 .text("Option Two - I").build();
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .keyboard()
                     .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
@@ -375,7 +378,7 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
                     .close()
                 .oneTimeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);
@@ -392,11 +395,11 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText("Your answer was accepted!");
-        
+
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
                 .removeKeyboard(true)
                 .build();
-        
+
         msg.setReplyKeyboardMarkup(replyMarkup);
 
         exchange.getIn().setBody(msg);

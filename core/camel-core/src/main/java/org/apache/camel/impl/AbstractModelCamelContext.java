@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.impl.engine.BaseRouteService;
@@ -39,6 +39,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteFilters;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -231,6 +232,22 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         model.addServiceCallConfiguration(serviceName, configuration);
     }
 
+    @Override
+    public void setRouteFilterPattern(String include, String exclude) {
+        model.setRouteFilterPattern(include, exclude);
+    }
+
+    @Override
+    public void setRouteFilter(Function<RouteDefinition, Boolean> filter) {
+        model.setRouteFilter(filter);
+    }
+
+    @Override
+    public Function<RouteDefinition, Boolean> getRouteFilter() {
+        return model.getRouteFilter();
+    }
+
+    @Override
     protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
         DefaultValidatorRegistry registry = new DefaultValidatorRegistry(this);
         for (ValidatorDefinition def : getValidators()) {
@@ -244,6 +261,7 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
         return new ValidatorKey(new DataType(def.getType()));
     }
 
+    @Override
     protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
         DefaultTransformerRegistry registry = new DefaultTransformerRegistry(this);
         for (TransformerDefinition def : getTransformers()) {
@@ -287,11 +305,6 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     protected synchronized void shutdownRouteService(BaseRouteService routeService) throws Exception {
-        // remove the route from ErrorHandlerBuilder if possible
-        if (getErrorHandlerFactory() instanceof ErrorHandlerBuilderSupport) {
-            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport) getErrorHandlerFactory();
-            builder.removeOnExceptionList(routeService.getId());
-        }
         if (routeService instanceof RouteService) {
             model.getRouteDefinitions().remove(((RouteService) routeService).getRouteDefinition());
         }

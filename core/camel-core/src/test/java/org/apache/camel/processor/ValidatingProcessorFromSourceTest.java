@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 
-import org.apache.camel.StringSource;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
+import org.apache.camel.util.xml.StringSource;
 import org.junit.Before;
 import org.junit.Test;
 

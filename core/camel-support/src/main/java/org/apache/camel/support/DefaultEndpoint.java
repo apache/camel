@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
@@ -55,6 +56,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private String endpointUri;
     private CamelContext camelContext;
     private Component component;
+    @UriParam(label = "producer",
+            description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
+                    + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
+                    + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
+                    + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
+    private boolean lazyStartProducer;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                     + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
@@ -182,14 +189,15 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
-        return AsyncProcessorConverterHelper.convert(createProducer());
+        if (isLazyStartProducer()) {
+            return new LazyStartProducer(this);
+        } else {
+            return AsyncProcessorConverterHelper.convert(createProducer());
+        }
     }
 
     /**
-     * Returns the component that created this endpoint.
-     * 
-     * @return the component that created this endpoint, or <tt>null</tt> if
-     *         none set
+     * Returns the component that created this endpoint, or <tt>null</tt> if none set.
      */
     public Component getComponent() {
         return component;
@@ -243,8 +251,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Sets whether synchronous processing should be strictly used, or Camel is
      * allowed to use asynchronous processing (if supported).
-     * 
-     * @param synchronous <tt>true</tt> to enforce synchronous processing
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
@@ -262,6 +268,20 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setBasicPropertyBinding(boolean basicPropertyBinding) {
         this.basicPropertyBinding = basicPropertyBinding;
+    }
+
+    public boolean isLazyStartProducer() {
+        return lazyStartProducer;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     */
+    public void setLazyStartProducer(boolean lazyStartProducer) {
+        this.lazyStartProducer = lazyStartProducer;
     }
 
     public boolean isBridgeErrorHandler() {
@@ -379,9 +399,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(camelContext, bean, parameters);
-
         if (basicPropertyBinding) {
             // use basic binding
             PropertyBindingSupport.build()
@@ -494,7 +511,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         // the bridgeErrorHandler/exceptionHandler was originally configured with consumer. prefix, such as consumer.bridgeErrorHandler=true
         // so if they have been configured on the endpoint then map to the old naming style
         if (bridgeErrorHandler) {
@@ -503,6 +520,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (exceptionHandler != null) {
             getConsumerProperties().put("exceptionHandler", exceptionHandler);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
     }
 
     @Override

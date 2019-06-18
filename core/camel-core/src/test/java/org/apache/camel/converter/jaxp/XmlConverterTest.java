@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.jaxp;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.util.Properties;
-
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -32,15 +32,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.xml.sax.InputSource;
 
-import org.apache.camel.BytesSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.util.xml.BytesSource;
 import org.junit.Before;
 import org.junit.Test;
 

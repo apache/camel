@@ -48,7 +48,7 @@ public class Web3jConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private String address;
 
-    @UriParam(label = "common", javaType = "String")
+    @UriParam(label = "common", javaType = "java.lang.String")
     private List<String> topics;
 
     @UriParam(label = "producer")

@@ -38,10 +38,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.xml.StreamSourceCache;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
@@ -100,6 +100,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 li.set(document);
             }
         }
+        orig.setBodySources(getBodySources());
     }
 
     private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {

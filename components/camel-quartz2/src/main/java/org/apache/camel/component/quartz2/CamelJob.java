@@ -60,6 +60,8 @@ public class CamelJob implements Job {
             try {
                 if (processor != null) {
                     processor.process(exchange);
+                } else {
+                    LOG.debug("Cannot execute CamelJob as there are no active consumers.");
                 }
             } catch (Throwable e) {
                 exchange.setException(e);

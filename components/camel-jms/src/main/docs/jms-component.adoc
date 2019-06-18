@@ -324,7 +324,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (92 parameters):
+==== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -364,6 +364,7 @@ with the following path and query parameters:
 | *deliveryPersistent* (producer) | Specifies whether persistent delivery is used by default. | true | boolean
 | *explicitQosEnabled* (producer) | Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages. This option is based on Spring's JmsTemplate. The deliveryMode, priority and timeToLive options are applied to the current endpoint. This contrasts with the preserveMessageQos option, which operates at message granularity, reading QoS properties exclusively from the Camel In message headers. | false | Boolean
 | *formatDateHeadersToIso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *preserveMessageQos* (producer) | Set to true, if you want to send message using the QoS settings specified on the message, instead of the QoS settings on the JMS endpoint. The following three headers are considered JMSPriority, JMSDeliveryMode, and JMSExpiration. You can provide all or only some of them. If not provided, Camel will fall back to use the values from the endpoint instead. So, when using this option, the headers override the values from the endpoint. The explicitQosEnabled option, by contrast, will only use options set on the endpoint, and not values from the message header. | false | boolean
 | *priority* (producer) | Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest). The explicitQosEnabled option must also be enabled in order for this option to have any effect. | 4 | int
 | *replyToConcurrentConsumers* (producer) | Specifies the default number of concurrent consumers when doing request/reply over JMS. See also the maxMessagesPerTask option to control dynamic scaling up/down of threads. | 1 | int
@@ -440,7 +441,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 173 options, which are listed below.
+The component supports 171 options, which are listed below.
 
 
 
@@ -515,11 +516,9 @@ The component supports 173 options, which are listed below.
 | *camel.component.jms.configuration.message-id-enabled* | When sending, specifies whether message IDs should be added. This is just an hint to the JMS Broker. If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value | true | Boolean
 | *camel.component.jms.configuration.message-listener-container-factory* | Registry ID of the MessageListenerContainerFactory used to determine what org.springframework.jms.listener.AbstractMessageListenerContainer to use to consume messages. Setting this will automatically set consumerType to Custom. |  | MessageListener ContainerFactory
 | *camel.component.jms.configuration.message-timestamp-enabled* | Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS Broker. If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value. | true | Boolean
-| *camel.component.jms.configuration.metadata-jms-operations* | Sets the {@link JmsOperations} used to deduce the {@link JmsProviderMetadata} details which if none is customized one is lazily created on demand |  | JmsOperations
 | *camel.component.jms.configuration.password* | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *camel.component.jms.configuration.preserve-message-qos* | Set to true, if you want to send message using the QoS settings specified on the message, instead of the QoS settings on the JMS endpoint. The following three headers are considered JMSPriority, JMSDeliveryMode, and JMSExpiration. You can provide all or only some of them. If not provided, Camel will fall back to use the values from the endpoint instead. So, when using this option, the headers override the values from the endpoint. The explicitQosEnabled option, by contrast, will only use options set on the endpoint, and not values from the message header. | false | Boolean
 | *camel.component.jms.configuration.priority* | Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest). The explicitQosEnabled option must also be enabled in order for this option to have any effect. | 4 | Integer
-| *camel.component.jms.configuration.provider-metadata* | Allows the provider metadata to be explicitly configured. Typically this is not required and Camel will auto-detect the provider metadata from the underlying provider. |  | JmsProviderMetadata
 | *camel.component.jms.configuration.pub-sub-no-local* | Specifies whether to inhibit the delivery of messages published by its own connection. | false | Boolean
 | *camel.component.jms.configuration.receive-timeout* | The timeout for receiving messages (in milliseconds). | 1000 | Long
 | *camel.component.jms.configuration.recovery-interval* | Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The default is 5000 ms, that is, 5 seconds. | 5000 | Long

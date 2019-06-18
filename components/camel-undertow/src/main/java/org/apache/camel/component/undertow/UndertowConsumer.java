@@ -24,6 +24,9 @@ import java.util.Collection;
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.accesslog.AccessLogHandler;
+import io.undertow.server.handlers.accesslog.AccessLogReceiver;
+import io.undertow.server.handlers.accesslog.JBossLoggingAccessLogReceiver;
 import io.undertow.server.handlers.form.EagerFormParsingHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -71,9 +74,22 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             this.webSocketHandler.setConsumer(this);
         } else {
             // allow for HTTP 1.1 continue
+            HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
+            if (endpoint.getAccessLog()) {
+                AccessLogReceiver accessLogReciever = null;
+                if (endpoint.getAccessLogReceiver() != null) {
+                    accessLogReciever = endpoint.getAccessLogReceiver();
+                } else {
+                    accessLogReciever = new JBossLoggingAccessLogReceiver();
+                }
+                httpHandler = new AccessLogHandler(httpHandler,
+                                                   accessLogReciever,
+                                                   "common",
+                                                   AccessLogHandler.class.getClassLoader());
+            }
             endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), Handlers.httpContinueRead(
                     // wrap with EagerFormParsingHandler to enable undertow form parsers
-                    new EagerFormParsingHandler().setNext(UndertowConsumer.this)));
+                    httpHandler));
         }
     }
 

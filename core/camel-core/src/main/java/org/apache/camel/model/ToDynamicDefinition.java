@@ -20,8 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,6 +40,8 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {
 
+    @XmlTransient
+    protected EndpointProducerBuilder endpointProducerBuilder;
     @XmlAttribute @Metadata(required = true)
     private String uri;
     @XmlAttribute
@@ -120,6 +124,14 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
      */
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public EndpointProducerBuilder getEndpointProducerBuilder() {
+        return endpointProducerBuilder;
+    }
+
+    public void setEndpointProducerBuilder(EndpointProducerBuilder endpointProducerBuilder) {
+        this.endpointProducerBuilder = endpointProducerBuilder;
     }
 
     public ExchangePattern getPattern() {

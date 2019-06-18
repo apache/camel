@@ -63,7 +63,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
         super.doStart();
 
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
-        loadCoreTypeConverters();
+        loadCoreAndFastTypeConverters();
 
         // we are using backwards compatible legacy mode to detect additional converters
         if (loadTypeConverters) {

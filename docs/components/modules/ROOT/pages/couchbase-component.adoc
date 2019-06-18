@@ -63,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +85,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *autoStartIdForInserts* (producer) | Define if we want an autostart Id when we are doing an insert operation | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | The operation to do | CCB_PUT | String
 | *persistTo* (producer) | Where to persist the data | 0 | int
 | *producerRetryAttempts* (producer) | Define the number of retry attempts | 2 | int
@@ -148,3 +149,10 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+=== Couchbase SDK compatibility
+This component is currently using a "Legacy SDK" version of couchbase-client.
+
+In order to authenticate with newer versions of Couchbase Server 5.0 and beyond, as per instructions on the  https://docs.couchbase.com/java-sdk/2.7/sdk-authentication-overview.html/[CouchBase Java SDK Authentication]:
+
+ * The value formerly interpreted as a bucket-name is now interpreted as a username. The username must correspond to a user defined on the cluster that is being accessed.
+ * The value formerly interpreted as a bucket-password is now interpreted as the password of the defined user.

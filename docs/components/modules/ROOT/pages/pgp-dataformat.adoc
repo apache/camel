@@ -48,49 +48,49 @@ into message dynamically.
 |=======================================================================
 |Name |Type |Description
 
-|`CamelPGPDataFormatKeyFileName` |`String` |*Since Camel 2.11.0*; filename of the keyring; will override existing
+|`CamelPGPDataFormatKeyFileName` |`String` |filename of the keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatEncryptionKeyRing` |`byte[]` |*Since Camel 2.12.1*; the encryption keyring; will override existing
+|`CamelPGPDataFormatEncryptionKeyRing` |`byte[]` |the encryption keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyUserid` |`String` |*Since Camel 2.11.0*; the User ID of the key in the PGP keyring; will
+|`CamelPGPDataFormatKeyUserid` |`String` |the User ID of the key in the PGP keyring; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyUserids` |`List<String>` |*Since camel 2.12.2*: the User IDs of the key in the PGP keyring; will
+|`CamelPGPDataFormatKeyUserids` |`List<String>` |the User IDs of the key in the PGP keyring; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatKeyPassword` |`String` |*Since Camel 2.11.0*; password used when opening the private key; will
+|`CamelPGPDataFormatKeyPassword` |`String` |password used when opening the private key; will
 override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyFileName` |`String` |*Since Camel 2.11.0*; filename of the signature keyring; will override
+|`CamelPGPDataFormatSignatureKeyFileName` |`String` |filename of the signature keyring; will override
 existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyRing` |`byte[]` |*Since Camel 2.12.1*; the signature keyring; will override existing
+|`CamelPGPDataFormatSignatureKeyRing` |`byte[]` |the signature keyring; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyUserid` |`String` |*Since Camel 2.11.0*; the User ID of the signature key in the PGP
+|`CamelPGPDataFormatSignatureKeyUserid` |`String` |the User ID of the signature key in the PGP
 keyring; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyUserids` |`List<String>` |*Since Camel 2.12.3*; the User IDs of the signature keys in the PGP
+|`CamelPGPDataFormatSignatureKeyUserids` |`List<String>` |the User IDs of the signature keys in the PGP
 keyring; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureKeyPassword` |`String` |*Since Camel 2.11.0*; password used when opening the signature private
+|`CamelPGPDataFormatSignatureKeyPassword` |`String` |password used when opening the signature private
 key; will override existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatEncryptionAlgorithm` |`int` |*Since Camel 2.12.2*; symmetric key encryption algorithm; will override
+|`CamelPGPDataFormatEncryptionAlgorithm` |`int` |symmetric key encryption algorithm; will override
 existing setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatSignatureHashAlgorithm` |`int` |*Since Camel 2.12.2*; signature hash algorithm; will override existing
+|`CamelPGPDataFormatSignatureHashAlgorithm` |`int` |signature hash algorithm; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatCompressionAlgorithm` |`int` |*Since Camel 2.12.2*; compression algorithm; will override existing
+|`CamelPGPDataFormatCompressionAlgorithm` |`int` |compression algorithm; will override existing
 setting directly on the PGPDataFormat.
 
-|`CamelPGPDataFormatNumberOfEncryptionKeys` |`Integer` |*Since* *Camel 2.12.3; *number of public keys used for encrypting the
+|`CamelPGPDataFormatNumberOfEncryptionKeys` |`Integer` |number of public keys used for encrypting the
 symmectric key, set by PGPDataFormat during encryptiion process
 
-|`CamelPGPDataFormatNumberOfSigningKeys` |`Integer` |*Since* *Camel 2.12.3; *number of private keys used for creating
+|`CamelPGPDataFormatNumberOfSigningKeys` |`Integer` |number of private keys used for creating
 signatures, set by PGPDataFormat during signing process
 |=======================================================================
 
@@ -151,8 +151,6 @@ ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
 ### Private/Public Keys
 
-Since *Camel 2.12.2*.
-
 A PGP Data Formater can decrypt/verify messages which have been
 encrypted by different public keys or signed by different private keys.
 Just, provide the corresponding private keys in the secret keyring, the
@@ -196,8 +194,6 @@ unmarshaling.
 
 ### Restricting the Signer Identities during PGP Signature Verification
 
-Since *Camel 2.12.3.*
-
 If you verify a signature you not only want to verify the correctness of
 the signature but you also want check that the signature comes from a
 certain identity or a specific set of identities. Therefore it is
@@ -233,8 +229,6 @@ keys in the public keyring are taken into account.
 
 ### Several Signatures in One PGP Data Format
 
-Since *Camel 2.12.3.*
-
 The PGP specification allows that one PGP data format can contain
 several signatures from different keys. Since Camel 2.13.3 it is
 possible to create such kind of PGP content via specifying signature
@@ -263,7 +257,6 @@ from("direct:start")
 
 ### Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
-Since *Camel 2.12.3. +
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
 have a primary key and sub-keys. The usage of the keys is indicated by
 the so called https://tools.ietf.org/html/rfc4880#section-5.2.3.21[Key
@@ -278,7 +271,6 @@ primary key and its sub-keys have the same User IDs.
 
 ### Support of Custom Key Accessors
 
-Since *Camel 2.13.0. +
 *You can implement custom key accessors for encryption/signing. The
 above PGPDataFormat class selects in a certain predefined way the keys
 which should be used for signing/encryption or verifying/decryption. If

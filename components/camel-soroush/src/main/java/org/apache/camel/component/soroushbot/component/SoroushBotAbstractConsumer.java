@@ -28,7 +28,7 @@ import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.service.SoroushService;
 import org.apache.camel.support.DefaultConsumer;
@@ -78,14 +78,14 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
     private void run() {
         lastMessageReceived = System.currentTimeMillis();
         Request request = new Request.Builder()
-                .url(SoroushService.get().generateUrl(endpoint.authorizationToken, Endpoint.getMessage, null))
+                .url(SoroushService.get().generateUrl(endpoint.getAuthorizationToken(), SoroushAction.getMessage, null))
                 .build();
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(endpoint.connectionTimeout, TimeUnit.MILLISECONDS)
+                .connectTimeout(endpoint.getConnectionTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(0L, TimeUnit.MILLISECONDS)
                 .readTimeout(0L, TimeUnit.MILLISECONDS)
                 .build();
-        connection = new ReconnectableEventSourceListener(client, request, endpoint.maxConnectionRetry) {
+        connection = new ReconnectableEventSourceListener(client, request, endpoint.getMaxConnectionRetry()) {
             @Override
             protected boolean onBeforeConnect() {
                 int connectionRetry = getConnectionRetry();
@@ -146,7 +146,7 @@ public abstract class SoroushBotAbstractConsumer extends DefaultConsumer impleme
                             log.debug("event data is: " + data);
                         }
                         // if autoDownload is true, download the resource if provided in the message
-                        if (endpoint.autoDownload) {
+                        if (endpoint.isAutoDownload()) {
                             endpoint.handleDownloadFiles(soroushMessage);
                         }
                         //let each subclass decide how to start processing of each exchange
@@ -190,6 +190,7 @@ class ReconnectableEventSourceListener extends EventSourceListener {
     private Request request;
     private final EventSource.Factory factory;
     private EventSource eventSource;
+
     public ReconnectableEventSourceListener(OkHttpClient client, Request request, int maxConnectionRetry) {
         this.client = client;
         this.maxConnectionRetry = maxConnectionRetry;

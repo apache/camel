@@ -86,7 +86,8 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("jetty").producerComponent("http")
+                        .host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")

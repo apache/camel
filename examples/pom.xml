@@ -45,6 +45,7 @@
         <module>camel-example-billboard-aggr</module>
         <module>camel-example-bigxml-split</module>
         <module>camel-example-cafe</module>
+        <module>camel-example-cafe-endpointdsl</module>
         <module>camel-example-cassandra-kubernetes</module>
         <module>camel-example-cdi</module>
         <module>camel-example-cdi-aws-s3</module>
@@ -83,6 +84,7 @@
         <module>camel-example-loan-broker-cxf</module>
         <module>camel-example-loan-broker-jms</module>
         <module>camel-example-main</module>
+        <module>camel-example-main-artemis</module>
         <module>camel-example-management</module>
         <module>camel-example-micrometer</module>
         <module>camel-example-mybatis</module>
@@ -93,7 +95,6 @@
         <module>camel-example-pojo-messaging</module>
         <module>camel-example-rabbitmq</module>
         <module>camel-example-reactive-streams</module>
-        <module>camel-example-reload</module>
         <module>camel-example-rest-producer</module>
         <module>camel-example-rest-swagger</module>
         <module>camel-example-restlet-jdbc</module>

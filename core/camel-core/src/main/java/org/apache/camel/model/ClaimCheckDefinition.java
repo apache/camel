@@ -89,7 +89,7 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     }
 
     /**
-     * To use a specific key for claim check id.
+     * To use a specific key for claim check id (for dynamic keys use simple language syntax as the key).
      */
     public ClaimCheckDefinition key(String key) {
         setKey(key);

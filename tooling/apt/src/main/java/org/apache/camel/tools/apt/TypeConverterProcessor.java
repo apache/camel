@@ -24,8 +24,10 @@ import java.util.TreeMap;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.NestingKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -35,25 +37,36 @@ import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {
 
+    boolean acceptClass(Element element) {
+        // we accept any class that is not using @Converter(loader = true)
+        return !isLoaderEnabled(element);
+    }
+
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
         TypeElement converterAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.Converter");
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(converterAnnotationType);
+
         Map<String, Element> converterClasses = new TreeMap<>();
         for (Element element : elements) {
             if (element instanceof TypeElement) {
-                TypeElement classElement = (TypeElement) element;
+                TypeElement te = (TypeElement) element;
 
                 // we only support top-level classes (not inner classes)
-                if (classElement.getNestingKind() == NestingKind.TOP_LEVEL) {
-                    final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                if (!te.getNestingKind().isNested() && acceptClass(te)) {
+                    final String javaTypeName = canonicalClassName(te.getQualifiedName().toString());
                     converterClasses.put(javaTypeName, element);
                 }
             }
         }
+        
+        // skip all converter classes from core as we just want to use the optimized TypeConverterLoader files
         if (!converterClasses.isEmpty()
                 && !converterClasses.containsKey("org.apache.camel.converter.IOConverter")
-                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.DomConverter")) {
+                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.DomConverter")
+                && !converterClasses.containsKey("org.apache.camel.converter.jaxp.XmlConverter")
+                && !converterClasses.containsKey("org.apache.camel.util.xml.StreamSourceConverter")
+                && !converterClasses.containsKey("org.apache.camel.converter.stream.StreamCacheConverter")) {
             Filer filer = processingEnv.getFiler();
             FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT,
                     "", "META-INF/services/org/apache/camel/TypeConverter",
@@ -65,6 +78,17 @@ public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {
                 }
             }
         }
+    }
+
+    private static boolean isLoaderEnabled(Element element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
+                if ("loader".equals(entry.getKey().getSimpleName().toString())) {
+                    return (Boolean) entry.getValue().getValue();
+                }
+            }
+        }
+        return false;
     }
 
 }

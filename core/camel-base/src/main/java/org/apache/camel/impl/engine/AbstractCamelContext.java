@@ -120,7 +120,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
@@ -193,7 +192,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
-    private Boolean trace = Boolean.FALSE;
+    private Boolean trace = Boolean.TRUE;
+    private Boolean debug = Boolean.TRUE;
     private Boolean messageHistory = Boolean.TRUE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
@@ -249,7 +249,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ExecutorServiceManager executorServiceManager;
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
-    private volatile ReloadStrategy reloadStrategy;
     private volatile RouteController routeController;
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
@@ -375,14 +374,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return getNameStrategy().getName();
     }
 
-    /**
-     * Sets the name of the this context.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
-        // use an explicit name strategy since an explicit name was provided to
-        // be used
+        // use an explicit name strategy since an explicit name was provided to be used
         setNameStrategy(new ExplicitCamelContextNameStrategy(name));
     }
 
@@ -761,6 +754,111 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                             answer = component.createEndpoint(rawUri);
                         } else {
                             answer = component.createEndpoint(uri);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        }
+                    }
+
+                }
+
+                if (answer != null) {
+                    addService(answer);
+                    answer = addEndpointToRegistry(uri, answer);
+                }
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
+            }
+        }
+
+        // unknown scheme
+        if (answer == null && scheme != null) {
+            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
+        }
+
+        return answer;
+    }
+
+    public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
+        init();
+
+        StringHelper.notEmpty(uri, "uri");
+
+        log.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
+
+        // in case path has property placeholders then try to let property
+        // component resolve those
+        try {
+            uri = resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new ResolveEndpointFailedException(uri, e);
+        }
+
+        final String rawUri = uri;
+
+        // normalize uri so we can do endpoint hits with minor mistakes and
+        // parameters is not in the same order
+        uri = normalizeEndpointUri(uri);
+
+        log.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
+
+        Endpoint answer;
+        String scheme = null;
+        // use optimized method to get the endpoint uri
+        EndpointKey key = getEndpointKeyPreNormalized(uri);
+        answer = endpoints.get(key);
+        if (answer == null) {
+            try {
+                // Use the URI prefix to find the component.
+                String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
+                if (splitURI[1] != null) {
+                    scheme = splitURI[0];
+                    log.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
+                    Component component = getComponent(scheme);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri, parameters);
+                        } else {
+                            answer = component.createEndpoint(uri, parameters);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        }
+                    }
+                }
+
+                if (answer == null) {
+                    // no component then try in registry and elsewhere
+                    answer = createEndpoint(uri);
+                    log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
+                }
+
+                if (answer == null && splitURI[1] == null) {
+                    // the uri has no context-path which is rare and it was not
+                    // referring to an endpoint in the registry
+                    // so try to see if it can be created by a component
+
+                    int pos = uri.indexOf('?');
+                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
+
+                    Component component = getComponent(componentName);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri, parameters);
+                        } else {
+                            answer = component.createEndpoint(uri, parameters);
                         }
 
                         if (answer != null && log.isDebugEnabled()) {
@@ -1832,12 +1930,20 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return trace;
     }
 
-    public Boolean isMessageHistory() {
-        return messageHistory;
+    public void setDebugging(Boolean debug) {
+        this.debug = debug;
+    }
+
+    public Boolean isDebugging() {
+        return debug;
     }
 
     public void setMessageHistory(Boolean messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public Boolean isMessageHistory() {
+        return messageHistory;
     }
 
     public void setLogMask(Boolean logMask) {
@@ -2394,11 +2500,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         EventHelper.notifyCamelContextStarting(this);
 
         forceLazyInitialization();
-
-        if (reloadStrategy != null) {
-            log.info("Using ReloadStrategy: {}", reloadStrategy);
-            addService(reloadStrategy, true, true);
-        }
 
         // if camel-bean is on classpath then we can load its bean proxy facory
         BeanProxyFactory beanProxyFactory = new BeanProxyFactoryResolver().resolve(this);
@@ -3741,16 +3842,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             }
         }
         return value;
-    }
-
-    @Override
-    public ReloadStrategy getReloadStrategy() {
-        return reloadStrategy;
-    }
-
-    @Override
-    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
-        this.reloadStrategy = doAddService(reloadStrategy);
     }
 
     @Override

@@ -29,12 +29,14 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BoonDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -79,12 +81,14 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
+        @XmlElement(required = false, name = "cbor", type = CBORDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
         @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
+        @XmlElement(required = false, name = "grok", type = GrokDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),

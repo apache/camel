@@ -55,7 +55,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
     @UriPath
     private String contextIdPattern;
     @UriParam
-    private String componentName;
+    private String consumerComponentName;
     @UriParam
     private String apiComponentName;
 
@@ -93,18 +93,18 @@ public class RestApiEndpoint extends DefaultEndpoint {
         this.contextIdPattern = contextIdPattern;
     }
 
-    public String getComponentName() {
-        return componentName;
+    public String getConsumerComponentName() {
+        return consumerComponentName;
     }
 
     /**
-     * The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+     * The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow.
      * If no component has been explicit configured, then Camel will lookup if there is a Camel component
      * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
      * If either one is found, then that is being used.
      */
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
+    public void setConsumerComponentName(String consumerComponentName) {
+        this.consumerComponentName = consumerComponentName;
     }
 
     public String getApiComponentName() {
@@ -133,7 +133,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(componentName, true);
+        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, true);
 
         // lookup in registry
         Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
@@ -213,12 +213,12 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
         // we use the rest component as the HTTP consumer to service the API
         // the API then uses the api component (eg usually camel-swagger-java) to build the API
-        if (getComponentName() != null) {
-            Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
+        if (getConsumerComponentName() != null) {
+            Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
             if (comp instanceof RestApiConsumerFactory) {
                 factory = (RestApiConsumerFactory) comp;
             } else {
-                comp = getCamelContext().getComponent(getComponentName());
+                comp = getCamelContext().getComponent(getConsumerComponentName());
                 if (comp instanceof RestApiConsumerFactory) {
                     factory = (RestApiConsumerFactory) comp;
                 }
@@ -226,12 +226,12 @@ public class RestApiEndpoint extends DefaultEndpoint {
 
             if (factory == null) {
                 if (comp != null) {
-                    throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestApiConsumerFactory");
+                    throw new IllegalArgumentException("Component " + getConsumerComponentName() + " is not a RestApiConsumerFactory");
                 } else {
-                    throw new NoSuchBeanException(getComponentName(), RestApiConsumerFactory.class.getName());
+                    throw new NoSuchBeanException(getConsumerComponentName(), RestApiConsumerFactory.class.getName());
                 }
             }
-            cname = getComponentName();
+            cname = getConsumerComponentName();
         }
 
         // try all components

@@ -3,13 +3,10 @@
 
 *Available as of Camel version 1.2*
 
-The *amqp:* component supports the http://www.amqp.org/[AMQP 1.0
-protocol] using the JMS Client API of the http://qpid.apache.org/[Qpid]
-project. In case you want to use AMQP 0.9 (in particular RabbitMQ) you
-might also be interested in the <<rabbitmq-component,Camel RabbitMQ>>
-component. Please keep in mind that prior to the Camel 2.17.0 AMQP
-component supported AMQP 0.9 and above, however since Camel 2.17.0 it
-supports only AMQP 1.0.
+The AMQP component supports the
+http://www.amqp.org/[AMQP 1.0 protocol]
+using the JMS Client API of the http://qpid.apache.org/[Qpid]
+project.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -156,7 +153,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (92 parameters):
+==== Query Parameters (93 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -196,6 +193,7 @@ with the following path and query parameters:
 | *deliveryPersistent* (producer) | Specifies whether persistent delivery is used by default. | true | boolean
 | *explicitQosEnabled* (producer) | Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages. This option is based on Spring's JmsTemplate. The deliveryMode, priority and timeToLive options are applied to the current endpoint. This contrasts with the preserveMessageQos option, which operates at message granularity, reading QoS properties exclusively from the Camel In message headers. | false | Boolean
 | *formatDateHeadersToIso8601* (producer) | Sets whether date headers should be formatted according to the ISO 8601 standard. | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *preserveMessageQos* (producer) | Set to true, if you want to send message using the QoS settings specified on the message, instead of the QoS settings on the JMS endpoint. The following three headers are considered JMSPriority, JMSDeliveryMode, and JMSExpiration. You can provide all or only some of them. If not provided, Camel will fall back to use the values from the endpoint instead. So, when using this option, the headers override the values from the endpoint. The explicitQosEnabled option, by contrast, will only use options set on the endpoint, and not values from the message header. | false | boolean
 | *priority* (producer) | Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest). The explicitQosEnabled option must also be enabled in order for this option to have any effect. | 4 | int
 | *replyToConcurrentConsumers* (producer) | Specifies the default number of concurrent consumers when doing request/reply over JMS. See also the maxMessagesPerTask option to control dynamic scaling up/down of threads. | 1 | int
@@ -388,22 +386,6 @@ from(...).
 
 ### Configuring AMQP component
 
-Starting from the Camel 2.16.1 you can also use the
-`AMQPComponent#amqp10Component(String connectionURI)` factory method to
-return the AMQP 1.0 component with the pre-configured topic prefix: 
-
-*Creating AMQP 1.0 component*
-
-[source,java]
-----
- AMQPComponent amqp = AMQPComponent.amqp10Component("amqp://guest:guest@localhost:5672");
-----
-
-Keep in mind that starting from the
-Camel 2.17 the `AMQPComponent#amqp10Component(String connectionURI)` factory
-method has been deprecated on the behalf of the
-`AMQPComponent#amqpComponent(String connectionURI)`: 
-
 *Creating AMQP 1.0 component*
 
 [source,java]
@@ -413,10 +395,9 @@ AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672");
 AMQPComponent authorizedAmqp = AMQPComponent.amqpComponent("amqp://localhost:5672", "user", "password");
 ----
 
-Starting from Camel 2.17, in order to automatically configure the AMQP
-component, you can also add an instance
+You can also add an instance
 of `org.apache.camel.component.amqp.AMQPConnectionDetails` to the
-registry. For example for Spring Boot you just have to define bean:
+registry in order to automatically configure the AMQP component. For example for Spring Boot you just have to define bean:
 
 *AMQP connection details auto-configuration*
 

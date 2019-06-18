@@ -55,11 +55,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
 
     // TODO: This implementation seems to have transformed itself into a to broad concern
-    // where unit of work is doing a bit more work than the transactional aspect that ties
-    // to its name. Maybe this implementation should be named ExchangeContext and we can
-    // introduce a simpler UnitOfWork concept. This would also allow us to refactor the
-    // SubUnitOfWork into a general parent/child unit of work concept. However this
-    // requires API changes and thus is best kept for Camel 3.0
+    //   where unit of work is doing a bit more work than the transactional aspect that ties
+    //   to its name. Maybe this implementation should be named ExchangeContext and we can
+    //   introduce a simpler UnitOfWork concept. This would also allow us to refactor the
+    //   SubUnitOfWork into a general parent/child unit of work concept. However this
+    //   requires API changes and thus is best kept for Camel 3.0
 
     private UnitOfWork parent;
     private String id;

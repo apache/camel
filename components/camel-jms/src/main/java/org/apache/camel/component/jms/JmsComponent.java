@@ -349,6 +349,13 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
+     * Gets the connection factory to be used.
+     */
+    public ConnectionFactory getConnectionFactory() {
+        return getConfiguration().getConnectionFactory();
+    }
+
+    /**
      * The connection factory to be use. A connection factory must be configured either on the component or endpoint.
      */
     @Metadata(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
@@ -1321,7 +1328,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         String cfUsername = getAndRemoveParameter(parameters, "username", String.class, getConfiguration().getUsername());
         String cfPassword = getAndRemoveParameter(parameters, "password", String.class, getConfiguration().getPassword());
         if (cfUsername != null && cfPassword != null) {
-            cf = endpoint.getConfiguration().getConnectionFactory();
+            cf = endpoint.getConfiguration().getOrCreateConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
             log.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();

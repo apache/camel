@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,6 +72,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *iamClient* (producer) | To use a existing configured AWS IAM as client |  | AmazonIdentity Management
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform |  | IAMOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the IAM client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the IAM client |  | Integer
@@ -170,7 +171,7 @@ Camel-AWS IAM component provides the following operation on the producer side:
 
 ### Automatic detection of AmazonIdentityManagement client in registry
 
-From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonIdentityManagement bean into the registry.
+The component is capable of detecting the presence of an AmazonIdentityManagement bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -189,8 +190,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel
-(2.16 or higher).
+where `${camel-version}` must be replaced by the actual version of Camel.
 
 ### See Also
 

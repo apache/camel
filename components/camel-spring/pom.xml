@@ -40,6 +40,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-main</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-management-api</artifactId>
         </dependency>
         <dependency>
@@ -386,6 +390,7 @@
                                         <include name="org/apache/camel/ShutdownRunningTask.java"/>
                                         <include name="org/apache/camel/WaitForTaskToComplete.java"/>
                                         <include name="org/apache/camel/package-info.java"/>
+                                        <exclude name="org/apache/camel/model/endpoint/*.java"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../core/camel-util/src/main/java">
                                         <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java"/>

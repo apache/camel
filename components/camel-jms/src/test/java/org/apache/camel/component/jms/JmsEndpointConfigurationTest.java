@@ -290,9 +290,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(0, endpoint.getMaxConcurrentConsumers());
         assertEquals(-1, endpoint.getMaxMessagesPerTask());
         assertNull(endpoint.getMessageConverter());
-        assertNotNull(endpoint.getMetadataJmsOperations());
         assertNotNull(endpoint.getPriority());
-        assertNotNull(endpoint.getProviderMetadata());
         assertNotNull(endpoint.getReceiveTimeout());
         assertNotNull(endpoint.getRecoveryInterval());
         assertNull(endpoint.getReplyTo());

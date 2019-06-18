@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
@@ -31,10 +30,12 @@ import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.BoonDataFormat;
+import org.apache.camel.model.dataformat.CBORDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
+import org.apache.camel.model.dataformat.GrokDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
@@ -204,6 +205,25 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         boon.setUnmarshalType(classType);
         return dataFormat(boon);
     }
+    
+    /**
+     * Uses the CBOR data format
+     */
+    public T cbor() {
+        return dataFormat(new CBORDataFormat());
+    }
+
+    /**
+     * Uses the CBOR data format
+     *
+     * @param unmarshalType
+     *            unmarshal type for cbor type
+     */
+    public T cbor(Class<?> unmarshalType) {
+        CBORDataFormat cborDataFormat = new CBORDataFormat();
+        cborDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(cborDataFormat);
+    }
 
     /**
      * Uses the CSV data format
@@ -225,6 +245,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T custom(String ref) {
         return dataFormat(new CustomDataFormat(ref));
+    }
+
+    /**
+     * Uses the Grok data format
+     */
+    public T grok(String pattern) {
+        GrokDataFormat grokDataFormat = new GrokDataFormat();
+        grokDataFormat.setPattern(pattern);
+        return dataFormat(grokDataFormat);
     }
 
     /**

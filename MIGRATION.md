@@ -22,6 +22,7 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 - camel-cloud
 - camel-core
 - camel-jaxp
+- camel-main
 - camel-management-api
 - camel-management-impl
 - camel-support
@@ -82,11 +83,19 @@ All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 Migrating Camel applications
 ----------------------------
 
+### Main class
+
+The Camel `Main` class has been moved out of `camel-core` into `camel-main` so you should add that as dependency if you use Main.
+
 ### Removed components
 
 We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
+
+The `camel-zookeeper` has its route policy functionality removed, instead use `ZooKeeperClusterService` or the `camel-zookeeper-master` component.
+
+The `camel-jetty` component no longer supports producer (eg to) which has been removed, instead use `camel-http4` component instead.
 
 ### Renamed components
 
@@ -250,6 +259,10 @@ The annotation `org.apache.camel.Constant` has been removed, use `@Simple` inste
 The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
 
 Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
+
+The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been removed.
+
+The `MessageHistoryFactory` interface has some options to filter and copy the message and a slight change in its API.
 
 #### camel-test
 

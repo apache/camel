@@ -29,13 +29,10 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.spi.BrowsableEndpoint;
-
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -355,45 +352,6 @@ public final class EndpointHelper {
 
         // not found
         return null;
-    }
-
-    /**
-     * Browses the {@link BrowsableEndpoint} within the given range, and returns the messages as a XML payload.
-     *
-     * @param endpoint    the browsable endpoint
-     * @param fromIndex   from range
-     * @param toIndex     to range
-     * @param includeBody whether to include the message body in the XML payload
-     * @return XML payload with the messages
-     * @throws IllegalArgumentException if the from and to range is invalid
-     * @see MessageHelper#dumpAsXml(org.apache.camel.Message)
-     */
-    public static String browseRangeMessagesAsXml(BrowsableEndpoint endpoint, Integer fromIndex, Integer toIndex, Boolean includeBody) {
-        if (fromIndex == null) {
-            fromIndex = 0;
-        }
-        if (toIndex == null) {
-            toIndex = Integer.MAX_VALUE;
-        }
-        if (fromIndex > toIndex) {
-            throw new IllegalArgumentException("From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
-        }
-
-        List<Exchange> exchanges = endpoint.getExchanges();
-        if (exchanges.size() == 0) {
-            return null;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<messages>");
-        for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
-            Exchange exchange = exchanges.get(i);
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            String xml = MessageHelper.dumpAsXml(msg, includeBody);
-            sb.append("\n").append(xml);
-        }
-        sb.append("\n</messages>");
-        return sb.toString();
     }
 
     /**

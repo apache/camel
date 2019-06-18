@@ -1,0 +1,36 @@
+== Camel Example Main Artemis
+
+This example shows how to run Camel standalone via the built-in Main class.
+The example requires a running Apache ActiveMQ Artemis broker running.
+
+The example also demonstrates how you can configure the Camel application
+via Camel built-in dependency-injection that supports binding via the
+`@BindToRegistry`, `@BeanInject` and `@PropertyInject` annotations.
+
+Also notice how you can configure Camel in the `application.properties` file.
+
+The example also demonstrates how you can configure the ActiveMQ Artemis JMS `ConnectionFactory`
+via two different styles
+
+- via `@BindToRegistry` from Java source code in the `MyConfiguration.java` source file
+- via `application.properties` and the `camel-main-maven-plugin`
+  that performs classpath scanning to auto-detect the JMS client and prepare for autowiring
+  by generating the `META-INF/services/org/apache/camel/autowire.properties` file.
+
+=== How to run
+
+First install https://activemq.apache.org/components/artemis/[Apache ActiveMQ Artemis]
+and create a broker, such as `mybroker`, and create the admin user as `admin` as username
+and `admin` as password:
+
+    bin/artemis create mybroker
+    cd mybroker
+    bin/artemis run
+
+Then you can run this example using
+
+    mvn camel:run   
+
+=== More information
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/

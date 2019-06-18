@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="xml">
             <from uri="timer://foo?period=1000"/>
-            <setBody><simple>Hello World from camel-contex.xml</simple></setBody>
+            <setBody><simple>Hello World from camel-context.xml</simple></setBody>
             <log message=">>> ${body}"/>
         </route>
     </camelContext>

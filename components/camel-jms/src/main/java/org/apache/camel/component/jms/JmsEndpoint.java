@@ -419,48 +419,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         return pubSubDomain;
     }
 
-    /**
-     * Lazily loads the temporary queue type if one has not been explicitly configured
-     * via calling the {@link JmsProviderMetadata#setTemporaryQueueType(Class)}
-     * on the {@link #getConfiguration()} instance
-     */
-    public Class<? extends TemporaryQueue> getTemporaryQueueType() {
-        JmsProviderMetadata metadata = getProviderMetadata();
-        JmsOperations template = getMetadataJmsOperations();
-        return metadata.getTemporaryQueueType(template);
-    }
-
-    /**
-     * Lazily loads the temporary topic type if one has not been explicitly configured
-     * via calling the {@link JmsProviderMetadata#setTemporaryTopicType(Class)}
-     * on the {@link #getConfiguration()} instance
-     */
-    public Class<? extends TemporaryTopic> getTemporaryTopicType() {
-        JmsOperations template = getMetadataJmsOperations();
-        JmsProviderMetadata metadata = getProviderMetadata();
-        return metadata.getTemporaryTopicType(template);
-    }
-
-    /**
-     * Returns the provider metadata
-     */
-    protected JmsProviderMetadata getProviderMetadata() {
-        JmsConfiguration conf = getConfiguration();
-        JmsProviderMetadata metadata = conf.getProviderMetadata();
-        return metadata;
-    }
-
-    /**
-     * Returns the {@link JmsOperations} used for metadata operations such as creating temporary destinations
-     */
-    protected JmsOperations getMetadataJmsOperations() {
-        JmsOperations template = getConfiguration().getMetadataJmsOperations(this);
-        if (template == null) {
-            throw new IllegalArgumentException("No Metadata JmsTemplate supplied!");
-        }
-        return template;
-    }
-
     protected ExecutorService getAsyncStartStopExecutorService() {
         if (getComponent() == null) {
             throw new IllegalStateException("AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
@@ -621,10 +579,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     public MessageConverter getMessageConverter() {
         return getConfiguration().getMessageConverter();
-    }
-
-    public JmsOperations getMetadataJmsOperations(JmsEndpoint endpoint) {
-        return getConfiguration().getMetadataJmsOperations(endpoint);
     }
 
     @ManagedAttribute
@@ -947,10 +901,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
     }
 
-    public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
-        getConfiguration().setMetadataJmsOperations(metadataJmsOperations);
-    }
-
     @ManagedAttribute
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         getConfiguration().setPreserveMessageQos(preserveMessageQos);
@@ -959,10 +909,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setPriority(int priority) {
         getConfiguration().setPriority(priority);
-    }
-
-    public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
-        getConfiguration().setProviderMetadata(providerMetadata);
     }
 
     @ManagedAttribute

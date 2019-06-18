@@ -38,6 +38,7 @@ public interface MessageHistory {
 
     /**
      * Gets the elapsed time in millis processing the node took
+     * (this is 0 until the node processing is done)
      */
     long getElapsed();
 
@@ -45,5 +46,10 @@ public interface MessageHistory {
      * Used for signalling that processing of the node is done.
      */
     void nodeProcessingDone();
+
+    /**
+     * A read-only copy of the message at the point of this history (if this has been enabled).
+     */
+    Message getMessage();
 
 }

@@ -276,6 +276,10 @@ public class S3ComponentConfiguration
          * instance or to expect static credentials to be passed in.
          */
         private Boolean useIAMCredentials = false;
+        /**
+         * Setting the autocreation of the bucket
+         */
+        private Boolean autoCreateBucket = true;
 
         public Long getPartSize() {
             return partSize;
@@ -525,6 +529,14 @@ public class S3ComponentConfiguration
 
         public void setUseIAMCredentials(Boolean useIAMCredentials) {
             this.useIAMCredentials = useIAMCredentials;
+        }
+
+        public Boolean getAutoCreateBucket() {
+            return autoCreateBucket;
+        }
+
+        public void setAutoCreateBucket(Boolean autoCreateBucket) {
+            this.autoCreateBucket = autoCreateBucket;
         }
     }
 }

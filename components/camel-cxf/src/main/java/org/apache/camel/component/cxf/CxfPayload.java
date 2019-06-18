@@ -134,6 +134,14 @@ public class CxfPayload<T> {
         return body;
     }
     
+    /*
+     * set the body back with cached stream source so
+     * CxfPayload is re-readable
+     */
+    public void setBodySources(List<Source> body) {
+        this.body = body;
+    }
+    
     public List<T> getHeaders() {
         return headers;
     }

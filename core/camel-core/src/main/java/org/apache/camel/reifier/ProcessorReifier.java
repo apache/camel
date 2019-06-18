@@ -50,7 +50,6 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.model.MarshalDefinition;
-import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -71,6 +70,7 @@ import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.model.SamplingDefinition;
@@ -103,10 +103,10 @@ import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,9 +187,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected final T definition;
-    
+
     public ProcessorReifier(T definition) {
         this.definition = definition;
+    }
+
+    public static void registerReifier(Class<?> processorClass, Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+        PROCESSORS.put(processorClass, creator);
     }
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(ProcessorDefinition<?> definition) {
@@ -266,7 +270,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      * Wraps the child processor in whatever necessary interceptors and error handlers
      */
     public Channel wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
-        // dont double wrap
+        // don't double wrap
         if (processor instanceof Channel) {
             return (Channel) processor;
         }
@@ -279,18 +283,44 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
 
     protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route flow logic
-        ModelChannel channel = createChannel(routeContext);
-        channel.setNextProcessor(processor);
+        DefaultChannel channel = new DefaultChannel();
 
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
-        addInterceptStrategies(routeContext, channel, routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getInterceptStrategies());
-        addInterceptStrategies(routeContext, channel, routeContext.getInterceptStrategies());
-        addInterceptStrategies(routeContext, channel, definition.getInterceptStrategies());
+        List<InterceptStrategy> interceptors = new ArrayList<>();
+        addInterceptStrategies(routeContext, interceptors, routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getInterceptStrategies());
+        addInterceptStrategies(routeContext, interceptors, routeContext.getInterceptStrategies());
+        addInterceptStrategies(routeContext, interceptors, definition.getInterceptStrategies());
+
+        // force the creation of an id
+        RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
+
+        // fix parent/child relationship. This will be the case of the routes has been
+        // defined using XML DSL or end user may have manually assembled a route from the model.
+        // Background note: parent/child relationship is assembled on-the-fly when using Java DSL (fluent builders)
+        // where as when using XML DSL (JAXB) then it fixed after, but if people are using custom interceptors
+        // then we need to fix the parent/child relationship beforehand, and thus we can do it here
+        // ideally we need the design time route -> runtime route to be a 2-phase pass (scheduled work for Camel 3.0)
+        if (child != null && definition != child) {
+            child.setParent(definition);
+        }
 
         // set the child before init the channel
-        channel.setChildDefinition(child);
-        channel.initChannel(definition, routeContext);
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+        boolean first = false;
+        if (route != null && !route.getOutputs().isEmpty()) {
+            first = route.getOutputs().get(0) == definition;
+        }
+        // set scoping
+        boolean routeScoped = true;
+        if (definition instanceof OnExceptionDefinition) {
+            routeScoped = ((OnExceptionDefinition) definition).isRouteScoped();
+        } else if (this.definition instanceof OnCompletionDefinition) {
+            routeScoped = ((OnCompletionDefinition) definition).isRouteScoped();
+        }
+        // initialize the channel
+        channel.initChannel(routeContext, definition, child, interceptors, processor, route, first, routeScoped);
 
+        boolean wrap = false;
         // set the error handler, must be done after init as we can set the error handler as first in the chain
         if (definition instanceof TryDefinition || definition instanceof CatchDefinition || definition instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
@@ -309,7 +339,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             // however if inherit error handler is enabled, we need to wrap an error handler on the hystrix parent
             if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
                 // only wrap the parent (not the children of the hystrix)
-                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
+                wrap = true;
             } else {
                 log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", definition);
             }
@@ -320,17 +350,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
-                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
+                wrap = true;
             } else {
                 log.trace("{} is part of multicast which have special error handling so no error handler is applied", definition);
             }
         } else {
             // use error handler by default or if configured to do so
+            wrap = true;
+        }
+        if (wrap) {
             wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
         }
 
         // do post init at the end
-        channel.postInitChannel(definition, routeContext);
+        channel.postInitChannel();
         log.trace("{} wrapped in Channel: {}", definition, channel);
 
         return channel;
@@ -344,7 +377,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      * @param inheritErrorHandler whether to inherit error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext, Boolean inheritErrorHandler) throws Exception {
+    private void wrapChannelInErrorHandler(DefaultChannel channel, RouteContext routeContext, Boolean inheritErrorHandler) throws Exception {
         if (inheritErrorHandler == null || inheritErrorHandler) {
             log.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();
@@ -367,7 +400,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
         ErrorHandlerFactory builder = routeContext.getErrorHandlerFactory();
         // create error handler
-        Processor errorHandler = builder.createErrorHandler(routeContext, output);
+        Processor errorHandler = ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, output);
 
         // invoke lifecycles so we can manage this error handler builder
         for (LifecycleStrategy strategy : routeContext.getCamelContext().getLifecycleStrategies()) {
@@ -381,10 +414,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      * Adds the given list of interceptors to the channel.
      *
      * @param routeContext  the route context
-     * @param channel       the channel to add strategies
+     * @param interceptors  the list to add strategies
      * @param strategies    list of strategies to add.
      */
-    protected void addInterceptStrategies(RouteContext routeContext, Channel channel, List<InterceptStrategy> strategies) {
+    protected void addInterceptStrategies(RouteContext routeContext, List<InterceptStrategy> interceptors, List<InterceptStrategy> strategies) {
         for (InterceptStrategy strategy : strategies) {
             if (!routeContext.isHandleFault() && strategy instanceof HandleFault) {
                 // handle fault is disabled so we should not add it
@@ -392,7 +425,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             }
 
             // add strategy
-            channel.addInterceptStrategy(strategy);
+            interceptors.add(strategy);
         }
     }
 
@@ -402,13 +435,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      */
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         return Pipeline.newInstance(routeContext.getCamelContext(), list);
-    }
-
-    /**
-     * Creates a new instance of the {@link Channel}.
-     */
-    protected ModelChannel createChannel(RouteContext routeContext) throws Exception {
-        return new DefaultChannel();
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {

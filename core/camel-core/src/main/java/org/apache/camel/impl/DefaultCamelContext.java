@@ -149,17 +149,12 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         super(init);
     }
 
-    /**
-     * Lazily create a default implementation
-     */
     protected TypeConverter createTypeConverter() {
-        // lets use the new fast type converter registry
         return new DefaultTypeConverter(
                 this, getPackageScanClassResolver(),
                 getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
     }
 
-    @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
         TypeConverter typeConverter = getTypeConverter();
         if (typeConverter instanceof TypeConverterRegistry) {
@@ -168,9 +163,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return null;
     }
 
-    /**
-     * Lazily create a default implementation
-     */
     protected Injector createInjector() {
         FactoryFinder finder = getDefaultFactoryFinder();
         try {
@@ -181,23 +173,14 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         }
     }
 
-    /**
-     * Lazily create a default bean post processor
-     */
     protected CamelBeanPostProcessor createBeanPostProcessor() {
         return new DefaultCamelBeanPostProcessor(this);
     }
 
-    /**
-     * Lazily create a default implementation
-     */
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
     }
 
-    /**
-     * Lazily create a default implementation
-     */
     protected Registry createRegistry() {
         return new DefaultRegistry();
     }
@@ -249,7 +232,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     protected HealthCheckRegistry createHealthCheckRegistry() {
         return new DefaultHealthCheckRegistry(this);
     }
-
 
     protected ShutdownStrategy createShutdownStrategy() {
         return new DefaultShutdownStrategy(this);
@@ -311,7 +293,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return new DefaultLanguageResolver();
     }
 
-    @Override
     protected RestRegistryFactory createRestRegistryFactory() {
         return new RestRegistryFactoryResolver().resolve(this);
     }
@@ -320,7 +301,6 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
         return new DefaultEndpointRegistry(this, endpoints);
     }
 
-    @Override
     protected StreamCachingStrategy createStreamCachingStrategy() {
         return new DefaultStreamCachingStrategy();
     }

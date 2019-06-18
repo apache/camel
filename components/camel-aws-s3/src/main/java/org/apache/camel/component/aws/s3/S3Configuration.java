@@ -82,6 +82,8 @@ public class S3Configuration implements Cloneable {
     private boolean payloadSigningEnabled;
     @UriParam(label = "common, advanced", defaultValue = "false")
     private boolean forceGlobalBucketAccessEnabled;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoCreateBucket = true;
     @UriParam(label = "producer,advanced", defaultValue = "false")
     private boolean useAwsKMS;
     @UriParam(label = "producer,advanced")
@@ -94,8 +96,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Setup the partSize which is used in multi part upload,
-     * the default size is 25M.
+     * Setup the partSize which is used in multi part upload, the default size
+     * is 25M.
      */
     public void setPartSize(long partSize) {
         this.partSize = partSize;
@@ -106,8 +108,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, camel will upload the file with multi part
-     * format, the part size is decided by the option of `partSize`
+     * If it is true, camel will upload the file with multi part format, the
+     * part size is decided by the option of `partSize`
      */
     public void setMultiPartUpload(boolean multiPartUpload) {
         this.multiPartUpload = multiPartUpload;
@@ -150,7 +152,7 @@ public class S3Configuration implements Cloneable {
     public String getPrefix() {
         return prefix;
     }
-    
+
     /**
      * The prefix which is used in the
      * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
@@ -159,7 +161,7 @@ public class S3Configuration implements Cloneable {
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
-    
+
     public String getDelimiter() {
         return delimiter;
     }
@@ -283,8 +285,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Sets the server-side encryption algorithm when encrypting
-     * the object using AWS-managed keys. For example use <tt>AES256</tt>.
+     * Sets the server-side encryption algorithm when encrypting the object
+     * using AWS-managed keys. For example use <tt>AES256</tt>.
      */
     public void setServerSideEncryption(String serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
@@ -451,8 +453,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to load credentials on an EC2 instance or to
-     * expect static credentials to be passed in.
+     * Set whether the S3 client should expect to load credentials on an EC2
+     * instance or to expect static credentials to be passed in.
      */
     public void setUseIAMCredentials(Boolean useIAMCredentials) {
         this.useIAMCredentials = useIAMCredentials;
@@ -462,10 +464,21 @@ public class S3Configuration implements Cloneable {
         return useIAMCredentials;
     }
 
+    public boolean isAutoCreateBucket() {
+        return autoCreateBucket;
+    }
+
+    /**
+     * Setting the autocreation of the bucket
+     */
+    public void setAutoCreateBucket(boolean autoCreateBucket) {
+        this.autoCreateBucket = autoCreateBucket;
+    }
+
     public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
-    
+
     // *************************************************
     //
     // *************************************************

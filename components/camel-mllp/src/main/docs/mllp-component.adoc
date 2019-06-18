@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+==== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,6 +99,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging them at WARN or ERROR level and ignored. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. | InOut | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used (this component only supports synchronous operations). | true | boolean
 | *backlog* (tcp) | The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. If a connection indication arrives when the queue is full, the connection is refused. | 5 | Integer
@@ -173,8 +174,8 @@ The component supports 32 options, which are listed below.
 | *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 | *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
-| *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
+| *camel.component.mllp.configuration.buffer-writes* | *Deprecated* Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
+| *camel.component.mllp.configuration.max-receive-timeouts* | *Deprecated* The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 |===
 // spring-boot-auto-configure options: END
 

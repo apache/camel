@@ -21,18 +21,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -46,29 +39,6 @@ public final class StreamCacheConverter {
      * Utility classes should not have a public constructor.
      */
     private StreamCacheConverter() {
-    }
-
-    @Converter
-    public static StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
-        return new StreamSourceCache(source, exchange);
-    }
-
-    @Converter
-    public static StreamCache convertToStreamCache(StringSource source) {
-        //no need to do stream caching for a StringSource
-        return null;
-    }
-
-    @Converter
-    public static StreamCache convertToStreamCache(BytesSource source) {
-        //no need to do stream caching for a BytesSource
-        return null;
-    }
-
-    @Converter
-    public static StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
-        String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, source);
-        return new SourceCache(data);
     }
 
     @Converter
@@ -94,12 +64,6 @@ public final class StreamCacheConverter {
     public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         return new ReaderCache(data);
-    }
-
-    @Converter
-    public static Serializable convertToSerializable(StreamCache cache, Exchange exchange) throws IOException {
-        byte[] data = convertToByteArray(cache, exchange);
-        return new BytesSource(data);
     }
 
     @Converter

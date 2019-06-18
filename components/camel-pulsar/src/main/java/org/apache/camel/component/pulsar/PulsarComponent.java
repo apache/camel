@@ -30,13 +30,12 @@ import org.apache.pulsar.client.api.PulsarClient;
 @Component("pulsar")
 public class PulsarComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(label = "advanced")
     private AutoConfiguration autoConfiguration;
-    @Metadata
+    @Metadata(label = "advanced")
     private PulsarClient pulsarClient;
 
     public PulsarComponent() {
-        this(null);
     }
 
     public PulsarComponent(CamelContext context) {
@@ -64,7 +63,7 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     /**
-     * The pulsar autoconfiguration
+     * The pulsar auto configuration
      */
     public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
         this.autoConfiguration = autoConfiguration;

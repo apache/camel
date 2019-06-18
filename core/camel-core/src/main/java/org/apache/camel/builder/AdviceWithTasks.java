@@ -391,7 +391,7 @@ public final class AdviceWithTasks {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 FromDefinition from = route.getInput();
-                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), uri);
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getEndpointUri(), uri);
                 from.setEndpoint(null);
                 from.setUri(uri);
             }
@@ -402,7 +402,7 @@ public final class AdviceWithTasks {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 FromDefinition from = route.getInput();
-                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), endpoint.getEndpointUri());
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getEndpointUri(), endpoint.getEndpointUri());
                 from.setUri(null);
                 from.setEndpoint(endpoint);
             }

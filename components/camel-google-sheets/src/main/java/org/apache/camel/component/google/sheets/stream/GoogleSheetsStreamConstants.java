@@ -27,6 +27,8 @@ public final class GoogleSheetsStreamConstants {
     public static final String SPREADSHEET_URL =  PROPERTY_PREFIX + "SpreadsheetUrl";
     public static final String MAJOR_DIMENSION = PROPERTY_PREFIX + "MajorDimension";
     public static final String RANGE = PROPERTY_PREFIX + "Range";
+    public static final String RANGE_INDEX = PROPERTY_PREFIX + "RangeIndex";
+    public static final String VALUE_INDEX = PROPERTY_PREFIX + "ValueIndex";
 
     /**
      * Prevent instantiation.

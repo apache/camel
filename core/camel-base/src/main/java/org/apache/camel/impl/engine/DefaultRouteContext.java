@@ -18,8 +18,10 @@ package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -41,13 +43,14 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The context used to activate new routing rules
  */
 public class DefaultRouteContext implements RouteContext {
-    private final NamedNode route;
-    private final String routeId;
+    private NamedNode route;
+    private String routeId;
     private Route runtimeRoute;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
@@ -56,6 +59,7 @@ public class DefaultRouteContext implements RouteContext {
     private ManagementInterceptStrategy managementInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean debug;
     private Boolean messageHistory;
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
@@ -74,6 +78,7 @@ public class DefaultRouteContext implements RouteContext {
     private final Map<String, Object> properties = new HashMap<>();
     private ErrorHandlerFactory errorHandlerFactory;
     private Integer startupOrder;
+    private Map<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new HashMap<>();
 
     public DefaultRouteContext(CamelContext camelContext, NamedNode route, String routeId) {
         this.camelContext = camelContext;
@@ -112,7 +117,7 @@ public class DefaultRouteContext implements RouteContext {
     public Endpoint resolveEndpoint(String uri, String ref) {
         Endpoint endpoint = null;
         if (uri != null) {
-            endpoint = resolveEndpoint(uri);
+            endpoint = camelContext.getEndpoint(uri);
             if (endpoint == null) {
                 throw new NoSuchEndpointException(uri);
             }
@@ -262,6 +267,19 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isTracing();
+        }
+    }
+
+    public void setDebugging(Boolean debugging) {
+        this.debug = debugging;
+    }
+
+    public Boolean isDebugging() {
+        if (debug != null) {
+            return debug;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isDebugging();
         }
     }
 
@@ -465,4 +483,22 @@ public class DefaultRouteContext implements RouteContext {
         properties.put(key, value);
     }
 
+    @Override
+    public void addErrorHandler(ErrorHandlerFactory factory, NamedNode onException) {
+        getErrorHandlers(factory).add(onException);
+    }
+
+    @Override
+    public Set<NamedNode> getErrorHandlers(ErrorHandlerFactory factory) {
+        return errorHandlers.computeIfAbsent(factory, f -> new LinkedHashSet<>());
+    }
+
+    @Override
+    public void addErrorHandlerFactoryReference(ErrorHandlerFactory source, ErrorHandlerFactory target) {
+        Set<NamedNode> list = getErrorHandlers(source);
+        Set<NamedNode> previous = errorHandlers.put(target, list);
+        if (list != previous && ObjectHelper.isNotEmpty(previous) && ObjectHelper.isNotEmpty(list)) {
+            throw new IllegalStateException("multiple references with different handlers");
+        }
+    }
 }

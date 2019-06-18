@@ -82,8 +82,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client()
-                : S3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
+        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : S3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
 
         String fileName = getConfiguration().getFileName();
 
@@ -110,14 +109,16 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
         LOG.trace("Bucket [{}] doesn't exist yet", bucketName);
 
-        // creates the new bucket because it doesn't exist yet
-        CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
+        if (getConfiguration().isAutoCreateBucket()) {
+            // creates the new bucket because it doesn't exist yet
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
 
-        LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
+            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
 
-        s3Client.createBucket(createBucketRequest);
+            s3Client.createBucket(createBucketRequest);
 
-        LOG.trace("Bucket created");
+            LOG.trace("Bucket created");
+        }
 
         if (configuration.getPolicy() != null) {
             LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());

@@ -19,7 +19,8 @@ package org.apache.camel.component.rss;
 import java.util.Date;
 import java.util.Map;
 
-import com.sun.syndication.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntry;
+
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.support.LRUCacheFactory;

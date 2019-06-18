@@ -140,7 +140,7 @@ public class GoogleSheetsStreamComponentConfiguration
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          */
-        private Integer maxResults = 10;
+        private Integer maxResults = 0;
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
          */
@@ -157,6 +157,13 @@ public class GoogleSheetsStreamComponentConfiguration
          * True if grid data should be returned.
          */
         private Boolean includeGridData = false;
+        /**
+         * True if value range result should be split into rows or columns to
+         * process each of them individually. When true each row or column is
+         * represented with a separate exchange in batch processing. Otherwise
+         * value range object is used as exchange junk size.
+         */
+        private Boolean splitResults = false;
 
         public String getClientId() {
             return clientId;
@@ -260,6 +267,14 @@ public class GoogleSheetsStreamComponentConfiguration
 
         public void setIncludeGridData(Boolean includeGridData) {
             this.includeGridData = includeGridData;
+        }
+
+        public Boolean getSplitResults() {
+            return splitResults;
+        }
+
+        public void setSplitResults(Boolean splitResults) {
+            this.splitResults = splitResults;
         }
     }
 }

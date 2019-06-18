@@ -16,25 +16,18 @@
  */
 package org.apache.camel.spring.boot.util;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.PropertyBindingException;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
  * To help configuring Camel properties that have been defined in Spring Boot configuration files.
  */
 public final class CamelPropertiesHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
     private CamelPropertiesHelper() {
     }
@@ -42,11 +35,21 @@ public final class CamelPropertiesHelper {
     /**
      * Sets the properties on the target bean.
      * <p/>
-     * This implementation sets the properties using the following algorithm:
+     * This method uses {@link PropertyBindingSupport} and therefore offers its capabilities such as:
      * <ul>
-     *     <li>Value as reference lookup - If the value uses Camel reference syntax, eg #beanId then the bean is looked up from Registry and set on the target</li>
-     *     <li>Value as-is - The value is attempted to be converted to the class type of the bean setter method; this is for regular types like String, numbers etc</li>
-     *     <li>Value as lookup - the bean is looked up from Registry and if there is a bean then its set on the target</li>
+     *     <li>property placeholders - Keys and values using Camels property placeholder will be resolved</li>
+     *     <li>nested - Properties can be nested using the dot syntax (OGNL and builder pattern using with as prefix), eg foo.bar=123</li>
+     *     <li>map</li> - Properties can lookup in Map's using map syntax, eg foo[bar] where foo is the name of the property that is a Map instance, and bar is the name of the key.</li>
+     *     <li>list</li> - Properties can refer or add to in List's using list syntax, eg foo[0] where foo is the name of the property that is a
+     *                     List instance, and 0 is the index. To refer to the last element, then use last as key.</li>
+     * </ul>
+     * This implementation sets the properties using the following algorithm in the given order:
+     * <ul>
+     *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
+     *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
+     *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
+     *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
+     *     <li>value as lookup - The value is used as-is (eg like #value) to lookup in the Registry if there is a bean then its set on the target</li>
      * </ul>
      * When an option has been set on the target bean, then its removed from the given properties map. If all the options has been set, then the map will be empty.
      *
@@ -71,17 +74,18 @@ public final class CamelPropertiesHelper {
             Object value = entry.getValue();
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
-            if (stringValue != null && isReferenceParameter(stringValue)) {
-                // its a #beanId reference lookup
-                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
-            } else if (value != null) {
-                // its a value to be used as-is (or type converted)
-                try {
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
-                } catch (IllegalArgumentException e) {
-                    // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
-                    // then maybe the value refers to a spring bean in the registry so try this
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, null, stringValue, true);
+            try {
+                hit = PropertyBindingSupport.bindProperty(context, target, name, value);
+            } catch (PropertyBindingException e) {
+                // no we could not and this would be thrown if we attempted to set a value on a property which we cannot do type conversion as
+                // then maybe the value refers to a spring bean in the registry so try this
+                if (stringValue != null) {
+                    if (stringValue.startsWith("#")) {
+                        stringValue = stringValue.substring(1);
+                    }
+                    // use #bean: to lookup
+                    stringValue = "#bean:" + stringValue;
+                    hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
                 }
             }
 
@@ -99,50 +103,4 @@ public final class CamelPropertiesHelper {
         return rc;
     }
 
-    /**
-     * Inspects the given object and resolves any property placeholders from its properties.
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
-     *
-     * @param camelContext the Camel context
-     * @param target       the object that should have the properties (eg getter/setter) resolved
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
-     * @see CamelContext#resolvePropertyPlaceholders(String)
-     * @see org.apache.camel.component.properties.PropertiesComponent
-     */
-    public static void resolvePropertyPlaceholders(CamelContext camelContext, Object target) throws Exception {
-        LOG.trace("Resolving property placeholders for: {}", target);
-
-        // find all getter/setter which we can use for property placeholders
-        Map<String, Object> properties = new HashMap<>();
-        IntrospectionSupport.getProperties(target, properties, null);
-
-        Map<String, Object> changedProperties = new HashMap<>();
-        if (!properties.isEmpty()) {
-            LOG.trace("There are {} properties on: {}", properties.size(), target);
-            // lookup and resolve properties for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // value must be a String, as a String is the key for a property placeholder
-                    String text = (String) value;
-                    text = camelContext.resolvePropertyPlaceholders(text);
-                    if (text != value) {
-                        // invoke setter as the text has changed
-                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), target, name, text);
-                        if (!changed) {
-                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + target);
-                        }
-                        changedProperties.put(name, value);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

@@ -41,6 +41,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 
@@ -49,6 +50,26 @@ import org.apache.camel.spi.UnitOfWorkFactory;
  * but for SPI, custom components, or more advanced used-cases with Camel.
  */
 public interface ExtendedCamelContext extends CamelContext {
+
+    /**
+     * Sets the name (id) of the this context.
+     * <p/>
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
+     * Important: Setting the name should only be set before CamelContext is started.
+     *
+     * @param name the name
+     */
+    void setName(String name);
+
+    /**
+     * Sets the registry Camel should use for looking up beans by name or type.
+     * <p/>
+     * This operation is mostly only used by different Camel runtimes such as camel-spring, camel-cdi, camel-spring-boot etc.
+     * Important: Setting the registry should only be set before CamelContext is started.
+     *
+     * @param registry the registry such as DefaultRegistry or
+     */
+    void setRegistry(Registry registry);
 
     /**
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.

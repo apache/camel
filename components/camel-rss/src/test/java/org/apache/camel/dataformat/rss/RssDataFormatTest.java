@@ -16,7 +16,8 @@
  */
 package org.apache.camel.dataformat.rss;
 
-import com.sun.syndication.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndFeed;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssUtils;
@@ -43,8 +44,8 @@ public class RssDataFormatTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(SyndFeed.class);
         mock.message(0).body(SyndFeed.class).equals(feed);
         mock.assertIsSatisfied();
-    }    
-    
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {

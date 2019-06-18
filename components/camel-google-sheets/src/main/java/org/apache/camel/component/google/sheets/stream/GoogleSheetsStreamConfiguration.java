@@ -57,14 +57,17 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     @UriParam
     private String spreadsheetId;
 
-    @UriParam(defaultValue = "10")
-    private int maxResults = 10;
+    @UriParam(defaultValue = "0")
+    private int maxResults;
 
     @UriParam
     private String range;
 
     @UriParam
     private boolean includeGridData;
+
+    @UriParam
+    private boolean splitResults;
 
     @UriParam(enums = "ROWS,COLUMNS,DIMENSION_UNSPECIFIED", defaultValue = "ROWS")
     private String majorDimension = "ROWS";
@@ -238,6 +241,21 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
      */
     public void setIncludeGridData(boolean includeGridData) {
         this.includeGridData = includeGridData;
+    }
+
+    public boolean isSplitResults() {
+        return splitResults;
+    }
+
+    /**
+     * True if value range result should be split into rows or columns to process each of them individually. When true
+     * each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used
+     * as exchange junk size.
+     *
+     * @param splitResults
+     */
+    public void setSplitResults(boolean splitResults) {
+        this.splitResults = splitResults;
     }
 
     // *************************************************

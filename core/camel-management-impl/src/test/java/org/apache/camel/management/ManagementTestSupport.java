@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.io.IOException;
+import java.util.Random;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -26,15 +27,33 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
+import org.apache.camel.management.util.AvailablePortFinder;
+import org.junit.Before;
 
 /**
  * Base class for JMX tests.
  */
 public abstract class ManagementTestSupport extends ContextTestSupport {
 
+    protected int registryPort;
+    protected String url;
+
     @Override
     protected boolean useJmx() {
         return true;
+    }
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        registryPort = AvailablePortFinder.getNextAvailable();
+        log.info("Using port " + registryPort);
+
+        // need to explicit set it to false to use non-platform mbs
+        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "" + registryPort);
+        super.setUp();
     }
 
     protected MBeanServer getMBeanServer() {

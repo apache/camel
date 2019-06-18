@@ -85,7 +85,8 @@ We have integrated _Salesforce Migration Tool_ into the Maven _integration-test_
 
 Before running the tests for the first time run the migration by invoking Maven from the `camel-salesforce-component` Maven module directory:
 
-    $ mvn -Pintegration antrun:run@setup-salesforce-instance
+    $ mvn -Pintegration resources:copy-resources@copy-test-salesforce-login-properties \
+      resources:copy-resources@set-connected-app-client-id antrun:run@setup-salesforce-instance
 
 This will create a _Connected App_ with predefined Consumer Key (the one mentioned in the comment one in `test-salesforce-login.properties.sample`) and _Consumer Secret_ (`clientSecret`) with the name of `CamelSalesforceIntegrationTests`.
 
@@ -109,9 +110,10 @@ Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can 
  - add custom field `Shipping_Location` of type `GeoLocation` on the `Account` object
  - add custom field `Units_Sold` of `Number` type with maximum length of `18` on the `Line_Item` object
  - delete custom fields `Quantity`, `Invoice`, `Line_Item_Total` from the `Line_Item` object
- - delete custom field `Quantity` from the `Merchanidise` object, you will need to delete dependencies (ApexClass and Visualforce Page)
+ - delete custom field `Quantity` from the `Merchandise` object, you will need to delete dependencies (ApexClass and Visualforce Page)
  - create new ApexClass named `MerchandiseRestResource` with the content of `MerchandiseRestResource.apxc`
  - deactivate the `Contact Duplicate Rule` in salesforce configuration
+ - add `Account` to selected entities for change data capture in the _Integrations/Change Data Capture_ menu
 
 You'll need to access a Merchandise record and run a `Test Report` in order for them to appear in _Recent Items_ and _Recent Reports_. Do this by accessing _Warehouse_ application from the menu in the top right, and selecting _Merchandise_ click _Go!_ (preselected is View: _All_) and click on the single Merchandise item available. Next go to Reports and select and run _Test Report_ from _Test Reports_. This is needed by the integration tests as they access recent items and recently run reports.
 

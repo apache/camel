@@ -26,6 +26,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.slf4j.Logger;
@@ -86,9 +87,9 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             // only lookup if there was explicit an error handler builder configured
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
-            if (ErrorHandlerBuilderRef.isErrorHandlerFactoryConfigured(ref)) {
+            if (ErrorHandlerReifier.isErrorHandlerFactoryConfigured(ref)) {
                 LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
-                builder = (ErrorHandlerBuilder) ErrorHandlerBuilderRef.lookupErrorHandlerFactory(routeContext, ref);
+                builder = (ErrorHandlerBuilder) ErrorHandlerReifier.lookupErrorHandlerFactory(routeContext, ref);
             }
         }
 
@@ -111,13 +112,10 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
 
         // use error handlers from the configured builder
         if (builder != null) {
-            txBuilder.setErrorHandlers(routeContext, builder.getErrorHandlers(routeContext));
+            routeContext.addErrorHandlerFactoryReference(builder, txBuilder);
         }
 
         answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
-        answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
-        // configure our answer based on the existing error handler
-        txBuilder.configure(routeContext, answer);
 
         // set the route to use our transacted error handler builder
         route.setErrorHandlerFactory(txBuilder);
@@ -130,7 +128,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
             ErrorHandlerBuilder builder) {
         JtaTransactionErrorHandler answer;
         try {
-            answer = (JtaTransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
+            answer = (JtaTransactionErrorHandler) ErrorHandlerReifier.reifier(builder).createErrorHandler(routeContext, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

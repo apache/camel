@@ -16,15 +16,91 @@
  */
 package org.apache.camel.impl.engine;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.DefaultMessageHistory;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
-public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
+@ManagedResource(description = "Managed MessageHistoryFactory")
+public class DefaultMessageHistoryFactory extends ServiceSupport implements MessageHistoryFactory {
+
+    private CamelContext camelContext;
+    private boolean copyMessage;
+    private String nodePattern;
+    private volatile String[] nodePatternParts;
 
     @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp) {
-        return new DefaultMessageHistory(routeId, node, timestamp);
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp, Exchange exchange) {
+        if (nodePatternParts != null) {
+            String name = node.getShortName();
+            for (String part : nodePatternParts) {
+                boolean match = PatternHelper.matchPattern(name, part);
+                if (!match) {
+                    return null;
+                }
+            }
+        }
+
+        Message msg = null;
+        if (copyMessage) {
+            msg = exchange.getMessage().copy();
+        }
+
+        return new DefaultMessageHistory(routeId, node, timestamp, msg);
+    }
+
+    @ManagedAttribute(description = "Whether message history is enabled")
+    public boolean isEnabled() {
+        return camelContext != null ? camelContext.isMessageHistory() : false;
+    }
+
+    @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
+    public boolean isCopyMessage() {
+        return copyMessage;
+    }
+
+    @ManagedAttribute(description = "Whether a copy of the message is included in the message history")
+    public void setCopyMessage(boolean copyMessage) {
+        this.copyMessage = copyMessage;
+    }
+
+    @ManagedAttribute(description = "Pattern to filter EIPs")
+    public String getNodePattern() {
+        return nodePattern;
+    }
+
+    @ManagedAttribute(description = "Pattern to filter EIPs")
+    public void setNodePattern(String nodePattern) {
+        this.nodePattern = nodePattern;
+        if (nodePattern != null) {
+            this.nodePatternParts = nodePattern.split(",");
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

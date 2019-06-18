@@ -31,7 +31,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.apache.camel.reifier.ErrorHandlerReifier;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 @XmlRootElement(name = "errorHandler")

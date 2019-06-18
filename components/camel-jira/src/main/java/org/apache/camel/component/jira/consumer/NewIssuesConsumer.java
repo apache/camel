@@ -32,14 +32,17 @@ import org.apache.camel.component.jira.JiraEndpoint;
 public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     private final String jql;
-
     private long latestIssueId = -1;
 
     public NewIssuesConsumer(JiraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
         jql = endpoint.getJql() + " ORDER BY key desc";
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // read the actual issues, the next poll outputs only the new issues added after the route start
         // grab only the top
         List<Issue> issues = getIssues(jql, 0, 1, 1);
         // in case there aren't any issues...
@@ -50,15 +53,21 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
 
     @Override
     protected int poll() throws Exception {
-        List<Issue> newIssues = getNewIssues();
-        // In the end, we want only *new* issues oldest to newest.
-        for (int i = newIssues.size() - 1; i > -1; i--)  {
-            Issue newIssue = newIssues.get(i);
-            Exchange e = getEndpoint().createExchange();
-            e.getIn().setBody(newIssue);
-            getProcessor().process(e);
+        // it may happen the poll() is called while the route is doing the initial load,
+        // this way we need to wait for the latestIssueId being associated to the last indexed issue id
+        int nMessages = 0;
+        if (latestIssueId > -1) {
+            List<Issue> newIssues = getNewIssues();
+            // In the end, we want only *new* issues oldest to newest.
+            for (int i = newIssues.size() - 1; i > -1; i--)  {
+                Issue newIssue = newIssues.get(i);
+                Exchange e = getEndpoint().createExchange();
+                e.getIn().setBody(newIssue);
+                getProcessor().process(e);
+            }
+            nMessages = newIssues.size();
         }
-        return newIssues.size();
+        return nMessages;
     }
 
     private List<Issue> getNewIssues() {

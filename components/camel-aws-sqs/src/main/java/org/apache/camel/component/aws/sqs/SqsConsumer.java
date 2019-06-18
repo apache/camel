@@ -37,7 +37,6 @@ import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
@@ -79,8 +78,8 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         ReceiveMessageRequest request = new ReceiveMessageRequest(getQueueUrl());
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
-        request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
-        request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds() != null ? getConfiguration().getWaitTimeSeconds() : null);
+        request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout());
+        request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds());
 
         if (attributeNames != null) {
             request.setAttributeNames(attributeNames);
@@ -91,7 +90,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         log.trace("Receiving messages with request [{}]...", request);
 
-        ReceiveMessageResult messageResult = null;
+        ReceiveMessageResult messageResult;
         try {
             messageResult = getClient().receiveMessage(request);
         } catch (QueueDoesNotExistException e) {
@@ -162,7 +161,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (log.isDebugEnabled()) {
                     log.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
-                              new Object[] {delay, period, repeatSeconds, exchange.getExchangeId()});
+                              delay, period, repeatSeconds, exchange.getExchangeId());
                 }
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(new TimeoutExtender(exchange, repeatSeconds), delay, period,
                                                                                                       TimeUnit.SECONDS);
@@ -202,12 +201,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             });
 
             log.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    log.trace("Processing exchange [{}] done.", exchange);
-                }
-            });
+            getAsyncProcessor().process(exchange, doneSync -> log.trace("Processing exchange [{}] done.", exchange));
         }
 
         return total;

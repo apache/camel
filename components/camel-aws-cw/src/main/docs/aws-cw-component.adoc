@@ -67,13 +67,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+==== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonCwClient* (producer) | To use the AmazonCloudWatch as the client |  | AmazonCloudWatch
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *name* (producer) | The metric name |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the CW client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the CW client |  | Integer
@@ -157,11 +158,11 @@ the https://aws.amazon.com/cloudwatch/[Amazon's CloudWatch].
 
 |`CamelAwsCwMetricTimestamp` |`Date` |The Amazon CW metric timestamp.
 
-|`CamelAwsCwMetricDimensionName` |`String` |*Camel 2.12:* The Amazon CW metric dimension name.
+|`CamelAwsCwMetricDimensionName` |`String` |The Amazon CW metric dimension name.
 
-|`CamelAwsCwMetricDimensionValue` |`String` |*Camel 2.12:* The Amazon CW metric dimension value.
+|`CamelAwsCwMetricDimensionValue` |`String` |The Amazon CW metric dimension value.
 
-|`CamelAwsCwMetricDimensions` |`Map<String, String>` |*Camel 2.12:* A map of dimension names and dimension values.
+|`CamelAwsCwMetricDimensions` |`Map<String, String>` |A map of dimension names and dimension values.
 |=======================================================================
 
 #### Advanced AmazonCloudWatch configuration
@@ -195,7 +196,7 @@ registry.bind("client", client);
 
 ### Automatic detection of AmazonCloudWatch client in registry
 
-From Camel 3.0.0-M3 the component will be able to detect the presence of an AmazonCloudWatch bean into the registry.
+The component is capable of detecting the presence of an AmazonCloudWatch bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
@@ -214,8 +215,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.10 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
 ### See Also
 

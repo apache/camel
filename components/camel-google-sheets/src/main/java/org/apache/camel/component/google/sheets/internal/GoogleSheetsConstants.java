@@ -29,5 +29,7 @@ public final class GoogleSheetsConstants {
     /**
      * Prevent instantiation.
      */
-    private GoogleSheetsConstants() { }
+    private GoogleSheetsConstants() {
+        super();
+    }
 }

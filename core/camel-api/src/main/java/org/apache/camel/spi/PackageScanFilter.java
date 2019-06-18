@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 /**
  * Filter that can be used with the {@link org.apache.camel.spi.PackageScanClassResolver} resolver.
  */
+@FunctionalInterface
 public interface PackageScanFilter {
 
     /**

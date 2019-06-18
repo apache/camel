@@ -80,8 +80,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
             return;
         }
 
-        JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel"));
-        MBeanServerConnection mbeanServer = connector.getMBeanServerConnection();
+        MBeanServerConnection mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));

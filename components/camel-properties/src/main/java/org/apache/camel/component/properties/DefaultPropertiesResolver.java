@@ -30,6 +30,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedProperties;
 
 /**
  * Default {@link org.apache.camel.component.properties.PropertiesResolver} which can resolve properties
@@ -47,7 +48,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
     }
 
     public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
-        Properties answer = new Properties();
+        Properties answer = new OrderedProperties();
         Properties prop;
 
         for (PropertiesLocation location : locations) {
@@ -76,7 +77,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
     }
 
     protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) {
-        Properties answer = new Properties();
+        Properties answer = new OrderedProperties();
         String path = location.getPath();
 
         InputStream is = null;
@@ -103,7 +104,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
     }
 
     protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, PropertiesLocation location) {
-        Properties answer = new Properties();
+        Properties answer = new OrderedProperties();
         String path = location.getPath();
 
         InputStream is = context.getClassResolver().loadResourceAsStream(path);
@@ -138,13 +139,13 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         } catch (Exception ex) {
             // just look up the Map as a fault back
             Map map = context.getRegistry().lookupByNameAndType(path, Map.class);
-            answer = new Properties();
+            answer = new OrderedProperties();
             answer.putAll(map);
         }
         if (answer == null && (!ignoreMissingLocation && !location.isOptional())) {
             throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }
-        return answer != null ? answer : new Properties();
+        return answer != null ? answer : new OrderedProperties();
     }
 
     /**
@@ -158,7 +159,7 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
      * @return the prepared properties
      */
     protected Properties prepareLoadedProperties(Properties properties) {
-        Properties answer = new Properties();
+        Properties answer = new OrderedProperties();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();

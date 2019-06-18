@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -101,11 +100,11 @@ public class SqsProducer extends DefaultProducer {
 
     private void sendBatchMessage(AmazonSQS amazonSQS, Exchange exchange) {
         SendMessageBatchRequest request = new SendMessageBatchRequest(getQueueUrl());
-        Collection<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>();
+        Collection<SendMessageBatchRequestEntry> entries = new ArrayList<>();
         if (exchange.getIn().getBody() instanceof Iterable) {
             Iterable c = exchange.getIn().getBody(Iterable.class);
-            for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-                String object = (String) iterator.next();
+            for (Object o : c) {
+                String object = (String) o;
                 SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
                 entry.setId(UUID.randomUUID().toString());
                 entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
@@ -134,8 +133,7 @@ public class SqsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Receipt Handle must be specified for the operation deleteMessage");
         }
         request.setReceiptHandle(receiptHandle);
-        DeleteMessageResult result = new DeleteMessageResult();
-        result = amazonSQS.deleteMessage(request);
+        DeleteMessageResult result = amazonSQS.deleteMessage(request);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
@@ -145,8 +143,7 @@ public class SqsProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(SqsConstants.SQS_QUEUE_PREFIX))) {
             request.setQueueNamePrefix(exchange.getIn().getHeader(SqsConstants.SQS_QUEUE_PREFIX, String.class));
         }
-        ListQueuesResult result = new ListQueuesResult();
-        result = amazonSQS.listQueues(request);
+        ListQueuesResult result = amazonSQS.listQueues(request);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
@@ -274,7 +271,7 @@ public class SqsProducer extends DefaultProducer {
                         dataType = "Number";
                     }
                     mav.setDataType(dataType);
-                    mav.withStringValue(((Number)value).toString());
+                    mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof Date) {
                     MessageAttributeValue mav = new MessageAttributeValue();

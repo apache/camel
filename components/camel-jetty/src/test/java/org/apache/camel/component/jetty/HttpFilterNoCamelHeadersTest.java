@@ -58,7 +58,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("direct:start")
                     .setHeader(Exchange.FILE_NAME, constant("test.txt"))
-                    .to("jetty:http://localhost:{{port}}/test/filter")
+                    .to("http://localhost:{{port}}/test/filter")
                     .to("mock:result");
 
                 from("jetty:http://localhost:{{port}}/test/filter")

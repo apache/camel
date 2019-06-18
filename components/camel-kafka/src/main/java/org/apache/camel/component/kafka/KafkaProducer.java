@@ -53,6 +53,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     private final KafkaEndpoint endpoint;
     private ExecutorService workerPool;
     private boolean shutdownWorkerPool;
+    private volatile boolean closeKafkaProducer;
 
     public KafkaProducer(KafkaEndpoint endpoint) {
         super(endpoint);
@@ -106,10 +107,13 @@ public class KafkaProducer extends DefaultAsyncProducer {
             try {
                 // Kafka uses reflection for loading authentication settings, use its classloader
                 Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.producer.KafkaProducer.class.getClassLoader());
+                log.trace("Creating KafkaProducer");
                 kafkaProducer = new org.apache.kafka.clients.producer.KafkaProducer(props);
+                closeKafkaProducer = true;
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
             }
+            log.debug("Created KafkaProducer: {}", kafkaProducer);
         }
 
         // if we are in asynchronous mode we need a worker pool
@@ -122,8 +126,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (kafkaProducer != null) {
+        if (kafkaProducer != null && closeKafkaProducer) {
+            log.debug("Closing KafkaProducer: {}", kafkaProducer);
             kafkaProducer.close();
+            kafkaProducer = null;
         }
 
         if (shutdownWorkerPool && workerPool != null) {

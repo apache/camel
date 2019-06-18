@@ -20,12 +20,14 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * Model interface
@@ -55,7 +57,7 @@ public interface Model {
      * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param is input stream with the route(s) definition to add
-     * @throws Exception if the route definitions could not be created for whatever reason
+     * @throws Exception if the route definitions could not be added for whatever reason
      */
     void addRouteDefinitions(InputStream is) throws Exception;
 
@@ -67,7 +69,7 @@ public interface Model {
      * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param routeDefinitions the route(s) definition to add
-     * @throws Exception if the route definitions could not be created for whatever reason
+     * @throws Exception if the route definitions could not be added for whatever reason
      */
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
@@ -79,7 +81,7 @@ public interface Model {
      * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
      *
      * @param routeDefinition the route definition to add
-     * @throws Exception if the route definition could not be created for whatever reason
+     * @throws Exception if the route definition could not be added for whatever reason
      */
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
@@ -260,5 +262,37 @@ public interface Model {
      * Start all routes from this model.
      */
     void startRouteDefinitions() throws Exception;
+
+    /**
+     * Used for filtering routes routes matching the given pattern, which follows the following rules:
+     *
+     * - Match by route id
+     * - Match by route input endpoint uri
+     *
+     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     *
+     * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
+     * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
+     *
+     * Exclude takes precedence over include.
+     *
+     * @param include  the include pattern
+     * @param exclude  the exclude pattern
+     */
+    void setRouteFilterPattern(String include, String exclude);
+
+    /**
+     * Sets a custom route filter to use for filtering unwanted routes when routes are added.
+     *
+     * @param filter the filter
+     */
+    void setRouteFilter(Function<RouteDefinition, Boolean> filter);
+
+    /**
+     * Gets the current route filter
+     *
+     * @return the filter, or <tt>null</tt> if no custom filter has been configured.
+     */
+    Function<RouteDefinition, Boolean> getRouteFilter();
 
 }

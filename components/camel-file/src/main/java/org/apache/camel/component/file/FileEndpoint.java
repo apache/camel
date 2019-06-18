@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
@@ -56,12 +57,18 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam(label = "advanced")
     private boolean renameUsingCopy;
-    @UriParam(label = "producer,advanced", defaultValue = "true")
-    private boolean forceWrites = true;
+    @UriParam(label = "consumer,advanced")
+    private boolean startingDirectoryMustExist;
+    @UriParam(label = "consumer,advanced")
+    private boolean startingDirectoryMustHaveAccess;
+    @UriParam(label = "consumer,advanced")
+    private boolean directoryMustExist;
     @UriParam(label = "consumer,advanced")
     private boolean probeContentType;
     @UriParam(label = "consumer,advanced")
     private String extendedAttributes;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean forceWrites = true;
     @UriParam(label = "producer,advanced")
     private String chmod;
     @UriParam(label = "producer,advanced")
@@ -91,7 +98,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
                 throw new FileNotFoundException("Starting directory does not exist: " + file);
             }
         }
-
+        if (!isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+            throw new IllegalArgumentException("You cannot set startingDirectoryMustHaveAccess=true without setting startingDirectoryMustExist=true");
+        } else if (isStartingDirectoryMustExist() && isStartingDirectoryMustHaveAccess()) {
+            if (!file.canRead() || !file.canWrite()) {
+                throw new IOException("Starting directory permission denied: " + file);
+            }
+        }
         FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {
@@ -249,6 +262,44 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      */
     public void setRenameUsingCopy(boolean renameUsingCopy) {
         this.renameUsingCopy = renameUsingCopy;
+    }
+
+    public boolean isStartingDirectoryMustExist() {
+        return startingDirectoryMustExist;
+    }
+
+    /**
+     * Whether the starting directory must exist. Mind that the autoCreate option is default enabled,
+     * which means the starting directory is normally auto created if it doesn't exist.
+     * You can disable autoCreate and enable this to ensure the starting directory must exist. Will thrown an exception if the directory doesn't exist.
+     */
+    public void setStartingDirectoryMustExist(boolean startingDirectoryMustExist) {
+        this.startingDirectoryMustExist = startingDirectoryMustExist;
+    }
+
+    public boolean isStartingDirectoryMustHaveAccess() {
+        return startingDirectoryMustHaveAccess;
+    }
+
+    /**
+     * Whether the starting directory has access permissions. Mind that the
+     * startingDirectoryMustExist parameter must be set to true in order to verify that the
+     * directory exists. Will thrown an exception if the directory doesn't have
+     * read and write permissions.
+     */
+    public void setStartingDirectoryMustHaveAccess(boolean startingDirectoryMustHaveAccess) {
+        this.startingDirectoryMustHaveAccess = startingDirectoryMustHaveAccess;
+    }
+
+    public boolean isDirectoryMustExist() {
+        return directoryMustExist;
+    }
+
+    /**
+     * Similar to the startingDirectoryMustExist option but this applies during polling (after starting the consumer).
+     */
+    public void setDirectoryMustExist(boolean directoryMustExist) {
+        this.directoryMustExist = directoryMustExist;
     }
 
     public boolean isForceWrites() {

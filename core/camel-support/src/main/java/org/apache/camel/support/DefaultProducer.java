@@ -53,10 +53,12 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     /**
      * This implementation will delegate to the endpoint {@link org.apache.camel.Endpoint#isSingleton()}
      */
+    @Override
     public boolean isSingleton() {
         return endpoint.isSingleton();
     }
 
+    @Override
     protected void doStart() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {
@@ -66,6 +68,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {

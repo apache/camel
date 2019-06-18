@@ -17,6 +17,7 @@
 package org.apache.camel.impl.health;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -37,7 +39,7 @@ public class DefaultHealthCheckServiceTest {
         CamelContext context = null;
 
         try {
-            MyHealthCheck check = new MyHealthCheck("", HealthCheck.State.UP);
+            MyHealthCheck check = new MyHealthCheck("test", HealthCheck.State.UP);
             List<HealthCheck.State> results = new ArrayList<>();
             CountDownLatch latch = new CountDownLatch(10);
 
@@ -45,6 +47,10 @@ public class DefaultHealthCheckServiceTest {
             registry.register(check);
 
             DefaultHealthCheckService service = new DefaultHealthCheckService();
+            Map<String, Object> options = new HashMap<>();
+            options.put("test", "test");
+
+            service.setHealthCheckOptions("test", options);
             service.setCheckInterval(500, TimeUnit.MILLISECONDS);
             service.addStateChangeListener((s, c) -> {
                 results.add(s);
@@ -69,6 +75,7 @@ public class DefaultHealthCheckServiceTest {
 
             Assert.assertEquals(1, service.getResults().size());
             Assert.assertEquals(check, service.getResults().iterator().next().getCheck());
+            Assert.assertEquals(options, check.getOptions());
 
         } finally {
             if (context != null) {
@@ -84,6 +91,7 @@ public class DefaultHealthCheckServiceTest {
 
     private class MyHealthCheck extends AbstractHealthCheck {
         private HealthCheck.State state;
+        private Map<String, Object> options;
 
         MyHealthCheck(String id, HealthCheck.State state) {
             super(id);
@@ -99,6 +107,11 @@ public class DefaultHealthCheckServiceTest {
         @Override
         public void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
             builder.state(state);
+            this.options = options;
+        }
+
+        public Map<String, Object> getOptions() {
+            return options;
         }
     }
 }
