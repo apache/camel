@@ -52,7 +52,7 @@ public class AMQ2240Test {
             LOG.info("creating context with bad URI: " + vmUri);
             ActiveMQComponent amq = ActiveMQComponent.activeMQComponent(vmUri);
 
-            amq.getConfiguration().getConnectionFactory();
+            amq.getConfiguration().getOrCreateConnectionFactory();
 
             fail("Should have received an exception from the bad URI.");
         } catch (Exception e) {
