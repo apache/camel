@@ -45,7 +45,7 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // file should not exists
         assertFalse("File should been deleted", new File("target/data/files/report.txt").exists());

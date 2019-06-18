@@ -18,20 +18,17 @@ package org.apache.camel.builder.endpoint;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.util.URISupport;
 
 @XmlTransient
@@ -39,7 +36,7 @@ public class AbstractEndpointBuilder {
 
     protected final String scheme;
     protected final String path;
-    protected final Map<String, Object> properties = new HashMap<>();
+    protected final Map<String, Object> properties = new LinkedHashMap<>();
 
     public AbstractEndpointBuilder(String scheme, String path) {
         this.scheme = scheme;
@@ -94,11 +91,7 @@ public class AbstractEndpointBuilder {
         this.properties.put(key, value);
     }
 
-    /**
-     * Builds an expression that can be used
-     * @return
-     */
     public Expression expr() {
-        return new SimpleExpression(getUri());
+        return SimpleBuilder.simple(getUri());
     }
 }
