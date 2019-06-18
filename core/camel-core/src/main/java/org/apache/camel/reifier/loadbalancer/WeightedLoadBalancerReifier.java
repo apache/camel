@@ -42,7 +42,7 @@ class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalanc
         try {
             String[] ratios = definition.getDistributionRatio().split(definition.getDistributionRatioDelimiter());
             for (String ratio : ratios) {
-                distributionRatioList.add(new Integer(ratio.trim()));
+                distributionRatioList.add(Integer.parseInt(ratio.trim()));
             }
 
             boolean isRoundRobin = definition.getRoundRobin() != null && definition.getRoundRobin();
