@@ -144,6 +144,7 @@ The maven plugin *autowire* goal supports the following options which can be con
 |===
 | Parameter | Default Value | Description
 | logClasspath | false | Whether to log the classpath when starting
+| logUnmapped | false | When autowiring has detected multiple implementations (2 or more) of a given interface, which cannot be mapped, should they be logged so you can see and add manual mapping if needed.
 | downloadVersion | true | Whether to allow downloading Camel catalog version from the internet.
   This is needed if the project * uses a different Camel version than this plugin is using by default.
 | exclude | | To exclude autowiring specific properties with these key names. You can also configure a single entry and separate the excludes with comma.
