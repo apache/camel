@@ -18,6 +18,7 @@ package org.apache.camel.example.cafe;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,7 +31,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 
 /**
- * A simple example router from Cafe Demo
+ * A simple example router from Cafe Demo.
+ *
+ * Notice how this RouteBuilder extends {@link EndpointRouteBuilder} which provides the support
+ * for Camel Endpoint DSL.
  */
 public class CafeRouteBuilder extends EndpointRouteBuilder {
     
@@ -49,7 +53,7 @@ public class CafeRouteBuilder extends EndpointRouteBuilder {
     
     public void runCafeRouteDemo() throws Exception {
         // create CamelContext
-        DefaultCamelContext camelContext = new DefaultCamelContext();
+        CamelContext camelContext = new DefaultCamelContext();
 
         // bind beans to the Camel
         bindBeans(camelContext.getRegistry());
@@ -57,6 +61,8 @@ public class CafeRouteBuilder extends EndpointRouteBuilder {
         // add the routes
         camelContext.addRoutes(this);
 
+        // add additional routes using inlined RouteBuilder
+        // where we can access the Camel Endpoint DSL from this class
         RouteBuilder.addRoutes(camelContext, rb ->
                 rb.from(timer("myTimer").fixedRate(true).period(500).advanced().synchronous(false))
                         .delay(simple("${random(250,1000)}"))

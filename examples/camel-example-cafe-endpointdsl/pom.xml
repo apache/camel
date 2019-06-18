@@ -30,7 +30,7 @@
 
     <artifactId>camel-example-cafe-endpointdsl</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Example :: Cafe using the Endpoint DSL</name>
+    <name>Camel :: Example :: Cafe :: Endpoint DSL</name>
     <description>A cafe example showing how to work with Camel and the Endpoint DSL</description>
 
     <properties>
@@ -40,6 +40,7 @@
 
     <dependencies>
 
+        <!-- using camel with endpoint dsl -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-endpointdsl</artifactId>

@@ -20,9 +20,9 @@
 <features>
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
-    <feature name='camel-example-cafe' version='${project.version}'>
+    <feature name='camel-example-cafe-endpointdsl' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
-        <bundle>mvn:org.apache.camel.example/camel-example-cafe/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-cafe-endpointdsl/${project.version}</bundle>
     </feature>
 
 </features>
