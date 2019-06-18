@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"expression", "correlationExpression", "outputs"})
+@XmlType(propOrder = {"expression", "correlationExpression"})
 public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlElement(name = "correlationExpression")
