@@ -77,13 +77,6 @@ import org.reflections.util.ConfigurationBuilder;
 public class AutowireMojo extends AbstractExecMojo {
 
     /**
-     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
-     * uses a different Camel version than this plugin is using by default.
-     */
-    @Parameter(property = "camel.downloadVersion", defaultValue = "true")
-    private boolean downloadVersion;
-
-    /**
      * Whether to log the classpath when starting
      */
     @Parameter(property = "camel.logClasspath", defaultValue = "false")
@@ -121,6 +114,13 @@ public class AutowireMojo extends AbstractExecMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/classes/camel-main-mappings.properties")
     protected File mappingsFile;
+
+    /**
+     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
+     * uses a different Camel version than this plugin is using by default.
+     */
+    @Parameter(property = "camel.downloadVersion", defaultValue = "true")
+    private boolean downloadVersion;
 
     @Component
     private ArtifactFactory artifactFactory;
