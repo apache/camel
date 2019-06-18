@@ -85,11 +85,6 @@ public class SshComponentConfiguration
      */
     private Long timeout;
     /**
-     * Sets the resource path of the certificate to use for Authentication.
-     */
-    @Deprecated
-    private String certFilename;
-    /**
      * Sets the resource path of the certificate to use for Authentication. Will
      * use ResourceHelperKeyPairProvider to resolve file based certificate, and
      * depends on keyType setting.
@@ -195,17 +190,6 @@ public class SshComponentConfiguration
         this.timeout = timeout;
     }
 
-    @Deprecated
-    @DeprecatedConfigurationProperty
-    public String getCertFilename() {
-        return certFilename;
-    }
-
-    @Deprecated
-    public void setCertFilename(String certFilename) {
-        this.certFilename = certFilename;
-    }
-
     public String getCertResource() {
         return certResource;
     }
@@ -297,9 +281,6 @@ public class SshComponentConfiguration
          * SSH server connection. Defaults to 30000 milliseconds.
          */
         private Long timeout = 30000L;
-        /**
-         * @deprecated As of version 2.11, replaced by certResource.
-         */
         @Deprecated
         private String certFilename;
         /**
