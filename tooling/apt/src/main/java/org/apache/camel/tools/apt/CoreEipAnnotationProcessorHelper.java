@@ -51,6 +51,7 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElementChildren;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.hasSuperClass;
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
@@ -71,9 +72,9 @@ public class CoreEipAnnotationProcessorHelper {
     // find all classes)
     private static final String[] ONE_OF_INPUTS = new String[] {"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.VerbDefinition"};
     // special for outputs (these classes have sub classes, so we use this to
-    // find all classes)
+    // find all classes - and not in particular if they support outputs or not)
     private static final String[] ONE_OF_OUTPUTS = new String[] {"org.apache.camel.model.ProcessorDefinition", "org.apache.camel.model.NoOutputDefinition",
-                                                                 "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.ExpressionNode",
+                                                                 "org.apache.camel.model.OutputDefinition", "org.apache.camel.model.OutputExpressionNode",
                                                                  "org.apache.camel.model.NoOutputExpressionNode", "org.apache.camel.model.SendDefinition",
                                                                  "org.apache.camel.model.InterceptDefinition", "org.apache.camel.model.WhenDefinition",
                                                                  "org.apache.camel.model.ToDynamicDefinition"};
@@ -767,7 +768,7 @@ public class CoreEipAnnotationProcessorHelper {
      */
     private void processOutputs(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType, XmlElementRef elementRef,
                                 VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
-        if ("outputs".equals(fieldName) && supportOutputs(originalClassType)) {
+        if ("outputs".equals(fieldName) && supportOutputs(processingEnv, roundEnv, originalClassType)) {
             String kind = "element";
             String name = elementRef.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
@@ -818,7 +819,7 @@ public class CoreEipAnnotationProcessorHelper {
 
         Elements elementUtils = processingEnv.getElementUtils();
 
-        if ("verbs".equals(fieldName) && supportOutputs(originalClassType)) {
+        if ("verbs".equals(fieldName) && supportOutputs(processingEnv, roundEnv, originalClassType)) {
             String kind = "element";
             String name = elementRef.name();
             if (isNullOrEmpty(name) || "##default".equals(name)) {
@@ -978,9 +979,8 @@ public class CoreEipAnnotationProcessorHelper {
      * There are some classes which does not support outputs, even though they
      * have a outputs element.
      */
-    private boolean supportOutputs(TypeElement classElement) {
-        String superclass = canonicalClassName(classElement.getSuperclass().toString());
-        return !"org.apache.camel.model.NoOutputExpressionNode".equals(superclass);
+    private boolean supportOutputs(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement) {
+        return implementsInterface(processingEnv, roundEnv, classElement, "org.apache.camel.model.OutputNode");
     }
 
     private String findDefaultValue(VariableElement fieldElement, String fieldTypeName) {
