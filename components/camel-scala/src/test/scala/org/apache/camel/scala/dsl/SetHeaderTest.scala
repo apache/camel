@@ -57,7 +57,7 @@ class SetHeaderTest extends ScalaTestSupport {
   def doTestExpression(from: String, mock: String) {
     mock expect {_.headerReceived("genus", "felis")}
     test {
-      from ! (new Cat("Duchess"), new Cat("Toulouse"))
+      from ! (new Cat("Duchess"))
     }    
   }
     
