@@ -44,7 +44,6 @@ import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.artifact.Artifact;
@@ -290,9 +289,13 @@ public class AutowireMojo extends AbstractExecMojo {
                         Class clazz = classLoader.loadClass(javaType);
                         if (clazz.isInterface() && isComplexUserType(clazz)) {
                             Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
-                            // filter classes (must not be interfaces, must not be abstract, must be top level) and also a valid autowire class
+                            // filter classes (must not be interfaces, must be public, must not be abstract, must be top level) and also a valid autowire class
                             classes = classes.stream().filter(
-                                    c -> !c.isInterface() && !Modifier.isAbstract(c.getModifiers()) && c.getEnclosingClass() == null && isValidAutowireClass(c))
+                                    c -> !c.isInterface()
+                                            && Modifier.isPublic(c.getModifiers())
+                                            && !Modifier.isAbstract(c.getModifiers())
+                                            && c.getEnclosingClass() == null
+                                            && isValidAutowireClass(c))
                                     .collect(Collectors.toSet());
                             Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
                             if (best != null) {
@@ -336,7 +339,7 @@ public class AutowireMojo extends AbstractExecMojo {
                 getLog().info("Cannot autowire option camel.component." + componentName + "." + optionName
                         + " as the interface: " + type.getName() + " has " + candidates.size() + " implementations in the classpath:");
                 for (Class c : candidates) {
-                    getLog().info("    Class: " + c.getName());
+                    getLog().info("\t\t" + c.getName());
                 }
             }
         }
@@ -348,7 +351,7 @@ public class AutowireMojo extends AbstractExecMojo {
         String prefix = "camel.component." + componentName + ".";
         name = StringHelper.dashToCamelCase(name);
 
-        if (ObjectHelper.isNotEmpty(exclude)) {
+        if (exclude != null && exclude.length > 0) {
             // works on components too
             for (String pattern : exclude) {
                 pattern = pattern.trim();
@@ -362,7 +365,7 @@ public class AutowireMojo extends AbstractExecMojo {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(include)) {
+        if (include != null && include.length > 0) {
             for (String pattern : include) {
                 pattern = pattern.trim();
                 pattern = StringHelper.dashToCamelCase(pattern);
