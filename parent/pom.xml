@@ -632,7 +632,7 @@
         <spring-batch-bundle-version>4.1.2.RELEASE_1</spring-batch-bundle-version>
         <spring-boot-version>2.1.5.RELEASE</spring-boot-version>
         <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
-        <spring-cloud-consul-version>2.0.2.RELEASE</spring-cloud-consul-version>
+        <spring-cloud-consul-version>2.1.1.RELEASE</spring-cloud-consul-version>
         <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
         <spring-cloud-zookeeper-version>2.0.0.RELEASE</spring-cloud-zookeeper-version>
         <spring-data-commons-version>2.1.6.RELEASE</spring-data-commons-version>
