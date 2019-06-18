@@ -126,7 +126,8 @@ public interface JingEndpointBuilderFactory {
     }
     /**
      * Validates the payload of a message using RelaxNG Syntax using Jing
-     * library. Creates a builder to build endpoints for the Jing component.
+     * library.
+     * Maven coordinates: org.apache.camel:camel-jing
      */
     default JingEndpointBuilder jing(String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {

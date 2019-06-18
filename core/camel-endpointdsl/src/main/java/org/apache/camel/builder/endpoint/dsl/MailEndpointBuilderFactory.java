@@ -2351,8 +2351,8 @@ public interface MailEndpointBuilderFactory {
         }
     }
     /**
-     * To send or receive emails using imap/pop3 or smtp protocols. Creates a
-     * builder to build endpoints for the IMAP component.
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * Maven coordinates: org.apache.camel:camel-mail
      */
     default MailEndpointBuilder mail(String path) {
         class MailEndpointBuilderImpl extends AbstractEndpointBuilder implements MailEndpointBuilder, AdvancedMailEndpointBuilder {

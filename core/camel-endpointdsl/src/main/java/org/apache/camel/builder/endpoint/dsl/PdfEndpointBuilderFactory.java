@@ -299,8 +299,8 @@ public interface PdfEndpointBuilderFactory {
     }
     /**
      * The pdf components provides the ability to create, modify or extract
-     * content from PDF documents. Creates a builder to build endpoints for the
-     * PDF component.
+     * content from PDF documents.
+     * Maven coordinates: org.apache.camel:camel-pdf
      */
     default PdfEndpointBuilder pdf(String path) {
         class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder, AdvancedPdfEndpointBuilder {

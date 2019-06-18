@@ -163,8 +163,8 @@ public interface SchematronEndpointBuilderFactory {
         }
     }
     /**
-     * Validates the payload of a message using the Schematron Library. Creates
-     * a builder to build endpoints for the Schematron component.
+     * Validates the payload of a message using the Schematron Library.
+     * Maven coordinates: org.apache.camel:camel-schematron
      */
     default SchematronEndpointBuilder schematron(String path) {
         class SchematronEndpointBuilderImpl extends AbstractEndpointBuilder implements SchematronEndpointBuilder, AdvancedSchematronEndpointBuilder {

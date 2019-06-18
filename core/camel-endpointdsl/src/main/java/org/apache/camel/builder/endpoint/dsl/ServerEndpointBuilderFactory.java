@@ -1377,8 +1377,8 @@ public interface ServerEndpointBuilderFactory {
     /**
      * IEC 60870 component used for telecontrol (supervisory control and data
      * acquisition) such as controlling electric power transmission grids and
-     * other geographically widespread control systems. Creates a builder to
-     * build endpoints for the IEC 60870 Server component.
+     * other geographically widespread control systems.
+     * Maven coordinates: org.apache.camel:camel-iec60870
      */
     default ServerEndpointBuilder server(String path) {
         class ServerEndpointBuilderImpl extends AbstractEndpointBuilder implements ServerEndpointBuilder, AdvancedServerEndpointBuilder {

@@ -155,8 +155,8 @@ public interface EjbEndpointBuilderFactory {
         }
     }
     /**
-     * The ejb component is for invoking EJB Java beans from Camel. Creates a
-     * builder to build endpoints for the EJB component.
+     * The ejb component is for invoking EJB Java beans from Camel.
+     * Maven coordinates: org.apache.camel:camel-ejb
      */
     default EjbEndpointBuilder ejb(String path) {
         class EjbEndpointBuilderImpl extends AbstractEndpointBuilder implements EjbEndpointBuilder, AdvancedEjbEndpointBuilder {

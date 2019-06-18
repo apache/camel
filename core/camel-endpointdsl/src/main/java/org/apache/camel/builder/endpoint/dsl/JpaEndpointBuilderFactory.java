@@ -1639,8 +1639,8 @@ public interface JpaEndpointBuilderFactory {
     }
     /**
      * The jpa component enables you to store and retrieve Java objects from
-     * databases using JPA. Creates a builder to build endpoints for the JPA
-     * component.
+     * databases using JPA.
+     * Maven coordinates: org.apache.camel:camel-jpa
      */
     default JpaEndpointBuilder jpa(String path) {
         class JpaEndpointBuilderImpl extends AbstractEndpointBuilder implements JpaEndpointBuilder, AdvancedJpaEndpointBuilder {

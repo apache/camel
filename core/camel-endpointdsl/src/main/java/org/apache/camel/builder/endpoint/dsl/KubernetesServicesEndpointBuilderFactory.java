@@ -1087,8 +1087,8 @@ public interface KubernetesServicesEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Service Accounts component provides a producer to execute
-     * service operations and a consumer to consume service events. Creates a
-     * builder to build endpoints for the Kubernetes Services component.
+     * service operations and a consumer to consume service events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesServicesEndpointBuilder kubernetesServices(String path) {
         class KubernetesServicesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServicesEndpointBuilder, AdvancedKubernetesServicesEndpointBuilder {

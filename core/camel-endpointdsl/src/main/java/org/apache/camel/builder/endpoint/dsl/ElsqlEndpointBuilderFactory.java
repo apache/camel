@@ -2013,8 +2013,8 @@ public interface ElsqlEndpointBuilderFactory {
     }
     /**
      * The elsql component is an extension to the existing SQL Component that
-     * uses ElSql to define the SQL queries. Creates a builder to build
-     * endpoints for the ElSQL component.
+     * uses ElSql to define the SQL queries.
+     * Maven coordinates: org.apache.camel:camel-elsql
      */
     default ElsqlEndpointBuilder elsql(String path) {
         class ElsqlEndpointBuilderImpl extends AbstractEndpointBuilder implements ElsqlEndpointBuilder, AdvancedElsqlEndpointBuilder {

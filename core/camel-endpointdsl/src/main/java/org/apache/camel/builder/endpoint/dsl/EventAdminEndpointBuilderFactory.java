@@ -437,8 +437,8 @@ public interface EventAdminEndpointBuilderFactory {
     }
     /**
      * The eventadmin component can be used in an OSGi environment to receive
-     * OSGi EventAdmin events and process them. Creates a builder to build
-     * endpoints for the OSGi EventAdmin component.
+     * OSGi EventAdmin events and process them.
+     * Maven coordinates: org.apache.camel:camel-eventadmin
      */
     default EventAdminEndpointBuilder eventAdmin(String path) {
         class EventAdminEndpointBuilderImpl extends AbstractEndpointBuilder implements EventAdminEndpointBuilder, AdvancedEventAdminEndpointBuilder {

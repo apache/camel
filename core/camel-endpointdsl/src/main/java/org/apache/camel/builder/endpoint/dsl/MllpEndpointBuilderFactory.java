@@ -1471,8 +1471,8 @@ public interface MllpEndpointBuilderFactory {
     }
     /**
      * Provides functionality required by Healthcare providers to communicate
-     * with other systems using the MLLP protocol. Creates a builder to build
-     * endpoints for the MLLP component.
+     * with other systems using the MLLP protocol.
+     * Maven coordinates: org.apache.camel:camel-mllp
      */
     default MllpEndpointBuilder mllp(String path) {
         class MllpEndpointBuilderImpl extends AbstractEndpointBuilder implements MllpEndpointBuilder, AdvancedMllpEndpointBuilder {

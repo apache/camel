@@ -105,8 +105,8 @@ public interface LdifEndpointBuilderFactory {
     }
     /**
      * The ldif component allows you to do updates on an LDAP server from a LDIF
-     * body content. Creates a builder to build endpoints for the LDIF
-     * component.
+     * body content.
+     * Maven coordinates: org.apache.camel:camel-ldif
      */
     default LdifEndpointBuilder ldif(String path) {
         class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder, AdvancedLdifEndpointBuilder {

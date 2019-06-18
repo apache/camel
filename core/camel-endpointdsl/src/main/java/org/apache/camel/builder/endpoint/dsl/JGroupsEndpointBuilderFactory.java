@@ -431,8 +431,8 @@ public interface JGroupsEndpointBuilderFactory {
     }
     /**
      * The jgroups component provides exchange of messages between Camel and
-     * JGroups clusters. Creates a builder to build endpoints for the JGroups
-     * component.
+     * JGroups clusters.
+     * Maven coordinates: org.apache.camel:camel-jgroups
      */
     default JGroupsEndpointBuilder jGroups(String path) {
         class JGroupsEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsEndpointBuilder, AdvancedJGroupsEndpointBuilder {

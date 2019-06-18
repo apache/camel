@@ -458,8 +458,8 @@ public interface DigitalSignatureEndpointBuilderFactory {
     }
     /**
      * The crypto component is used for signing and verifying exchanges using
-     * the Signature Service of the Java Cryptographic Extension (JCE). Creates
-     * a builder to build endpoints for the Crypto (JCE) component.
+     * the Signature Service of the Java Cryptographic Extension (JCE).
+     * Maven coordinates: org.apache.camel:camel-crypto
      */
     default DigitalSignatureEndpointBuilder digitalSignature(String path) {
         class DigitalSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalSignatureEndpointBuilder, AdvancedDigitalSignatureEndpointBuilder {

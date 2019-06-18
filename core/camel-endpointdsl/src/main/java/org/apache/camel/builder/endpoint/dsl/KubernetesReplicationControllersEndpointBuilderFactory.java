@@ -1104,8 +1104,8 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
     /**
      * The Kubernetes Replication Controllers component provides a producer to
      * execute kubernetes replication controller operations and a consumer to
-     * consume replication controller events. Creates a builder to build
-     * endpoints for the Kubernetes Replication Controller component.
+     * consume replication controller events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
             String path) {

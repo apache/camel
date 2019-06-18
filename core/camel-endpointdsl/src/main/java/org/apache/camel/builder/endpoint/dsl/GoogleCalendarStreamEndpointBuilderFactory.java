@@ -263,8 +263,8 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
     }
     /**
      * The google-calendar component provides access to Google Calendar in a
-     * streaming mode. Creates a builder to build endpoints for the Google
-     * Calendar Stream component.
+     * streaming mode.
+     * Maven coordinates: org.apache.camel:camel-google-calendar
      */
     default GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {

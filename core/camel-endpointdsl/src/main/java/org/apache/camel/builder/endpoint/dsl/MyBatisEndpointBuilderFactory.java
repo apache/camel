@@ -954,8 +954,8 @@ public interface MyBatisEndpointBuilderFactory {
     }
     /**
      * Performs a query, poll, insert, update or delete in a relational database
-     * using MyBatis. Creates a builder to build endpoints for the MyBatis
-     * component.
+     * using MyBatis.
+     * Maven coordinates: org.apache.camel:camel-mybatis
      */
     default MyBatisEndpointBuilder myBatis(String path) {
         class MyBatisEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisEndpointBuilder, AdvancedMyBatisEndpointBuilder {

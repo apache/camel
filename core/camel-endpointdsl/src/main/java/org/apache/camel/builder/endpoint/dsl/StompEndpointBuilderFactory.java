@@ -621,8 +621,8 @@ public interface StompEndpointBuilderFactory {
     }
     /**
      * The stomp component is used for communicating with Stomp compliant
-     * message brokers. Creates a builder to build endpoints for the Stomp
-     * component.
+     * message brokers.
+     * Maven coordinates: org.apache.camel:camel-stomp
      */
     default StompEndpointBuilder stomp(String path) {
         class StompEndpointBuilderImpl extends AbstractEndpointBuilder implements StompEndpointBuilder, AdvancedStompEndpointBuilder {

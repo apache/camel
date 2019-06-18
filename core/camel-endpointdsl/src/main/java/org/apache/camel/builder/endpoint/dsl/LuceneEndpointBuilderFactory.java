@@ -217,8 +217,8 @@ public interface LuceneEndpointBuilderFactory {
         query;
     }
     /**
-     * To insert or query from Apache Lucene databases. Creates a builder to
-     * build endpoints for the Lucene component.
+     * To insert or query from Apache Lucene databases.
+     * Maven coordinates: org.apache.camel:camel-lucene
      */
     default LuceneEndpointBuilder lucene(String path) {
         class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {

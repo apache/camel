@@ -700,7 +700,8 @@ public interface PubNubEndpointBuilderFactory {
     }
     /**
      * To send and receive messages to PubNub data stream network for connected
-     * devices. Creates a builder to build endpoints for the PubNub component.
+     * devices.
+     * Maven coordinates: org.apache.camel:camel-pubnub
      */
     default PubNubEndpointBuilder pubNub(String path) {
         class PubNubEndpointBuilderImpl extends AbstractEndpointBuilder implements PubNubEndpointBuilder, AdvancedPubNubEndpointBuilder {

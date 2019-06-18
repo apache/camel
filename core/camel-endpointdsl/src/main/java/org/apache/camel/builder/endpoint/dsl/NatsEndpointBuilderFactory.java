@@ -1393,7 +1393,7 @@ public interface NatsEndpointBuilderFactory {
     }
     /**
      * The nats component allows you produce and consume messages from NATS.
-     * Creates a builder to build endpoints for the Nats component.
+     * Maven coordinates: org.apache.camel:camel-nats
      */
     default NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {

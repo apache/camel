@@ -130,8 +130,8 @@ public interface IAMEndpointBuilderFactory {
         removeUserFromGroup;
     }
     /**
-     * The aws-iam is used for managing Amazon IAM Creates a builder to build
-     * endpoints for the AWS IAM component.
+     * The aws-iam is used for managing Amazon IAM
+     * Maven coordinates: org.apache.camel:camel-aws-iam
      */
     default IAMEndpointBuilder iAM(String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {

@@ -1653,8 +1653,8 @@ public interface CouchbaseEndpointBuilderFactory {
     }
     /**
      * Represents a Couchbase endpoint that can query Views with a Poll strategy
-     * and/or produce various type of operations. Creates a builder to build
-     * endpoints for the Couchbase component.
+     * and/or produce various type of operations.
+     * Maven coordinates: org.apache.camel:camel-couchbase
      */
     default CouchbaseEndpointBuilder couchbase(String path) {
         class CouchbaseEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchbaseEndpointBuilder, AdvancedCouchbaseEndpointBuilder {

@@ -1077,8 +1077,8 @@ public interface LinkedInEndpointBuilderFactory {
     }
     /**
      * The linkedin component is used for retrieving LinkedIn user profiles,
-     * connections, companies, groups, posts, etc. Creates a builder to build
-     * endpoints for the Linkedin component.
+     * connections, companies, groups, posts, etc.
+     * Maven coordinates: org.apache.camel:camel-linkedin
      */
     default LinkedInEndpointBuilder linkedIn(String path) {
         class LinkedInEndpointBuilderImpl extends AbstractEndpointBuilder implements LinkedInEndpointBuilder, AdvancedLinkedInEndpointBuilder {

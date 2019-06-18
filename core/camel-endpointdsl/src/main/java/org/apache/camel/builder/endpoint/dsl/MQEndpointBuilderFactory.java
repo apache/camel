@@ -123,8 +123,8 @@ public interface MQEndpointBuilderFactory {
         describeBroker;
     }
     /**
-     * The aws-mq is used for managing Amazon MQ instances. Creates a builder to
-     * build endpoints for the AWS MQ component.
+     * The aws-mq is used for managing Amazon MQ instances.
+     * Maven coordinates: org.apache.camel:camel-aws-mq
      */
     default MQEndpointBuilder mQ(String path) {
         class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder, AdvancedMQEndpointBuilder {

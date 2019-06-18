@@ -2981,8 +2981,8 @@ public interface KafkaEndpointBuilderFactory {
     }
     /**
      * The kafka component allows messages to be sent to (or consumed from)
-     * Apache Kafka brokers. Creates a builder to build endpoints for the Kafka
-     * component.
+     * Apache Kafka brokers.
+     * Maven coordinates: org.apache.camel:camel-kafka
      */
     default KafkaEndpointBuilder kafka(String path) {
         class KafkaEndpointBuilderImpl extends AbstractEndpointBuilder implements KafkaEndpointBuilder, AdvancedKafkaEndpointBuilder {

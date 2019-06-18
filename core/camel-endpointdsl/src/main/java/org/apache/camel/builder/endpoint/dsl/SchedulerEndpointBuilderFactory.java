@@ -123,8 +123,8 @@ public interface SchedulerEndpointBuilderFactory {
     }
     /**
      * The scheduler component is used for generating message exchanges when a
-     * scheduler fires. Creates a builder to build endpoints for the Scheduler
-     * component.
+     * scheduler fires.
+     * Maven coordinates: org.apache.camel:camel-scheduler
      */
     default SchedulerEndpointBuilder scheduler(String path) {
         class SchedulerEndpointBuilderImpl extends AbstractEndpointBuilder implements SchedulerEndpointBuilder, AdvancedSchedulerEndpointBuilder {

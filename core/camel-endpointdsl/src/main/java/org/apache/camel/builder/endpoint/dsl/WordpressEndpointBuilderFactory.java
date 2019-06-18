@@ -765,8 +765,8 @@ public interface WordpressEndpointBuilderFactory {
         }
     }
     /**
-     * Integrates Camel with Wordpress. Creates a builder to build endpoints for
-     * the Wordpress component.
+     * Integrates Camel with Wordpress.
+     * Maven coordinates: org.apache.camel:camel-wordpress
      */
     default WordpressEndpointBuilder wordpress(String path) {
         class WordpressEndpointBuilderImpl extends AbstractEndpointBuilder implements WordpressEndpointBuilder, AdvancedWordpressEndpointBuilder {

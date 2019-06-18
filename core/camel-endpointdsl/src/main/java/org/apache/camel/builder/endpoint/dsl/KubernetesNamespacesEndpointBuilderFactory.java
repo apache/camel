@@ -1090,8 +1090,8 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
     /**
      * The Kubernetes Namespaces component provides a producer to execute
      * kubernetes namespace operations and a consumer to consume namespace
-     * events. Creates a builder to build endpoints for the Kubernetes
-     * Namespaces component.
+     * events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {

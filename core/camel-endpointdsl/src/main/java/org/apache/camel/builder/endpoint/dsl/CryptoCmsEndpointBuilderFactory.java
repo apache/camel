@@ -487,8 +487,8 @@ public interface CryptoCmsEndpointBuilderFactory {
     /**
      * The crypto cms component is used for encrypting data in CMS Enveloped
      * Data format, decrypting CMS Enveloped Data, signing data in CMS Signed
-     * Data format, and verifying CMS Signed Data. Creates a builder to build
-     * endpoints for the Crypto CMS component.
+     * Data format, and verifying CMS Signed Data.
+     * Maven coordinates: org.apache.camel:camel-crypto-cms
      */
     default CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {

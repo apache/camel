@@ -373,8 +373,8 @@ public interface MiloServerEndpointBuilderFactory {
         }
     }
     /**
-     * Make telemetry data available as an OPC UA server Creates a builder to
-     * build endpoints for the OPC UA Server component.
+     * Make telemetry data available as an OPC UA server
+     * Maven coordinates: org.apache.camel:camel-milo
      */
     default MiloServerEndpointBuilder miloServer(String path) {
         class MiloServerEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloServerEndpointBuilder, AdvancedMiloServerEndpointBuilder {

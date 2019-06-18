@@ -2920,8 +2920,8 @@ public interface FileEndpointBuilderFactory {
         TryRename;
     }
     /**
-     * The file component is used for reading or writing files. Creates a
-     * builder to build endpoints for the File component.
+     * The file component is used for reading or writing files.
+     * Maven coordinates: org.apache.camel:camel-file
      */
     default FileEndpointBuilder file(String path) {
         class FileEndpointBuilderImpl extends AbstractEndpointBuilder implements FileEndpointBuilder, AdvancedFileEndpointBuilder {

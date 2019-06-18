@@ -1333,8 +1333,8 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
     }
     /**
      * The Twitter Direct Message Component consumes/produces user's direct
-     * messages. Creates a builder to build endpoints for the Twitter Direct
-     * Message component.
+     * messages.
+     * Maven coordinates: org.apache.camel:camel-twitter
      */
     default TwitterDirectMessageEndpointBuilder twitterDirectMessage(String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {

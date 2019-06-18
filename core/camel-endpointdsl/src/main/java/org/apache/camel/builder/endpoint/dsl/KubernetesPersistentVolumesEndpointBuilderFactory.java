@@ -325,8 +325,8 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Persistent Volumes component provides a producer to
-     * execute kubernetes persistent volume operations. Creates a builder to
-     * build endpoints for the Kubernetes Persistent Volume component.
+     * execute kubernetes persistent volume operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
             String path) {

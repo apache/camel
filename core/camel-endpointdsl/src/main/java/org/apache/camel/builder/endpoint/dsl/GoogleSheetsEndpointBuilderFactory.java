@@ -628,8 +628,8 @@ public interface GoogleSheetsEndpointBuilderFactory {
         DATA;
     }
     /**
-     * The google-sheets component provides access to Google Sheets. Creates a
-     * builder to build endpoints for the Google Sheets component.
+     * The google-sheets component provides access to Google Sheets.
+     * Maven coordinates: org.apache.camel:camel-google-sheets
      */
     default GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {

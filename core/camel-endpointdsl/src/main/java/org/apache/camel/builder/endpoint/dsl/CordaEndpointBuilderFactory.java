@@ -412,7 +412,7 @@ public interface CordaEndpointBuilderFactory {
     }
     /**
      * The corda component uses the corda-rpc to interact with corda nodes.
-     * Creates a builder to build endpoints for the corda component.
+     * Maven coordinates: org.apache.camel:camel-corda
      */
     default CordaEndpointBuilder corda(String path) {
         class CordaEndpointBuilderImpl extends AbstractEndpointBuilder implements CordaEndpointBuilder, AdvancedCordaEndpointBuilder {

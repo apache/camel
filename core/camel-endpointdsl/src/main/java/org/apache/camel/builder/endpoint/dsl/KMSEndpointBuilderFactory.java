@@ -123,8 +123,8 @@ public interface KMSEndpointBuilderFactory {
         enableKey;
     }
     /**
-     * The aws-kms is used for managing Amazon KMS Creates a builder to build
-     * endpoints for the AWS KMS component.
+     * The aws-kms is used for managing Amazon KMS
+     * Maven coordinates: org.apache.camel:camel-aws-kms
      */
     default KMSEndpointBuilder kMS(String path) {
         class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder, AdvancedKMSEndpointBuilder {

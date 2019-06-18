@@ -1115,8 +1115,8 @@ public interface XmppEndpointBuilderFactory {
         }
     }
     /**
-     * To send and receive messages from a XMPP (chat) server. Creates a builder
-     * to build endpoints for the XMPP component.
+     * To send and receive messages from a XMPP (chat) server.
+     * Maven coordinates: org.apache.camel:camel-xmpp
      */
     default XmppEndpointBuilder xmpp(String path) {
         class XmppEndpointBuilderImpl extends AbstractEndpointBuilder implements XmppEndpointBuilder, AdvancedXmppEndpointBuilder {

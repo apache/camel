@@ -647,8 +647,8 @@ public interface IOTAEndpointBuilderFactory {
         }
     }
     /**
-     * Component for integrate IOTA DLT Creates a builder to build endpoints for
-     * the IOTA component.
+     * Component for integrate IOTA DLT
+     * Maven coordinates: org.apache.camel:camel-iota
      */
     default IOTAEndpointBuilder iOTA(String path) {
         class IOTAEndpointBuilderImpl extends AbstractEndpointBuilder implements IOTAEndpointBuilder, AdvancedIOTAEndpointBuilder {

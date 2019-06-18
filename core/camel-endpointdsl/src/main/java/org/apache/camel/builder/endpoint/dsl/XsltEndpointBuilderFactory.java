@@ -457,8 +457,8 @@ public interface XsltEndpointBuilderFactory {
         file;
     }
     /**
-     * Transforms the message using a XSLT template. Creates a builder to build
-     * endpoints for the XSLT component.
+     * Transforms the message using a XSLT template.
+     * Maven coordinates: org.apache.camel:camel-xslt
      */
     default XsltEndpointBuilder xslt(String path) {
         class XsltEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltEndpointBuilder, AdvancedXsltEndpointBuilder {

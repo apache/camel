@@ -1062,7 +1062,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
     }
     /**
      * The hazelcast-seda component is used to access Hazelcast BlockingQueue.
-     * Creates a builder to build endpoints for the Hazelcast SEDA component.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
         class HazelcastSedaEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSedaEndpointBuilder, AdvancedHazelcastSedaEndpointBuilder {

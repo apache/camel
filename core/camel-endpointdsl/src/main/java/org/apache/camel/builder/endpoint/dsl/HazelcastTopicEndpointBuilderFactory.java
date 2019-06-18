@@ -1066,8 +1066,8 @@ public interface HazelcastTopicEndpointBuilderFactory {
     }
     /**
      * The hazelcast-topic component is used to access Hazelcast distributed
-     * topic. Creates a builder to build endpoints for the Hazelcast Topic
-     * component.
+     * topic.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
         class HazelcastTopicEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastTopicEndpointBuilder, AdvancedHazelcastTopicEndpointBuilder {

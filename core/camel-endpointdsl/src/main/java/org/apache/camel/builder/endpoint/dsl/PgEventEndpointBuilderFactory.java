@@ -604,8 +604,8 @@ public interface PgEventEndpointBuilderFactory {
     }
     /**
      * The pgevent component allows for producing/consuming PostgreSQL events
-     * related to the listen/notify commands. Creates a builder to build
-     * endpoints for the PostgresSQL Event component.
+     * related to the listen/notify commands.
+     * Maven coordinates: org.apache.camel:camel-pgevent
      */
     default PgEventEndpointBuilder pgEvent(String path) {
         class PgEventEndpointBuilderImpl extends AbstractEndpointBuilder implements PgEventEndpointBuilder, AdvancedPgEventEndpointBuilder {

@@ -402,8 +402,8 @@ public interface JGroupsRaftEndpointBuilderFactory {
     }
     /**
      * The jgroups component provides exchange of messages between Camel and
-     * JGroups clusters. Creates a builder to build endpoints for the JGroups
-     * raft component.
+     * JGroups clusters.
+     * Maven coordinates: org.apache.camel:camel-jgroups-raft
      */
     default JGroupsRaftEndpointBuilder jGroupsRaft(String path) {
         class JGroupsRaftEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsRaftEndpointBuilder, AdvancedJGroupsRaftEndpointBuilder {

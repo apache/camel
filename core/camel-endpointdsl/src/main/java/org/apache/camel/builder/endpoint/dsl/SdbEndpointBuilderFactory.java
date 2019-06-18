@@ -255,8 +255,8 @@ public interface SdbEndpointBuilderFactory {
     }
     /**
      * The aws-sdb component is for storing and retrieving data from/to Amazon's
-     * SDB service. Creates a builder to build endpoints for the AWS SimpleDB
-     * component.
+     * SDB service.
+     * Maven coordinates: org.apache.camel:camel-aws-sdb
      */
     default SdbEndpointBuilder sdb(String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {

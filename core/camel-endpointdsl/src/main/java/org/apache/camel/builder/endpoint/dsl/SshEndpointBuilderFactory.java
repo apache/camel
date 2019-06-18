@@ -1266,8 +1266,8 @@ public interface SshEndpointBuilderFactory {
     }
     /**
      * The ssh component enables access to SSH servers such that you can send an
-     * SSH command, and process the response. Creates a builder to build
-     * endpoints for the SSH component.
+     * SSH command, and process the response.
+     * Maven coordinates: org.apache.camel:camel-ssh
      */
     default SshEndpointBuilder ssh(String path) {
         class SshEndpointBuilderImpl extends AbstractEndpointBuilder implements SshEndpointBuilder, AdvancedSshEndpointBuilder {

@@ -878,8 +878,8 @@ public interface JcrEndpointBuilderFactory {
     }
     /**
      * The jcr component allows you to add/read nodes to/from a JCR compliant
-     * content repository. Creates a builder to build endpoints for the JCR
-     * component.
+     * content repository.
+     * Maven coordinates: org.apache.camel:camel-jcr
      */
     default JcrEndpointBuilder jcr(String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {

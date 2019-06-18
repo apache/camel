@@ -177,8 +177,8 @@ public interface GlanceEndpointBuilderFactory {
     }
     /**
      * The openstack-glance component allows messages to be sent to an OpenStack
-     * image services. Creates a builder to build endpoints for the OpenStack
-     * Glance component.
+     * image services.
+     * Maven coordinates: org.apache.camel:camel-openstack
      */
     default GlanceEndpointBuilder glance(String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {

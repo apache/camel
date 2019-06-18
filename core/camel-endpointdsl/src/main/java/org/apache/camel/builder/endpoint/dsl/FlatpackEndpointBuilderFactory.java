@@ -1166,8 +1166,8 @@ public interface FlatpackEndpointBuilderFactory {
     }
     /**
      * The flatpack component supports fixed width and delimited file parsing
-     * via the FlatPack library. Creates a builder to build endpoints for the
-     * Flatpack component.
+     * via the FlatPack library.
+     * Maven coordinates: org.apache.camel:camel-flatpack
      */
     default FlatpackEndpointBuilder flatpack(String path) {
         class FlatpackEndpointBuilderImpl extends AbstractEndpointBuilder implements FlatpackEndpointBuilder, AdvancedFlatpackEndpointBuilder {

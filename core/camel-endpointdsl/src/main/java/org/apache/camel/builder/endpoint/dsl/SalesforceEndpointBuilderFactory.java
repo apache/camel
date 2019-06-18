@@ -2421,8 +2421,8 @@ public interface SalesforceEndpointBuilderFactory {
     }
     /**
      * The salesforce component is used for integrating Camel with the massive
-     * Salesforce API. Creates a builder to build endpoints for the Salesforce
-     * component.
+     * Salesforce API.
+     * Maven coordinates: org.apache.camel:camel-salesforce
      */
     default SalesforceEndpointBuilder salesforce(String path) {
         class SalesforceEndpointBuilderImpl extends AbstractEndpointBuilder implements SalesforceEndpointBuilder, AdvancedSalesforceEndpointBuilder {

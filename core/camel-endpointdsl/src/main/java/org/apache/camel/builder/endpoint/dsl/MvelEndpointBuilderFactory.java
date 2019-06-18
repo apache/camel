@@ -133,8 +133,8 @@ public interface MvelEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a MVEL template. Creates a builder to build
-     * endpoints for the MVEL component.
+     * Transforms the message using a MVEL template.
+     * Maven coordinates: org.apache.camel:camel-mvel
      */
     default MvelEndpointBuilder mvel(String path) {
         class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {

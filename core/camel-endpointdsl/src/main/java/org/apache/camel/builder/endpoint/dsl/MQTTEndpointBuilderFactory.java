@@ -2267,8 +2267,8 @@ public interface MQTTEndpointBuilderFactory {
     }
     /**
      * Component for communicating with MQTT M2M message brokers using
-     * FuseSource MQTT Client. Creates a builder to build endpoints for the MQTT
-     * component.
+     * FuseSource MQTT Client.
+     * Maven coordinates: org.apache.camel:camel-mqtt
      */
     default MQTTEndpointBuilder mQTT(String path) {
         class MQTTEndpointBuilderImpl extends AbstractEndpointBuilder implements MQTTEndpointBuilder, AdvancedMQTTEndpointBuilder {

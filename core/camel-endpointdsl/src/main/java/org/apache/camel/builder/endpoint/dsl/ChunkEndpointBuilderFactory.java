@@ -169,8 +169,8 @@ public interface ChunkEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a Chunk template. Creates a builder to build
-     * endpoints for the Chunk component.
+     * Transforms the message using a Chunk template.
+     * Maven coordinates: org.apache.camel:camel-chunk
      */
     default ChunkEndpointBuilder chunk(String path) {
         class ChunkEndpointBuilderImpl extends AbstractEndpointBuilder implements ChunkEndpointBuilder, AdvancedChunkEndpointBuilder {

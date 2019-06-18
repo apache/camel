@@ -177,8 +177,8 @@ public interface FreemarkerEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a FreeMarker template. Creates a builder to
-     * build endpoints for the Freemarker component.
+     * Transforms the message using a FreeMarker template.
+     * Maven coordinates: org.apache.camel:camel-freemarker
      */
     default FreemarkerEndpointBuilder freemarker(String path) {
         class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {

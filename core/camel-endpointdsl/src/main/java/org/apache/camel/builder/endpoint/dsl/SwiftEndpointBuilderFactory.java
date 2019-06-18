@@ -186,8 +186,8 @@ public interface SwiftEndpointBuilderFactory {
     }
     /**
      * The openstack-swift component allows messages to be sent to an OpenStack
-     * object storage services. Creates a builder to build endpoints for the
-     * OpenStack Swift component.
+     * object storage services.
+     * Maven coordinates: org.apache.camel:camel-openstack
      */
     default SwiftEndpointBuilder swift(String path) {
         class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {

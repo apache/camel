@@ -240,8 +240,8 @@ public interface AtomEndpointBuilderFactory {
         }
     }
     /**
-     * The atom component is used for consuming Atom RSS feeds. Creates a
-     * builder to build endpoints for the Atom component.
+     * The atom component is used for consuming Atom RSS feeds.
+     * Maven coordinates: org.apache.camel:camel-atom
      */
     default AtomEndpointBuilder atom(String path) {
         class AtomEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomEndpointBuilder, AdvancedAtomEndpointBuilder {

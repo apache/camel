@@ -669,7 +669,7 @@ public interface CouchDbEndpointBuilderFactory {
     }
     /**
      * The couchdb component is used for integrate with CouchDB databases.
-     * Creates a builder to build endpoints for the CouchDB component.
+     * Maven coordinates: org.apache.camel:camel-couchdb
      */
     default CouchDbEndpointBuilder couchDb(String path) {
         class CouchDbEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchDbEndpointBuilder, AdvancedCouchDbEndpointBuilder {

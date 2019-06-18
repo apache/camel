@@ -1781,8 +1781,8 @@ public interface AS2EndpointBuilderFactory {
     }
     /**
      * Component used for transferring data secure and reliable over the
-     * internet using the AS2 protocol. Creates a builder to build endpoints for
-     * the AS2 component.
+     * internet using the AS2 protocol.
+     * Maven coordinates: org.apache.camel:camel-as2
      */
     default AS2EndpointBuilder aS2(String path) {
         class AS2EndpointBuilderImpl extends AbstractEndpointBuilder implements AS2EndpointBuilder, AdvancedAS2EndpointBuilder {

@@ -535,7 +535,8 @@ public interface ZendeskEndpointBuilderFactory {
     }
     /**
      * Allows producing messages to manage Zendesk ticket, user, organization,
-     * etc. Creates a builder to build endpoints for the Zendesk component.
+     * etc.
+     * Maven coordinates: org.apache.camel:camel-zendesk
      */
     default ZendeskEndpointBuilder zendesk(String path) {
         class ZendeskEndpointBuilderImpl extends AbstractEndpointBuilder implements ZendeskEndpointBuilder, AdvancedZendeskEndpointBuilder {

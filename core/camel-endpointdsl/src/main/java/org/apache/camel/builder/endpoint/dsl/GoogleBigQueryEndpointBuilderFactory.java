@@ -156,8 +156,8 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
     }
     /**
-     * Google BigQuery data warehouse for analytics. Creates a builder to build
-     * endpoints for the Google BigQuery component.
+     * Google BigQuery data warehouse for analytics.
+     * Maven coordinates: org.apache.camel:camel-google-bigquery
      */
     default GoogleBigQueryEndpointBuilder googleBigQuery(String path) {
         class GoogleBigQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQueryEndpointBuilder, AdvancedGoogleBigQueryEndpointBuilder {

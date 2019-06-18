@@ -169,8 +169,8 @@ public interface WebhookEndpointBuilderFactory {
     /**
      * The webhook component allows other Camel components that can receive push
      * notifications to expose webhook endpoints and automatically register them
-     * with their own webhook provider. Creates a builder to build endpoints for
-     * the Webhook component.
+     * with their own webhook provider.
+     * Maven coordinates: org.apache.camel:camel-webhook
      */
     default WebhookEndpointBuilder webhook(String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {

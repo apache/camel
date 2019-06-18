@@ -163,8 +163,8 @@ public interface VelocityEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a Velocity template. Creates a builder to
-     * build endpoints for the Velocity component.
+     * Transforms the message using a Velocity template.
+     * Maven coordinates: org.apache.camel:camel-velocity
      */
     default VelocityEndpointBuilder velocity(String path) {
         class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder, AdvancedVelocityEndpointBuilder {

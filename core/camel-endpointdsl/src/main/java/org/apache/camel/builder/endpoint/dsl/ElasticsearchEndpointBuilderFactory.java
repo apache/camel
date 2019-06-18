@@ -329,8 +329,8 @@ public interface ElasticsearchEndpointBuilderFactory {
     }
     /**
      * The elasticsearch component is used for interfacing with ElasticSearch
-     * server using REST API. Creates a builder to build endpoints for the
-     * Elastichsearch Rest component.
+     * server using REST API.
+     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
      */
     default ElasticsearchEndpointBuilder elasticsearch(String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {

@@ -112,8 +112,8 @@ public interface MasterEndpointBuilderFactory {
     }
     /**
      * Represents an endpoint which only becomes active when the
-     * CamelClusterView has the leadership. Creates a builder to build endpoints
-     * for the Master component.
+     * CamelClusterView has the leadership.
+     * Maven coordinates: org.apache.camel:camel-master
      */
     default MasterEndpointBuilder master(String path) {
         class MasterEndpointBuilderImpl extends AbstractEndpointBuilder implements MasterEndpointBuilder, AdvancedMasterEndpointBuilder {

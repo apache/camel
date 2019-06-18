@@ -165,8 +165,8 @@ public interface StringTemplateEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a String template. Creates a builder to
-     * build endpoints for the String Template component.
+     * Transforms the message using a String template.
+     * Maven coordinates: org.apache.camel:camel-stringtemplate
      */
     default StringTemplateEndpointBuilder stringTemplate(String path) {
         class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {

@@ -1054,7 +1054,7 @@ public interface RestletEndpointBuilderFactory {
     }
     /**
      * Component for consuming and producing Restful resources using Restlet.
-     * Creates a builder to build endpoints for the Restlet component.
+     * Maven coordinates: org.apache.camel:camel-restlet
      */
     default RestletEndpointBuilder restlet(String path) {
         class RestletEndpointBuilderImpl extends AbstractEndpointBuilder implements RestletEndpointBuilder, AdvancedRestletEndpointBuilder {

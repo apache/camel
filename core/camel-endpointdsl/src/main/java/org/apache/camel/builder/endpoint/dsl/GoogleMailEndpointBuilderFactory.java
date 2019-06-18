@@ -626,8 +626,8 @@ public interface GoogleMailEndpointBuilderFactory {
         USERS;
     }
     /**
-     * The google-mail component provides access to Google Mail. Creates a
-     * builder to build endpoints for the Google Mail component.
+     * The google-mail component provides access to Google Mail.
+     * Maven coordinates: org.apache.camel:camel-google-mail
      */
     default GoogleMailEndpointBuilder googleMail(String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {

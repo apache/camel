@@ -1089,7 +1089,7 @@ public interface Olingo4EndpointBuilderFactory {
     }
     /**
      * Communicates with OData 4.0 services using Apache Olingo OData API.
-     * Creates a builder to build endpoints for the Olingo4 component.
+     * Maven coordinates: org.apache.camel:camel-olingo4
      */
     default Olingo4EndpointBuilder olingo4(String path) {
         class Olingo4EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo4EndpointBuilder, AdvancedOlingo4EndpointBuilder {

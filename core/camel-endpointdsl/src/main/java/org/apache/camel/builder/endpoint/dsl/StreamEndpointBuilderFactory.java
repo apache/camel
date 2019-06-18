@@ -955,8 +955,8 @@ public interface StreamEndpointBuilderFactory {
     }
     /**
      * The stream: component provides access to the system-in, system-out and
-     * system-err streams as well as allowing streaming of file and URL. Creates
-     * a builder to build endpoints for the Stream component.
+     * system-err streams as well as allowing streaming of file and URL.
+     * Maven coordinates: org.apache.camel:camel-stream
      */
     default StreamEndpointBuilder stream(String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {

@@ -1163,7 +1163,8 @@ public interface WsEndpointBuilderFactory {
     }
     /**
      * To exchange data with external Websocket servers using Async Http Client.
-     * Creates a builder to build endpoints for the AHC Websocket component.
+     * 
+     * Maven coordinates: org.apache.camel:camel-ahc-ws
      */
     default WsEndpointBuilder ws(String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {

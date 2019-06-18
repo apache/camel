@@ -256,8 +256,8 @@ public interface NagiosEndpointBuilderFactory {
         TripleDes;
     }
     /**
-     * To send passive checks to Nagios using JSendNSCA. Creates a builder to
-     * build endpoints for the Nagios component.
+     * To send passive checks to Nagios using JSendNSCA.
+     * Maven coordinates: org.apache.camel:camel-nagios
      */
     default NagiosEndpointBuilder nagios(String path) {
         class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder, AdvancedNagiosEndpointBuilder {

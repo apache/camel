@@ -750,8 +750,8 @@ public interface IgniteCacheEndpointBuilderFactory {
     }
     /**
      * The Ignite Cache endpoint is one of camel-ignite endpoints which allows
-     * you to interact with an Ignite Cache. Creates a builder to build
-     * endpoints for the Ignite Cache component.
+     * you to interact with an Ignite Cache.
+     * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteCacheEndpointBuilder igniteCache(String path) {
         class IgniteCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteCacheEndpointBuilder, AdvancedIgniteCacheEndpointBuilder {

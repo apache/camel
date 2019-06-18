@@ -1312,8 +1312,8 @@ public interface TwitterSearchEndpointBuilderFactory {
         EVENT;
     }
     /**
-     * The Twitter Search component consumes search results. Creates a builder
-     * to build endpoints for the Twitter Search component.
+     * The Twitter Search component consumes search results.
+     * Maven coordinates: org.apache.camel:camel-twitter
      */
     default TwitterSearchEndpointBuilder twitterSearch(String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {

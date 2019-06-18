@@ -567,7 +567,7 @@ public interface JcloudsEndpointBuilderFactory {
     }
     /**
      * For interacting with cloud compute & blobstore service via jclouds.
-     * Creates a builder to build endpoints for the JClouds component.
+     * Maven coordinates: org.apache.camel:camel-jclouds
      */
     default JcloudsEndpointBuilder jclouds(String path) {
         class JcloudsEndpointBuilderImpl extends AbstractEndpointBuilder implements JcloudsEndpointBuilder, AdvancedJcloudsEndpointBuilder {

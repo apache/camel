@@ -876,8 +876,8 @@ public interface RedisEndpointBuilderFactory {
     }
     /**
      * The spring-redis component allows sending and receiving messages from
-     * Redis. Creates a builder to build endpoints for the Spring Redis
-     * component.
+     * Redis.
+     * Maven coordinates: org.apache.camel:camel-spring-redis
      */
     default RedisEndpointBuilder redis(String path) {
         class RedisEndpointBuilderImpl extends AbstractEndpointBuilder implements RedisEndpointBuilder, AdvancedRedisEndpointBuilder {

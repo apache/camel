@@ -195,8 +195,8 @@ public interface MicrometerEndpointBuilderFactory {
     }
     /**
      * To collect various metrics directly from Camel routes using the
-     * Micrometer library. Creates a builder to build endpoints for the
-     * Micrometer component.
+     * Micrometer library.
+     * Maven coordinates: org.apache.camel:camel-micrometer
      */
     default MicrometerEndpointBuilder micrometer(String path) {
         class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {

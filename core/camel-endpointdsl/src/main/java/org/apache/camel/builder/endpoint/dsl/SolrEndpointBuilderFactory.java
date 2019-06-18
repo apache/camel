@@ -309,7 +309,8 @@ public interface SolrEndpointBuilderFactory {
     }
     /**
      * The solr component allows you to interface with an Apache Lucene Solr
-     * server. Creates a builder to build endpoints for the Solr component.
+     * server.
+     * Maven coordinates: org.apache.camel:camel-solr
      */
     default SolrEndpointBuilder solr(String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {

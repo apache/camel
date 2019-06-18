@@ -1239,8 +1239,8 @@ public interface AtomixMessagingEndpointBuilderFactory {
     }
     /**
      * The atomix-messaging component is used to access Atomix's group
-     * messaging. Creates a builder to build endpoints for the Atomix Messaging
-     * component.
+     * messaging.
+     * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
         class AtomixMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMessagingEndpointBuilder, AdvancedAtomixMessagingEndpointBuilder {

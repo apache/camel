@@ -599,7 +599,7 @@ public interface HttpEndpointBuilderFactory {
     }
     /**
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
-     * Creates a builder to build endpoints for the HTTP4 component.
+     * Maven coordinates: org.apache.camel:camel-http4
      */
     default HttpEndpointBuilder http(String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {

@@ -841,8 +841,8 @@ public interface ServiceNowEndpointBuilderFactory {
     }
     /**
      * The servicenow component is used to integrate Camel with ServiceNow cloud
-     * services. Creates a builder to build endpoints for the ServiceNow
-     * component.
+     * services.
+     * Maven coordinates: org.apache.camel:camel-servicenow
      */
     default ServiceNowEndpointBuilder serviceNow(String path) {
         class ServiceNowEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceNowEndpointBuilder, AdvancedServiceNowEndpointBuilder {

@@ -2686,8 +2686,8 @@ public interface RabbitMQEndpointBuilderFactory {
     }
     /**
      * The rabbitmq component allows you produce and consume messages from
-     * RabbitMQ instances. Creates a builder to build endpoints for the RabbitMQ
-     * component.
+     * RabbitMQ instances.
+     * Maven coordinates: org.apache.camel:camel-rabbitmq
      */
     default RabbitMQEndpointBuilder rabbitMQ(String path) {
         class RabbitMQEndpointBuilderImpl extends AbstractEndpointBuilder implements RabbitMQEndpointBuilder, AdvancedRabbitMQEndpointBuilder {

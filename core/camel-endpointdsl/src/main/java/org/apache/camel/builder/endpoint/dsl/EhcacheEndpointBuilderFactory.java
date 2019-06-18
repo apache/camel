@@ -986,8 +986,8 @@ public interface EhcacheEndpointBuilderFactory {
     }
     /**
      * The ehcache component enables you to perform caching operations using
-     * Ehcache as cache implementation. Creates a builder to build endpoints for
-     * the Ehcache component.
+     * Ehcache as cache implementation.
+     * Maven coordinates: org.apache.camel:camel-ehcache
      */
     default EhcacheEndpointBuilder ehcache(String path) {
         class EhcacheEndpointBuilderImpl extends AbstractEndpointBuilder implements EhcacheEndpointBuilder, AdvancedEhcacheEndpointBuilder {

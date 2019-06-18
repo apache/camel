@@ -731,8 +731,8 @@ public interface JiraEndpointBuilderFactory {
         WATCHERS;
     }
     /**
-     * The jira component interacts with the JIRA issue tracker. Creates a
-     * builder to build endpoints for the Jira component.
+     * The jira component interacts with the JIRA issue tracker.
+     * Maven coordinates: org.apache.camel:camel-jira
      */
     default JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {

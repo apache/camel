@@ -403,8 +403,8 @@ public interface AtomixMultiMapEndpointBuilderFactory {
     }
     /**
      * The atomix-multimap component is used to access Atomix's distributed
-     * multi map. Creates a builder to build endpoints for the Atomix MultiMap
-     * component.
+     * multi map.
+     * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixMultiMapEndpointBuilder atomixMultiMap(String path) {
         class AtomixMultiMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMultiMapEndpointBuilder, AdvancedAtomixMultiMapEndpointBuilder {

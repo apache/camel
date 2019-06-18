@@ -562,8 +562,8 @@ public interface GuavaEventBusEndpointBuilderFactory {
     }
     /**
      * The guava-eventbus component provides integration bridge between Camel
-     * and Google Guava EventBus. Creates a builder to build endpoints for the
-     * Guava EventBus component.
+     * and Google Guava EventBus.
+     * Maven coordinates: org.apache.camel:camel-guava-eventbus
      */
     default GuavaEventBusEndpointBuilder guavaEventBus(String path) {
         class GuavaEventBusEndpointBuilderImpl extends AbstractEndpointBuilder implements GuavaEventBusEndpointBuilder, AdvancedGuavaEventBusEndpointBuilder {

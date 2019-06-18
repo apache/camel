@@ -1088,8 +1088,8 @@ public interface Olingo2EndpointBuilderFactory {
         DEFAULT;
     }
     /**
-     * Communicates with OData 2.0 services using Apache Olingo. Creates a
-     * builder to build endpoints for the Olingo2 component.
+     * Communicates with OData 2.0 services using Apache Olingo.
+     * Maven coordinates: org.apache.camel:camel-olingo2
      */
     default Olingo2EndpointBuilder olingo2(String path) {
         class Olingo2EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo2EndpointBuilder, AdvancedOlingo2EndpointBuilder {

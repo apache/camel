@@ -1062,8 +1062,8 @@ public interface HazelcastListEndpointBuilderFactory {
     }
     /**
      * The hazelcast-list component is used to access Hazelcast distributed
-     * list. Creates a builder to build endpoints for the Hazelcast List
-     * component.
+     * list.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastListEndpointBuilder hazelcastList(String path) {
         class HazelcastListEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastListEndpointBuilder, AdvancedHazelcastListEndpointBuilder {

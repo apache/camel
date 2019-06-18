@@ -2441,7 +2441,8 @@ public interface SipEndpointBuilderFactory {
     }
     /**
      * To send and receive messages using the SIP protocol (used in telco and
-     * mobile). Creates a builder to build endpoints for the SIP component.
+     * mobile).
+     * Maven coordinates: org.apache.camel:camel-sip
      */
     default SipEndpointBuilder sip(String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {

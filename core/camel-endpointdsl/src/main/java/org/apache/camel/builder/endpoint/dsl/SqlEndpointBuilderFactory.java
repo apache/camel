@@ -1802,7 +1802,8 @@ public interface SqlEndpointBuilderFactory {
     }
     /**
      * The sql component allows you to work with databases using JDBC SQL
-     * queries. Creates a builder to build endpoints for the SQL component.
+     * queries.
+     * Maven coordinates: org.apache.camel:camel-sql
      */
     default SqlEndpointBuilder sql(String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {

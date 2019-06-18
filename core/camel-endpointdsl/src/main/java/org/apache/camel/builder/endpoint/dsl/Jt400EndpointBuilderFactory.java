@@ -1451,8 +1451,8 @@ public interface Jt400EndpointBuilderFactory {
     }
     /**
      * The jt400 component allows you to exchanges messages with an AS/400
-     * system using data queues or program call. Creates a builder to build
-     * endpoints for the JT400 component.
+     * system using data queues or program call.
+     * Maven coordinates: org.apache.camel:camel-jt400
      */
     default Jt400EndpointBuilder jt400(String path) {
         class Jt400EndpointBuilderImpl extends AbstractEndpointBuilder implements Jt400EndpointBuilder, AdvancedJt400EndpointBuilder {

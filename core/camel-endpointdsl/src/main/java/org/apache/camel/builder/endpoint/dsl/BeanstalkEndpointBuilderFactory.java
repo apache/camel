@@ -1080,8 +1080,8 @@ public interface BeanstalkEndpointBuilderFactory {
     }
     /**
      * The beanstalk component is used for job retrieval and post-processing of
-     * Beanstalk jobs. Creates a builder to build endpoints for the Beanstalk
-     * component.
+     * Beanstalk jobs.
+     * Maven coordinates: org.apache.camel:camel-beanstalk
      */
     default BeanstalkEndpointBuilder beanstalk(String path) {
         class BeanstalkEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanstalkEndpointBuilder, AdvancedBeanstalkEndpointBuilder {

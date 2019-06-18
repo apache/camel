@@ -313,8 +313,8 @@ public interface KubernetesSecretsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Secrets component provides a producer to execute
-     * kubernetes secret operations. Creates a builder to build endpoints for
-     * the Kubernetes Secrets component.
+     * kubernetes secret operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
         class KubernetesSecretsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesSecretsEndpointBuilder, AdvancedKubernetesSecretsEndpointBuilder {

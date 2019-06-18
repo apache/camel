@@ -663,8 +663,8 @@ public interface DisruptorEndpointBuilderFactory {
     }
     /**
      * The disruptor component provides asynchronous SEDA behavior using LMAX
-     * Disruptor. Creates a builder to build endpoints for the Disruptor
-     * component.
+     * Disruptor.
+     * Maven coordinates: org.apache.camel:camel-disruptor
      */
     default DisruptorEndpointBuilder disruptor(String path) {
         class DisruptorEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorEndpointBuilder, AdvancedDisruptorEndpointBuilder {

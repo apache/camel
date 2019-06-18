@@ -760,8 +760,8 @@ public interface GoraEndpointBuilderFactory {
     }
     /**
      * The gora component allows you to work with NoSQL databases using the
-     * Apache Gora framework. Creates a builder to build endpoints for the Gora
-     * component.
+     * Apache Gora framework.
+     * Maven coordinates: org.apache.camel:camel-gora
      */
     default GoraEndpointBuilder gora(String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {

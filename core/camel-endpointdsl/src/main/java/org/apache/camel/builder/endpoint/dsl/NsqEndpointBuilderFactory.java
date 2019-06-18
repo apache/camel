@@ -689,8 +689,8 @@ public interface NsqEndpointBuilderFactory {
         }
     }
     /**
-     * Represents a nsq endpoint. Creates a builder to build endpoints for the
-     * NSQ component.
+     * Represents a nsq endpoint.
+     * Maven coordinates: org.apache.camel:camel-nsq
      */
     default NsqEndpointBuilder nsq(String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {

@@ -1649,7 +1649,8 @@ public interface JBPMEndpointBuilderFactory {
     }
     /**
      * The jbpm component provides integration with jBPM (Business Process
-     * Management). Creates a builder to build endpoints for the JBPM component.
+     * Management).
+     * Maven coordinates: org.apache.camel:camel-jbpm
      */
     default JBPMEndpointBuilder jBPM(String path) {
         class JBPMEndpointBuilderImpl extends AbstractEndpointBuilder implements JBPMEndpointBuilder, AdvancedJBPMEndpointBuilder {

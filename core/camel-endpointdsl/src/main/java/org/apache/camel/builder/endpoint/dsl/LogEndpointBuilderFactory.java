@@ -589,7 +589,8 @@ public interface LogEndpointBuilderFactory {
     }
     /**
      * The log component logs message exchanges to the underlying logging
-     * mechanism. Creates a builder to build endpoints for the Log component.
+     * mechanism.
+     * Maven coordinates: org.apache.camel:camel-log
      */
     default LogEndpointBuilder log(String path) {
         class LogEndpointBuilderImpl extends AbstractEndpointBuilder implements LogEndpointBuilder, AdvancedLogEndpointBuilder {

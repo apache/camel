@@ -319,8 +319,8 @@ public interface DigitalOceanEndpointBuilderFactory {
     }
     /**
      * The DigitalOcean component allows you to manage Droplets and resources
-     * within the DigitalOcean cloud. Creates a builder to build endpoints for
-     * the DigitalOcean component.
+     * within the DigitalOcean cloud.
+     * Maven coordinates: org.apache.camel:camel-digitalocean
      */
     default DigitalOceanEndpointBuilder digitalOcean(String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {

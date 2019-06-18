@@ -165,8 +165,8 @@ public interface CMEndpointBuilderFactory {
         }
     }
     /**
-     * The cm-sms component allows to integrate with CM SMS Gateway. Creates a
-     * builder to build endpoints for the CM SMS Gateway component.
+     * The cm-sms component allows to integrate with CM SMS Gateway.
+     * Maven coordinates: org.apache.camel:camel-cm-sms
      */
     default CMEndpointBuilder cM(String path) {
         class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {

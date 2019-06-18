@@ -1901,8 +1901,8 @@ public interface CxfEndpointBuilderFactory {
         POJO;
     }
     /**
-     * The cxf component is used for SOAP WebServices using Apache CXF. Creates
-     * a builder to build endpoints for the CXF component.
+     * The cxf component is used for SOAP WebServices using Apache CXF.
+     * Maven coordinates: org.apache.camel:camel-cxf
      */
     default CxfEndpointBuilder cxf(String path) {
         class CxfEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfEndpointBuilder, AdvancedCxfEndpointBuilder {

@@ -759,8 +759,8 @@ public interface DropboxEndpointBuilderFactory {
     }
     /**
      * For uploading, downloading and managing files, folders, groups,
-     * collaborations, etc on dropbox DOT com. Creates a builder to build
-     * endpoints for the Dropbox component.
+     * collaborations, etc on dropbox DOT com.
+     * Maven coordinates: org.apache.camel:camel-dropbox
      */
     default DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {

@@ -1078,8 +1078,8 @@ public interface KubernetesNodesEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Nodes component provides a producer to execute kubernetes
-     * node operations and a consumer to consume node events. Creates a builder
-     * to build endpoints for the Kubernetes Nodes component.
+     * node operations and a consumer to consume node events.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
         class KubernetesNodesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNodesEndpointBuilder, AdvancedKubernetesNodesEndpointBuilder {

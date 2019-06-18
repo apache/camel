@@ -326,8 +326,8 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Persistent Volumes Claims component provides a producer to
-     * execute kubernetes persistent volume claim operations. Creates a builder
-     * to build endpoints for the Kubernetes Persistent Volume Claim component.
+     * execute kubernetes persistent volume claim operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String path) {

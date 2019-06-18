@@ -117,8 +117,8 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
     }
     /**
      * Represents an endpoint which only becomes active when it obtains the
-     * master lock Creates a builder to build endpoints for the ZooKeeper Master
-     * component.
+     * master lock
+     * Maven coordinates: org.apache.camel:camel-zookeeper-master
      */
     default ZooKeeperMasterEndpointBuilder zooKeeperMaster(String path) {
         class ZooKeeperMasterEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperMasterEndpointBuilder, AdvancedZooKeeperMasterEndpointBuilder {

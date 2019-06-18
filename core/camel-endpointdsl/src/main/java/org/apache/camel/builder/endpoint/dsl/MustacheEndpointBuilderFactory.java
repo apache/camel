@@ -151,8 +151,8 @@ public interface MustacheEndpointBuilderFactory {
         }
     }
     /**
-     * Transforms the message using a Mustache template. Creates a builder to
-     * build endpoints for the Mustache component.
+     * Transforms the message using a Mustache template.
+     * Maven coordinates: org.apache.camel:camel-mustache
      */
     default MustacheEndpointBuilder mustache(String path) {
         class MustacheEndpointBuilderImpl extends AbstractEndpointBuilder implements MustacheEndpointBuilder, AdvancedMustacheEndpointBuilder {

@@ -1812,8 +1812,8 @@ public interface SjmsEndpointBuilderFactory {
     }
     /**
      * The sjms component (simple jms) allows messages to be sent to (or
-     * consumed from) a JMS Queue or Topic (uses JMS 1.x API). Creates a builder
-     * to build endpoints for the Simple JMS component.
+     * consumed from) a JMS Queue or Topic (uses JMS 1.x API).
+     * Maven coordinates: org.apache.camel:camel-sjms
      */
     default SjmsEndpointBuilder sjms(String path) {
         class SjmsEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsEndpointBuilder, AdvancedSjmsEndpointBuilder {

@@ -486,7 +486,7 @@ public interface AsteriskEndpointBuilderFactory {
     }
     /**
      * The asterisk component is used to interact with Asterisk PBX Server.
-     * Creates a builder to build endpoints for the Asterisk component.
+     * Maven coordinates: org.apache.camel:camel-asterisk
      */
     default AsteriskEndpointBuilder asterisk(String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {

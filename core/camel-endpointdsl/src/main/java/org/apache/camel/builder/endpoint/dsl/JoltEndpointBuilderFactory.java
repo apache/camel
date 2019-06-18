@@ -213,8 +213,8 @@ public interface JoltEndpointBuilderFactory {
     }
     /**
      * The jolt component allows you to process a JSON messages using an JOLT
-     * specification (such as JSON-JSON transformation). Creates a builder to
-     * build endpoints for the JOLT component.
+     * specification (such as JSON-JSON transformation).
+     * Maven coordinates: org.apache.camel:camel-jolt
      */
     default JoltEndpointBuilder jolt(String path) {
         class JoltEndpointBuilderImpl extends AbstractEndpointBuilder implements JoltEndpointBuilder, AdvancedJoltEndpointBuilder {

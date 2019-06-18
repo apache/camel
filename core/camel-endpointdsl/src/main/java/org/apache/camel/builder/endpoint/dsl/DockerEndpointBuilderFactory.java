@@ -1173,8 +1173,8 @@ public interface DockerEndpointBuilderFactory {
         execstart;
     }
     /**
-     * The docker component is used for managing Docker containers. Creates a
-     * builder to build endpoints for the Docker component.
+     * The docker component is used for managing Docker containers.
+     * Maven coordinates: org.apache.camel:camel-docker
      */
     default DockerEndpointBuilder docker(String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {

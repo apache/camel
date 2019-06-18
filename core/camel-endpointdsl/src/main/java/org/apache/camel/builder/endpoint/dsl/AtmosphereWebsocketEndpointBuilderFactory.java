@@ -1338,8 +1338,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
     }
     /**
      * To exchange data with external Websocket clients using Atmosphere.
-     * Creates a builder to build endpoints for the Atmosphere Websocket
-     * component.
+     * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
      */
     default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
         class AtmosphereWebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosphereWebsocketEndpointBuilder, AdvancedAtmosphereWebsocketEndpointBuilder {

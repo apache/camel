@@ -4862,8 +4862,8 @@ public interface FtpsEndpointBuilderFactory {
     }
     /**
      * The ftps (FTP secure SSL/TLS) component is used for uploading or
-     * downloading files from FTP servers. Creates a builder to build endpoints
-     * for the FTPS component.
+     * downloading files from FTP servers.
+     * Maven coordinates: org.apache.camel:camel-ftp
      */
     default FtpsEndpointBuilder ftps(String path) {
         class FtpsEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpsEndpointBuilder, AdvancedFtpsEndpointBuilder {

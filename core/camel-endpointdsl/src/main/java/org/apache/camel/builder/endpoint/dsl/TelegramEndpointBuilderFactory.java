@@ -898,8 +898,8 @@ public interface TelegramEndpointBuilderFactory {
         }
     }
     /**
-     * The telegram component provides access to the Telegram Bot API. Creates a
-     * builder to build endpoints for the Telegram component.
+     * The telegram component provides access to the Telegram Bot API.
+     * Maven coordinates: org.apache.camel:camel-telegram
      */
     default TelegramEndpointBuilder telegram(String path) {
         class TelegramEndpointBuilderImpl extends AbstractEndpointBuilder implements TelegramEndpointBuilder, AdvancedTelegramEndpointBuilder {

@@ -121,8 +121,8 @@ public interface EKSEndpointBuilderFactory {
         deleteCluster;
     }
     /**
-     * The aws-kms is used for managing Amazon EKS Creates a builder to build
-     * endpoints for the AWS EKS component.
+     * The aws-kms is used for managing Amazon EKS
+     * Maven coordinates: org.apache.camel:camel-aws-eks
      */
     default EKSEndpointBuilder eKS(String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {

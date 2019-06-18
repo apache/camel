@@ -1212,8 +1212,8 @@ public interface GrpcEndpointBuilderFactory {
     }
     /**
      * The gRPC component allows to call and expose remote procedures via HTTP/2
-     * with protobuf dataformat Creates a builder to build endpoints for the
-     * gRPC component.
+     * with protobuf dataformat
+     * Maven coordinates: org.apache.camel:camel-grpc
      */
     default GrpcEndpointBuilder grpc(String path) {
         class GrpcEndpointBuilderImpl extends AbstractEndpointBuilder implements GrpcEndpointBuilder, AdvancedGrpcEndpointBuilder {

@@ -798,8 +798,8 @@ public interface GridFsEndpointBuilderFactory {
         PersistentTimestampAndFileAttribute;
     }
     /**
-     * Component for working with MongoDB GridFS. Creates a builder to build
-     * endpoints for the MongoDB GridFS component.
+     * Component for working with MongoDB GridFS.
+     * Maven coordinates: org.apache.camel:camel-mongodb-gridfs
      */
     default GridFsEndpointBuilder gridFs(String path) {
         class GridFsEndpointBuilderImpl extends AbstractEndpointBuilder implements GridFsEndpointBuilder, AdvancedGridFsEndpointBuilder {

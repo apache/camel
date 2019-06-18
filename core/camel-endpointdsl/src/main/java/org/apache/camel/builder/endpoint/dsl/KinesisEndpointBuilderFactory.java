@@ -1075,8 +1075,8 @@ public interface KinesisEndpointBuilderFactory {
     }
     /**
      * The aws-kinesis component is for consuming and producing records from
-     * Amazon Kinesis Streams. Creates a builder to build endpoints for the AWS
-     * Kinesis component.
+     * Amazon Kinesis Streams.
+     * Maven coordinates: org.apache.camel:camel-aws-kinesis
      */
     default KinesisEndpointBuilder kinesis(String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {

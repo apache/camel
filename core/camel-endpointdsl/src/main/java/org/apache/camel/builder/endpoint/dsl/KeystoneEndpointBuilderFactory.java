@@ -177,8 +177,8 @@ public interface KeystoneEndpointBuilderFactory {
     }
     /**
      * The openstack-keystone component allows messages to be sent to an
-     * OpenStack identity services. Creates a builder to build endpoints for the
-     * OpenStack Keystone component.
+     * OpenStack identity services.
+     * Maven coordinates: org.apache.camel:camel-openstack
      */
     default KeystoneEndpointBuilder keystone(String path) {
         class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder, AdvancedKeystoneEndpointBuilder {

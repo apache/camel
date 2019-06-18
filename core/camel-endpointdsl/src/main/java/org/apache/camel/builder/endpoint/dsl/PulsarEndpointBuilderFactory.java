@@ -467,8 +467,8 @@ public interface PulsarEndpointBuilderFactory {
         FAILOVER;
     }
     /**
-     * Camel Apache Pulsar Component Creates a builder to build endpoints for
-     * the Apache Pulsar component.
+     * Camel Apache Pulsar Component
+     * Maven coordinates: org.apache.camel:camel-pulsar
      */
     default PulsarEndpointBuilder pulsar(String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {

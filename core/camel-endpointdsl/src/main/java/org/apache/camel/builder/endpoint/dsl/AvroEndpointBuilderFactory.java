@@ -799,8 +799,8 @@ public interface AvroEndpointBuilderFactory {
         netty;
     }
     /**
-     * Working with Apache Avro for data serialization. Creates a builder to
-     * build endpoints for the Avro component.
+     * Working with Apache Avro for data serialization.
+     * Maven coordinates: org.apache.camel:camel-avro
      */
     default AvroEndpointBuilder avro(String path) {
         class AvroEndpointBuilderImpl extends AbstractEndpointBuilder implements AvroEndpointBuilder, AdvancedAvroEndpointBuilder {

@@ -1504,7 +1504,7 @@ public interface IrcEndpointBuilderFactory {
     }
     /**
      * The irc component implements an IRC (Internet Relay Chat) transport.
-     * Creates a builder to build endpoints for the IRC component.
+     * Maven coordinates: org.apache.camel:camel-irc
      */
     default IrcEndpointBuilder irc(String path) {
         class IrcEndpointBuilderImpl extends AbstractEndpointBuilder implements IrcEndpointBuilder, AdvancedIrcEndpointBuilder {

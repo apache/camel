@@ -1741,7 +1741,8 @@ public interface Mina2EndpointBuilderFactory {
     }
     /**
      * Socket level networking using TCP or UDP with the Apache Mina 2.x
-     * library. Creates a builder to build endpoints for the Mina2 component.
+     * library.
+     * Maven coordinates: org.apache.camel:camel-mina2
      */
     default Mina2EndpointBuilder mina2(String path) {
         class Mina2EndpointBuilderImpl extends AbstractEndpointBuilder implements Mina2EndpointBuilder, AdvancedMina2EndpointBuilder {

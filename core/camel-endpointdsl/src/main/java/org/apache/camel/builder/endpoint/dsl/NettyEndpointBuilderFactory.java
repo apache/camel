@@ -3623,7 +3623,7 @@ public interface NettyEndpointBuilderFactory {
     }
     /**
      * Socket level networking using TCP or UDP with the Netty 4.x library.
-     * Creates a builder to build endpoints for the Netty4 component.
+     * Maven coordinates: org.apache.camel:camel-netty4
      */
     default NettyEndpointBuilder netty(String path) {
         class NettyEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyEndpointBuilder, AdvancedNettyEndpointBuilder {

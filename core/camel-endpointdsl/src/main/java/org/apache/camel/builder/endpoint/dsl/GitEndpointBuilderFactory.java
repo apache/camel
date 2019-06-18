@@ -591,8 +591,8 @@ public interface GitEndpointBuilderFactory {
         BRANCH;
     }
     /**
-     * The git component is used for working with git repositories. Creates a
-     * builder to build endpoints for the Git component.
+     * The git component is used for working with git repositories.
+     * Maven coordinates: org.apache.camel:camel-git
      */
     default GitEndpointBuilder git(String path) {
         class GitEndpointBuilderImpl extends AbstractEndpointBuilder implements GitEndpointBuilder, AdvancedGitEndpointBuilder {

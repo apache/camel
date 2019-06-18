@@ -349,8 +349,8 @@ public interface HazelcastInstanceEndpointBuilderFactory {
     }
     /**
      * The hazelcast-instance component is used to consume join/leave events of
-     * the cache instance in the cluster. Creates a builder to build endpoints
-     * for the Hazelcast Instance component.
+     * the cache instance in the cluster.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
         class HazelcastInstanceEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastInstanceEndpointBuilder, AdvancedHazelcastInstanceEndpointBuilder {

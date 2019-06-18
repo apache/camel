@@ -915,8 +915,8 @@ public interface HBaseEndpointBuilderFactory {
         }
     }
     /**
-     * For reading/writing from/to an HBase store (Hadoop database). Creates a
-     * builder to build endpoints for the HBase component.
+     * For reading/writing from/to an HBase store (Hadoop database).
+     * Maven coordinates: org.apache.camel:camel-hbase
      */
     default HBaseEndpointBuilder hBase(String path) {
         class HBaseEndpointBuilderImpl extends AbstractEndpointBuilder implements HBaseEndpointBuilder, AdvancedHBaseEndpointBuilder {

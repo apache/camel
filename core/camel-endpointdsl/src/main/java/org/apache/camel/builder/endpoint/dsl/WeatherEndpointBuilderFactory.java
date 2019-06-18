@@ -1873,8 +1873,8 @@ public interface WeatherEndpointBuilderFactory {
         Daily;
     }
     /**
-     * Polls the weather information from Open Weather Map. Creates a builder to
-     * build endpoints for the Weather component.
+     * Polls the weather information from Open Weather Map.
+     * Maven coordinates: org.apache.camel:camel-weather
      */
     default WeatherEndpointBuilder weather(String path) {
         class WeatherEndpointBuilderImpl extends AbstractEndpointBuilder implements WeatherEndpointBuilder, AdvancedWeatherEndpointBuilder {

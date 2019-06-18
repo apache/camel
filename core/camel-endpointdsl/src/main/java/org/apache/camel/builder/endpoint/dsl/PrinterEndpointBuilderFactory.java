@@ -255,7 +255,8 @@ public interface PrinterEndpointBuilderFactory {
     }
     /**
      * The printer component is used for sending messages to printers as print
-     * jobs. Creates a builder to build endpoints for the Printer component.
+     * jobs.
+     * Maven coordinates: org.apache.camel:camel-printer
      */
     default PrinterEndpointBuilder printer(String path) {
         class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder, AdvancedPrinterEndpointBuilder {

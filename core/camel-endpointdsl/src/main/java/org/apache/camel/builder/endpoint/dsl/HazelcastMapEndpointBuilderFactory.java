@@ -1060,7 +1060,7 @@ public interface HazelcastMapEndpointBuilderFactory {
     }
     /**
      * The hazelcast-map component is used to access Hazelcast distributed map.
-     * Creates a builder to build endpoints for the Hazelcast Map component.
+     * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastMapEndpointBuilder hazelcastMap(String path) {
         class HazelcastMapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMapEndpointBuilder, AdvancedHazelcastMapEndpointBuilder {

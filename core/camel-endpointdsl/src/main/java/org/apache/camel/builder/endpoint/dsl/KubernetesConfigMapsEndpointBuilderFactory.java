@@ -314,8 +314,8 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
     }
     /**
      * The Kubernetes Configmaps component provides a producer to execute
-     * kubernetes configmap operations. Creates a builder to build endpoints for
-     * the Kubernetes ConfigMap component.
+     * kubernetes configmap operations.
+     * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
         class KubernetesConfigMapsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesConfigMapsEndpointBuilder, AdvancedKubernetesConfigMapsEndpointBuilder {

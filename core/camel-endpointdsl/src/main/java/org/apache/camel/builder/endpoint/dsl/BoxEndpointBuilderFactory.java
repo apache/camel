@@ -1094,8 +1094,8 @@ public interface BoxEndpointBuilderFactory {
     }
     /**
      * For uploading downloading and managing files folders groups
-     * collaborations etc on box DOT com. Creates a builder to build endpoints
-     * for the Box component.
+     * collaborations etc on box DOT com.
+     * Maven coordinates: org.apache.camel:camel-box
      */
     default BoxEndpointBuilder box(String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {

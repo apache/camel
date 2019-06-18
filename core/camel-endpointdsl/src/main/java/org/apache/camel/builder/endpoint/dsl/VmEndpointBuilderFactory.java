@@ -783,8 +783,8 @@ public interface VmEndpointBuilderFactory {
     }
     /**
      * The vm component provides asynchronous call to another endpoint from the
-     * same CamelContext. Creates a builder to build endpoints for the VM
-     * component.
+     * same CamelContext.
+     * Maven coordinates: org.apache.camel:camel-vm
      */
     default VmEndpointBuilder vm(String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
