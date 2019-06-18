@@ -20,7 +20,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.MinorType;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
@@ -46,7 +46,7 @@ public class ProducerTest extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + Endpoint.sendMessage + "/token")
+                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/token")
                         .to("mock:soroush");
             }
         };

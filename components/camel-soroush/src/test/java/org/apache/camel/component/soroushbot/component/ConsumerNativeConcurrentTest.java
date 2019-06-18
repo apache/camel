@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +40,7 @@ public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + Endpoint.getMessage + "/10?concurrentConsumers=3&maxConnectionRetry=0").process(exchange -> {
+                from("soroush://" + SoroushAction.getMessage + "/10?concurrentConsumers=3&maxConnectionRetry=0").process(exchange -> {
                     String from = exchange.getIn().getBody(SoroushMessage.class).getFrom();
                     Thread currentThread = Thread.currentThread();
                     Thread previousThread = userToThread.putIfAbsent(from, currentThread);

@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class ConsumerAutoDownloadFile extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + Endpoint.getMessage + "?authorizationToken=4 File&autoDownload=true")
+                from("soroush://" + SoroushAction.getMessage + "?authorizationToken=4 File&autoDownload=true")
                         .to("mock:soroush");
             }
         };
