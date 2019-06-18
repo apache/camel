@@ -291,12 +291,12 @@ public class AutowireMojo extends AbstractExecMojo {
                             Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
                             // filter classes (must not be interfaces, must be public, must not be abstract, must be top level) and also a valid autowire class
                             classes = classes.stream().filter(
-                                    c -> !c.isInterface()
-                                            && Modifier.isPublic(c.getModifiers())
-                                            && !Modifier.isAbstract(c.getModifiers())
-                                            && c.getEnclosingClass() == null
-                                            && isValidAutowireClass(c))
-                                    .collect(Collectors.toSet());
+                            c -> !c.isInterface()
+                                 && Modifier.isPublic(c.getModifiers())
+                                 && !Modifier.isAbstract(c.getModifiers())
+                                 && c.getEnclosingClass() == null
+                                 && isValidAutowireClass(c))
+                                 .collect(Collectors.toSet());
                             Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
                             if (best != null) {
                                 String line = "camel.component." + componentName + "." + name + "=#class:" + best.getName();
