@@ -17,6 +17,7 @@
 package org.apache.camel.component.mongodb3;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import com.mongodb.CursorType;
 import com.mongodb.MongoCursorNotFoundException;
@@ -205,8 +206,8 @@ public class MongoDbTailingProcess implements Runnable {
 
     private void awaitStopped() throws InterruptedException {
         if (!stopped) {
-            LOG.info("Going to wait for stopping");
-            stoppedLatch.await();
+            LOG.info("Going to wait for stopping, timeout set to 10 seconds");
+            stoppedLatch.await(10, TimeUnit.SECONDS);
         }
     }
 
