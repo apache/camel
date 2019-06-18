@@ -31,7 +31,7 @@ import javax.ws.rs.core.Response;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.soroushbot.models.Endpoint;
+import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.models.response.UploadFileResponse;
 import org.apache.camel.component.soroushbot.service.SoroushService;
@@ -55,69 +55,69 @@ import org.slf4j.LoggerFactory;
 /**
  * To integrate with the Soroush chat bot.
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:endpoint/authorizationToken", label = "chat")
+@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action/authorizationToken", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SoroushBotEndpoint.class);
 
-    @UriPath(name = "endpoint", description = "The endpoint type. Support `getMessage` as consumer and `sendMessage`,`uploadFile`,`downloadFile` as producer")
+    @UriPath(name = "action", description = "The action to do.")
     @Metadata(required = true)
-    Endpoint type;
-    @UriParam(label = "global,security", description = "The authorization token for using"
+    private SoroushAction action;
+    @UriParam(label = "common,security", description = "The authorization token for using"
             + " the bot. if uri path does not contain authorization token, this token will be used.", secret = true)
-    String authorizationToken;
-    @UriParam(label = "global", description = "Connection timeout in ms when connecting to soroush API", defaultValue = "30000")
-    Integer connectionTimeout = 30000;
-    @UriParam(label = "global", description = "Maximum connection retry when fail to connect to soroush API, if the quota is reached,"
+    private String authorizationToken;
+    @UriParam(label = "common", description = "Connection timeout in ms when connecting to soroush API", defaultValue = "30000")
+    private int connectionTimeout = 30000;
+    @UriParam(label = "common", description = "Maximum connection retry when fail to connect to soroush API, if the quota is reached,"
             + " `MaximumConnectionRetryReachedException` is thrown for that message.", defaultValue = "4")
-    Integer maxConnectionRetry = 4;
-    @UriParam(label = "getMessage,consumer", description = "Number of Thread created by consumer in the route."
+    private int maxConnectionRetry = 4;
+    @UriParam(label = "consumer", description = "Number of Thread created by consumer in the route."
             + " if you use this method for parallelism, it is guaranteed that messages from same user always execute in the same"
             + " thread and therefore messages from the same user are processed sequentially", defaultValue = "1",
             defaultValueNote = "using SoroushBotSingleThreadConsumer")
-    Integer concurrentConsumers = 1;
-    @UriParam(label = "getMessage,consumer", description = "Maximum capacity of each queue when `concurrentConsumers` is greater than 1."
+    private int concurrentConsumers = 1;
+    @UriParam(label = "consumer", description = "Maximum capacity of each queue when `concurrentConsumers` is greater than 1."
             + " if a queue become full, every message that should go to that queue will be dropped. If `bridgeErrorHandler`"
             + " is set to `true`, an exchange with `CongestionException` is directed to ErrorHandler. You can then processed the"
             + " error using `onException(CongestionException.class)` route", defaultValue = "0", defaultValueNote = "infinite capacity")
-    Integer queueCapacityPerThread = 0;
-    @UriParam(label = "sendMessage", description = "Automatically upload attachments when a message goes to the sendMessage endpoint "
+    private int queueCapacityPerThread;
+    @UriParam(label = "producer", description = "Automatically upload attachments when a message goes to the sendMessage endpoint "
             + "and the `SoroushMessage.file` (`SoroushMessage.thumbnail`) has been set and `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is null",
             defaultValue = "true")
-    Boolean autoUploadFile = true;
-    @UriParam(label = "sendMessage,uploadFile", description = "Force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the "
+    private boolean autoUploadFile = true;
+    @UriParam(label = "producer", description = "Force to  upload `SoroushMessage.file`(`SoroushMessage.thumbnail`) if exists, even if the "
             + "`SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`) is not null in the message", defaultValue = "false")
-    Boolean forceUpload = false;
-    @UriParam(label = "getMessage,downloadFile", description = "If true, when downloading an attached file, thumbnail will be downloaded if provided in the message."
+    private boolean forceUpload;
+    @UriParam(label = "producer", description = "If true, when downloading an attached file, thumbnail will be downloaded if provided in the message."
             + " Otherwise, only the file will be downloaded ", defaultValue = "true")
-    Boolean downloadThumbnail = true;
-    @UriParam(label = "downloadFile", description = "Force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`)"
+    private boolean downloadThumbnail = true;
+    @UriParam(label = "producer", description = "Force to download `SoroushMessage.fileUrl`(`SoroushMessage.thumbnailUrl`)"
             + " if exists, even if the `SoroushMessage.file`(`SoroushMessage.thumbnail`) was not null in that message",
             defaultValue = "false")
-    Boolean forceDownload = false;
-    @UriParam(label = "getMessage", description = "Automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` "
+    private boolean forceDownload;
+    @UriParam(label = "producer", description = "Automatically download `SoroushMessage.fileUrl` and `SoroushMessage.thumbnailUrl` "
             + "if exists for the message and store them in `SoroushMessage.file` and `SoroushMessage.thumbnail` field ",
             defaultValue = "false")
-    Boolean autoDownload = false;
-    @UriParam(label = "global", description = "Waiting time before retry failed request (Millisecond)."
+    private boolean autoDownload;
+    @UriParam(label = "scheduling", description = "Waiting time before retry failed request (Millisecond)."
             + " If backOffStrategy is not Fixed this is the based value for computing back off waiting time."
             + " the first retry is always happen immediately after failure and retryWaitingTime do not apply to the first retry.",
             defaultValue = "1000")
-    Long retryWaitingTime = 1000L;
-    @UriParam(label = "global", description = "The strategy to backoff in case of connection failure. Currently 3 strategies are supported:"
+    private long retryWaitingTime = 1000L;
+    @UriParam(label = "scheduling", description = "The strategy to backoff in case of connection failure. Currently 3 strategies are supported:"
             + " 1. `Exponential` (default): It multiply `retryWaitingTime` by `retryExponentialCoefficient` after each connection failure."
             + " 2. `Linear`: It increase `retryWaitingTime` by `retryLinearIncrement` after each connection failure."
             + " 3. `Fixed`: Always use `retryWaitingTime` as the time between retries.",
             defaultValue = "Exponential")
-    String backOffStrategy = "Exponential";
-    @UriParam(label = "global", description = "Coefficient to compute back off time when using `Exponential` Back Off strategy", defaultValue = "2")
-    Long retryExponentialCoefficient = 2L;
-    @UriParam(label = "global", description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy", defaultValue = "10000")
-    Long retryLinearIncrement = 10000L;
-    @UriParam(label = "global", description = "Maximum amount of time (in millisecond) a thread wait before retrying failed request.",
+    private String backOffStrategy = "Exponential";
+    @UriParam(label = "scheduling", description = "Coefficient to compute back off time when using `Exponential` Back Off strategy", defaultValue = "2")
+    private long retryExponentialCoefficient = 2L;
+    @UriParam(label = "scheduling", description = "The amount of time (in millisecond) which adds to waiting time when using `Linear` back off strategy", defaultValue = "10000")
+    private long retryLinearIncrement = 10000L;
+    @UriParam(label = "scheduling", description = "Maximum amount of time (in millisecond) a thread wait before retrying failed request.",
             defaultValue = "3600000")
-    Long maxRetryWaitingTime = 3600000L;
-    @UriParam(label = "getMessage", description = "The timeout in millisecond to reconnect the existing getMessage connection"
+    private long maxRetryWaitingTime = 3600000L;
+    @UriParam(label = "scheduling", description = "The timeout in millisecond to reconnect the existing getMessage connection"
             + " to ensure that the connection is always live and does not dead without notifying the bot. this value should not be changed.",
             defaultValue = "300000")
     private long reconnectIdleConnectionTimeout = 5 * 60 * 1000;
@@ -139,14 +139,14 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * @return supported Soroush endpoint as string to display in error.
      */
     private String getSupportedEndpointAsString() {
-        return "[" + String.join(", ", getSupportedEndpoint().stream().map(Endpoint::value).collect(Collectors.toList())) + "]";
+        return "[" + String.join(", ", getSupportedEndpoint().stream().map(SoroushAction::value).collect(Collectors.toList())) + "]";
     }
 
     /**
      * @return supported Soroush endpoint by this component which is all Soroush Bot API
      */
-    private List<Endpoint> getSupportedEndpoint() {
-        return Arrays.asList(Endpoint.values());
+    private List<SoroushAction> getSupportedEndpoint() {
+        return Arrays.asList(SoroushAction.values());
     }
 
     /**
@@ -171,12 +171,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         if (pathParts.size() > 2 || pathParts.size() == 0) {
             throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString() + "[/<authorizationToken>][?options]', found " + uri);
         }
-        for (Endpoint supported : getSupportedEndpoint()) {
+        for (SoroushAction supported : getSupportedEndpoint()) {
             if (supported.value().equals(pathParts.get(0))) {
-                type = supported;
+                action = supported;
             }
         }
-        if (type == null) {
+        if (action == null) {
             throw new IllegalArgumentException("Unexpected URI format. Expected soroush://" + getSupportedEndpointAsString() + "[/<authorizationToken>][?options]', found " + uri);
         }
         if (this.authorizationToken == null) {
@@ -195,12 +195,6 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
      * check and fix invalid value in uri parameter.
      */
     void normalizeConfiguration() {
-        if (connectionTimeout == null) {
-            connectionTimeout = 0;
-        }
-        if (maxConnectionRetry == null) {
-            maxConnectionRetry = 0;
-        }
         if (reconnectIdleConnectionTimeout <= 0) {
             reconnectIdleConnectionTimeout = 5 * 60 * 1000;
         }
@@ -219,22 +213,22 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * create producer based on uri {@link Endpoint}
+     * create producer based on uri {@link SoroushAction}
      *
      * @return created producer
      */
     @Override
     public Producer createProducer() {
-        if (type == Endpoint.sendMessage) {
+        if (action == SoroushAction.sendMessage) {
             return new SoroushBotSendMessageProducer(this);
         }
-        if (type == Endpoint.uploadFile) {
+        if (action == SoroushAction.uploadFile) {
             return new SoroushBotUploadFileProducer(this);
         }
-        if (type == Endpoint.downloadFile) {
+        if (action == SoroushAction.downloadFile) {
             return new SoroushBotDownloadFileProducer(this);
         } else {
-            throw new IllegalArgumentException("only [" + Endpoint.sendMessage + ", " + Endpoint.downloadFile + ", " + Endpoint.uploadFile
+            throw new IllegalArgumentException("only [" + SoroushAction.sendMessage + ", " + SoroushAction.downloadFile + ", " + SoroushAction.uploadFile
                     + "] supported for producer(from) and process");
         }
     }
@@ -255,8 +249,8 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer consumer;
-        if (type != Endpoint.getMessage) {
-            throw new IllegalArgumentException("only " + Endpoint.getMessage + " support for consumer(from)");
+        if (action != SoroushAction.getMessage) {
+            throw new IllegalArgumentException("only " + SoroushAction.getMessage + " support for consumer(from)");
         }
         if (concurrentConsumers < 2) {
             consumer = new SoroushBotSingleThreadConsumer(this, processor);
@@ -314,12 +308,12 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         return sendMessageTarget;
     }
 
-    public Endpoint getType() {
-        return type;
+    public SoroushAction getAction() {
+        return action;
     }
 
-    public void setType(Endpoint type) {
-        this.type = type;
+    public void setAction(SoroushAction action) {
+        this.action = action;
     }
 
     public String getAuthorizationToken() {
@@ -330,67 +324,83 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         this.authorizationToken = authorizationToken;
     }
 
-    public Integer getConnectionTimeout() {
+    public int getConnectionTimeout() {
         return connectionTimeout;
     }
 
-    public void setConnectionTimeout(Integer connectionTimeout) {
+    public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
-    public Integer getMaxConnectionRetry() {
+    public int getMaxConnectionRetry() {
         return maxConnectionRetry;
     }
 
-    public void setMaxConnectionRetry(Integer maxConnectionRetry) {
+    public void setMaxConnectionRetry(int maxConnectionRetry) {
         this.maxConnectionRetry = maxConnectionRetry;
     }
 
-    public Integer getConcurrentConsumers() {
+    public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(Integer concurrentConsumers) {
+    public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public Integer getQueueCapacityPerThread() {
+    public int getQueueCapacityPerThread() {
         return queueCapacityPerThread;
     }
 
-    public void setQueueCapacityPerThread(Integer queueCapacityPerThread) {
+    public void setQueueCapacityPerThread(int queueCapacityPerThread) {
         this.queueCapacityPerThread = queueCapacityPerThread;
     }
 
-    public Boolean getAutoUploadFile() {
+    public boolean isAutoUploadFile() {
         return autoUploadFile;
     }
 
-    public void setAutoUploadFile(Boolean autoUploadFile) {
+    public void setAutoUploadFile(boolean autoUploadFile) {
         this.autoUploadFile = autoUploadFile;
     }
 
-    public Boolean getForceUpload() {
+    public boolean isForceUpload() {
         return forceUpload;
     }
 
-    public void setForceUpload(Boolean forceUpload) {
+    public void setForceUpload(boolean forceUpload) {
         this.forceUpload = forceUpload;
     }
 
-    public Boolean getDownloadThumbnail() {
+    public boolean isDownloadThumbnail() {
         return downloadThumbnail;
     }
 
-    public void setDownloadThumbnail(Boolean downloadThumbnail) {
+    public void setDownloadThumbnail(boolean downloadThumbnail) {
         this.downloadThumbnail = downloadThumbnail;
     }
 
-    public Long getRetryWaitingTime() {
+    public boolean isForceDownload() {
+        return forceDownload;
+    }
+
+    public void setForceDownload(boolean forceDownload) {
+        this.forceDownload = forceDownload;
+    }
+
+    public boolean isAutoDownload() {
+        return autoDownload;
+    }
+
+    public void setAutoDownload(boolean autoDownload) {
+        this.autoDownload = autoDownload;
+    }
+
+    public long getRetryWaitingTime() {
         return retryWaitingTime;
     }
 
-    public void setRetryWaitingTime(Long retryWaitingTime) {
+    public void setRetryWaitingTime(long retryWaitingTime) {
         this.retryWaitingTime = retryWaitingTime;
     }
 
@@ -402,52 +412,52 @@ public class SoroushBotEndpoint extends DefaultEndpoint {
         this.backOffStrategy = backOffStrategy;
     }
 
-    public Long getRetryExponentialCoefficient() {
+    public long getRetryExponentialCoefficient() {
         return retryExponentialCoefficient;
     }
 
-    public Long getReconnectIdleConnectionTimeout() {
-        return reconnectIdleConnectionTimeout;
-    }
-
-    public void setReconnectIdleConnectionTimeout(Long reconnectIdleConnectionTimeout) {
-        this.reconnectIdleConnectionTimeout = reconnectIdleConnectionTimeout;
-    }
-
-    public void setRetryExponentialCoefficient(Long retryExponentialCoefficient) {
+    public void setRetryExponentialCoefficient(long retryExponentialCoefficient) {
         this.retryExponentialCoefficient = retryExponentialCoefficient;
     }
 
-    public Long getRetryLinearIncrement() {
+    public long getRetryLinearIncrement() {
         return retryLinearIncrement;
     }
 
-    public void setRetryLinearIncrement(Long retryLinearIncrement) {
+    public void setRetryLinearIncrement(long retryLinearIncrement) {
         this.retryLinearIncrement = retryLinearIncrement;
     }
 
-    public Long getMaxRetryWaitingTime() {
+    public long getMaxRetryWaitingTime() {
         return maxRetryWaitingTime;
     }
 
-    public void setMaxRetryWaitingTime(Long maxRetryWaitingTime) {
+    public void setMaxRetryWaitingTime(long maxRetryWaitingTime) {
         this.maxRetryWaitingTime = maxRetryWaitingTime;
     }
 
-    public Boolean getForceDownload() {
-        return forceDownload;
+    public long getReconnectIdleConnectionTimeout() {
+        return reconnectIdleConnectionTimeout;
     }
 
-    public void setForceDownload(Boolean forceDownload) {
-        this.forceDownload = forceDownload;
+    public void setReconnectIdleConnectionTimeout(long reconnectIdleConnectionTimeout) {
+        this.reconnectIdleConnectionTimeout = reconnectIdleConnectionTimeout;
     }
 
-    public Boolean getAutoDownload() {
-        return autoDownload;
+    public void setUploadFileTarget(WebTarget uploadFileTarget) {
+        this.uploadFileTarget = uploadFileTarget;
     }
 
-    public void setAutoDownload(Boolean autoDownload) {
-        this.autoDownload = autoDownload;
+    public void setSendMessageTarget(WebTarget sendMessageTarget) {
+        this.sendMessageTarget = sendMessageTarget;
+    }
+
+    public BackOffStrategy getBackOffStrategyHelper() {
+        return backOffStrategyHelper;
+    }
+
+    public void setBackOffStrategyHelper(BackOffStrategy backOffStrategyHelper) {
+        this.backOffStrategyHelper = backOffStrategyHelper;
     }
 
     /**

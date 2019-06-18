@@ -42,27 +42,67 @@ public interface SoroushBotEndpointBuilderFactory {
             return (AdvancedSoroushBotEndpointConsumerBuilder) this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option is a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointConsumerBuilder endpoint(Endpoint endpoint) {
-            setProperty("endpoint", endpoint);
+        default SoroushBotEndpointConsumerBuilder action(SoroushAction action) {
+            setProperty("action", action);
             return this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointConsumerBuilder endpoint(String endpoint) {
-            setProperty("endpoint", endpoint);
+        default SoroushBotEndpointConsumerBuilder action(String action) {
+            setProperty("action", action);
+            return this;
+        }
+        /**
+         * Connection timeout in ms when connecting to soroush API.
+         * The option is a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointConsumerBuilder connectionTimeout(
+                int connectionTimeout) {
+            setProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Connection timeout in ms when connecting to soroush API.
+         * The option will be converted to a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointConsumerBuilder connectionTimeout(
+                String connectionTimeout) {
+            setProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Maximum connection retry when fail to connect to soroush API, if the
+         * quota is reached, MaximumConnectionRetryReachedException is thrown
+         * for that message.
+         * The option is a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
+                int maxConnectionRetry) {
+            setProperty("maxConnectionRetry", maxConnectionRetry);
+            return this;
+        }
+        /**
+         * Maximum connection retry when fail to connect to soroush API, if the
+         * quota is reached, MaximumConnectionRetryReachedException is thrown
+         * for that message.
+         * The option will be converted to a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
+                String maxConnectionRetry) {
+            setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
         /**
@@ -103,11 +143,11 @@ public interface SoroushBotEndpointBuilderFactory {
          * always execute in the same thread and therefore messages from the
          * same user are processed sequentially. Default value notice: using
          * SoroushBotSingleThreadConsumer.
-         * The option is a <code>java.lang.Integer</code> type.
+         * The option is a <code>int</code> type.
          * @group consumer
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
-                Integer concurrentConsumers) {
+                int concurrentConsumers) {
             setProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
@@ -117,8 +157,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * always execute in the same thread and therefore messages from the
          * same user are processed sequentially. Default value notice: using
          * SoroushBotSingleThreadConsumer.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
@@ -134,11 +173,11 @@ public interface SoroushBotEndpointBuilderFactory {
          * can then processed the error using
          * onException(CongestionException.class) route. Default value notice:
          * infinite capacity.
-         * The option is a <code>java.lang.Integer</code> type.
+         * The option is a <code>int</code> type.
          * @group consumer
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
-                Integer queueCapacityPerThread) {
+                int queueCapacityPerThread) {
             setProperty("queueCapacityPerThread", queueCapacityPerThread);
             return this;
         }
@@ -150,265 +189,12 @@ public interface SoroushBotEndpointBuilderFactory {
          * can then processed the error using
          * onException(CongestionException.class) route. Default value notice:
          * infinite capacity.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a <code>int</code> type.
          * @group consumer
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 String queueCapacityPerThread) {
             setProperty("queueCapacityPerThread", queueCapacityPerThread);
-            return this;
-        }
-        /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointConsumerBuilder autoDownload(
-                Boolean autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointConsumerBuilder autoDownload(
-                String autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
-                long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option will be converted to a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
-                String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointConsumerBuilder downloadThumbnail(
-                Boolean downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointConsumerBuilder downloadThumbnail(
-                String downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointConsumerBuilder forceDownload(
-                Boolean forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointConsumerBuilder forceDownload(
-                String forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * The strategy to backoff in case of connection failure. Currently 3
-         * strategies are supported: 1. Exponential (default): It multiply
-         * retryWaitingTime by retryExponentialCoefficient after each connection
-         * failure. 2. Linear: It increase retryWaitingTime by
-         * retryLinearIncrement after each connection failure. 3. Fixed: Always
-         * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder backOffStrategy(
-                String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
-            return this;
-        }
-        /**
-         * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder connectionTimeout(
-                Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in ms when connecting to soroush API.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder connectionTimeout(
-                String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Maximum connection retry when fail to connect to soroush API, if the
-         * quota is reached, MaximumConnectionRetryReachedException is thrown
-         * for that message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
-                Integer maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * Maximum connection retry when fail to connect to soroush API, if the
-         * quota is reached, MaximumConnectionRetryReachedException is thrown
-         * for that message.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
-                String maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
-                Long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
-                String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
-                Long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
-                String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
-                Long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
-                String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
-                Long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
-                String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
         /**
@@ -423,56 +209,134 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sendMessage
+         * The strategy to backoff in case of connection failure. Currently 3
+         * strategies are supported: 1. Exponential (default): It multiply
+         * retryWaitingTime by retryExponentialCoefficient after each connection
+         * failure. 2. Linear: It increase retryWaitingTime by
+         * retryLinearIncrement after each connection failure. 3. Fixed: Always
+         * use retryWaitingTime as the time between retries.
+         * The option is a <code>java.lang.String</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointConsumerBuilder autoUploadFile(
-                Boolean autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointConsumerBuilder backOffStrategy(
+                String backOffStrategy) {
+            setProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group sendMessage
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointConsumerBuilder autoUploadFile(
-                String autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
+                long maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group uploadFile
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointConsumerBuilder forceUpload(
-                Boolean forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
+                String maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group uploadFile
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointConsumerBuilder forceUpload(String forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
+                long reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
+                String reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
+                long retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
+                String retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
+                long retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
+                String retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
+                long retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointConsumerBuilder retryWaitingTime(
+                String retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -591,27 +455,190 @@ public interface SoroushBotEndpointBuilderFactory {
             return (AdvancedSoroushBotEndpointProducerBuilder) this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option is a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointProducerBuilder endpoint(Endpoint endpoint) {
-            setProperty("endpoint", endpoint);
+        default SoroushBotEndpointProducerBuilder action(SoroushAction action) {
+            setProperty("action", action);
             return this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointProducerBuilder endpoint(String endpoint) {
-            setProperty("endpoint", endpoint);
+        default SoroushBotEndpointProducerBuilder action(String action) {
+            setProperty("action", action);
+            return this;
+        }
+        /**
+         * Connection timeout in ms when connecting to soroush API.
+         * The option is a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointProducerBuilder connectionTimeout(
+                int connectionTimeout) {
+            setProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Connection timeout in ms when connecting to soroush API.
+         * The option will be converted to a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointProducerBuilder connectionTimeout(
+                String connectionTimeout) {
+            setProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Maximum connection retry when fail to connect to soroush API, if the
+         * quota is reached, MaximumConnectionRetryReachedException is thrown
+         * for that message.
+         * The option is a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
+                int maxConnectionRetry) {
+            setProperty("maxConnectionRetry", maxConnectionRetry);
+            return this;
+        }
+        /**
+         * Maximum connection retry when fail to connect to soroush API, if the
+         * quota is reached, MaximumConnectionRetryReachedException is thrown
+         * for that message.
+         * The option will be converted to a <code>int</code> type.
+         * @group common
+         */
+        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
+                String maxConnectionRetry) {
+            setProperty("maxConnectionRetry", maxConnectionRetry);
+            return this;
+        }
+        /**
+         * Automatically download SoroushMessage.fileUrl and
+         * SoroushMessage.thumbnailUrl if exists for the message and store them
+         * in SoroushMessage.file and SoroushMessage.thumbnail field.
+         * The option is a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder autoDownload(
+                boolean autoDownload) {
+            setProperty("autoDownload", autoDownload);
+            return this;
+        }
+        /**
+         * Automatically download SoroushMessage.fileUrl and
+         * SoroushMessage.thumbnailUrl if exists for the message and store them
+         * in SoroushMessage.file and SoroushMessage.thumbnail field.
+         * The option will be converted to a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder autoDownload(
+                String autoDownload) {
+            setProperty("autoDownload", autoDownload);
+            return this;
+        }
+        /**
+         * Automatically upload attachments when a message goes to the
+         * sendMessage endpoint and the SoroushMessage.file
+         * (SoroushMessage.thumbnail) has been set and
+         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
+         * The option is a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder autoUploadFile(
+                boolean autoUploadFile) {
+            setProperty("autoUploadFile", autoUploadFile);
+            return this;
+        }
+        /**
+         * Automatically upload attachments when a message goes to the
+         * sendMessage endpoint and the SoroushMessage.file
+         * (SoroushMessage.thumbnail) has been set and
+         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
+         * The option will be converted to a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder autoUploadFile(
+                String autoUploadFile) {
+            setProperty("autoUploadFile", autoUploadFile);
+            return this;
+        }
+        /**
+         * If true, when downloading an attached file, thumbnail will be
+         * downloaded if provided in the message. Otherwise, only the file will
+         * be downloaded.
+         * The option is a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder downloadThumbnail(
+                boolean downloadThumbnail) {
+            setProperty("downloadThumbnail", downloadThumbnail);
+            return this;
+        }
+        /**
+         * If true, when downloading an attached file, thumbnail will be
+         * downloaded if provided in the message. Otherwise, only the file will
+         * be downloaded.
+         * The option will be converted to a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder downloadThumbnail(
+                String downloadThumbnail) {
+            setProperty("downloadThumbnail", downloadThumbnail);
+            return this;
+        }
+        /**
+         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
+         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
+         * was not null in that message.
+         * The option is a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder forceDownload(
+                boolean forceDownload) {
+            setProperty("forceDownload", forceDownload);
+            return this;
+        }
+        /**
+         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
+         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
+         * was not null in that message.
+         * The option will be converted to a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder forceDownload(
+                String forceDownload) {
+            setProperty("forceDownload", forceDownload);
+            return this;
+        }
+        /**
+         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
+         * exists, even if the
+         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
+         * the message.
+         * The option is a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder forceUpload(
+                boolean forceUpload) {
+            setProperty("forceUpload", forceUpload);
+            return this;
+        }
+        /**
+         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
+         * exists, even if the
+         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
+         * the message.
+         * The option will be converted to a <code>boolean</code> type.
+         * @group producer
+         */
+        default SoroushBotEndpointProducerBuilder forceUpload(String forceUpload) {
+            setProperty("forceUpload", forceUpload);
             return this;
         }
         /**
@@ -651,258 +678,6 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointProducerBuilder autoDownload(
-                Boolean autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointProducerBuilder autoDownload(
-                String autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
-                long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option will be converted to a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
-                String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointProducerBuilder downloadThumbnail(
-                Boolean downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointProducerBuilder downloadThumbnail(
-                String downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointProducerBuilder forceDownload(
-                Boolean forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointProducerBuilder forceDownload(
-                String forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * The strategy to backoff in case of connection failure. Currently 3
-         * strategies are supported: 1. Exponential (default): It multiply
-         * retryWaitingTime by retryExponentialCoefficient after each connection
-         * failure. 2. Linear: It increase retryWaitingTime by
-         * retryLinearIncrement after each connection failure. 3. Fixed: Always
-         * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder backOffStrategy(
-                String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
-            return this;
-        }
-        /**
-         * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder connectionTimeout(
-                Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in ms when connecting to soroush API.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder connectionTimeout(
-                String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Maximum connection retry when fail to connect to soroush API, if the
-         * quota is reached, MaximumConnectionRetryReachedException is thrown
-         * for that message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
-                Integer maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * Maximum connection retry when fail to connect to soroush API, if the
-         * quota is reached, MaximumConnectionRetryReachedException is thrown
-         * for that message.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder maxConnectionRetry(
-                String maxConnectionRetry) {
-            setProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
-                Long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
-                String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
-                Long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
-                String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
-                Long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
-                String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryWaitingTime(
-                Long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointProducerBuilder retryWaitingTime(
-                String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
-            return this;
-        }
-        /**
          * The authorization token for using the bot. if uri path does not
          * contain authorization token, this token will be used.
          * The option is a <code>java.lang.String</code> type.
@@ -914,56 +689,134 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sendMessage
+         * The strategy to backoff in case of connection failure. Currently 3
+         * strategies are supported: 1. Exponential (default): It multiply
+         * retryWaitingTime by retryExponentialCoefficient after each connection
+         * failure. 2. Linear: It increase retryWaitingTime by
+         * retryLinearIncrement after each connection failure. 3. Fixed: Always
+         * use retryWaitingTime as the time between retries.
+         * The option is a <code>java.lang.String</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointProducerBuilder autoUploadFile(
-                Boolean autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointProducerBuilder backOffStrategy(
+                String backOffStrategy) {
+            setProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group sendMessage
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointProducerBuilder autoUploadFile(
-                String autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
+                long maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group uploadFile
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointProducerBuilder forceUpload(
-                Boolean forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
+                String maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group uploadFile
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointProducerBuilder forceUpload(String forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
+                long reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
+                String reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
+                long retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
+                String retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
+                long retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryLinearIncrement(
+                String retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryWaitingTime(
+                long retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointProducerBuilder retryWaitingTime(
+                String retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -1033,153 +886,39 @@ public interface SoroushBotEndpointBuilderFactory {
             return (AdvancedSoroushBotEndpointBuilder) this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option is a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointBuilder endpoint(Endpoint endpoint) {
-            setProperty("endpoint", endpoint);
+        default SoroushBotEndpointBuilder action(SoroushAction action) {
+            setProperty("action", action);
             return this;
         }
         /**
-         * The endpoint type. Support getMessage as consumer and
-         * sendMessage,uploadFile,downloadFile as producer.
+         * The action to do.
          * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.Endpoint</code>
-         * type.
+         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
          * @group common
          */
-        default SoroushBotEndpointBuilder endpoint(String endpoint) {
-            setProperty("endpoint", endpoint);
-            return this;
-        }
-        /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointBuilder autoDownload(Boolean autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * Automatically download SoroushMessage.fileUrl and
-         * SoroushMessage.thumbnailUrl if exists for the message and store them
-         * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointBuilder autoDownload(String autoDownload) {
-            setProperty("autoDownload", autoDownload);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
-                long reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * The timeout in millisecond to reconnect the existing getMessage
-         * connection to ensure that the connection is always live and does not
-         * dead without notifying the bot. this value should not be changed.
-         * The option will be converted to a <code>long</code> type.
-         * @group getMessage
-         */
-        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
-                String reconnectIdleConnectionTimeout) {
-            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointBuilder downloadThumbnail(
-                Boolean downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * If true, when downloading an attached file, thumbnail will be
-         * downloaded if provided in the message. Otherwise, only the file will
-         * be downloaded.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointBuilder downloadThumbnail(
-                String downloadThumbnail) {
-            setProperty("downloadThumbnail", downloadThumbnail);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointBuilder forceDownload(Boolean forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
-         * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
-         * was not null in that message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group downloadFile
-         */
-        default SoroushBotEndpointBuilder forceDownload(String forceDownload) {
-            setProperty("forceDownload", forceDownload);
-            return this;
-        }
-        /**
-         * The strategy to backoff in case of connection failure. Currently 3
-         * strategies are supported: 1. Exponential (default): It multiply
-         * retryWaitingTime by retryExponentialCoefficient after each connection
-         * failure. 2. Linear: It increase retryWaitingTime by
-         * retryLinearIncrement after each connection failure. 3. Fixed: Always
-         * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
-            setProperty("backOffStrategy", backOffStrategy);
+        default SoroushBotEndpointBuilder action(String action) {
+            setProperty("action", action);
             return this;
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
+         * The option is a <code>int</code> type.
+         * @group common
          */
         default SoroushBotEndpointBuilder connectionTimeout(
-                Integer connectionTimeout) {
+                int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
+         * The option will be converted to a <code>int</code> type.
+         * @group common
          */
         default SoroushBotEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1190,11 +929,11 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group global
+         * The option is a <code>int</code> type.
+         * @group common
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
-                Integer maxConnectionRetry) {
+                int maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
             return this;
         }
@@ -1202,104 +941,12 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * @group global
+         * The option will be converted to a <code>int</code> type.
+         * @group common
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
             setProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder maxRetryWaitingTime(
-                Long maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Maximum amount of time (in millisecond) a thread wait before retrying
-         * failed request.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder maxRetryWaitingTime(
-                String maxRetryWaitingTime) {
-            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryExponentialCoefficient(
-                Long retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * Coefficient to compute back off time when using Exponential Back Off
-         * strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryExponentialCoefficient(
-                String retryExponentialCoefficient) {
-            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryLinearIncrement(
-                Long retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * The amount of time (in millisecond) which adds to waiting time when
-         * using Linear back off strategy.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryLinearIncrement(
-                String retryLinearIncrement) {
-            setProperty("retryLinearIncrement", retryLinearIncrement);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryWaitingTime(Long retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
-            return this;
-        }
-        /**
-         * Waiting time before retry failed request (Millisecond). If
-         * backOffStrategy is not Fixed this is the based value for computing
-         * back off waiting time. the first retry is always happen immediately
-         * after failure and retryWaitingTime do not apply to the first retry.
-         * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group global
-         */
-        default SoroushBotEndpointBuilder retryWaitingTime(
-                String retryWaitingTime) {
-            setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
         /**
@@ -1314,53 +961,132 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sendMessage
+         * The strategy to backoff in case of connection failure. Currently 3
+         * strategies are supported: 1. Exponential (default): It multiply
+         * retryWaitingTime by retryExponentialCoefficient after each connection
+         * failure. 2. Linear: It increase retryWaitingTime by
+         * retryLinearIncrement after each connection failure. 3. Fixed: Always
+         * use retryWaitingTime as the time between retries.
+         * The option is a <code>java.lang.String</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointBuilder autoUploadFile(Boolean autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
+            setProperty("backOffStrategy", backOffStrategy);
             return this;
         }
         /**
-         * Automatically upload attachments when a message goes to the
-         * sendMessage endpoint and the SoroushMessage.file
-         * (SoroushMessage.thumbnail) has been set and
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group sendMessage
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointBuilder autoUploadFile(String autoUploadFile) {
-            setProperty("autoUploadFile", autoUploadFile);
+        default SoroushBotEndpointBuilder maxRetryWaitingTime(
+                long maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group uploadFile
+         * Maximum amount of time (in millisecond) a thread wait before retrying
+         * failed request.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointBuilder forceUpload(Boolean forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointBuilder maxRetryWaitingTime(
+                String maxRetryWaitingTime) {
+            setProperty("maxRetryWaitingTime", maxRetryWaitingTime);
             return this;
         }
         /**
-         * Force to upload SoroushMessage.file(SoroushMessage.thumbnail) if
-         * exists, even if the
-         * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
-         * the message.
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
-         * @group uploadFile
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option is a <code>long</code> type.
+         * @group scheduling
          */
-        default SoroushBotEndpointBuilder forceUpload(String forceUpload) {
-            setProperty("forceUpload", forceUpload);
+        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
+                long reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout in millisecond to reconnect the existing getMessage
+         * connection to ensure that the connection is always live and does not
+         * dead without notifying the bot. this value should not be changed.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
+                String reconnectIdleConnectionTimeout) {
+            setProperty("reconnectIdleConnectionTimeout", reconnectIdleConnectionTimeout);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryExponentialCoefficient(
+                long retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * Coefficient to compute back off time when using Exponential Back Off
+         * strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryExponentialCoefficient(
+                String retryExponentialCoefficient) {
+            setProperty("retryExponentialCoefficient", retryExponentialCoefficient);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryLinearIncrement(
+                long retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * The amount of time (in millisecond) which adds to waiting time when
+         * using Linear back off strategy.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryLinearIncrement(
+                String retryLinearIncrement) {
+            setProperty("retryLinearIncrement", retryLinearIncrement);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option is a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryWaitingTime(long retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
+            return this;
+        }
+        /**
+         * Waiting time before retry failed request (Millisecond). If
+         * backOffStrategy is not Fixed this is the based value for computing
+         * back off waiting time. the first retry is always happen immediately
+         * after failure and retryWaitingTime do not apply to the first retry.
+         * The option will be converted to a <code>long</code> type.
+         * @group scheduling
+         */
+        default SoroushBotEndpointBuilder retryWaitingTime(
+                String retryWaitingTime) {
+            setProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
     }
@@ -1421,9 +1147,10 @@ public interface SoroushBotEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.soroushbot.models.Endpoint</code> enum.
+     * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code>
+     * enum.
      */
-    enum Endpoint {
+    enum SoroushAction {
         sendMessage,
         getMessage,
         uploadFile,

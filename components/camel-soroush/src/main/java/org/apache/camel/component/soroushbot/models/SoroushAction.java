@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.soroushbot.models;
 
-public enum Endpoint {
+public enum SoroushAction {
     sendMessage("sendMessage"),
     getMessage("getMessage"),
     uploadFile("uploadFile"),
@@ -24,7 +24,7 @@ public enum Endpoint {
 
     private final String value;
 
-    Endpoint(String value) {
+    SoroushAction(String value) {
         this.value = value;
     }
 
