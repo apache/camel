@@ -20,13 +20,12 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+
+import com.ctc.wstx.sr.ValidatingStreamReader;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
-
-import com.ctc.wstx.sr.ValidatingStreamReader;
 
 /**
  * It uses SAX content handler to handle events.
@@ -57,7 +56,7 @@ public class StAXProcessor implements Processor {
             StaxStreamXMLReader reader = new StaxStreamXMLReader(stream);
             ContentHandler handler;
             if (this.contentHandlerClass != null) {
-                handler = (ContentHandler) this.contentHandlerClass.newInstance();
+                handler = this.contentHandlerClass.newInstance();
             } else {
                 handler = this.contentHandler;
             }
