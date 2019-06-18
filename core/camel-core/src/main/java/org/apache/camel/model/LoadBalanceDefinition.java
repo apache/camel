@@ -45,7 +45,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {
+public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> implements OutputNode {
     @XmlElements({
             @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
@@ -74,10 +74,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
                 configureChild(output);
             }
         }
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public LoadBalancerDefinition getLoadBalancerType() {

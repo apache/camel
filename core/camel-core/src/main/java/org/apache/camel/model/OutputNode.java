@@ -16,16 +16,11 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Base class for definitions which does not support outputs.
+ * Marker interface to mark a {@link ProcessorDefinition} that supports outputs
  */
-public abstract class NoOutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
-
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return Collections.emptyList();
-    }
-
+@XmlTransient
+public interface OutputNode {
 }

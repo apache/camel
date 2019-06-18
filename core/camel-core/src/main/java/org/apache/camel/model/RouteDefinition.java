@@ -50,7 +50,7 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = {"input", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
+public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implements OutputNode {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private FromDefinition input;
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -692,10 +692,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 configureChild(output);
             }
         }
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     /**

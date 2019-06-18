@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortDefinition<T> extends NoOutputExpressionNode {
+public class SortDefinition<T> extends ExpressionNode {
     @XmlTransient
     private Comparator<? super T> comparator;
     @XmlAttribute

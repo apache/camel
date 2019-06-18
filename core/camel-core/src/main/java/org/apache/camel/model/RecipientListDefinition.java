@@ -37,7 +37,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {
+public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends ExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient

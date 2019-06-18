@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
+public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> implements OutputNode {
     @XmlElementRef @AsPredicate
     private List<WhenDefinition> whenClauses = new ArrayList<>();
     @XmlElement
@@ -116,11 +116,6 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         };
     }
 
-    @Override
-    public boolean isOutputSupported() {
-        return true;
-    }
-    
     @Override
     public String toString() {
         return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";

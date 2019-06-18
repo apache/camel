@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "eip,routing") @AsPredicate
 @XmlRootElement(name = "when")
-public class WhenDefinition extends ExpressionNode {
+public class WhenDefinition extends OutputExpressionNode {
 
     public WhenDefinition() {
     }

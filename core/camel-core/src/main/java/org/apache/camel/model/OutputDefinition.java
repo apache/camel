@@ -32,17 +32,13 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlType(name = "output")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
+public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> implements OutputNode {
 
     @XmlElementRef
     protected List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

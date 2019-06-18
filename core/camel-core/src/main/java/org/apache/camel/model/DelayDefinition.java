@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DelayDefinition extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
+public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;

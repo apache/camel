@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing") @AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterDefinition extends ExpressionNode {
+public class FilterDefinition extends OutputExpressionNode {
 
     public FilterDefinition() {
     }

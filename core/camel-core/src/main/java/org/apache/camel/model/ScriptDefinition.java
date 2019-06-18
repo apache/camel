@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "script")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ScriptDefinition extends NoOutputExpressionNode {
+public class ScriptDefinition extends ExpressionNode {
 
     public ScriptDefinition() {
     }

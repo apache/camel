@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,15 +31,17 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 
 /**
- * A base class for nodes which contain an expression and a number of outputs
+ * A base {@link ExpressionNode} which does <b>not</b> support any outputs.
+ * <p/>
+ * This node is to be extended by definitions which need to support an expression but the definition should not
+ * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
 public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
+
     @XmlElementRef
     private ExpressionDefinition expression;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ExpressionNode() {
     }
@@ -71,20 +73,6 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
     public void setExpression(ExpressionDefinition expression) {
         // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
         this.expression = expression;
-    }
-
-    @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-    }
-
-    @Override
-    public boolean isOutputSupported() {
-        return true;
     }
 
     @Override
@@ -132,4 +120,16 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
         }
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public ExpressionNode id(String id) {
+        // let parent handle assigning the id, as we do not support outputs
+        getParent().id(id);
+        return this;
+    }
 }
+

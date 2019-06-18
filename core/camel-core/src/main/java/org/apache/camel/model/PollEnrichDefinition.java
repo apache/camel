@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends NoOutputExpressionNode {
+public class PollEnrichDefinition extends ExpressionNode {
     @XmlAttribute @Metadata(defaultValue = "-1")
     private Long timeout;
     @XmlAttribute(name = "strategyRef")

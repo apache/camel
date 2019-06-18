@@ -39,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements OutputNode, ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute @Metadata(defaultValue = "AfterConsumer")
     private OnCompletionMode mode;
     @XmlAttribute
@@ -253,10 +253,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
-    }
-
-    public boolean isOutputSupported() {
-        return true;
     }
 
     public OnCompletionMode getMode() {
