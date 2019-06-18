@@ -127,9 +127,14 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     @Override
     public ExpressionNode id(String id) {
-        // let parent handle assigning the id, as we do not support outputs
-        getParent().id(id);
-        return this;
+        if (!(this instanceof OutputNode)) {
+            // let parent handle assigning the id, as we do not support outputs
+            getParent().id(id);
+            return this;
+        } else {
+            return super.id(id);
+        }
     }
+
 }
 
