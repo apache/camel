@@ -136,9 +136,6 @@ public class AutowireMojo extends AbstractExecMojo {
 
     private transient ClassLoader classLoader;
 
-    // TODO: Allow to configure known types in xml config, or refer to external file
-
-    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         CamelCatalog catalog = new DefaultCamelCatalog();
