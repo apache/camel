@@ -31,7 +31,7 @@
     <bundle dependency="true">mvn:jakarta.xml.bind/jakarta.xml.bind-api/${jakarta-jaxb-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxrs-api-2.1/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-runtime/${jaxb-bundle-version}</bundle>
   </feature>
@@ -1909,7 +1909,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml/aalto-xml/0.9.10</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
@@ -2085,7 +2085,7 @@
   </feature>
   <feature name='camel-restlet-jackson' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-restlet</feature>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${restlet-woodstox-version}</bundle>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
