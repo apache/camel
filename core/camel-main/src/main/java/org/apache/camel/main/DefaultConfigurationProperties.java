@@ -611,8 +611,6 @@ public abstract class DefaultConfigurationProperties<T> {
      * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
      *
      * Exclude takes precedence over include.
-     *
-     * @param include  the include pattern
      */
     public void setRouteFilterIncludePattern(String include) {
         this.routeFilterIncludePattern = include;
@@ -636,8 +634,6 @@ public abstract class DefaultConfigurationProperties<T> {
      * Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42;
      *
      * Exclude takes precedence over include.
-     *
-     * @param exclude  the exclude pattern
      */
     public void setRouteFilterExcludePattern(String exclude) {
         this.routeFilterExcludePattern = exclude;
