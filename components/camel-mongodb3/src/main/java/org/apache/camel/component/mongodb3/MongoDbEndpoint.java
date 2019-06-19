@@ -305,8 +305,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         if( mongoConnection == null ) {
             mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+            log.debug("Resolved the connection provided by {} context reference as {}", connectionBean, mongoConnection);
+        }else {
+            log.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
         }
-        log.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         super.doStart();
     }
 

@@ -90,7 +90,7 @@ with the following path and query parameters:
 | *connectionBean* | *Required* Name of com.mongodb.Mongo reference to use. |  | String
 |===
 
-You may use mongoConnection query parameter to provide a connection instead of the connectionBean reference.
+You may use `mongoConnection` query parameter to provide a connection instead of the `connectionBean` reference. In such circumstance, the `connectionBean` will be used as a simple reference name for your route with no relation to the connection client used and it's still required parameter.
 
 ==== Query Parameters (22 parameters):
 
