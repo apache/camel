@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.5*
 
-The language component allows you to send Exchange
+The Language component allows you to send Exchange
 to an endpoint which executes a script by any of the supported
 Languages in Camel. +
  By having a component to execute language scripts, it allows more
@@ -24,7 +24,7 @@ components if the language of choice mandates it, such as using
 language://languageName[:script][?options]
 ----
 
-And from Camel 2.11 onwards you can refer to an external resource for
+You can refer to an external resource for
 the script using same notation as supported by the other
 <<language-component,Language>>s in Camel
 
@@ -168,6 +168,6 @@ evaluation. +
  For example if the file myscript.txt is changed on disk, then the
 updated script is used:
 
-From *Camel 2.11* onwards you can refer to the resource similar to the
+You can refer to the resource similar to the
 other <<language-component,Language>>s in Camel by prefixing with
 `"resource:"` as shown below:

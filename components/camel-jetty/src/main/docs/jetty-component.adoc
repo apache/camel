@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.2*
 
-The *jetty* component provides HTTP-based endpoints
+The Jetty component provides HTTP-based endpoints
 for consuming and producing HTTP requests. That is, the Jetty component
 behaves as a simple Web server.
 
@@ -229,7 +229,7 @@ The component supports 35 options, which are listed below.
 
 Camel uses the same message headers as the <<http-component,HTTP>>
 component. 
-From Camel 2.2, it also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
+It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
 header to turn on or turn off the chuched encoding on the camel-jetty
 consumer.
 
@@ -238,7 +238,7 @@ example, given a client request with the URL,
 `http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-Starting with Camel 2.2.0, you can get the request.parameter from the
+You can get the request.parameter from the
 message header not only from Get Method, but also other HTTP method.
 
 === Usage
@@ -325,8 +325,8 @@ public void process(Exchange exchange) throws Exception {
 [[Jetty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
 
-As of Camel 2.8, the Jetty component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+The Jetty component supports SSL/TLS configuration
+through the link:camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

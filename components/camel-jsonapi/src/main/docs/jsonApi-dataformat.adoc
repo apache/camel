@@ -7,7 +7,7 @@
 *Available as of Camel version 3.0*
 
 // dataformat options: START
-The jsonApi dataformat supports 3 options, which are listed below.
+The JsonAPI dataformat supports 3 options, which are listed below.
 
 
 

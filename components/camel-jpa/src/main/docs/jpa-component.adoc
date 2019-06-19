@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-The *jpa* component enables you to store and retrieve Java objects from
+The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),
 which is a standard interface layer that wraps Object/Relational Mapping
 (ORM) products such as OpenJPA, Hibernate, TopLink, and so on.
@@ -37,7 +37,7 @@ If the body does not contain one of the previous listed types, put a
 Message Translator in front of the
 endpoint to perform the necessary conversion first.
 
-From *Camel 2.19* onwards you can use `query`, `namedQuery` or `nativeQuery`
+You can use `query`, `namedQuery` or `nativeQuery`
 for the producer as well. Also in the value of the `parameters`, you can use
 Simple expression which allows you to retrieve parameter values from Message body, header
 and etc. Those query can be used for retrieving a set of data with using `SELECT`
@@ -65,8 +65,7 @@ http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/compone
 which will be invoked on your entity bean when the entity bean when it
 has been processed (and when routing is done).
 
-From *Camel 2.13* onwards you can use
-http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
+You can use http://camel.apache.org/maven/current/camel-jpa/apidocs/org/apache/camel/component/jpa/PreConsumed.html[@PreConsumed]
 which will be invoked on your entity bean before it has been processed
 (before routing).
 
@@ -235,17 +234,9 @@ Camel adds the following message headers to the exchange:
 |=======================================================================
 |Header |Type |Description
 
-|`CamelJpaTemplate` |`JpaTemplate` |*Not supported anymore since Camel 2.12:* The `JpaTemplate` object that
-is used to access the entity bean. You need this object in some
-situations, for instance in a type converter or when you are doing some
-custom processing. See
-https://issues.apache.org/jira/browse/CAMEL-5932[CAMEL-5932] for the
-reason why the support for this header has been dropped.
+|`CamelEntityManager` |`EntityManager` |The JPA `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
 
-|`CamelEntityManager` |`EntityManager` |*Camel 2.12: JPA consumer / Camel 2.12.2: JPA producer:* The JPA
-`EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
-
-|`CamelJpaParameters` |`Map<String, Object>` |*Camel 2.23: JPA producer:* Alternative way for passing query parameters as an Exchange header.
+|`CamelJpaParameters` |`Map<String, Object>` |Alternative way for passing query parameters as an Exchange header.
 
 |=======================================================================
 
@@ -266,7 +257,7 @@ For example, you can instantiate a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-In *Camel 2.3* the `JpaComponent` will auto lookup the
+The `JpaComponent` looks up automatically the
 `EntityManagerFactory` from the Registry which means
 you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
@@ -274,7 +265,7 @@ log a WARN.
 
 ### Configuring TransactionManager
 
-Since *Camel 2.3* the `JpaComponent` will auto lookup the
+The `JpaComponent` looks up automatically the
 `TransactionManager` from the Registry. If Camel
 won't find any `TransactionManager` instance registered, it will also
 look up for the `TransactionTemplate` and try to
