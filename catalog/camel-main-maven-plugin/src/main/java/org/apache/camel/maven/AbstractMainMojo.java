@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -45,6 +48,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.mojo.exec.AbstractExecMojo;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 /**
  * Base class for maven goals.
@@ -66,6 +73,12 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     protected transient ClassLoader classLoader;
 
+    protected transient CamelCatalog catalog;
+
+    protected transient Reflections reflections;
+
+    protected transient Set<String> camelComponentsOnClasspath;
+
     @Component
     private RepositorySystem repositorySystem;
 
@@ -77,6 +90,62 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     @Parameter(property = "project.remoteArtifactRepositories")
     private List remoteRepositories;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        catalog = new DefaultCamelCatalog();
+        // add activemq as known component
+        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
+        // enable loading other catalog versions dynamically
+        catalog.setVersionManager(new MavenVersionManager());
+        // enable caching
+        catalog.enableCache();
+
+        String detectedVersion = findCamelVersion(project);
+        if (detectedVersion != null) {
+            getLog().info("Detected Camel version used in project: " + detectedVersion);
+        }
+
+        if (downloadVersion) {
+            String catalogVersion = catalog.getCatalogVersion();
+            String version = findCamelVersion(project);
+            if (version != null && !version.equals(catalogVersion)) {
+                // the project uses a different Camel version so attempt to load it
+                getLog().info("Downloading Camel version: " + version);
+                boolean loaded = catalog.loadVersion(version);
+                if (!loaded) {
+                    getLog().warn("Error downloading Camel version: " + version);
+                }
+            }
+        }
+
+        if (catalog.getLoadedVersion() != null) {
+            getLog().info("Pre-scanning using downloaded Camel version: " + catalog.getLoadedVersion());
+        } else {
+            getLog().info("Pre-scanning using Camel version: " + catalog.getCatalogVersion());
+        }
+
+        // find all Camel components on classpath and check in the camel-catalog for all component options
+        // then check each option if its a complex type and an interface
+        // and if so scan class-path and find the single class implementing this interface
+        // write this to META-INF/services/org/apache/camel/autowire.properties
+
+        // find all Camel components on classpath
+        camelComponentsOnClasspath = resolveCamelComponentsFromClasspath();
+        if (camelComponentsOnClasspath.isEmpty()) {
+            getLog().warn("No Camel components discovered in classpath");
+            return;
+        } else {
+            getLog().info("Discovered " + camelComponentsOnClasspath.size() + " Camel components from classpath: " + camelComponentsOnClasspath);
+        }
+
+        // build index of classes on classpath
+        getLog().debug("Indexing classes on classpath");
+        reflections = new Reflections(new ConfigurationBuilder()
+                .addUrls(ClasspathHelper.forClassLoader(classLoader))
+                .addClassLoader(classLoader)
+                .setScanners(new SubTypesScanner()));
+    }
 
     protected static String findCamelVersion(MavenProject project) {
         Dependency candidate = null;
@@ -194,4 +263,13 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
         return artifacts;
     }
+
+    protected String safeJavaType(String javaType) {
+        int pos = javaType.indexOf('<');
+        if (pos > 0) {
+            return javaType.substring(0, pos);
+        }
+        return javaType;
+    }
+
 }
