@@ -43,6 +43,12 @@ public class PrepareCamelMainMojo extends AbstractMojo {
     @Parameter(readonly = true, defaultValue = "${project.build.directory}/../src/main/resources/META-INF/")
     protected File outFolder;
 
+    /**
+     * The build directory
+     */
+    @Parameter(readonly = true, defaultValue = "${project.build.directory}/")
+    protected File buildDir;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final List<ConfigurationModel> data = new ArrayList<>();
@@ -50,7 +56,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         MainConfigurationParser parser = new MainConfigurationParser();
 
         // scan for configuration files
-        File[] files = new File("src/main/java/org/apache/camel/main").listFiles(f ->
+        File[] files = new File(buildDir, "../src/main/java/org/apache/camel/main").listFiles(f ->
                 f.isFile() && f.getName().endsWith("Properties.java"));
 
         for (File file : files) {
