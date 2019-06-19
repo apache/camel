@@ -39,6 +39,14 @@
 
     <dependencies>
 
+        <!-- Spring Boot -->
+        <!-- <dependency> -->
+            <!-- <groupId>org.springframework.boot</groupId> -->
+            <!-- <artifactId>spring-boot-starter</artifactId> -->
+            <!-- <scope>provided</scope> -->
+            <!-- <optional>true</optional> -->
+        <!-- </dependency> -->
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -93,6 +101,7 @@
                 <artifactId>camel-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
+                    <logClasspath>true</logClasspath>
                     <mainClass>org.apache.camel.example.MyApplication</mainClass>
                 </configuration>
             </plugin>
