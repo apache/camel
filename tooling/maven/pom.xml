@@ -35,6 +35,7 @@
 
     <modules>
         <module>camel-main-parser</module>
+        <module>camel-main-package-maven-plugin</module>
         <module>camel-package-maven-plugin</module>
         <module>camel-maven-plugin</module>
         <module>camel-eip-documentation-enricher-maven-plugin</module>

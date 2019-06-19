@@ -33,9 +33,16 @@ public class MainConfigurationParser {
      * Parses the Camel Main configuration java source file.
      */
     public List<ConfigurationModel> parseConfigurationSource(String fileName) throws FileNotFoundException {
+        return parseConfigurationSource(new File(fileName));
+    }
+
+    /**
+     * Parses the Camel Main configuration java source file.
+     */
+    public List<ConfigurationModel> parseConfigurationSource(File file) throws FileNotFoundException {
         final List<ConfigurationModel> answer = new ArrayList<>();
 
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File(fileName));
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
         List<FieldSource<JavaClassSource>> fields = clazz.getFields();
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());

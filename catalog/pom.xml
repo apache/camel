@@ -43,7 +43,6 @@
         <module>camel-catalog-provider-springboot</module>
         <module>camel-catalog-lucene</module>
         <module>camel-catalog-maven</module>
-        <module>camel-main-parser</module>
         <!-- tooling that depends on catalog -->
         <module>camel-route-parser</module>
         <module>camel-report-maven-plugin</module>
