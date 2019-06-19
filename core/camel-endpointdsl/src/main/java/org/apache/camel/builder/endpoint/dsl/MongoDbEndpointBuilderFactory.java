@@ -103,6 +103,27 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option is a <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointConsumerBuilder mongoConnection(
+                Object mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
+            return this;
+        }
+        /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option will be converted to a
+         * <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointConsumerBuilder mongoConnection(
+                String mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
+            return this;
+        }
+        /**
          * Sets the operation this endpoint will execute against MongoDB. For
          * possible values, see MongoDbOperation.
          * The option is a
@@ -557,6 +578,27 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option is a <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointProducerBuilder mongoConnection(
+                Object mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
+            return this;
+        }
+        /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option will be converted to a
+         * <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointProducerBuilder mongoConnection(
+                String mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
+            return this;
+        }
+        /**
          * Sets the operation this endpoint will execute against MongoDB. For
          * possible values, see MongoDbOperation.
          * The option is a
@@ -950,6 +992,25 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder database(String database) {
             setProperty("database", database);
+            return this;
+        }
+        /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option is a <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointBuilder mongoConnection(Object mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
+            return this;
+        }
+        /**
+         * Sets the Mongo instance that represents the backing connection.
+         * The option will be converted to a
+         * <code>com.mongodb.MongoClient</code> type.
+         * @group common
+         */
+        default MongoDbEndpointBuilder mongoConnection(String mongoConnection) {
+            setProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
