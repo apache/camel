@@ -61,9 +61,10 @@ import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterabl
     label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
+    @UriParam(description = "Sets the connection bean used as a client for connecting to a database.")
     private MongoClient mongoConnection;
 
-    @UriPath
+    @UriPath(description = "Sets the connection bean reference used to lookup a client for connecting to a database.")
     @Metadata(required = true)
     private String connectionBean;
     @UriParam
@@ -302,8 +303,13 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     
     @Override
     protected void doStart() throws Exception {
-        mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        log.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        if (mongoConnection == null) {
+            mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+            log.debug("Resolved the connection provided by {} context reference as {}", connectionBean,
+                    mongoConnection);
+        } else {
+            log.debug("Resolved the connection provided by mongoConnection property parameter as {}", mongoConnection);
+        }
         super.doStart();
     }
 

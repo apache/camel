@@ -87,11 +87,12 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionBean* | *Required* Name of com.mongodb.Mongo to use. |  | String
+| *connectionBean* | *Required* Name of com.mongodb.Mongo reference to use. |  | String
 |===
 
+You may use `mongoConnection` query parameter to provide a connection instead of the `connectionBean` reference. In such circumstance, the `connectionBean` will be used as a simple reference name for your route with no relation to the connection client used and it's still required parameter.
 
-==== Query Parameters (23 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,6 +102,7 @@ with the following path and query parameters:
 | *collectionIndex* (common) | Sets the collection index (JSON FORMAT : { field1 : order1, field2 : order2}) |  | String
 | *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
 | *database* (common) | Sets the name of the MongoDB database to target |  | String
+| *mongoConnection* (common) | Sets the Mongo instance that represents the backing connection |  | MongoClient
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values, see MongoDbOperation. |  | MongoDbOperation
 | *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -152,7 +154,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-Note on options of MongoDB component
+Note on options of MongoDB component 
 
 writeConcern *Remove in camel 2.19.* See Mongo client options <<MongoDB-ConfigurationofdatabaseinSpringXML>>. Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method.
 
@@ -844,7 +846,7 @@ new objects are inserted, MongoDB will push them as `Document` in natural
 order to your tailable cursor consumer, who will transform them to an
 Exchange and will trigger your route logic.
 
-===== How the tailable cursor consumer works
+=== How the tailable cursor consumer works
 
 To turn a cursor into a tailable cursor, a few special flags are to be
 signalled to MongoDB when first generating the cursor. Once created, the
@@ -895,7 +897,7 @@ The above route will consume from the "flights.cancellations" capped
 collection, using "departureTime" as the increasing field, with a
 default regeneration cursor delay of 1000ms.
 
-===== Persistent tail tracking
+=== Persistent tail tracking
 
 Standard tail tracking is volatile and the last value is only kept in
 memory. However, in practice you will need to restart your Camel
@@ -915,7 +917,7 @@ persisting at regular intervals too in the future (flush every 5
 seconds) for added robustness if the demand is there. To request this
 feature, please open a ticket in the Camel JIRA.
 
-===== Enabling persistent tail tracking
+=== Enabling persistent tail tracking
 
 To enable this function, set at least the following options on the
 endpoint URI:
