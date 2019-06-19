@@ -1,6 +1,46 @@
 {
   "properties": [
     {
+      "name": "camel.main.auto-configuration-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether auto configuration of components/dataformats/languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. <p/> The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the  {@link org.apache.camel.spi.Registry#bind(String,Object)}  method or by using the  {@link org.apache.camel.BindToRegistry}  annotation style. <p/> This option is default enabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.autowire-component-properties",
+      "type": "java.lang.Boolean",
+      "description": "Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. <p/> This option is default enabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.autowire-component-properties-deep",
+      "type": "java.lang.Boolean",
+      "description": "Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. <p/> This option is default disabled."
+    },
+    {
+      "name": "camel.main.autowire-component-properties-allow-private-setter",
+      "type": "java.lang.Boolean",
+      "description": "Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.duration",
+      "type": "java.lang.Long",
+      "description": "Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <= 0 will run forever.",
+      "defaultValue": -1
+    },
+    {
+      "name": "camel.main.duration-hit-exit-code",
+      "type": "java.lang.Integer",
+      "description": "Sets the exit code for the application if duration was hit"
+    },
+    {
+      "name": "camel.main.hangup-interceptor-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
+      "defaultValue": true
+    },
+    {
       "name": "camel.main.name",
       "type": "java.lang.String",
       "description": "Sets the name of the CamelContext."
@@ -222,46 +262,6 @@
       "name": "camel.main.route-filter-exclude-pattern",
       "type": "java.lang.String",
       "description": "Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by  {@link PatternHelper#matchPattern(String,String)} . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
-    },
-    {
-      "name": "camel.main.auto-configuration-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Whether auto configuration of components/dataformats/languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. <p/> The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the  {@link org.apache.camel.spi.Registry#bind(String,Object)}  method or by using the  {@link org.apache.camel.BindToRegistry}  annotation style. <p/> This option is default enabled.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.autowire-component-properties",
-      "type": "java.lang.Boolean",
-      "description": "Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. <p/> This option is default enabled.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.autowire-component-properties-deep",
-      "type": "java.lang.Boolean",
-      "description": "Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. <p/> This option is default disabled."
-    },
-    {
-      "name": "camel.main.autowire-component-properties-allow-private-setter",
-      "type": "java.lang.Boolean",
-      "description": "Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.duration",
-      "type": "java.lang.Long",
-      "description": "Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <= 0 will run forever.",
-      "defaultValue": -1
-    },
-    {
-      "name": "camel.main.duration-hit-exit-code",
-      "type": "java.lang.Integer",
-      "description": "Sets the exit code for the application if duration was hit"
-    },
-    {
-      "name": "camel.main.hangup-interceptor-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
-      "defaultValue": true
     },
     {
       "name": "camel.main.hystrix.group-key",
