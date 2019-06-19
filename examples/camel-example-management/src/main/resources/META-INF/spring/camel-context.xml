@@ -48,13 +48,13 @@
         <!-- throttle 10 msg/sec being send the ActiveMQ queue -->
         <throttle>
           <constant>10</constant>
-          <!-- store the stock symbol as a header -->
-          <setHeader headerName="symbol">
-            <xpath>/stock/symbol/text()</xpath>
-          </setHeader>
-          <!-- send the message to a dynamic to, with the stock symbol as the name of the queue -->
-          <toD uri="activemq:queue:stock.${header.symbol}"/>
         </throttle>
+        <!-- store the stock symbol as a header -->
+        <setHeader headerName="symbol">
+          <xpath>/stock/symbol/text()</xpath>
+        </setHeader>
+        <!-- send the message to a dynamic to, with the stock symbol as the name of the queue -->
+        <toD uri="activemq:queue:stock.${header.symbol}"/>
       </split>
     </route>
 
