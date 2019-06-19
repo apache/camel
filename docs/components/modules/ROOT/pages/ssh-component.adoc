@@ -172,6 +172,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.ssh.sleep-for-shell-prompt* | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | Long
 | *camel.component.ssh.timeout* | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | Long
 | *camel.component.ssh.username* | Sets the username to use in logging into the remote SSH server. |  | String
+| *camel.component.ssh.configuration.cert-filename* | *Deprecated*  |  | String
 |===
 // spring-boot-auto-configure options: END
 
