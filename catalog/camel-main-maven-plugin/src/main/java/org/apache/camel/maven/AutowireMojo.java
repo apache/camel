@@ -30,9 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.JSonSchemaHelper;
-import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -44,9 +42,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 /**
  * Pre scans your project and prepare autowiring by classpath scanning
@@ -96,58 +91,8 @@ public class AutowireMojo extends AbstractMainMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        // add activemq as known component
-        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
-        // enable loading other catalog versions dynamically
-        catalog.setVersionManager(new MavenVersionManager());
-        // enable caching
-        catalog.enableCache();
-
-        String detectedVersion = findCamelVersion(project);
-        if (detectedVersion != null) {
-            getLog().info("Detected Camel version used in project: " + detectedVersion);
-        }
-
-        if (downloadVersion) {
-            String catalogVersion = catalog.getCatalogVersion();
-            String version = findCamelVersion(project);
-            if (version != null && !version.equals(catalogVersion)) {
-                // the project uses a different Camel version so attempt to load it
-                getLog().info("Downloading Camel version: " + version);
-                boolean loaded = catalog.loadVersion(version);
-                if (!loaded) {
-                    getLog().warn("Error downloading Camel version: " + version);
-                }
-            }
-        }
-
-        if (catalog.getLoadedVersion() != null) {
-            getLog().info("Pre-scanning using downloaded Camel version: " + catalog.getLoadedVersion());
-        } else {
-            getLog().info("Pre-scanning using Camel version: " + catalog.getCatalogVersion());
-        }
-
-        // find all Camel components on classpath and check in the camel-catalog for all component options
-        // then check each option if its a complex type and an interface
-        // and if so scan class-path and find the single class implementing this interface
-        // write this to META-INF/services/org/apache/camel/autowire.properties
-
-        // find all Camel components on classpath
-        Set<String> components = resolveCamelComponentsFromClasspath();
-        if (components.isEmpty()) {
-            getLog().warn("No Camel components discovered in classpath");
-            return;
-        } else {
-            getLog().info("Discovered " + components.size() + " Camel components from classpath: " + components);
-        }
-
-        // build index of classes on classpath
-        getLog().debug("Indexing classes on classpath");
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .addUrls(ClasspathHelper.forClassLoader(classLoader))
-                .addClassLoader(classLoader)
-                .setScanners(new SubTypesScanner()));
+        // perform common tasks
+        super.execute();
 
         // load default mappings
         Properties mappingProperties = loadDefaultMappings();
@@ -170,7 +115,7 @@ public class AutowireMojo extends AbstractMainMojo {
         }
 
         // find the autowire via classpath scanning
-        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, components, reflections, mappingProperties);
+        List<String> autowires = findAutowireComponentOptionsByClasspath(catalog, camelComponentsOnClasspath, reflections, mappingProperties);
 
         if (!autowires.isEmpty()) {
             outFolder.mkdirs();
@@ -346,14 +291,6 @@ public class AutowireMojo extends AbstractMainMojo {
     protected boolean isValidAutowireClass(Class clazz) {
         // skip all from Apache Camel and regular JDK as they would be default anyway
         return !clazz.getName().startsWith("org.apache.camel");
-    }
-
-    protected String safeJavaType(String javaType) {
-        int pos = javaType.indexOf('<');
-        if (pos > 0) {
-            return javaType.substring(0, pos);
-        }
-        return javaType;
     }
 
 }

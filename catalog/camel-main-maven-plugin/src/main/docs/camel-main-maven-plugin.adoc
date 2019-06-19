@@ -3,6 +3,8 @@
 The Camel Main Maven Plugin supports the following goals
 
  - camel-main:autowire - To pre-scan your project and prepare autowiring by classpath scanning
+ - camel-main:spring-boot-tooling - To pre-scan your project and builds spring boot tooling metafiles
+   which fools tools to offer code completion for editing properties files.
 
 == camel:autowire
 
@@ -157,3 +159,58 @@ The maven plugin *autowire* goal supports the following options which can be con
 
 You can find more details and a working example at `examples/camel-example-main-artemis`.
 
+
+== camel:spring-boot-tooling
+
+To pre-scan your project and builds spring boot tooling metafiles
+which fools tools to offer code completion for editing properties files.
+
+----
+mvn camel-main:spring-boot-tooling
+----
+
+This will generate a Spring Boot tooling metadata file in `src/main/resouces/META-INF/spring-configuration-metadata.json`
+which contains all the options from Camel Main and the components from the classpath.
+
+For example if you have camel-jms on the classpath, then Java tools that has support for Spring Boot,
+can offer code completions when you edit `application.properties` file:
+
+----
+camel.component.jms.CURSOR HERE
+----
+
+Just press ctrl + space at the _CURSOR HERE_ location and you will get all the options you
+can configure on the JMS component.
+
+
+You can also enable the plugin to automatic run as part of the build to catch these errors.
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-main-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>spring-boot-tooling</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
+the compilation of the main source code.
+
+=== Options
+
+The maven plugin *spring-boot-tooling* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| logClasspath | false | Whether to log the classpath when starting
+| downloadVersion | true | Whether to allow downloading Camel catalog version from the internet.
+  This is needed if the project * uses a different Camel version than this plugin is using by default.
+|===
