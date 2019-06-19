@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.2*
 
-The *jdbc* component enables you to access databases through JDBC, where
+The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
 the message body. This component uses the standard JDBC API, unlike the
 <<sql-component,SQL Component>> component, which uses
@@ -154,15 +154,15 @@ header.
 |`CamelJdbcUpdateCount` |If the query is an `UPDATE`, query the update count is returned in this
 OUT header.
 
-|`CamelGeneratedKeysRows` |*Camel 2.10:* Rows that contains the generated keys.
+|`CamelGeneratedKeysRows` |Rows that contains the generated keys.
 
-|`CamelGeneratedKeysRowCount` |*Camel 2.10:* The number of rows in the header that contains generated
+|`CamelGeneratedKeysRowCount` |The number of rows in the header that contains generated
 keys.
 
-|`CamelJdbcColumnNames` |*Camel 2.11.1:* The column names from the ResultSet as a `java.util.Set`
+|`CamelJdbcColumnNames` |The column names from the ResultSet as a `java.util.Set`
 type.
 
-|`CamelJdbcParametes` |*Camel 2.12:* A `java.util.Map` which has the headers to be used if
+|`CamelJdbcParametes` |A `java.util.Map` which has the headers to be used if
 `useHeadersAsParameters` has been enabled.
 |===
 

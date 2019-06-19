@@ -125,11 +125,7 @@ the XA transaction to not work properly.
 If you are *not* using XA, then you should consider caching as it speeds
 up performance, such as setting `cacheLevelName=CACHE_CONSUMER`.
 
-Through Camel 2.7.x, the default setting for `cacheLevelName` is
-`CACHE_CONSUMER`. You will need to explicitly set
-`cacheLevelName=CACHE_NONE`.
-
-In Camel 2.8 onwards, the default setting for `cacheLevelName` is
+The default setting for `cacheLevelName` is
 `CACHE_AUTO`. This default auto detects the mode and sets the cache
 level accordingly to:
 
@@ -1186,14 +1182,14 @@ reply queue with an unique name per node, then you can run this in a
 clustered environment. As then the reply message will be sent back to
 that queue for the given node, that awaits the reply message.
 
-|`concurrentConsumers` |Fast |Yes |*Camel 2.10.3:* Allows to process
+|`concurrentConsumers` |Fast |Yes |Allows to process
 reply messages concurrently using concurrent message listeners in use.
 You can specify a range using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. *Notice:* That using `Shared` reply
 queues may not work as well with concurrent listeners, so use this
 option with care.
 
-|`maxConcurrentConsumers` |Fast |Yes |*Camel 2.10.3:* Allows to process
+|`maxConcurrentConsumers` |Fast |Yes |Allows to process
 reply messages concurrently using concurrent message listeners in use.
 You can specify a range using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. *Notice:* That using `Shared` reply
@@ -1211,27 +1207,7 @@ so you should *not* do anything. +
  This consumer is a Spring `DefaultMessageListenerContainer` which
 listen for replies. However it's fixed to 1 concurrent consumer. +
  That means replies will be processed in sequence as there are only 1
-thread to process the replies. If you want to process replies faster,
-then we need to use concurrency. But *not* using the
-`concurrentConsumer` option. We should use the `threads` from the Camel
-DSL instead, as shown in the route below:
-
-Instead of using threads, then use concurrentConsumers option if using
-Camel 2.10.3 or better. See further below.
-
-[source,java]
----------------------------------
-from(xxx)
-.inOut().to("activemq:queue:foo")
-.threads(5)
-.to(yyy)
-.to(zzz);
----------------------------------
-
-In this route we instruct Camel to route replies
-asynchronously using a thread pool with 5 threads.
-
-From *Camel 2.10.3* onwards you can now configure the listener to use
+thread to process the replies. You can configure the listener to use
 concurrent threads using the `concurrentConsumers` and
 `maxConcurrentConsumers` options. This allows you to easier configure
 this in Camel as shown below:
@@ -1243,6 +1219,9 @@ from(xxx)
 .to(yyy)
 .to(zzz);
 -------------------------------------------------------
+
+In this route we instruct Camel to route replies
+asynchronously using a thread pool with 5 threads.
 
 #### Request-reply over JMS and using a shared fixed reply queue
 
@@ -1285,15 +1264,14 @@ broker more frequent, and thus require more network traffic. +
 In the previous example, Camel would anticipate the fixed reply queue
 named "bar" was shared, and thus it uses a `JMSSelector` to only consume
 reply messages which it expects. However there is a drawback doing this
-as JMS selectos is slower. Also the consumer on the reply queue is
+as the JMS selector is slower. Also the consumer on the reply queue is
 slower to update with new JMS selector ids. In fact it only updates when
 the `receiveTimeout` option times out, which by default is 1 second. So
 in theory the reply messages could take up till about 1 sec to be
 detected. On the other hand if the fixed reply queue is exclusive to the
 Camel reply consumer, then we can avoid using the JMS selectors, and
-thus be more performant. In fact as fast as using temporary queues. So
-in *Camel 2.9* onwards we introduced the `ReplyToType` option which you
-can configure to `Exclusive` +
+thus be more performant. In fact as fast as using temporary queues. There is
+the `ReplyToType` option which you can configure to `Exclusive` +
  to tell Camel that the reply queue is exclusive as shown in the example
 below:
 
@@ -1358,7 +1336,7 @@ live, then Camel will still use a timeout by 20 seconds (the
 So the two options `requestTimeout` and `disableTimeToLive` gives you
 fine grained control when doing request/reply.
 
-From *Camel 2.13/2.12.3* onwards you can provide a header in the message
+You can provide a header in the message
 to override and use as the request timeout value instead of the endpoint
 configured value. For example:
 

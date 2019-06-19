@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.22*
 
-The *mybatis-bean:* component allows you to query, insert, update and
+The MyBatis Bean component allows you to query, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis] bean annotations.
 
 This component can **only** be used as a producer. If you want to consume

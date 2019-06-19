@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.14*
 
-The *netty4* component in Camel is a socket communication component,
+The Netty4 component in Camel is a socket communication component,
 based on the http://netty.io/[Netty] project version 4. +
  Netty is a NIO client server framework which enables quick and easy
 development of networkServerInitializerFactory applications such as
@@ -300,12 +300,12 @@ not set
 
 |`trustStoreFile` |*deprecated:* Server side certificate keystore to be used for encryption
 
-|`keyStoreResource` |*Camel 2.11.1:* Client side certificate keystore to be used for
+|`keyStoreResource` |Client side certificate keystore to be used for
 encryption. Is loaded by default from classpath, but you can prefix with
 `"classpath:"`, `"file:"`, or `"http:"` to load the resource from
 different systems.
 
-|`trustStoreResource` |*Camel 2.11.1:* Server side certificate keystore to be used for
+|`trustStoreResource` |Server side certificate keystore to be used for
 encryption. Is loaded by default from classpath, but you can prefix with
 `"classpath:"`, `"file:"`, or `"http:"` to load the resource from
 different systems.
@@ -405,8 +405,8 @@ RouteBuilder builder = new RouteBuilder() {
 [[Netty4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
 
-As of Camel 2.9, the Netty component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+The Netty component supports SSL/TLS configuration
+through the link:camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

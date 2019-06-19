@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.6*
 
-The *jbpm* component provides integration with Business Process
+The JBPM component provides integration with Business Process
 Management http://www.jbpm.org/[jBPM]. It uses
 kie-server-client API to interact with jBPM instance over REST. The
 component supports both producer and consumer.

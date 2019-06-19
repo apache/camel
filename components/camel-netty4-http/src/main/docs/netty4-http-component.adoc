@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.14*
 
-The *netty4-http* component is an extension to <<netty4-component,Netty4>>
+The Netty4 HTTP component is an extension to <<netty4-component,Netty4>>
 component to facilitiate HTTP transport with <<netty4-component,Netty4>>.
 
 This camel component supports both producer and consumer endpoints.
