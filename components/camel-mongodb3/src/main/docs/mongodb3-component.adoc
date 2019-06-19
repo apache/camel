@@ -87,12 +87,11 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionBean* | *Required* Name of com.mongodb.Mongo reference to use. |  | String
+| *connectionBean* | *Required* Name of com.mongodb.Mongo to use. |  | String
 |===
 
-You may use `mongoConnection` query parameter to provide a connection instead of the `connectionBean` reference. In such circumstance, the `connectionBean` will be used as a simple reference name for your route with no relation to the connection client used and it's still required parameter.
 
-==== Query Parameters (22 parameters):
+==== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
