@@ -22,20 +22,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -46,21 +37,12 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.repository.RepositorySystem;
-import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -70,13 +52,7 @@ import org.reflections.util.ConfigurationBuilder;
  * Pre scans your project and prepare autowiring by classpath scanning
  */
 @Mojo(name = "autowire", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
-public class AutowireMojo extends AbstractExecMojo {
-
-    /**
-     * Whether to log the classpath when starting
-     */
-    @Parameter(property = "camel.logClasspath", defaultValue = "false")
-    protected boolean logClasspath;
+public class AutowireMojo extends AbstractMainMojo {
 
     /**
      * When autowiring has detected multiple implementations (2 or more) of a given interface, which
@@ -117,27 +93,6 @@ public class AutowireMojo extends AbstractExecMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/classes/camel-main-mappings.properties")
     protected File mappingsFile;
-
-    /**
-     * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
-     * uses a different Camel version than this plugin is using by default.
-     */
-    @Parameter(property = "camel.downloadVersion", defaultValue = "true")
-    private boolean downloadVersion;
-
-    @Component
-    private RepositorySystem repositorySystem;
-
-    @Component
-    private ArtifactResolver artifactResolver;
-
-    @Parameter(property = "localRepository")
-    private ArtifactRepository localRepository;
-
-    @Parameter(property = "project.remoteArtifactRepositories")
-    private List remoteRepositories;
-
-    private transient ClassLoader classLoader;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -399,123 +354,6 @@ public class AutowireMojo extends AbstractExecMojo {
             return javaType.substring(0, pos);
         }
         return javaType;
-    }
-
-    protected Set<String> resolveCamelComponentsFromClasspath() throws MojoFailureException {
-        Set<String> components = new TreeSet<>();
-        try {
-            classLoader = getClassLoader();
-            Enumeration<URL> en = classLoader.getResources("META-INF/services/org/apache/camel/component.properties");
-            while (en.hasMoreElements()) {
-                URL url = en.nextElement();
-                InputStream is = (InputStream) url.getContent();
-                Properties prop = new Properties();
-                prop.load(is);
-                String comps = prop.getProperty("components");
-                if (comps != null) {
-                    String[] parts = comps.split("\\s+");
-                    components.addAll(Arrays.asList(parts));
-                }
-                IOHelper.close(is);
-            }
-        } catch (Throwable e) {
-            throw new MojoFailureException("Error during discovering Camel components from classpath due " + e.getMessage(), e);
-        }
-
-        return components;
-    }
-
-    private static String findCamelVersion(MavenProject project) {
-        Dependency candidate = null;
-
-        List list = project.getDependencies();
-        for (Object obj : list) {
-            Dependency dep = (Dependency) obj;
-            if ("org.apache.camel".equals(dep.getGroupId())) {
-                if ("camel-core".equals(dep.getArtifactId())) {
-                    // favor camel-core
-                    candidate = dep;
-                    break;
-                } else {
-                    candidate = dep;
-                }
-            }
-        }
-        if (candidate != null) {
-            return candidate.getVersion();
-        }
-
-        return null;
-    }
-
-    /**
-     * Set up a classloader for scanning
-     */
-    private ClassLoader getClassLoader() throws MalformedURLException, MojoExecutionException {
-        Set<URL> classpathURLs = new LinkedHashSet<>();
-
-        // add project classpath
-        URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-        classpathURLs.add(mainClasses);
-
-        // add maven dependencies
-        Set<Artifact> deps = project.getArtifacts();
-        deps.addAll(getAllNonTestScopedDependencies());
-        for (Artifact dep : deps) {
-            File file = dep.getFile();
-            if (file != null) {
-                classpathURLs.add(file.toURI().toURL());
-            }
-        }
-
-        if (logClasspath) {
-            getLog().info("Classpath:");
-            for (URL url : classpathURLs) {
-                getLog().info("  " + url.getFile());
-            }
-        }
-        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
-    }
-
-    private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
-        List<Artifact> answer = new ArrayList<>();
-
-        for (Artifact artifact : getAllDependencies()) {
-
-            // do not add test artifacts
-            if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
-
-                if ("google-collections".equals(artifact.getArtifactId())) {
-                    // skip this as we conflict with guava
-                    continue;
-                }
-
-                if (!artifact.isResolved()) {
-                    ArtifactResolutionRequest req = new ArtifactResolutionRequest();
-                    req.setArtifact(artifact);
-                    req.setResolveTransitively(true);
-                    req.setLocalRepository(localRepository);
-                    req.setRemoteRepositories(remoteRepositories);
-                    artifactResolver.resolve(req);
-                }
-
-                answer.add(artifact);
-            }
-        }
-        return answer;
-    }
-
-    // generic method to retrieve all the transitive dependencies
-    private Collection<Artifact> getAllDependencies() {
-        List<Artifact> artifacts = new ArrayList<>();
-
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency)dependencies.next();
-            Artifact art = repositorySystem.createDependencyArtifact(dependency);
-            artifacts.add(art);
-        }
-
-        return artifacts;
     }
 
 }
