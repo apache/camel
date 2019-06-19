@@ -27,14 +27,14 @@ for this component:
 Note that the <<msv-component,MSV>> component can also support RelaxNG XML
 syntax.
 
-### URI format Camel 2.16
+### URI format
 
 [source,java]
 ------------------------------
 jing:someLocalOrRemoteResource
 ------------------------------
 
-From Camel 2.16 the component use jing as name, and you can use the
+The component uses jing as name, and you can use the
 option compactSyntax to turn on either RNG or RNC mode.
 
 ### Options

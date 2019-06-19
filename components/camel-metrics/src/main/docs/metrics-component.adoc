@@ -12,7 +12,7 @@ endif::[]
 
 ### Metrics Component
 
-The **metrics:** component allows to collect various metrics directly
+The Metrics component allows to collect various metrics directly
 from Camel routes. Supported metric types
 are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
 xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides

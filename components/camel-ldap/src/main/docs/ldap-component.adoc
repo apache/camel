@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.5*
 
-The *ldap* component allows you to perform searches in LDAP servers
+The LDAP component allows you to perform searches in LDAP servers
 using filters as the message payload. +
  This component uses standard JNDI (`javax.naming` package) to access
 the server.

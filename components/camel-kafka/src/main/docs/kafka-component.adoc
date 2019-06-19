@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.13*
 
-The *kafka:* component is used for communicating with
+The Kafka component is used for communicating with
 http://kafka.apache.org/[Apache Kafka] message broker.
 
 Maven users will need to add the following dependency to their `pom.xml`

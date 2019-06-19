@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-The mail component provides access to Email via Spring's Mail support
+The Mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -342,8 +342,8 @@ configuration.
 
 ==== Using the JSSE Configuration Utility
 
-As of *Camel 2.10*, the mail component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+The mail component supports SSL/TLS configuration
+through the link:camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
@@ -409,7 +409,7 @@ below demonstrates this:
 The same applies for other MimeMessage headers such as recipients, so
 you can use a header property as `To`:
 
-*Since Camel 2.11* When using the MailProducer the send the mail to
+When using the MailProducer the send the mail to
 server, you should be able to get the message id of the
 http://java.sun.com/javaee/5/docs/api/javax/mail/internet/MimeMessage.html[MimeMessage]
 with the key `CamelMailMessageId` from the Camel message header.

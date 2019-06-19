@@ -123,35 +123,35 @@ The component supports 12 options, which are listed below.
 
 ### Headers
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,70%",options="header",]
 |=======================================================================
 |Header |Constant |Since version |Description
 
-|`JGROUPSRAFT_COMMIT_INDEX` |`JGroupsRaftEndpoint.HEADER_JGROUPSRAFT_COMMIT_INDEX` |*2.24.0* | *Consumer* : The commit index (int).
+|`JGROUPSRAFT_COMMIT_INDEX` |`JGroupsRaftEndpoint.HEADER_JGROUPSRAFT_COMMIT_INDEX` | *Consumer* : The commit index (int).
 
-|`JGROUPSRAFT_CURRENT_TERM` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_CURRENT_TERM` |*2.24.0* | *Consumer* : The current raft term (int).
+|`JGROUPSRAFT_CURRENT_TERM` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_CURRENT_TERM` | *Consumer* : The current raft term (int).
 
-|`JGROUPSRAFT_IS_LEADER` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_IS_LEADER` |*2.24.0* | *Consumer*: Whether the node is the Raft Leader or not (boolean).
+|`JGROUPSRAFT_IS_LEADER` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_IS_LEADER` | *Consumer*: Whether the node is the Raft Leader or not (boolean).
 
-|`JGROUPSRAFT_LAST_APPLIED` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LAST_APPLIED` |*2.24.0* | *Consumer*: The index of the last log entry that was appended to the log (int).
+|`JGROUPSRAFT_LAST_APPLIED` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LAST_APPLIED` | *Consumer*: The index of the last log entry that was appended to the log (int).
 
-|`JGROUPSRAFT_LEADER_ADDRESS` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LEADER_ADDRESS` |*2.24.0* | *Consumer*: The Address ot Raft Leader or not (org.jgroups.Address).
+|`JGROUPSRAFT_LEADER_ADDRESS` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LEADER_ADDRESS` | *Consumer*: The Address ot Raft Leader or not (org.jgroups.Address).
 
-|`JGROUPSRAFT_LOG_SIZE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE` |*2.24.0* | *Consumer*: The Raft log size in number of entries (int).
+|`JGROUPSRAFT_LOG_SIZE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE` | *Consumer*: The Raft log size in number of entries (int).
 
-|`JGROUPSRAFT_LOG_SIZE_BYTE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE_BYTE` |*2.24.0* | *Consumer*: The Raft log size in bytes (int).
+|`JGROUPSRAFT_LOG_SIZE_BYTE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_LOG_SIZE_BYTE` | *Consumer*: The Raft log size in bytes (int).
 
-|`JGROUPSRAFT_RAFT_ID` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_RAFT_ID` |*2.24.0* | *Consumer*: The Raft id of the node (String).
+|`JGROUPSRAFT_RAFT_ID` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_RAFT_ID` | *Consumer*: The Raft id of the node (String).
 
-|`JGROUPSRAFT_EVENT_TYPE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_EVENT_TYPE` |*2.24.0* | *Consumer*: The event type, one of org.apache.camel.component.jgroups.raft.JGroupsRaftEventType ENUM.
+|`JGROUPSRAFT_EVENT_TYPE` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_EVENT_TYPE` | *Consumer*: The event type, one of org.apache.camel.component.jgroups.raft.JGroupsRaftEventType ENUM.
 
-|`JGROUPSRAFT_SET_OFFSET` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_OFFSET` |*2.24.0* | *Producer*: Offset to use in the byte[] buffer to be set().
+|`JGROUPSRAFT_SET_OFFSET` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_OFFSET` | *Producer*: Offset to use in the byte[] buffer to be set().
 
-|`JGROUPSRAFT_SET_LENGTH` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_LENGTH` |*2.24.0* | *Producer*: Length to use in the byte[] buffer to be set().
+|`JGROUPSRAFT_SET_LENGTH` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_LENGTH` | *Producer*: Length to use in the byte[] buffer to be set().
 
-|`JGROUPSRAFT_SET_TIMEOUT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEOUT` |*2.24.0* | *Producer*: Timeout to be used in set() operation.
+|`JGROUPSRAFT_SET_TIMEOUT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEOUT` | *Producer*: Timeout to be used in set() operation.
 
-|`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` |*2.24.0* | *Producer*: Timeunit to be used in set() operation.
+|`JGROUPSRAFT_SET_TIMEUNIT` |`JGroupsRaftEndpoint.`HEADER_JGROUPSRAFT_SET_TIMEUNIT` | *Producer*: Timeunit to be used in set() operation.
 |=======================================================================
  
 ### Usage

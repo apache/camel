@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.18*
 
-The *Lumberjack* component retrieves logs sent over the network using the Lumberjack protocol,
+The Lumberjack component retrieves logs sent over the network using the Lumberjack protocol,
 from https://www.elastic.co/fr/products/beats/filebeat[Filebeat] for instance.
 The network communication can be secured with SSL.
 

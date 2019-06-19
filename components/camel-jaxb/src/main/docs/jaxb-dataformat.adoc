@@ -127,7 +127,6 @@ implementation and might change if you use different vendor than RI.
 
 ### Partial marshalling/unmarshalling
 
-*This feature is new to Camel 2.2.0.* +
  JAXB 2 supports marshalling and unmarshalling XML tree fragments. By
 default JAXB looks for `@XmlRootElement` annotation on given class to
 operate on whole XML tree. This is useful but not always - sometimes
@@ -156,7 +155,6 @@ note that you need to specify its value {[namespaceUri]}[localPart]
 
 ### Fragment
 
-*This feature is new to Camel 2.8.0.* +
  JaxbDataFormat has new property fragment which can set the the
 `Marshaller.JAXB_FRAGMENT` encoding property on the JAXB Marshaller. If
 you don't want the JAXB Marshaller to generate the XML declaration, you
@@ -165,7 +163,6 @@ false.
 
 ### Ignoring the NonXML Character
 
-*This feature is new to Camel 2.2.0.* +
  JaxbDataFromat supports to ignore the
 http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char[NonXML Character],
 you just need to set the filterNonXmlChars property to be true,
@@ -187,7 +184,6 @@ the Exchange property
 This feature has been tested with Woodstox 3.2.9 and Sun JDK 1.6 StAX
 implementation.
 
-*New for Camel 2.12.1* +
  JaxbDataFormat now allows you to customize the XMLStreamWriter used to
 marshal the stream to XML. Using this configuration, you can add your
 own stream writer to completely remove, escape, or replace non-xml
@@ -279,13 +275,6 @@ marshalling and unmarshalling from/to XML. Your can use the prefix
 *classpath:*, *file:* or *http:* to specify how the resource should by
 resolved. You can separate multiple schema files by using the *','*
 character.
-
-*Known issue*
-
-Camel 2.11.0 and 2.11.1 has a known issue by validation multiple
-`Exchange`'s in parallel. See
-https://issues.apache.org/jira/browse/CAMEL-6630[CAMEL-6630]. This is
-fixed with Camel 2.11.2/2.12.0.
 
 Using the Java DSL, you can configure it in the following way:
 
