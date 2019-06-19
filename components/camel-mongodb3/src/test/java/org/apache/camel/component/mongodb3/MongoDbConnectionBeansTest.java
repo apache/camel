@@ -18,6 +18,8 @@ package org.apache.camel.component.mongodb3;
 
 import java.util.Properties;
 
+import com.mongodb.MongoClient;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -25,43 +27,41 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.mongodb.MongoClient;
-
 public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
-      
+
     @Test
     public void checkConnectionFromProperties() {
         MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb3:anyName?mongoConnection=#myDb&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", 
+                "mongodb3:anyName?mongoConnection=#myDb&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
-        assertNotEquals("myDb",testEndpoint.getConnectionBean());
+        assertNotEquals("myDb", testEndpoint.getConnectionBean());
         assertEquals(mongo, testEndpoint.getMongoConnection());
     }
-    
+
     @Test
     public void checkConnectionFromBean() {
         MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", 
+                "mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
-        assertEquals("myDb",testEndpoint.getConnectionBean());
+        assertEquals("myDb", testEndpoint.getConnectionBean());
         assertEquals(mongo, testEndpoint.getMongoConnection());
     }
-    
+
     @Test
     public void checkConnectionBothExisting() {
         MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb3:myDb?mongoConnection=#myDbS&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", 
+                "mongodb3:myDb?mongoConnection=#myDbS&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
-        assertEquals("myDb",testEndpoint.getConnectionBean());
+        assertEquals("myDb", testEndpoint.getConnectionBean());
         MongoClient myDbS = mongo = applicationContext.getBean("myDbS", MongoClient.class);
         assertEquals(myDbS, testEndpoint.getMongoConnection());
     }
-    
+
     @Test(expected = Exception.class)
     public void checkMissingConnection() {
         MongoDbEndpoint testEndpoint = context.getEndpoint(
-                "mongodb3:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true", 
+                "mongodb3:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
     }
-    
+
 }
