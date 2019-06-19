@@ -785,7 +785,7 @@
       "defaultValue": false
     },
     {
-      "name": "camel.component.jms.use-message-i-d-as-correlation-i-d",
+      "name": "camel.component.jms.use-message-id-as-correlation-id",
       "type": "java.lang.Boolean",
       "description": "Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.",
       "defaultValue": false
@@ -941,13 +941,13 @@
       "defaultValue": true
     },
     {
-      "name": "camel.component.jms.include-sent-j-m-s-message-i-d",
+      "name": "camel.component.jms.include-sent-jms-message-id",
       "type": "java.lang.Boolean",
       "description": "Only applicable when sending to JMS destination using InOnly (eg fire and forget). Enabling this option will enrich the Camel Exchange with the actual JMSMessageID that was used by the JMS client when the message was sent to the JMS destination.",
       "defaultValue": false
     },
     {
-      "name": "camel.component.jms.include-all-j-m-s-x-properties",
+      "name": "camel.component.jms.include-all-jms-x-properties",
       "type": "java.lang.Boolean",
       "description": "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.",
       "defaultValue": false
