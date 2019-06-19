@@ -136,7 +136,18 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 sb.append(ch);
             }
         }
-        return sb.toString();
+
+        // somme words we dont want ID -> i-d, but keep it as id
+        String answer = sb.toString();
+        answer = answer.replaceAll("-i-d-", "-id-");
+        answer = answer.replaceAll("-u-r-i-", "-uri-");
+        answer = answer.replaceAll("-u-r-l-", "-url-");
+        answer = answer.replaceAll("-j-m-s-", "-jms-");
+        answer = answer.replaceAll("-j-m-x-", "-jmx-");
+        answer = answer.replaceFirst("-i-d$", "-id");
+        answer = answer.replaceFirst("-u-r-i$", "-uri");
+        answer = answer.replaceFirst("-u-r-l$", "-url");
+        return answer;
     }
 
     private static String springBootJavaType(String javaType) {
