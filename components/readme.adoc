@@ -764,7 +764,7 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 `solr:url` | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
 
 | link:camel-soroush/src/main/docs/soroush-component.adoc[Soroush] (camel-soroush) +
-`soroush:endpoint/authorizationToken` | 3.0 | To integrate with the Soroush chat bot.
+`soroush:action/authorizationToken` | 3.0 | To integrate with the Soroush chat bot.
 
 | link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
