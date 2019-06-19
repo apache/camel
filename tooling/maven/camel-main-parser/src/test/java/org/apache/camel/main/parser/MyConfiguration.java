@@ -16,9 +16,6 @@
  */
 package org.apache.camel.main.parser;
 
-import org.apache.camel.ManagementStatisticsLevel;
-import org.apache.camel.support.PatternHelper;
-
 /**
  * Common set of configuration options used by Camel Main, Camel Spring Boot and other runtimes.
  */
@@ -59,7 +56,6 @@ public class MyConfiguration {
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean useDataType;
     private boolean useBreadcrumb;
-    private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
     private boolean useMdcLogging;
@@ -523,20 +519,6 @@ public class MyConfiguration {
         this.useBreadcrumb = useBreadcrumb;
     }
 
-    public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
-        return jmxManagementStatisticsLevel;
-    }
-
-    /**
-     * Sets the JMX statistics level
-     * The level can be set to Extended to gather additional information
-     *
-     * The default value is Default.
-     */
-    public void setJmxManagementStatisticsLevel(ManagementStatisticsLevel jmxManagementStatisticsLevel) {
-        this.jmxManagementStatisticsLevel = jmxManagementStatisticsLevel;
-    }
-
     public String getJmxManagementNamePattern() {
         return jmxManagementNamePattern;
     }
@@ -603,7 +585,7 @@ public class MyConfiguration {
      * - Match by route id
      * - Match by route input endpoint uri
      *
-     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     * The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String, String).
      *
      * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
      * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
@@ -626,7 +608,7 @@ public class MyConfiguration {
      * - Match by route id
      * - Match by route input endpoint uri
      *
-     * The matching is using exact match, by wildcard and regular expression as documented by {@link PatternHelper#matchPattern(String, String)}.
+     * The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String, String).
      *
      * For example to only include routes which starts with foo in their route id's, use: include=foo&#42;
      * And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42;
