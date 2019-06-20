@@ -149,7 +149,7 @@ I use Spring Property Placeholder with Camel XML].
 
 [TIP]
 **Bridging Spring and Camel property placeholders** +
-From Camel 2.10 onwards, you can bridge the Spring property placeholder
+You can bridge the Spring property placeholder
 with Camel, see further below for more details.
 
 The property placeholder is generally in use when doing:
@@ -160,11 +160,11 @@ The property placeholder is generally in use when doing:
 * using Blueprint PropertyPlaceholder with Camel
 <<properties-component,Properties>> component
 * using `@PropertyInject` to inject a property in a POJO
-* *Camel 2.14.1* Using default value if a property does not exists
-* *Camel 2.14.1* Include out of the box functions, to lookup property
+* Using default value if a property does not exists
+* Include out of the box functions, to lookup property
 values from OS environment variables, JVM system properties, or the
 service idiom.
-* *Camel 2.14.1* Using custom functions, which can be plugged into the
+* Using custom functions, which can be plugged into the
 property component.
 
 === Syntax
@@ -175,13 +175,12 @@ example `{{file.uri}}` where `file.uri` is the property key.
 You can use property placeholders in parts of the endpoint URI's which
 for example you can use placeholders for parameters in the URIs.
 
-From **Camel 2.14.1** onwards you can specify a default value to use if
+You can specify a default value to use if
 a property with the key does not exists, eg `file.url:/some/path` where
 the default value is the text after the colon (eg /some/path).
 
 NOTE: Do not use colon in the property key. The colon is used as a separator
-token when you are providing a default value, which is supported from
-*Camel 2.14.1* onwards.
+token when you are providing a default value.
 
 === PropertyResolver
 
@@ -192,11 +191,11 @@ implementation
 is capable of loading properties from the file system, classpath or
 Registry. You can prefix the locations with either:
 
-* `ref:` *Camel 2.4:* to lookup in the Registry
+* `ref:` to lookup in the Registry
 * `file:` to load the from file system
 * `classpath:` to load from classpath (this is also the default if no
 prefix is provided)
-* `blueprint:` *Camel 2.7:* to use a specific OSGi blueprint placeholder
+* `blueprint:` to use a specific OSGi blueprint placeholder
 service
 
 === Defining location
@@ -356,7 +355,7 @@ Setting the properties location through the location tag works just fine but som
 
 [TIP]
 **Specifying the cache option inside XML** +
-Camel 2.10 onwards supports specifying a value for the cache option both
+Camel supports specifying a value for the cache option both
 inside the Spring as well as the Blueprint XML.
 
 === Using a Properties from the Registry
@@ -512,7 +511,7 @@ as values which can either be used as override or fallback values.
 The default mode is that JVM system properties are in override mode, which means they
 are checked first.
 
-And as of Camel 3.0 then OS environment variables are in override mode as default mode,
+OS environment variables are in override mode as default mode,
 which means that if a OS environment variable exists, then it will be used.
 
 You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
@@ -558,15 +557,6 @@ assertMockEndpointsSatisfied();
 === Using property placeholders for any kind of attribute in the XML DSL
 
 *Available as of Camel 2.7*
-
-NOTE: If you use OSGi Blueprint then this only works from *2.11.1* or *2.10.5*
-onwards.
-
-Previously it was only the `xs:string` type attributes in the XML DSL
-that support placeholders. For example often a timeout attribute would
-be a `xs:int` type and thus you cannot set a string value as the
-placeholder key. This is now possible from Camel 2.7 onwards using a
-special placeholder namespace.
 
 In the example below we use the `prop` prefix for the namespace
 `http://camel.apache.org/schema/placeholder` by which we can use the
@@ -821,8 +811,7 @@ When Testing with Camel and using the
 <<properties-component,Properties>> component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. +
-This is now possible from Camel 2.10 onwards, as the Camel test kits, eg
-`CamelTestSupport` class offers the following methods
+Camel test kits, eg `CamelTestSupport` class offers the following methods
 
 * `useOverridePropertiesWithPropertiesComponent`
 * `ignoreMissingLocationWithPropertiesComponent`
@@ -905,10 +894,10 @@ functions out of the box
 properties
 * `service` - A function to lookup the property from OS environment
 variables using the service naming idiom
-* `service.name` - **Camel 2.16.1: **A function to lookup the
+* `service.name` - A function to lookup the
 property from OS environment variables using the service naming idiom
 returning the hostname part only
-* `service.port` - **Camel 2.16.1: **A function to lookup the
+* `service.port` - A function to lookup the
 property from OS environment variables using the service naming idiom
 returning the port part only
 
@@ -1018,7 +1007,7 @@ placeholder. This is best illustrated in the example code below
 </camelContext>
 ----
 
-NOTE: from *camel 2.19.0* the location attribute (on propertyPlaceholder tag) is not more mandatory
+NOTE: The location attribute (on propertyPlaceholder tag) is not mandatory
 
 Here we have a Camel XML route where we have defined the
 `<propertyPlaceholder>` to use a custom function, which we refer to be the

@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.6*
 
-The `paxlogging` component can be used in an OSGi environment to receive
+The PAX Logging component can be used in an OSGi environment to receive
 http://wiki.ops4j.org/display/paxlogging/Pax+Logging[PaxLogging] events
 and process them.
 
@@ -20,8 +20,7 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 -------------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.6.0 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
 ### URI format
 
