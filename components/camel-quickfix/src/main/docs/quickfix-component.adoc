@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.1*
 
-The *quickfix* component adapts the
+The Quickfix component adapts the
 http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
 This component uses the standard http://www.fixprotocol.org/[Financial
 Interchange (FIX) protocol] for message transport.
@@ -39,7 +39,7 @@ the sessionID is:
 (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]->(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]]
 ----
 
-The optional *lazyCreateEngine* (Camel 2.12.3+) parameter allows to
+The optional *lazyCreateEngine* parameter allows to
 create QuickFIX/J engine on demand. Value *true* means the engine is
 started when first message is send or there's consumer configured in
 route definition. When **false** value is used, the engine is started at
@@ -254,7 +254,7 @@ values in the QuickFIX/J settings file.
 
 |`ScreenLogShowOutgoing` |Use a `ScreenLog`
 
-|`SLF4J*` |**Camel 2.6+**. Use a `SLF4JLog`. Any of the SLF4J settings
+|`SLF4J*` |Use a `SLF4JLog`. Any of the SLF4J settings
 will cause this log to be used.
 
 |`FileLogPath` |Use a `FileLog`
@@ -316,8 +316,6 @@ TargetCompID=YOUR_TARGET
 ----
 
 ### Using the InOut Message Exchange Pattern
-
-*Camel 2.8+*
 
 Although the FIX protocol is event-driven and asynchronous, there are
 specific pairs of messages
@@ -392,12 +390,7 @@ response is then converted to a
 JSON-formatted string and sent back to the HTTP server endpoint to be
 provided as the web response.
 
-The Spring configuration have changed from Camel 2.9 onwards. See
-further below for example.
-
 ### Spring Configuration
-
-*Camel 2.6 - 2.8.x*
 
 The QuickFIX/J component includes a Spring `FactoryBean` for configuring
 the session settings within a Spring context. A type converter for
@@ -456,8 +449,6 @@ default settings for both sessions.
 </property>
 </bean>
 ----
-
-*Camel 2.9 onwards*
 
 The QuickFIX/J component includes a `QuickfixjConfiguration` class for
 configuring the session settings. A type converter for QuickFIX/J
@@ -599,7 +590,7 @@ QuickFix.Message instance.
 
 ### Lazy creating engines
 
-From *Camel 2.12.3* onwards, you can configure the QuickFixComponent to
+You can configure the QuickFixComponent to
 lazy create and start the engines, which then only start these
 on-demand. For example you can use this when you have multiple Camel
 applications in a cluster with master/slaves. And want the slaves to be

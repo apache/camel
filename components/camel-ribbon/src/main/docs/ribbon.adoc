@@ -2,7 +2,7 @@
 
 *Available as of Camel version 2.18*
 
-The ribbon component provides use of Netflix Ribbon for client side load balancing.
+The Ribbon component provides use of Netflix Ribbon for client side load balancing.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

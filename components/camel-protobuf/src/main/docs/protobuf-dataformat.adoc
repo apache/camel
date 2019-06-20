@@ -67,7 +67,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Content type format (starting from *Camel 2.19*)
+### Content type format
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call protobuf with second parameter.

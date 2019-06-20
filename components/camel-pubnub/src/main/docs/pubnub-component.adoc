@@ -6,13 +6,13 @@
 Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.
 This component uses pubnub https://github.com/pubnub/java[java library].
 
-Use cases includs:
+Use cases include:
 
 ** Chat rooms: Sending and receiving messages
 ** Locations and Connected cars: dispatching taxi cabs
 ** Smart sensors: Receiving data from a sensor for data visualizations
 ** Health: Monitoring heart rate from a patient's wearable device
-** Multiplayer gamings
+** Multiplayer games
 ** Interactive media: audience-participating voting system
 
 
@@ -182,7 +182,7 @@ from("pubnub:eon-map-geolocation-output?subscribeKey=mysubkey)
 #### Subscribing to events
 
 The following snippet listens for events on the iot channel.
-If you can add the option withPresens, you will also receive channel Join, Leave asf events. 
+If you can add the option withPresence, you will also receive channel Join, Leave asf events.
 
 [source,java]
 ----

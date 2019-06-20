@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.19*
 
-The *openstack* component is a component for managing your
+The Openstack component is a component for managing your
 https://www.openstack.org//[OpenStack] applications. 
 
 Maven users will need to add the following dependency to their `pom.xml`

@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.13*
 
-The *optaplanner:* component solves the planning problem contained in a
+The Optaplanner component solves the planning problem contained in a
 message with http://www.optaplanner.org/[OptaPlanner]. +
  For example: feed it an unsolved Vehicle Routing problem and it solves
 it.
@@ -136,7 +136,7 @@ rather than blocking the current thread.
 ### Message Body
 
 Camel takes the planning problem for the IN body, solves it and returns
-it on the OUT body. (since v 2.16) The IN body object supports the following use cases:
+it on the OUT body. The IN body object supports the following use cases:
 
 * If the body is instance of Solution, then it will be solved using the
 solver identified by solverId and either synchronously or
