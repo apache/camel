@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
-public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbastractTest {
+public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftMasterTest.class);
 
     private ArrayList<CamelContext> lcc = new ArrayList<>();

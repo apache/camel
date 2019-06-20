@@ -157,7 +157,7 @@ The component supports 12 options, which are listed below.
 ### Usage
 
 Using `jgroups-raft` component with `enableRoleChangeEvents=true` on the consumer side of the route will capture
-change in JGrups-raft role and forward them to the Camel route.
+change in JGroups-raft role and forward them to the Camel route.
 JGroups-raft consumer processes incoming messages
 http://camel.apache.org/asynchronous-routing-engine.html[asynchronously].
 

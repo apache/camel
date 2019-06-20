@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JGroupsRaftProducerTest extends JGroupsRaftAbstractTest {
     private static final String CLUSTER_NAME = "JGroupsRaftProducerTest";

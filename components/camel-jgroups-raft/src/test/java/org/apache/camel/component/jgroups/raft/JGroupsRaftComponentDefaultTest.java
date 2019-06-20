@@ -19,7 +19,6 @@ package org.apache.camel.component.jgroups.raft;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
 import org.junit.Test;
 
 public class JGroupsRaftComponentDefaultTest extends CamelTestSupport {
