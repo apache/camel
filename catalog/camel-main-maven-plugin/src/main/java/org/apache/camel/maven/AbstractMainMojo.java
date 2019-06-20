@@ -255,7 +255,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
     private Collection<Artifact> getAllDependencies() {
         List<Artifact> artifacts = new ArrayList<>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext(); ) {
+        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency) dependencies.next();
             Artifact art = repositorySystem.createDependencyArtifact(dependency);
             artifacts.add(art);
