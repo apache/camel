@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.JSonSchemaHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -202,6 +203,11 @@ public class AutowireMojo extends AbstractMainMojo {
                                 String line = "camel.component." + componentName + "." + name + "=#class:" + best.getName();
                                 getLog().debug(line);
                                 autowires.add(line);
+
+                                // TODO: get options from best class (getter/setter pairs)
+                                // we dont have documentation
+                                // add as spring boot options
+
                             }
                         }
 
