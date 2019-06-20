@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -172,7 +173,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
     
     private static void addFileToZip(File source, File file, String fileName) throws IOException {
-        File tmpZip = File.createTempFile(source.getName(), null);
+        File tmpZip = Files.createTempFile(source.getName(), null).toFile();
         tmpZip.delete();
         if (!source.renameTo(tmpZip)) {
             throw new IOException("Could not make temp file (" + source.getName() + ")");
@@ -206,7 +207,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
     
     private static void addEntryToZip(File source, String entryName, byte[] buffer, int length) throws IOException {
-        File tmpZip = File.createTempFile(source.getName(), null);
+        File tmpZip = Files.createTempFile(source.getName(), null).toFile();
         tmpZip.delete();
         if (!source.renameTo(tmpZip)) {
             throw new IOException("Cannot create temp file: " + source.getName());

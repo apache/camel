@@ -106,7 +106,7 @@ public final class FileUtil {
         // create parent folder
         parent.mkdirs();
 
-        return File.createTempFile(prefix, suffix, parent);
+        return Files.createTempFile(parent.toPath(), prefix, suffix).toFile();
     }
 
     /**
