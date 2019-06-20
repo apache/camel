@@ -1,232 +1,20 @@
 {
   "properties": [
     {
-      "name": "camel.main.name",
-      "type": "java.lang.String",
-      "description": "Sets the name of the CamelContext."
-    },
-    {
-      "name": "camel.main.duration-max-seconds",
-      "type": "java.lang.Integer",
-      "description": "To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while."
-    },
-    {
-      "name": "camel.main.duration-max-idle-seconds",
-      "type": "java.lang.Integer",
-      "description": "To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while."
-    },
-    {
-      "name": "camel.main.duration-max-messages",
-      "type": "java.lang.Integer",
-      "description": "To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Camel for a short while."
-    },
-    {
-      "name": "camel.main.shutdown-timeout",
-      "type": "java.lang.Integer",
-      "description": "Timeout in seconds to graceful shutdown Camel.",
-      "defaultValue": 300
-    },
-    {
-      "name": "camel.main.shutdown-suppress-logging-on-timeout",
-      "type": "java.lang.Boolean",
-      "description": "Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false."
-    },
-    {
-      "name": "camel.main.shutdown-now-on-timeout",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.shutdown-routes-in-reverse-order",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether routes should be shutdown in reverse or the same order as they where started.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.shutdown-log-inflight-exchanges-on-timeout",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.file-configurations",
-      "type": "java.lang.String",
-      "description": "Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/*.properties, multiple directories can be separated by comma."
-    },
-    {
-      "name": "camel.main.jmx-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Enable JMX in your Camel application.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.producer-template-cache-size",
-      "type": "java.lang.Integer",
-      "description": "Producer template endpoints cache size.",
-      "defaultValue": 1000
-    },
-    {
-      "name": "camel.main.consumer-template-cache-size",
-      "type": "java.lang.Integer",
-      "description": "Consumer template endpoints cache size.",
-      "defaultValue": 1000
-    },
-    {
-      "name": "camel.main.load-type-converters",
-      "type": "java.lang.Boolean",
-      "description": "Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting <tt>@Converter(loader = true)</tt> on your custom type converter classes.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.log-debug-max-chars",
-      "type": "java.lang.Integer",
-      "description": "Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters."
-    },
-    {
-      "name": "camel.main.stream-caching-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether stream caching is enabled or not. Default is false."
-    },
-    {
-      "name": "camel.main.stream-caching-spool-directory",
-      "type": "java.lang.String",
-      "description": "Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory."
-    },
-    {
-      "name": "camel.main.stream-caching-spool-cipher",
-      "type": "java.lang.String",
-      "description": "Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted."
-    },
-    {
-      "name": "camel.main.stream-caching-spool-threshold",
-      "type": "java.lang.Long",
-      "description": "Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to disable overflow to disk."
-    },
-    {
-      "name": "camel.main.stream-caching-spool-used-heap-memory-threshold",
-      "type": "java.lang.Integer",
-      "description": "Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk."
-    },
-    {
-      "name": "camel.main.stream-caching-spool-used-heap-memory-limit",
-      "type": "java.lang.String",
-      "description": "Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use."
-    },
-    {
-      "name": "camel.main.stream-caching-any-spool-rules",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true."
-    },
-    {
-      "name": "camel.main.stream-caching-buffer-size",
-      "type": "java.lang.Integer",
-      "description": "Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096."
-    },
-    {
-      "name": "camel.main.stream-caching-remove-spool-directory-when-stopping",
-      "type": "java.lang.Boolean",
-      "description": "Whether to remove stream caching temporary directory when stopping. This option is default true.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.stream-caching-statistics-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether stream caching statistics is enabled."
-    },
-    {
-      "name": "camel.main.tracing",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether tracing is enabled or not. Default is false."
-    },
-    {
-      "name": "camel.main.message-history",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether message history is enabled or not. Default is true.",
-      "defaultValue": true
-    },
-    {
-      "name": "camel.main.log-mask",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether log mask is enabled or not. Default is false."
-    },
-    {
-      "name": "camel.main.log-exhausted-message-body",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether to log exhausted message body with message history. Default is false."
-    },
-    {
-      "name": "camel.main.handle-fault",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether fault handling is enabled or not. Default is false."
-    },
-    {
-      "name": "camel.main.auto-startup",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.",
-      "defaultValue": true
-    },
-    {
       "name": "camel.main.allow-use-original-message",
       "type": "java.lang.Boolean",
       "description": "Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false."
     },
     {
-      "name": "camel.main.endpoint-runtime-statistics-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false."
-    },
-    {
-      "name": "camel.main.use-data-type",
-      "type": "java.lang.Boolean",
-      "description": "Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off."
-    },
-    {
-      "name": "camel.main.use-breadcrumb",
-      "type": "java.lang.Boolean",
-      "description": "Set whether breadcrumb is enabled. The default value is false."
-    },
-    {
-      "name": "camel.main.jmx-management-statistics-level",
-      "type": "org.apache.camel.ManagementStatisticsLevel",
-      "description": "Sets the JMX statistics level The level can be set to Extended to gather additional information The default value is Default.",
-      "defaultValue": "ManagementStatisticsLevel.Default"
-    },
-    {
-      "name": "camel.main.jmx-management-name-pattern",
-      "type": "java.lang.String",
-      "description": "The naming pattern for creating the CamelContext JMX management name. The default pattern is #name#",
-      "defaultValue": "#name#"
-    },
-    {
-      "name": "camel.main.jmx-create-connector",
-      "type": "java.lang.Boolean",
-      "description": "Whether JMX connector is created, allowing clients to connect remotely The default value is false."
-    },
-    {
-      "name": "camel.main.use-mdc-logging",
-      "type": "java.lang.Boolean",
-      "description": "To turn on MDC logging"
-    },
-    {
-      "name": "camel.main.thread-name-pattern",
-      "type": "java.lang.String",
-      "description": "Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc."
-    },
-    {
-      "name": "camel.main.route-filter-include-pattern",
-      "type": "java.lang.String",
-      "description": "Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by  {@link PatternHelper#matchPattern(String,String)} . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
-    },
-    {
-      "name": "camel.main.route-filter-exclude-pattern",
-      "type": "java.lang.String",
-      "description": "Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by  {@link PatternHelper#matchPattern(String,String)} . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
-    },
-    {
       "name": "camel.main.auto-configuration-enabled",
       "type": "java.lang.Boolean",
       "description": "Whether auto configuration of components/dataformats/languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF/services/org/apache/camel/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. <p/> The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the  {@link org.apache.camel.spi.Registry#bind(String,Object)}  method or by using the  {@link org.apache.camel.BindToRegistry}  annotation style. <p/> This option is default enabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.auto-startup",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.",
       "defaultValue": true
     },
     {
@@ -236,15 +24,21 @@
       "defaultValue": true
     },
     {
+      "name": "camel.main.autowire-component-properties-allow-private-setter",
+      "type": "java.lang.Boolean",
+      "description": "Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
+      "defaultValue": true
+    },
+    {
       "name": "camel.main.autowire-component-properties-deep",
       "type": "java.lang.Boolean",
       "description": "Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. <p/> This option is default disabled."
     },
     {
-      "name": "camel.main.autowire-component-properties-allow-private-setter",
-      "type": "java.lang.Boolean",
-      "description": "Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
-      "defaultValue": true
+      "name": "camel.main.consumer-template-cache-size",
+      "type": "java.lang.Integer",
+      "description": "Consumer template endpoints cache size.",
+      "defaultValue": 1000
     },
     {
       "name": "camel.main.duration",
@@ -258,20 +52,45 @@
       "description": "Sets the exit code for the application if duration was hit"
     },
     {
+      "name": "camel.main.duration-max-idle-seconds",
+      "type": "java.lang.Integer",
+      "description": "To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Camel for a short while."
+    },
+    {
+      "name": "camel.main.duration-max-messages",
+      "type": "java.lang.Integer",
+      "description": "To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Camel for a short while."
+    },
+    {
+      "name": "camel.main.duration-max-seconds",
+      "type": "java.lang.Integer",
+      "description": "To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while."
+    },
+    {
+      "name": "camel.main.endpoint-runtime-statistics-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false."
+    },
+    {
+      "name": "camel.main.file-configurations",
+      "type": "java.lang.String",
+      "description": "Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from sub directories and a name pattern such as /var/app/secret/*.properties, multiple directories can be separated by comma."
+    },
+    {
+      "name": "camel.main.handle-fault",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether fault handling is enabled or not. Default is false."
+    },
+    {
       "name": "camel.main.hangup-interceptor-enabled",
       "type": "java.lang.Boolean",
       "description": "Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
       "defaultValue": true
     },
     {
-      "name": "camel.main.hystrix.group-key",
-      "type": "java.lang.String",
-      "description": "Sets the group key to use. The default value is CamelHystrix."
-    },
-    {
-      "name": "camel.main.hystrix.thread-pool-key",
-      "type": "java.lang.String",
-      "description": "Sets the thread pool key to use. Will by default use the same value as groupKey has been configured to use."
+      "name": "camel.main.hystrix.allow-maximum-size-to-diverge-from-core-size",
+      "type": "java.lang.Boolean",
+      "description": "Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than coreSize"
     },
     {
       "name": "camel.main.hystrix.circuit-breaker-enabled",
@@ -304,6 +123,11 @@
       "description": "The time in milliseconds after a HystrixCircuitBreaker trips open that it should wait before trying requests again."
     },
     {
+      "name": "camel.main.hystrix.core-pool-size",
+      "type": "java.lang.Integer",
+      "description": "Core thread-pool size that gets passed to  {@link java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)}"
+    },
+    {
       "name": "camel.main.hystrix.execution-isolation-semaphore-max-concurrent-requests",
       "type": "java.lang.Integer",
       "description": "Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond the concurrent limit will be rejected. <p> Applicable only when executionIsolationStrategy == SEMAPHORE."
@@ -319,14 +143,19 @@
       "description": "Whether the execution thread should attempt an interrupt (using  {@link Future#cancel} ) when a thread times out. <p> Applicable only when executionIsolationStrategy() == THREAD."
     },
     {
+      "name": "camel.main.hystrix.execution-timeout-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether the timeout mechanism is enabled for this command"
+    },
+    {
       "name": "camel.main.hystrix.execution-timeout-in-milliseconds",
       "type": "java.lang.Integer",
       "description": "Time in milliseconds at which point the command will timeout and halt execution. <p> If  {@link #executionIsolationThreadInterruptOnTimeout}  == true and the command is thread-isolated, the executing thread will be interrupted. If the command is semaphore-isolated and a HystrixObservableCommand, that command will get unsubscribed."
     },
     {
-      "name": "camel.main.hystrix.execution-timeout-enabled",
+      "name": "camel.main.hystrix.fallback-enabled",
       "type": "java.lang.Boolean",
-      "description": "Whether the timeout mechanism is enabled for this command"
+      "description": "Whether HystrixCommand.getFallback() should be attempted when failure occurs."
     },
     {
       "name": "camel.main.hystrix.fallback-isolation-semaphore-max-concurrent-requests",
@@ -334,9 +163,24 @@
       "description": "Number of concurrent requests permitted to HystrixCommand.getFallback(). Requests beyond the concurrent limit will fail-fast and not attempt retrieving a fallback."
     },
     {
-      "name": "camel.main.hystrix.fallback-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Whether HystrixCommand.getFallback() should be attempted when failure occurs."
+      "name": "camel.main.hystrix.group-key",
+      "type": "java.lang.String",
+      "description": "Sets the group key to use. The default value is CamelHystrix."
+    },
+    {
+      "name": "camel.main.hystrix.keep-alive-time",
+      "type": "java.lang.Integer",
+      "description": "Keep-alive time in minutes that gets passed to  {@link ThreadPoolExecutor#setKeepAliveTime(long,TimeUnit)}"
+    },
+    {
+      "name": "camel.main.hystrix.maximum-size",
+      "type": "java.lang.Integer",
+      "description": "Maximum thread-pool size that gets passed to  {@link ThreadPoolExecutor#setMaximumPoolSize(int)} . This is the maximum amount of concurrency that can be supported without starting to reject HystrixCommands. Please note that this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize"
+    },
+    {
+      "name": "camel.main.hystrix.max-queue-size",
+      "type": "java.lang.Integer",
+      "description": "Max queue size that gets passed to  {@link BlockingQueue}  in HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect the instantiation of a threadpool - it is not eliglible to change a queue size on the fly. For that, use queueSizeRejectionThreshold()."
     },
     {
       "name": "camel.main.hystrix.metrics-health-snapshot-interval-in-milliseconds",
@@ -354,19 +198,14 @@
       "description": "Whether percentile metrics should be captured using HystrixRollingPercentile inside HystrixCommandMetrics."
     },
     {
-      "name": "camel.main.hystrix.metrics-rolling-percentile-window-in-milliseconds",
-      "type": "java.lang.Integer",
-      "description": "Duration of percentile rolling window in milliseconds. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
-    },
-    {
       "name": "camel.main.hystrix.metrics-rolling-percentile-window-buckets",
       "type": "java.lang.Integer",
       "description": "Number of buckets the rolling percentile window is broken into. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
     },
     {
-      "name": "camel.main.hystrix.metrics-rolling-statistical-window-in-milliseconds",
+      "name": "camel.main.hystrix.metrics-rolling-percentile-window-in-milliseconds",
       "type": "java.lang.Integer",
-      "description": "This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool. The window is divided into buckets and “rolls” by those increments."
+      "description": "Duration of percentile rolling window in milliseconds. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics."
     },
     {
       "name": "camel.main.hystrix.metrics-rolling-statistical-window-buckets",
@@ -374,29 +213,9 @@
       "description": "Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside HystrixCommandMetrics."
     },
     {
-      "name": "camel.main.hystrix.request-log-enabled",
-      "type": "java.lang.Boolean",
-      "description": "Whether HystrixCommand execution and events should be logged to HystrixRequestLog."
-    },
-    {
-      "name": "camel.main.hystrix.core-pool-size",
+      "name": "camel.main.hystrix.metrics-rolling-statistical-window-in-milliseconds",
       "type": "java.lang.Integer",
-      "description": "Core thread-pool size that gets passed to  {@link java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)}"
-    },
-    {
-      "name": "camel.main.hystrix.maximum-size",
-      "type": "java.lang.Integer",
-      "description": "Maximum thread-pool size that gets passed to  {@link ThreadPoolExecutor#setMaximumPoolSize(int)} . This is the maximum amount of concurrency that can be supported without starting to reject HystrixCommands. Please note that this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize"
-    },
-    {
-      "name": "camel.main.hystrix.keep-alive-time",
-      "type": "java.lang.Integer",
-      "description": "Keep-alive time in minutes that gets passed to  {@link ThreadPoolExecutor#setKeepAliveTime(long,TimeUnit)}"
-    },
-    {
-      "name": "camel.main.hystrix.max-queue-size",
-      "type": "java.lang.Integer",
-      "description": "Max queue size that gets passed to  {@link BlockingQueue}  in HystrixConcurrencyStrategy.getBlockingQueue(int) This should only affect the instantiation of a threadpool - it is not eliglible to change a queue size on the fly. For that, use queueSizeRejectionThreshold()."
+      "description": "This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool. The window is divided into buckets and “rolls” by those increments."
     },
     {
       "name": "camel.main.hystrix.queue-size-rejection-threshold",
@@ -404,9 +223,14 @@
       "description": "Queue size rejection threshold is an artificial max size at which rejections will occur even if  {@link #maxQueueSize}  has not been reached. This is done because the  {@link #maxQueueSize} of a  {@link BlockingQueue}  can not be dynamically changed and we want to support dynamically changing the queue size that affects rejections. <p> This is used by HystrixCommand when queuing a thread for execution."
     },
     {
-      "name": "camel.main.hystrix.thread-pool-rolling-number-statistical-window-in-milliseconds",
-      "type": "java.lang.Integer",
-      "description": "Duration of statistical rolling window in milliseconds. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
+      "name": "camel.main.hystrix.request-log-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether HystrixCommand execution and events should be logged to HystrixRequestLog."
+    },
+    {
+      "name": "camel.main.hystrix.thread-pool-key",
+      "type": "java.lang.String",
+      "description": "Sets the thread pool key to use. Will by default use the same value as groupKey has been configured to use."
     },
     {
       "name": "camel.main.hystrix.thread-pool-rolling-number-statistical-window-buckets",
@@ -414,9 +238,185 @@
       "description": "Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
     },
     {
-      "name": "camel.main.hystrix.allow-maximum-size-to-diverge-from-core-size",
+      "name": "camel.main.hystrix.thread-pool-rolling-number-statistical-window-in-milliseconds",
+      "type": "java.lang.Integer",
+      "description": "Duration of statistical rolling window in milliseconds. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
+    },
+    {
+      "name": "camel.main.jmx-create-connector",
       "type": "java.lang.Boolean",
-      "description": "Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than coreSize"
+      "description": "Whether JMX connector is created, allowing clients to connect remotely The default value is false."
+    },
+    {
+      "name": "camel.main.jmx-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable JMX in your Camel application.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.jmx-management-name-pattern",
+      "type": "java.lang.String",
+      "description": "The naming pattern for creating the CamelContext JMX management name. The default pattern is #name#",
+      "defaultValue": "#name#"
+    },
+    {
+      "name": "camel.main.jmx-management-statistics-level",
+      "type": "org.apache.camel.ManagementStatisticsLevel",
+      "description": "Sets the JMX statistics level The level can be set to Extended to gather additional information The default value is Default.",
+      "defaultValue": "ManagementStatisticsLevel.Default"
+    },
+    {
+      "name": "camel.main.load-type-converters",
+      "type": "java.lang.Boolean",
+      "description": "Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting <tt>@Converter(loader = true)</tt> on your custom type converter classes.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.log-debug-max-chars",
+      "type": "java.lang.Integer",
+      "description": "Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000 characters."
+    },
+    {
+      "name": "camel.main.log-exhausted-message-body",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether to log exhausted message body with message history. Default is false."
+    },
+    {
+      "name": "camel.main.log-mask",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether log mask is enabled or not. Default is false."
+    },
+    {
+      "name": "camel.main.message-history",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether message history is enabled or not. Default is true.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.name",
+      "type": "java.lang.String",
+      "description": "Sets the name of the CamelContext."
+    },
+    {
+      "name": "camel.main.producer-template-cache-size",
+      "type": "java.lang.Integer",
+      "description": "Producer template endpoints cache size.",
+      "defaultValue": 1000
+    },
+    {
+      "name": "camel.main.route-filter-exclude-pattern",
+      "type": "java.lang.String",
+      "description": "Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by  {@link PatternHelper#matchPattern(String,String)} . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
+    },
+    {
+      "name": "camel.main.route-filter-include-pattern",
+      "type": "java.lang.String",
+      "description": "Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by  {@link PatternHelper#matchPattern(String,String)} . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
+    },
+    {
+      "name": "camel.main.shutdown-log-inflight-exchanges-on-timeout",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.shutdown-now-on-timeout",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.shutdown-routes-in-reverse-order",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether routes should be shutdown in reverse or the same order as they where started.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.shutdown-suppress-logging-on-timeout",
+      "type": "java.lang.Boolean",
+      "description": "Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false."
+    },
+    {
+      "name": "camel.main.shutdown-timeout",
+      "type": "java.lang.Integer",
+      "description": "Timeout in seconds to graceful shutdown Camel.",
+      "defaultValue": 300
+    },
+    {
+      "name": "camel.main.stream-caching-any-spool-rules",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true."
+    },
+    {
+      "name": "camel.main.stream-caching-buffer-size",
+      "type": "java.lang.Integer",
+      "description": "Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096."
+    },
+    {
+      "name": "camel.main.stream-caching-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether stream caching is enabled or not. Default is false."
+    },
+    {
+      "name": "camel.main.stream-caching-remove-spool-directory-when-stopping",
+      "type": "java.lang.Boolean",
+      "description": "Whether to remove stream caching temporary directory when stopping. This option is default true.",
+      "defaultValue": true
+    },
+    {
+      "name": "camel.main.stream-caching-spool-cipher",
+      "type": "java.lang.String",
+      "description": "Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted."
+    },
+    {
+      "name": "camel.main.stream-caching-spool-directory",
+      "type": "java.lang.String",
+      "description": "Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory."
+    },
+    {
+      "name": "camel.main.stream-caching-spool-threshold",
+      "type": "java.lang.Long",
+      "description": "Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to disable overflow to disk."
+    },
+    {
+      "name": "camel.main.stream-caching-spool-used-heap-memory-limit",
+      "type": "java.lang.String",
+      "description": "Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use."
+    },
+    {
+      "name": "camel.main.stream-caching-spool-used-heap-memory-threshold",
+      "type": "java.lang.Integer",
+      "description": "Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk."
+    },
+    {
+      "name": "camel.main.stream-caching-statistics-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether stream caching statistics is enabled."
+    },
+    {
+      "name": "camel.main.thread-name-pattern",
+      "type": "java.lang.String",
+      "description": "Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc."
+    },
+    {
+      "name": "camel.main.tracing",
+      "type": "java.lang.Boolean",
+      "description": "Sets whether tracing is enabled or not. Default is false."
+    },
+    {
+      "name": "camel.main.use-breadcrumb",
+      "type": "java.lang.Boolean",
+      "description": "Set whether breadcrumb is enabled. The default value is false."
+    },
+    {
+      "name": "camel.main.use-data-type",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off."
+    },
+    {
+      "name": "camel.main.use-mdc-logging",
+      "type": "java.lang.Boolean",
+      "description": "To turn on MDC logging"
     },
     {
       "name": "camel.component.bean.cache",
@@ -947,7 +947,7 @@
       "defaultValue": false
     },
     {
-      "name": "camel.component.jms.include-all-jms-x-properties",
+      "name": "camel.component.jms.include-all-jmsx-properties",
       "type": "java.lang.Boolean",
       "description": "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.",
       "defaultValue": false

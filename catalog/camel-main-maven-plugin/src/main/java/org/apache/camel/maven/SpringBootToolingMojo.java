@@ -33,6 +33,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import static org.apache.camel.util.StringHelper.camelCaseToDash;
+
 /**
  * Pre scans your project and builds spring boot tooling metafiles which fools tools to
  * offer code completion for editing properties files.
@@ -131,32 +133,7 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
             }
         }
     }
-
-    private static String camelCaseToDash(String name) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-            char ch = name.charAt(i);
-            if (Character.isUpperCase(ch)) {
-                sb.append("-");
-                sb.append(Character.toLowerCase(ch));
-            } else {
-                sb.append(ch);
-            }
-        }
-
-        // somme words we dont want ID -> i-d, but keep it as id
-        String answer = sb.toString();
-        answer = answer.replaceAll("-i-d-", "-id-");
-        answer = answer.replaceAll("-u-r-i-", "-uri-");
-        answer = answer.replaceAll("-u-r-l-", "-url-");
-        answer = answer.replaceAll("-j-m-s-", "-jms-");
-        answer = answer.replaceAll("-j-m-x-", "-jmx-");
-        answer = answer.replaceFirst("-i-d$", "-id");
-        answer = answer.replaceFirst("-u-r-i$", "-uri");
-        answer = answer.replaceFirst("-u-r-l$", "-url");
-        return answer;
-    }
-
+    
     private static String springBootJavaType(String javaType) {
         if ("boolean".equalsIgnoreCase(javaType)) {
             return "java.lang.Boolean";
