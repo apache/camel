@@ -35,7 +35,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            com.fasterxml.jackson.*;version="[2.6,3)"
+            com.fasterxml.jackson.*;version="[2.9,3)"
         </camel.osgi.import.before.defaults>
     </properties>
 
