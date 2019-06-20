@@ -122,7 +122,7 @@ public abstract class AbstractFeatureTest {
                 .set("Bundle-ManifestVersion", "2")
                 .set("Bundle-SymbolicName", name)
                 .set("Bundle-Version", "1.0.0")
-                .set("DynamicImport-Package", "*");
+                .set(Constants.DYNAMICIMPORT_PACKAGE, "*");
         consumer.accept(bundle);
         Bundle answer = bundleContext.installBundle(name, bundle.build());
 
