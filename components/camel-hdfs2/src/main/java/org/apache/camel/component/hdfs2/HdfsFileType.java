@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,7 +140,7 @@ public enum HdfsFileType {
             try {
                 String fname = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
 
-                File outputDest = File.createTempFile(fname, ".hdfs");
+                File outputDest = Files.createTempFile(fname, ".hdfs").toFile();
                 if (outputDest.exists()) {
                     outputDest.delete();
                 }
