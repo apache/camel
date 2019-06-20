@@ -83,6 +83,10 @@
             <artifactId>camel-main-parser</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util</artifactId>
+        </dependency>
 
         <!-- logging -->
         <dependency>
