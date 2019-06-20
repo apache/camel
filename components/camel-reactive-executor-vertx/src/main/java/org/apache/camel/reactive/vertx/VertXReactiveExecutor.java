@@ -76,7 +76,7 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
         vertx.executeBlocking(future -> {
             task.run();
             future.complete();
-        }, res -> {});
+        }, res -> { });
     }
 
     @Override
