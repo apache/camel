@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -67,7 +68,7 @@ public class BonitaAPIUtil {
             .resolveTemplate("processName", processDefinition.getName())
             .resolveTemplate("processVersion", processDefinition.getVersion());
 
-        File tempFile = File.createTempFile("tempFile", ".tmp");
+        File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
         FileOutputStream fos = new FileOutputStream(tempFile);
         fos.write(file.getContent());
         fos.close();
