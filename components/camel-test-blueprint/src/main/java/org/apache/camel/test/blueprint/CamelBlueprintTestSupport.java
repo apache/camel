@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -531,7 +532,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private String prepareInitialConfigFile(Properties initialConfiguration) throws IOException {
         File dir = new File("target/etc");
         dir.mkdirs();
-        File cfg = File.createTempFile("properties-", ".cfg", dir);
+        File cfg = Files.createTempFile(dir.toPath(), "properties-", ".cfg").toFile();
         FileWriter writer = new FileWriter(cfg);
         try {
             initialConfiguration.store(writer, null);
