@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.12*
 
-The *quartz2:* component provides a scheduled delivery of messages using
+The Quartz2 component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +
  Each endpoint represents a different timer (in Quartz terms, a Trigger
 and JobDetail).
@@ -219,8 +219,7 @@ You need to configure the quartz scheduler properties to enable JMX. +
 `"org.quartz.scheduler.jmx.export"` to a `true` value in the
 configuration file.
 
-From Camel 2.13 onwards Camel will automatic set this option to true,
-unless explicit disabled.
+This option is set to true by default, unless explicitly disabled.
 
 === Starting the Quartz scheduler
 
