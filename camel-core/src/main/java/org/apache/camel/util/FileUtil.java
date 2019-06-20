@@ -300,7 +300,14 @@ public final class FileUtil {
         boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
 
         // preserve starting slash if given in input path
-        boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
+        int cntSlashsAtStart = 0;
+        if (path.startsWith("/") || path.startsWith("\\")) {
+            cntSlashsAtStart++;
+            // for Windows, preserve up to 2 starting slashes, which is necessary for UNC paths.
+            if (isWindows() && path.length() > 1 && (path.charAt(1) == '/' || path.charAt(1) == '\\')) {
+                cntSlashsAtStart++;
+            }
+        }
         
         Deque<String> stack = new ArrayDeque<>();
 
@@ -321,7 +328,7 @@ public final class FileUtil {
         // build path based on stack
         StringBuilder sb = new StringBuilder();
         
-        if (startsWithSlash) {
+        for (int i = 0; i < cntSlashsAtStart; i++) {
             sb.append(separator);
         }
 
