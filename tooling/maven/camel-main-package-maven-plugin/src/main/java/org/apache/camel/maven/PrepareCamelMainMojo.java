@@ -78,6 +78,9 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             }
         }
 
+        // lets sort so they are always ordered
+        data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+
         if (!data.isEmpty()) {
             StringBuilder sb = new StringBuilder();
 
