@@ -32,11 +32,9 @@ import org.junit.Test;
 @Ignore("Require a running Nats server")
 public class NatsProducerTLSTest extends CamelTestSupport {
    
+    @BindToRegistry("ssl")
+    SSLContextParameters ssl = createSSLContextParameters();
 
-	@BindToRegistry("ssl")
-	SSLContextParameters ssl = createSSLContextParameters();
-
-	
     @Test
     public void sendTest() throws Exception {
         
