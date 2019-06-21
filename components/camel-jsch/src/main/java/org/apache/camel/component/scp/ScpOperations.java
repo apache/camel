@@ -174,7 +174,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         if (!isConnected()) {
             session = createSession(configuration instanceof ScpConfiguration ? (ScpConfiguration)configuration : null);
             // TODO: deal with reconnection attempts

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.net.ssl.SSLException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -35,8 +36,8 @@ public class FtpsOperations extends FtpOperations {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
-        boolean answer = super.connect(configuration);
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+        boolean answer = super.connect(configuration, exchange);
 
         FtpsConfiguration config = (FtpsConfiguration) configuration;
         if (answer) {
@@ -61,12 +62,24 @@ public class FtpsOperations extends FtpOperations {
                     log.debug("FTPClient initializing with execProt={}", execProt);
                     getFtpClient().execPROT(execProt);
                 }
+
+                if (exchange != null) {
+                    // store client reply information after the operation
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                }
             } catch (SSLException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(),
                         client.getReplyString(), e.getMessage(), e);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(),
                         client.getReplyString(), e.getMessage(), e);
+            } finally {
+                if (exchange != null) {
+                    // store client reply information after the operation
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
+                    exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+                }
             }
         }
 
