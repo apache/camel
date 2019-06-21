@@ -25,23 +25,19 @@ $ mvn compile
 
 ### Run the example
 
-Then using three different shells and run service1 and service2 before the client.
+Then using three different shells and run service1 and service2 before the client. These services use an annotation _CamelOpenTracing_ to indicate that the service should be traced.
 
 ```sh
 $ cd service1
 $ mvn compile spring-boot:run
 ```
 
-This service uses an annotation _CamelOpenTracing_ to indicate that the service should be traced.
-
 When service1 is ready then start service2
 
 ```sh
 $ cd service2
-$ mvn compile exec:exec
+$ mvn compile spring-boot:run
 ```
-
-This service is instrumented using an OpenTracing Java Agent, so the code does not need to be modified. The only requirement is that the OpenTracing Tracer and Camel OpenTracing component dependencies are added, and that the _opentracing-agent.jar_ Java Agent is specified when executing the service.
 
 And then start the client that calls service1 every 30 seconds.
 
