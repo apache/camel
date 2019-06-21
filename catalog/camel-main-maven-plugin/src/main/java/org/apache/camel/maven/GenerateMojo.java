@@ -317,7 +317,14 @@ public class GenerateMojo extends AbstractMainMojo {
                 if ("#skip#".equals(k)) {
                     return null;
                 }
-                Class found = candidates.stream().filter(c -> c.getName().equals(k)).findFirst().orElse(null);
+                // jump to after the leading prefix to have the classname
+                if (k.startsWith("#class:")) {
+                    k = k.substring(7);
+                } else if (k.startsWith("#type:")) {
+                    k = k.substring(6);
+                }
+                final String candiateName = k;
+                Class found = candidates.stream().filter(c -> c.getName().equals(candiateName)).findFirst().orElse(null);
                 if (found != null) {
                     return found;
                 }

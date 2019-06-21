@@ -39,6 +39,14 @@
 
     <dependencies>
 
+        <!-- to have spring boot tooling support in IDEA you need spring-boot JARs on the classpath -->
+<!--
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-boot-starter</artifactId>
+        </dependency>
+-->
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -110,6 +118,8 @@
                     <!-- <logUnmapped>true</logUnmapped> -->
                     <!-- just include only the jms component -->
                     <!-- <include>jms</include> -->
+                    <!-- to use spring caching connection factory instead of the default -->
+                    <!-- <mappings>javax.jms.ConnectionFactory=#class:org.springframework.jms.connection.CachingConnectionFactory</mappings> -->
                 </configuration>
                 <executions>
                     <execution>
