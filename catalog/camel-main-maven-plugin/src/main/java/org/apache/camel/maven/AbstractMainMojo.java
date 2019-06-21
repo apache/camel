@@ -32,14 +32,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.catalog.maven.MavenVersionManager;
-import org.apache.camel.maven.model.AutowireData;
-import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -293,7 +290,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
         return artifacts;
     }
 
-    protected String safeJavaType(String javaType) {
+    static String safeJavaType(String javaType) {
         int pos = javaType.indexOf('<');
         if (pos > 0) {
             return javaType.substring(0, pos);

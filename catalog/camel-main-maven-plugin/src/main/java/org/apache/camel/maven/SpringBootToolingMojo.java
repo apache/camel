@@ -38,6 +38,7 @@ import static org.apache.camel.util.StringHelper.camelCaseToDash;
  * offer code completion for editing properties files.
  */
 @Mojo(name = "spring-boot-tooling", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Deprecated
 public class SpringBootToolingMojo extends AbstractMainMojo {
 
     /**

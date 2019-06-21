@@ -115,8 +115,7 @@
                     <execution>
                         <id>generate</id>
                         <goals>
-                            <goal>autowire</goal>
-                            <goal>spring-boot-tooling</goal>
+                            <goal>generate</goal>
                         </goals>
                         <phase>process-classes</phase>
                     </execution>
