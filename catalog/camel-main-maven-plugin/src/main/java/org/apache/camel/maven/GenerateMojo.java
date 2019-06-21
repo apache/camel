@@ -1,13 +1,13 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,14 +24,12 @@ import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.maven.model.AutowireData;
+import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -42,14 +40,14 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.reflections.Reflections;
+
+import static org.apache.camel.util.StringHelper.camelCaseToDash;
 
 /**
- * Pre scans your project and prepare autowiring by classpath scanning
+ * Pre scans your project and prepares autowiring and spring-boot tooling support by classpath scanning.
  */
-@Mojo(name = "autowire", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
-@Deprecated
-public class AutowireMojo extends AbstractMainMojo {
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
+public class GenerateMojo extends AbstractMainMojo {
 
     /**
      * When autowiring has detected multiple implementations (2 or more) of a given interface, which
@@ -62,7 +60,13 @@ public class AutowireMojo extends AbstractMainMojo {
      * The output directory for generated autowire file
      */
     @Parameter(readonly = true, defaultValue = "${project.build.directory}/classes/META-INF/services/org/apache/camel/")
-    protected File outFolder;
+    protected File outAutowireFolder;
+
+    /**
+     * The output directory for generated spring boot tooling file
+     */
+    @Parameter(readonly = true, defaultValue = "${project.build.directory}/../src/main/resources/META-INF/")
+    protected File outSpringBootFolder;
 
     /**
      * To exclude autowiring specific properties with these key names.
@@ -91,6 +95,7 @@ public class AutowireMojo extends AbstractMainMojo {
     @Parameter(defaultValue = "${project.build.directory}/classes/camel-main-mappings.properties")
     protected File mappingsFile;
 
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // load default mappings
@@ -113,10 +118,19 @@ public class AutowireMojo extends AbstractMainMojo {
             mappingProperties.putAll(mappingFileProperties);
         }
 
-        final List<AutowireData> autowires = new ArrayList<>();
+        final List<AutowireData> autowireData = new ArrayList<>();
+        final List<SpringBootData> springBootData = new ArrayList<>();
+
         ComponentCallback callback = (componentName, name, type, javaType, description, defaultValue) -> {
+            // gather spring boot data
+            // we want to use dash in the name
+            String dash = camelCaseToDash(name);
+            String key = "camel.component." + componentName + "." + dash;
+            springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, defaultValue));
+
+            // check if we can do automatic autowire to complex singleton objects from classes in the classpath
             if ("object".equals(type)) {
-                if (!isValidPropertyName(componentName, name)) {
+                if (!isValidAutowirePropertyName(componentName, name)) {
                     getLog().debug("Skipping property name: " + name);
                     return;
                 }
@@ -134,15 +148,14 @@ public class AutowireMojo extends AbstractMainMojo {
                                 .collect(Collectors.toSet());
                         Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
                         if (best != null) {
-                            String key = "camel.component." + componentName + "." + name;
+                            key = "camel.component." + componentName + "." + name;
                             String value = "#class:" + best.getName();
                             getLog().debug(key + "=" + value);
-                            autowires.add(new AutowireData(key, value));
+                            autowireData.add(new AutowireData(key, value));
 
                             // TODO: get options from best class (getter/setter pairs)
                             // we dont have documentation
                             // add as spring boot options
-
                         }
                     }
 
@@ -153,23 +166,84 @@ public class AutowireMojo extends AbstractMainMojo {
             }
         };
 
-        // perform the work with this callback
+        // execute with the callback
         doExecute(callback);
 
-        if (!autowires.isEmpty()) {
-            outFolder.mkdirs();
-            File file = new File(outFolder, "autowire.properties");
+        // write the output files
+        writeAutowireFile(autowireData);
+        writeSpringBootFile(springBootData);
+    }
+
+    protected void writeSpringBootFile(List<SpringBootData> springBootData) throws MojoFailureException {
+        if (!springBootData.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < springBootData.size(); i++) {
+                SpringBootData row = springBootData.get(i);
+                sb.append("    {\n");
+                sb.append("      \"name\": \"" + row.getName() + "\",\n");
+                sb.append("      \"type\": \"" + row.getJavaType() + "\",\n");
+                sb.append("      \"description\": \"" + row.getDescription() + "\"");
+                if (row.getDefaultValue() != null) {
+                    sb.append(",\n");
+                    if (springBootDefaultValueQuotes(row.getJavaType())) {
+                        sb.append("      \"defaultValue\": \"" + row.getDefaultValue() + "\"\n");
+                    } else {
+                        sb.append("      \"defaultValue\": " + row.getDefaultValue() + "\n");
+                    }
+                } else {
+                    sb.append("\n");
+                }
+                if (i < springBootData.size() - 1) {
+                    sb.append("    },\n");
+                } else {
+                    sb.append("    }\n");
+                }
+            }
+            sb.append("  ]\n");
+            sb.append("}\n");
+
+            // okay then add the components into the main json at the end so they get merged together
+            // load camel-main metadata
+            String mainJson = loadCamelMainConfigurationMetadata();
+            if (mainJson == null) {
+                getLog().warn("Cannot load camel-main-configuration-metadata.json from within the camel-main JAR from the classpath."
+                        + " Not possible to build spring boot configuration file for this project");
+                return;
+            }
+            int pos = mainJson.lastIndexOf("    }");
+            String newJson = mainJson.substring(0, pos);
+            newJson = newJson + "    },\n";
+            newJson = newJson + sb.toString();
+
+            outSpringBootFolder.mkdirs();
+            File file = new File(outSpringBootFolder, "spring-configuration-metadata.json");
+            try {
+                FileOutputStream fos = new FileOutputStream(file, false);
+                fos.write(newJson.getBytes());
+                IOHelper.close(fos);
+                getLog().info("Created file: " + file);
+            } catch (Throwable e) {
+                throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
+            }
+        }
+    }
+
+    protected void writeAutowireFile(List<AutowireData> autowireData) throws MojoFailureException {
+        if (!autowireData.isEmpty()) {
+            outAutowireFolder.mkdirs();
+            File file = new File(outAutowireFolder, "autowire.properties");
             try {
                 FileOutputStream fos = new FileOutputStream(file, false);
                 fos.write("# Generated by camel build tools\n".getBytes());
-                for (AutowireData data : autowires) {
+                for (AutowireData data : autowireData) {
                     fos.write(data.getKey().getBytes());
                     fos.write('=');
                     fos.write(data.getValue().getBytes());
                     fos.write('\n');
                 }
                 IOHelper.close(fos);
-                getLog().info("Created file: " + file + " (autowire by classpath: " + autowires.size() + ")");
+                getLog().info("Created file: " + file + " (autowire by classpath: " + autowireData.size() + ")");
             } catch (Throwable e) {
                 throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
             }
@@ -179,7 +253,7 @@ public class AutowireMojo extends AbstractMainMojo {
     protected Properties loadDefaultMappings() throws MojoFailureException {
         Properties mappings = new OrderedProperties();
         try {
-            InputStream is = AutowireMojo.class.getResourceAsStream("/default-mappings.properties");
+            InputStream is = GenerateMojo.class.getResourceAsStream("/default-mappings.properties");
             if (is != null) {
                 mappings.load(is);
             }
@@ -232,7 +306,7 @@ public class AutowireMojo extends AbstractMainMojo {
         return null;
     }
 
-    protected boolean isValidPropertyName(String componentName, String name) {
+    protected boolean isValidAutowirePropertyName(String componentName, String name) {
         // we want to regard names as the same if they are using dash or not, and also to be case insensitive.
         String prefix = "camel.component." + componentName + ".";
         name = StringHelper.dashToCamelCase(name);
@@ -274,9 +348,44 @@ public class AutowireMojo extends AbstractMainMojo {
         return type != null && !type.isPrimitive() && !type.getName().startsWith("java.");
     }
 
-    protected boolean isValidAutowireClass(Class clazz) {
+    private static boolean isValidAutowireClass(Class clazz) {
         // skip all from Apache Camel and regular JDK as they would be default anyway
         return !clazz.getName().startsWith("org.apache.camel");
+    }
+
+    private String loadCamelMainConfigurationMetadata() throws MojoFailureException {
+        try {
+            InputStream is = classLoader.getResourceAsStream("META-INF/camel-main-configuration-metadata.json");
+            String text = IOHelper.loadText(is);
+            IOHelper.close(is);
+            return text;
+        } catch (Throwable e) {
+            throw new MojoFailureException("Error during discovering camel-main from classpath due " + e.getMessage(), e);
+        }
+    }
+
+    private static String springBootJavaType(String javaType) {
+        if ("boolean".equalsIgnoreCase(javaType)) {
+            return "java.lang.Boolean";
+        } else if ("int".equalsIgnoreCase(javaType)) {
+            return "java.lang.Integer";
+        } else if ("long".equalsIgnoreCase(javaType)) {
+            return "java.lang.Long";
+        } else if ("string".equalsIgnoreCase(javaType)) {
+            return "java.lang.String";
+        }
+        return javaType;
+    }
+
+    private static boolean springBootDefaultValueQuotes(String javaType) {
+        if ("java.lang.Boolean".equalsIgnoreCase(javaType)) {
+            return false;
+        } else if ("java.lang.Integer".equalsIgnoreCase(javaType)) {
+            return false;
+        } else if ("java.lang.Long".equalsIgnoreCase(javaType)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -2,11 +2,9 @@
 
 The Camel Main Maven Plugin supports the following goals
 
- - camel-main:autowire - To pre-scan your project and prepare autowiring by classpath scanning
- - camel-main:spring-boot-tooling - To pre-scan your project and builds spring boot tooling metafiles
-   which fools tools to offer code completion for editing properties files.
+ - camel-main:generate - To pre-scan your project and prepare autowiring and sprint boot tooling support by classpath scanning.
 
-== camel:autowire
+== Autowiring
 
 To pre-scan your project and prepare autowiring by classpath scanning.
 The idea is to use this maven plugin at build/compile time and detect what's on the classpath
@@ -22,8 +20,28 @@ JMS client you are using. Another example is JDBC drivers etc. In other words
 its a bit like Spring Boot _starter_ JARs that also offers a similar concept, but
 without the phase of doing this during build time.
 
+== Spring Boot Tooling
+
+To pre-scan your project and builds spring boot tooling metafiles
+which fools tools to offer code completion for editing properties files.
+
+This will generate a Spring Boot tooling metadata file in `src/main/resouces/META-INF/spring-configuration-metadata.json`
+which contains all the options from Camel Main and the components from the classpath.
+
+For example if you have camel-jms on the classpath, then Java tools that has support for Spring Boot,
+can offer code completions when you edit `application.properties` file:
+
 ----
-mvn camel-main:autowire
+camel.component.jms.CURSOR HERE
+----
+
+Just press ctrl + space at the _CURSOR HERE_ location and you will get all the options you
+can configure on the JMS component.
+
+== Using the plugin
+
+----
+mvn camel-main:generate
 ----
 
 You can also enable the plugin to automatic run as part of the build to catch these errors.
@@ -37,7 +55,7 @@ You can also enable the plugin to automatic run as part of the build to catch th
     <execution>
       <phase>process-classes</phase>
       <goals>
-        <goal>autowire</goal>
+        <goal>generate</goal>
       </goals>
     </execution>
   </executions>
@@ -50,14 +68,14 @@ the compilation of the main source code.
 
 === Include and Exclude properties or components
 
-By default the `autowire` goal will scan all the detected Camel components from the classpath.
+By default the plugin will scan all the detected Camel components from the classpath.
 
 For example as shown below, there are 29 detected Camel components,
 and 1 mapping was created in the `autowire.properties` file
 
 [source,text]
 ----
-[INFO] --- camel-main-maven-plugin:3.0.0-SNAPSHOT:autowire (generate) @ camel-example-main-artemis ---
+[INFO] --- camel-main-maven-plugin:3.0.0-SNAPSHOT:generate (generate) @ camel-example-main-artemis ---
 [INFO] Detected Camel version used in project: 3.0.0-SNAPSHOT
 [INFO] Pre-scanning using Camel version: 3.0.0-SNAPSHOT
 [INFO] Discovered 29 Camel components from classpath: [bean, browse, class, controlbus, dataformat, dataset, dataset-test, direct, direct-vm, file, jms, language, log, mock, properties, quartz, quartz2, ref, rest, rest-api, saga, scheduler, seda, spring-event, stub, timer, validator, vm, xslt]
@@ -82,7 +100,7 @@ For example to only include the JMS component you can do:
     <execution>
       <phase>process-classes</phase>
       <goals>
-        <goal>autowire</goal>
+        <goal>generate</goal>
       </goals>
     </execution>
   </executions>
@@ -118,7 +136,7 @@ For example one of the default mappings is as shown:
 javax.jms.ConnectionFactory=org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory;org.apache.activemq.ActiveMQConnectionFactory
 ----
 
-This tells the `autowire` goal that if the value of the property is a `javax.jms.ConnectionFactory` type
+This tells the `generate` goal that if the value of the property is a `javax.jms.ConnectionFactory` type
 then we should only accept the following implementations when scanning the classpath:
 
 - `org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory`
@@ -137,11 +155,11 @@ You can also specify the skip certain types, such as
 org.springframework.jms.core.JmsOperations=#skip#
 ----
 
-Which means the `autowire` goal skips any property values that are of type `org.springframework.jms.core.JmsOperations`.
+Which means the `generate` goal skips any property values that are of type `org.springframework.jms.core.JmsOperations`.
 
 === Options
 
-The maven plugin *autowire* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+The maven plugin *generate* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
 
 |===
 | Parameter | Default Value | Description
@@ -155,62 +173,8 @@ The maven plugin *autowire* goal supports the following options which can be con
 | mappingsFile | | Optional mappings file loaded from classpath, with mapping that override any default mappings. Will by default load the file `camel-main-mappings.properties` from the classpath root.
 |===
 
-==== Examples
+=== Examples
 
 You can find more details and a working example at `examples/camel-example-main-artemis`.
 
 
-== camel:spring-boot-tooling
-
-To pre-scan your project and builds spring boot tooling metafiles
-which fools tools to offer code completion for editing properties files.
-
-----
-mvn camel-main:spring-boot-tooling
-----
-
-This will generate a Spring Boot tooling metadata file in `src/main/resouces/META-INF/spring-configuration-metadata.json`
-which contains all the options from Camel Main and the components from the classpath.
-
-For example if you have camel-jms on the classpath, then Java tools that has support for Spring Boot,
-can offer code completions when you edit `application.properties` file:
-
-----
-camel.component.jms.CURSOR HERE
-----
-
-Just press ctrl + space at the _CURSOR HERE_ location and you will get all the options you
-can configure on the JMS component.
-
-
-You can also enable the plugin to automatic run as part of the build to catch these errors.
-
-[source,xml]
-----
-<plugin>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-main-maven-plugin</artifactId>
-  <executions>
-    <execution>
-      <phase>process-classes</phase>
-      <goals>
-        <goal>spring-boot-tooling</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
-----
-
-The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
-the compilation of the main source code.
-
-=== Options
-
-The maven plugin *spring-boot-tooling* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
-
-|===
-| Parameter | Default Value | Description
-| logClasspath | false | Whether to log the classpath when starting
-| downloadVersion | true | Whether to allow downloading Camel catalog version from the internet.
-  This is needed if the project * uses a different Camel version than this plugin is using by default.
-|===
