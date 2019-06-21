@@ -2,13 +2,13 @@
 == Aggregate EIP
 
 The
-http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
-from the link:enterprise-integration-patterns.html[EIP patterns] allows
+http://www.enterpriseintegrationpatterns.com/Aggregator.adoc[Aggregator]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows
 you to combine a number of messages together into a single message.
 
 image:http://www.enterpriseintegrationpatterns.com/img/Aggregator.gif[image]
 
-A correlation link:expression.html[Expression] is used to determine the
+A correlation xref:expression.adoc[Expression] is used to determine the
 messages which should be aggregated together. If you want to aggregate
 all messages into a single message, just use a constant expression. An
 AggregationStrategy is used to combine all the message exchanges for a
@@ -104,7 +104,7 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 
 === About completion
 
-When aggregation link:exchange.html[Exchange]s at some point you need to
+When aggregation xref:exchange.adoc[Exchange]s at some point you need to
 indicate that the aggregated exchanges is complete, so they can be send
 out of the aggregator. Camel allows you to indicate completion in
 various ways as follows:
@@ -116,7 +116,7 @@ key within the period.
 exchanges are completed.
 * completionSize - Is a number indicating that after X aggregated
 exchanges it's complete.
-* completionPredicate - Runs a link:predicate.html[Predicate] when a new
+* completionPredicate - Runs a xref:predicate.adoc[Predicate] when a new
 exchange is aggregated to determine if we are complete or not. Staring
 in *Camel 2.15*, the configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
@@ -126,7 +126,7 @@ implement `PreCompletionAwareAggregationStrategy` and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
-link:batch-consumer.html[Batch Consumer] which allows you to complete
+xref:batch-consumer.adoc[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
 * forceCompletionOnStop - *Camel 2.9* Indicates to complete all current
 aggregated exchanges when the context is stopped
@@ -148,9 +148,9 @@ aggregator. If not provided Camel will thrown an Exception on startup.
 *available as of Camel 2.16*
 
 There can be use-cases where you want the incoming
-link:exchange.html[Exchange] to determine if the correlation group
+xref:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-link:exchange.html[Exchange] is starting a new group from scratch. To
+xref:exchange.adoc[Exchange] is starting a new group from scratch. To
 determine this the `AggregationStrategy` can
 implement `PreCompletionAwareAggregationStrategy` which has
 a `preComplete` method:
@@ -188,7 +188,7 @@ consumer etc)
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-link:leveldb.html[LevelDB], or <<sql-component,SQL Component>> components.
+xref:leveldb.adoc[LevelDB], or <<sql-component,SQL Component>> components.
 
 === Using TimeoutAwareAggregationStrategy
 
@@ -574,7 +574,7 @@ without using POJOs then you may have `null` as `oldExchange` or
 Aggregate EIP will invoke the
 `AggregationStrategy` with `oldExchange` as null, for the first
 Exchange incoming to the aggregator. And then for
-subsequent link:exchange.html[Exchange]s then `oldExchange` and
+subsequent xref:exchange.adoc[Exchange]s then `oldExchange` and
 `newExchange` parameters are both not null.
 
 Example with Content Enricher EIP and no data
@@ -630,14 +630,14 @@ public class MyBodyAppender {
 }
 ----
 
-In the example above we use the link:content-enricher.html[Content
-Enricher] EIP using `pollEnrich`. The `newExchange` will be null in the
+In the example above we use the xref:content-enricher.adoc[Content Enricher] 
+EIP using `pollEnrich`. The `newExchange` will be null in the
 situation we could not get any data from the "seda:foo" endpoint, and
 therefore the timeout was hit after 1 second. So if we need to do some
 special merge logic we would need to set `setAllowNullNewExchange=true`,
 so the `append` method will be invoked. If we do not do that then when
 the timeout was hit, then the append method would normally not be
-invoked, meaning the link:content-enricher.html[Content Enricher] did
+invoked, meaning the xref:content-enricher.adoc[Content Enricher] did
 not merge/change the message.
 
 In XML DSL you would configure the `strategyMethodAllowNull` option and
