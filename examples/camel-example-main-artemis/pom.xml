@@ -40,12 +40,10 @@
     <dependencies>
 
         <!-- to have spring boot tooling support in IDEA you need spring-boot JARs on the classpath -->
-<!--
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
         </dependency>
--->
 
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -113,7 +111,7 @@
                 <artifactId>camel-main-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <logClasspath>true</logClasspath>
+                    <logClasspath>false</logClasspath>
                     <!-- lets show which options are unmapped -->
                     <!-- <logUnmapped>true</logUnmapped> -->
                     <!-- just include only the jms component -->

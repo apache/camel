@@ -119,6 +119,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- java source parser -->
+        <dependency>
+            <groupId>org.jboss.forge.roaster</groupId>
+            <artifactId>roaster-jdt</artifactId>
+            <version>${roaster-version}</version>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
