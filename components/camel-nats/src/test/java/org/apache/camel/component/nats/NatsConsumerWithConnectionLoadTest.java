@@ -24,10 +24,10 @@ import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
@@ -39,6 +39,14 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
     protected MockEndpoint mockResultEndpoint1;
     
     private Connection connection;
+    
+    @BindToRegistry("connection")
+    public Connection connection() throws IllegalStateException, IOException, InterruptedException {
+        Builder options = new Options.Builder();
+        options.server("nats://" + getNatsUrl());
+        connection = Nats.connect(options.build());
+        return connection;
+    }
 
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
@@ -53,18 +61,6 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
 
         mockResultEndpoint.assertIsSatisfied();
         mockResultEndpoint1.assertIsSatisfied();
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        Builder options = new Options.Builder();
-        options.server("nats://" + getNatsUrl());
-        connection = Nats.connect(options.build());
-        registry.bind("connection", connection);
-        
-        return registry;
     }
 
     @Override
