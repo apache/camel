@@ -21,10 +21,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -51,38 +48,17 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // perform common tasks
-        super.execute();
 
-        // load camel-main metadata
-        String mainJson = loadCamelMainConfigurationMetadata();
-        if (mainJson == null) {
-            getLog().warn("Cannot load camel-main-configuration-metadata.json from within the camel-main JAR from the classpath."
-                    + " Not possible to build spring boot configuration file for this project");
-            return;
-        }
+        final List<SpringBootData> componentData = new ArrayList<>();
+        ComponentCallback callback = (componentName, name, type, javaType, description, defaultValue) -> {
+            // we want to use dash in the name
+            String dash = camelCaseToDash(name);
+            String key = "camel.component." + componentName + "." + dash;
+            componentData.add(new SpringBootData(key, springBootJavaType(javaType), description, defaultValue));
+        };
 
-        List<SpringBootData> componentData = new ArrayList<>();
-        for (String componentName : camelComponentsOnClasspath) {
-            String json = catalog.componentJSonSchema(componentName);
-            if (json == null) {
-                getLog().debug("Cannot find component JSon metadata for component: " + componentName);
-                continue;
-            }
-
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-            Set<String> names = JSonSchemaHelper.getNames(rows);
-            for (String name : names) {
-                Map<String, String> row = JSonSchemaHelper.getRow(rows, name);
-                String javaType = springBootJavaType(safeJavaType(row.get("javaType")));
-                String desc = row.get("description");
-                String defaultValue = row.get("defaultValue");
-                // we want to use dash in the name
-                String dash = camelCaseToDash(name);
-                String key = "camel.component." + componentName + "." + dash;
-                componentData.add(new SpringBootData(key, javaType, desc, defaultValue));
-            }
-        }
+        // perform the work with this callback
+        doExecute(callback);
 
         if (!componentData.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -113,6 +89,13 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
             sb.append("}\n");
 
             // okay then add the components into the main json at the end so they get merged together
+            // load camel-main metadata
+            String mainJson = loadCamelMainConfigurationMetadata();
+            if (mainJson == null) {
+                getLog().warn("Cannot load camel-main-configuration-metadata.json from within the camel-main JAR from the classpath."
+                        + " Not possible to build spring boot configuration file for this project");
+                return;
+            }
             int pos = mainJson.lastIndexOf("    }");
             String newJson = mainJson.substring(0, pos);
             newJson = newJson + "    },\n";
