@@ -53,29 +53,20 @@
  ** xref:faq/does-camel-work-on-ibms-jdk.adoc[Does Camel work on IBM's JDK?]
  ** xref:support.adoc[How can I get help?]
  ** xref:faq/how-can-i-get-the-source-code.adoc[How can I get the source code?]
- ** xref:faq/how-does-camel-compare-to-mule.adoc[How does Camel compare to
-Mule?]
- ** xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare
-to ServiceMix?]
- ** xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[How does Camel
-compare to ServiceMix EIP?]
- ** xref:faq/how-does-camel-compare-to-synapse.adoc[How does Camel compare to
-Synapse?]
+ ** xref:faq/how-does-camel-compare-to-mule.adoc[How does Camel compare to Mule?]
+ ** xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare to ServiceMix?]
+ ** xref:faq/how-does-camel-compare-to-servicemix-eip.adoc[How does Camel compare to ServiceMix EIP?]
+ ** xref:faq/how-does-camel-compare-to-synapse.adoc[How does Camel compare to Synapse?]
  ** xref:faq/how-does-camel-work.adoc[How does Camel work?]
- ** xref:faq/how-does-camel-work-with-activemq.adoc[How does Camel work with
-ActiveMQ?]
- ** xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
-ServiceMix?]
- ** xref:faq/how-does-the-camel-api-compare-to.adoc[How does the Camel API
-compare to?]
+ ** xref:faq/how-does-camel-work-with-activemq.adoc[How does Camel work with ActiveMQ?]
+ ** xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with ServiceMix?]
+ ** xref:faq/how-does-the-camel-api-compare-to.adoc[How does the Camel API compare to?]
  ** xref:faq/how-does-the-website-work.adoc[How does the website work?]
  ** xref:faq/how-do-i-become-a-committer.adoc[How do I become a committer?]
  ** xref:faq/how-do-i-compile-the-code.adoc[How do I compile the code?]
  ** xref:faq/how-do-i-edit-the-website.adoc[How do I edit the website?]
- ** xref:faq/how-do-i-run-camel-using-java-webstart.adoc[How do I run Camel
-using Java WebStart?]
- ** xref:faq/if-i-use-servicemix-when-should-i-use-camel.adoc[If I use
-ServiceMix when should I use Camel?]
+ ** xref:faq/how-do-i-run-camel-using-java-webstart.adoc[How do I run Camel using Java WebStart?]
+ ** xref:faq/if-i-use-servicemix-when-should-i-use-camel.adoc[If I use ServiceMix when should I use Camel?]
  ** xref:faq/is-camel-an-esb.adoc[Is Camel an ESB?]
  ** xref:faq/is-camel-ioc-friendly.adoc[Is Camel IoC friendly?]
  ** xref:faq/running-camel-standalone.adoc[Running Camel standalone]
