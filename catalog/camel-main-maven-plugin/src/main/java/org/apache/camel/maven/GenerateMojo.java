@@ -23,16 +23,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.FileHandler;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
@@ -178,6 +185,20 @@ public class GenerateMojo extends AbstractMainMojo {
                                 extraSetterMethods(best, setters);
                                 // sort the setters
                                 setters.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+
+                                String javaSource = null;
+                                if (!setters.isEmpty()) {
+                                    String path = best.getName().replace('.', '/') + ".java";
+                                    getLog().debug("Loading Java source: " + path);
+
+                                    InputStream is = getSourcesClassLoader().getResourceAsStream(path);
+                                    if (is != null) {
+                                        javaSource = IOHelper.loadText(is);
+                                        IOHelper.close(is);
+                                    }
+                                    getLog().info("Loaded source code: " + javaSource);
+                                }
+
                                 for (Method m : setters) {
                                     String shortHand = IntrospectionSupport.getSetterShorthandName(m);
                                     String bootName = camelCaseToDash(shortHand);
@@ -185,6 +206,9 @@ public class GenerateMojo extends AbstractMainMojo {
                                     String bootJavaType = m.getParameterTypes()[0].getName();
                                     String sourceType = best.getName();
                                     getLog().debug("Spring Boot option: " + bootKey);
+
+                                    // find the setter method and grab the javadoc
+
                                     String desc = "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
                                     springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null));
                                 }
@@ -439,6 +463,17 @@ public class GenerateMojo extends AbstractMainMojo {
                 answer.add(m);
             }
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        JarFile jar = new JarFile("/Users/davsclaus/.m2/repository/org/springframework/spring-jms/5.1.8.RELEASE/spring-jms-5.1.8.RELEASE-sources.jar");
+        System.out.println(jar);
+        JarEntry en = jar.getJarEntry("org/springframework/jms/connection/CachingConnectionFactory.java");
+        System.out.println(en);
+        InputStream is = jar.getInputStream(en);
+        String source = IOHelper.loadText(is);
+        IOHelper.close(is);
+        System.out.println(source);
     }
 
 }
