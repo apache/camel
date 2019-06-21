@@ -95,7 +95,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     @FunctionalInterface
     protected interface ComponentCallback {
-        void onOption(String componentName, String name, String type, String javaType, String description, String defaultValue);
+        void onOption(String componentName, String componentJavaType, String name, String type, String javaType, String description, String defaultValue);
     }
 
     protected void doExecute(ComponentCallback callback) throws MojoExecutionException, MojoFailureException {
@@ -159,18 +159,25 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
                 continue;
             }
 
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+            String componentJavaType = getComponentJavaType(rows);
+
+            rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
             Set<String> names = JSonSchemaHelper.getNames(rows);
             for (String name : names) {
                 Map<String, String> row = JSonSchemaHelper.getRow(rows, name);
                 String type = row.get("type");
                 String javaType = safeJavaType(row.get("javaType"));
-                String desc = row.get("description");
+                String desc = safeValue(row.get("description"));
                 String defaultValue = row.get("defaultValue");
 
-                callback.onOption(componentName, name, type, javaType, desc, defaultValue);
+                callback.onOption(componentName, componentJavaType, name, type, javaType, desc, defaultValue);
             }
         }
+    }
+
+    protected static String safeValue(String description) {
+        return description != null ? description : "";
     }
 
     protected static String findCamelVersion(MavenProject project) {
@@ -193,6 +200,15 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
             return candidate.getVersion();
         }
 
+        return null;
+    }
+
+    public static String getComponentJavaType(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("javaType")) {
+                return row.get("javaType");
+            }
+        }
         return null;
     }
 

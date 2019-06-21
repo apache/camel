@@ -135,14 +135,15 @@ public class GenerateMojo extends AbstractMainMojo {
         final List<AutowireData> autowireData = new ArrayList<>();
         final List<SpringBootData> springBootData = new ArrayList<>();
 
-        ComponentCallback callback = (componentName, name, type, javaType, description, defaultValue) -> {
+        ComponentCallback callback = (componentName, componentJavaType, name, type, javaType, description, defaultValue) -> {
             // gather spring boot data
             // we want to use dash in the name
             String dash = camelCaseToDash(name);
             String key = "camel.component." + componentName + "." + dash;
             if (springBootEnabled) {
                 getLog().debug("Spring Boot option: " + key);
-                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, defaultValue));
+                String sourceType = componentJavaType;
+                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, sourceType, defaultValue));
             }
 
             // check if we can do automatic autowire to complex singleton objects from classes in the classpath
@@ -182,9 +183,10 @@ public class GenerateMojo extends AbstractMainMojo {
                                     String bootName = camelCaseToDash(shortHand);
                                     String bootKey = "camel.component." + componentName + "." + dash + "." + bootName;
                                     String bootJavaType = m.getParameterTypes()[0].getName();
+                                    String sourceType = best.getName();
                                     getLog().debug("Spring Boot option: " + bootKey);
                                     String desc = "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
-                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, null));
+                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null));
                                 }
                             }
                         }
@@ -214,9 +216,8 @@ public class GenerateMojo extends AbstractMainMojo {
                 sb.append("    {\n");
                 sb.append("      \"name\": \"" + row.getName() + "\",\n");
                 sb.append("      \"type\": \"" + row.getJavaType() + "\",\n");
-                if (row.getDescription() != null) {
-                    sb.append("      \"description\": \"" + row.getDescription() + "\"");
-                }
+                sb.append("      \"sourceType\": \"" + row.getSourceType() + "\",\n");
+                sb.append("      \"description\": \"" + row.getDescription() + "\"");
                 if (row.getDefaultValue() != null) {
                     sb.append(",\n");
                     if (springBootDefaultValueQuotes(row.getJavaType())) {
