@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,23 +23,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.JarURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.FileHandler;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
@@ -50,6 +43,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+
+import static org.apache.camel.maven.GenerateHelper.sanitizeDescription;
 import static org.apache.camel.util.StringHelper.camelCaseToDash;
 
 /**
@@ -69,6 +67,13 @@ public class GenerateMojo extends AbstractMainMojo {
      */
     @Parameter(property = "camel.springBootEnabled", defaultValue = "true")
     protected boolean springBootEnabled;
+
+    /**
+     * Whether to allow downloading -source JARs when generating spring boot tooling to include
+     * javadoc as description for discovered options.
+     */
+    @Parameter(property = "camel.downloadSourceJars", defaultValue = "true")
+    protected boolean downloadSourceJars;
 
     /**
      * When autowiring has detected multiple implementations (2 or more) of a given interface, which
@@ -165,12 +170,12 @@ public class GenerateMojo extends AbstractMainMojo {
                         Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
                         // filter classes (must not be interfaces, must be public, must not be abstract, must be top level) and also a valid autowire class
                         classes = classes.stream().filter(
-                                c -> !c.isInterface()
-                                        && Modifier.isPublic(c.getModifiers())
-                                        && !Modifier.isAbstract(c.getModifiers())
-                                        && c.getEnclosingClass() == null
-                                        && isValidAutowireClass(c))
-                                .collect(Collectors.toSet());
+                            c -> !c.isInterface()
+                            && Modifier.isPublic(c.getModifiers())
+                            && !Modifier.isAbstract(c.getModifiers())
+                            && c.getEnclosingClass() == null
+                            && isValidAutowireClass(c))
+                            .collect(Collectors.toSet());
                         Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
                         if (best != null) {
                             key = "camel.component." + componentName + "." + dash;
@@ -186,17 +191,18 @@ public class GenerateMojo extends AbstractMainMojo {
                                 // sort the setters
                                 setters.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
-                                String javaSource = null;
-                                if (!setters.isEmpty()) {
+                                JavaClassSource javaClassSource = null;
+                                if (downloadSourceJars && !setters.isEmpty()) {
                                     String path = best.getName().replace('.', '/') + ".java";
                                     getLog().debug("Loading Java source: " + path);
 
                                     InputStream is = getSourcesClassLoader().getResourceAsStream(path);
                                     if (is != null) {
-                                        javaSource = IOHelper.loadText(is);
+                                        String text = IOHelper.loadText(is);
                                         IOHelper.close(is);
+                                        javaClassSource = (JavaClassSource) Roaster.parse(text);
                                     }
-                                    getLog().info("Loaded source code: " + javaSource);
+                                    getLog().debug("Loaded source code: " + clazz);
                                 }
 
                                 for (Method m : setters) {
@@ -208,8 +214,17 @@ public class GenerateMojo extends AbstractMainMojo {
                                     getLog().debug("Spring Boot option: " + bootKey);
 
                                     // find the setter method and grab the javadoc
+                                    String desc = extractJavaDocFromMethod(javaClassSource, m);
+                                    if (desc == null) {
+                                        desc = "";
+                                    } else {
+                                        desc = sanitizeDescription(desc, false);
+                                        if (!desc.endsWith(".")) {
+                                            desc += ". ";
+                                        }
+                                    }
+                                    desc += "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
 
-                                    String desc = "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
                                     springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null));
                                 }
                             }
@@ -465,15 +480,15 @@ public class GenerateMojo extends AbstractMainMojo {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        JarFile jar = new JarFile("/Users/davsclaus/.m2/repository/org/springframework/spring-jms/5.1.8.RELEASE/spring-jms-5.1.8.RELEASE-sources.jar");
-        System.out.println(jar);
-        JarEntry en = jar.getJarEntry("org/springframework/jms/connection/CachingConnectionFactory.java");
-        System.out.println(en);
-        InputStream is = jar.getInputStream(en);
-        String source = IOHelper.loadText(is);
-        IOHelper.close(is);
-        System.out.println(source);
+    private static String extractJavaDocFromMethod(JavaClassSource clazz, Method method) {
+        if (clazz == null) {
+            return null;
+        }
+        MethodSource ms = clazz.getMethod(method.getName(), method.getParameterTypes()[0]);
+        if (ms != null) {
+            return ms.getJavaDoc().getText();
+        }
+        return null;
     }
 
 }

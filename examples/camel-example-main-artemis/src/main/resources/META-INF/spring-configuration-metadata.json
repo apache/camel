@@ -787,13 +787,13 @@
       "name": "camel.component.jms.connection-factory.cache-consumers",
       "type": "java.lang.Boolean",
       "sourceType": "org.springframework.jms.connection.CachingConnectionFactory",
-      "description": "Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setCacheConsumers"
+      "description": "Specify whether to cache JMS MessageConsumers per JMS Session instance(more specifically: one MessageConsumer per Destination, selector Stringand Session). Note that durable subscribers will only be cached untillogical closing of the Session handle.Default is true. Switch this to false in order to alwaysrecreate MessageConsumers on demand.Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setCacheConsumers"
     },
     {
       "name": "camel.component.jms.connection-factory.cache-producers",
       "type": "java.lang.Boolean",
       "sourceType": "org.springframework.jms.connection.CachingConnectionFactory",
-      "description": "Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setCacheProducers"
+      "description": "Specify whether to cache JMS MessageProducers per JMS Session instance(more specifically: one MessageProducer per Destination and Session).Default is true. Switch this to false in order to alwaysrecreate MessageProducers on demand.Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setCacheProducers"
     },
     {
       "name": "camel.component.jms.connection-factory.client-id",
@@ -817,7 +817,7 @@
       "name": "camel.component.jms.connection-factory.session-cache-size",
       "type": "java.lang.Integer",
       "sourceType": "org.springframework.jms.connection.CachingConnectionFactory",
-      "description": "Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setSessionCacheSize"
+      "description": "Specify the desired size for the JMS Session cache (per JMS Session type).This cache size is the maximum limit for the number of cached Sessionsper session acknowledgement type (auto, client, dups_ok, transacted).As a consequence, the actual number of cached Sessions may be up tofour times as high as the specified value - in the unlikely caseof mixing and matching different acknowledgement types.Default is 1: caching a single Session, (re-)creating further ones ondemand. Specify a number like 10 if you'd like to raise the number of cachedSessions; that said, 1 may be sufficient for low-concurrency scenarios.Auto discovered option from class: org.springframework.jms.connection.CachingConnectionFactory to set the option via setter: setSessionCacheSize"
     },
     {
       "name": "camel.component.jms.connection-factory.target-connection-factory",
