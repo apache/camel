@@ -1,12 +1,12 @@
 [[Architecture-Architecture]]
 === Architecture
 
-Camel uses a Java based link:dsl.adoc[Routing Domain Specific Language
+Camel uses a Java based xref:dsl.adoc[Routing Domain Specific Language
 (DSL)] or an XML Configuration to configure
 routing and mediation rules which are added to a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
 to implement the various
-link:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns].
 
 At a high level Camel consists of a
@@ -33,8 +33,7 @@ Expression or Predicate to
 make a truly powerful DSL which is extensible to the most suitable
 language depending on your needs. Many of the Languages 
 are also supported as
-link:annotation-based-expression-language.html[Annotation Based
-Expression Language].
+xref:annotation-based-expression-language.adoc[Annotation Based Expression Language].
 
 [[Architecture-Diagram]]
 ==== Diagram
