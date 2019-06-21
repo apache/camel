@@ -542,9 +542,8 @@
         <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
         <openstack4j-version>3.0.2</openstack4j-version>
         <openstack4j-guava-version>17.0</openstack4j-guava-version>
-        <opentracing-java-agent-version>0.2.0</opentracing-java-agent-version>
-        <opentracing-version>0.31.0</opentracing-version>
-        <opentracing-tracerresolver-version>0.1.4</opentracing-tracerresolver-version>
+        <opentracing-version>0.33.0</opentracing-version>
+        <opentracing-tracerresolver-version>0.1.8</opentracing-tracerresolver-version>
         <ops4j-base-version>1.5.0</ops4j-base-version>
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <optaplanner-version>7.22.0.Final</optaplanner-version>
