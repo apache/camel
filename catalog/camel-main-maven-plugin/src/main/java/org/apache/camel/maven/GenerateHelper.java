@@ -30,7 +30,7 @@ public final class GenerateHelper {
      * @return the text that is valid as json
      */
     public static String sanitizeDescription(String javadoc, boolean summary) {
-        if (javadoc == null || javadoc.isEmpty()) {
+        if (javadoc == null || javadoc.trim().isEmpty()) {
             return null;
         }
 
