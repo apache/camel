@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.catalog.JSonSchemaHelper;
+import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -61,7 +62,7 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
             return;
         }
 
-        List<String[]> componentData = new ArrayList<>();
+        List<SpringBootData> componentData = new ArrayList<>();
         for (String componentName : camelComponentsOnClasspath) {
             String json = catalog.componentJSonSchema(componentName);
             if (json == null) {
@@ -79,7 +80,7 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
                 // we want to use dash in the name
                 String dash = camelCaseToDash(name);
                 String key = "camel.component." + componentName + "." + dash;
-                componentData.add(new String[]{key, javaType, desc, defaultValue});
+                componentData.add(new SpringBootData(key, javaType, desc, defaultValue));
             }
         }
 
@@ -87,21 +88,17 @@ public class SpringBootToolingMojo extends AbstractMainMojo {
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < componentData.size(); i++) {
-                String[] row = componentData.get(i);
-                String name = row[0];
-                String javaType = row[1];
-                String desc = row[2];
-                String defaultValue = row[3];
+                SpringBootData row = componentData.get(i);
                 sb.append("    {\n");
-                sb.append("      \"name\": \"" + name + "\",\n");
-                sb.append("      \"type\": \"" + javaType + "\",\n");
-                sb.append("      \"description\": \"" + desc + "\"");
-                if (defaultValue != null) {
+                sb.append("      \"name\": \"" + row.getName() + "\",\n");
+                sb.append("      \"type\": \"" + row.getJavaType() + "\",\n");
+                sb.append("      \"description\": \"" + row.getDescription() + "\"");
+                if (row.getDefaultValue() != null) {
                     sb.append(",\n");
-                    if (springBootDefaultValueQuotes(javaType)) {
-                        sb.append("      \"defaultValue\": \"" + defaultValue + "\"\n");
+                    if (springBootDefaultValueQuotes(row.getJavaType())) {
+                        sb.append("      \"defaultValue\": \"" + row.getDefaultValue() + "\"\n");
                     } else {
-                        sb.append("      \"defaultValue\": " + defaultValue + "\n");
+                        sb.append("      \"defaultValue\": " + row.getDefaultValue() + "\n");
                     }
                 } else {
                     sb.append("\n");
