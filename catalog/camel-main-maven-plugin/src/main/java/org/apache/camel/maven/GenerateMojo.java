@@ -221,10 +221,14 @@ public class GenerateMojo extends AbstractMainMojo {
                                     // find the setter method and grab the javadoc
                                     String desc = extractJavaDocFromMethod(javaClassSource, m);
                                     desc = sanitizeDescription(desc, false);
-                                    if (desc == null || desc.isEmpty()) {
+                                    if (desc == null) {
                                         desc = "";
                                     } else {
-                                        desc += ". ";
+                                        if (desc.endsWith(".")) {
+                                            desc += " ";
+                                        } else {
+                                            desc += ". ";
+                                        }
                                     }
                                     desc += "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
 
