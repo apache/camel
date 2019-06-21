@@ -233,7 +233,35 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             URL url1 = bundle.getEntry(META_INF_TYPE_CONVERTER);
             URL url2 = bundle.getEntry(META_INF_TYPE_CONVERTER_LOADER);
             URL url3 = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
-            if (url1 != null || url2 != null || url3 != null) {
+            if (url2 != null) {
+                LOG.debug("Found TypeConverterLoader in bundle {}", bundle.getSymbolicName());
+                Set<Class<?>> classes = new LinkedHashSet<>();
+                Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER_LOADER));
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found {} {} packages: {}", packages.size(), META_INF_TYPE_CONVERTER_LOADER, packages);
+                }
+                for (String pkg : packages) {
+
+                    if (StringHelper.isClassName(pkg)) {
+                        // its a FQN class name so load it directly
+                        LOG.trace("Loading {} class", pkg);
+                        try {
+                            Class<?> clazz = bundle.loadClass(pkg);
+                            BundleTypeConverterLoader bundleTypeConverterLoader =
+                                new BundleTypeConverterLoader(bundle, url3 != null);
+                            bundleTypeConverterLoader.setTypeConverterLoader((TypeConverterLoader)clazz.newInstance());
+                            resolvers.add(bundleTypeConverterLoader);
+                            // the class could be found and loaded so continue to next
+                            continue;
+                        } catch (Throwable t) {
+                            // Ignore
+                            LOG.trace("Failed to load " + pkg + " class due " + t.getMessage() + ". This exception will be ignored.", t);
+                        }
+                    }
+                }
+                    
+            } else if (url1 != null || url3 != null) {
                 LOG.debug("Found TypeConverter in bundle {}", bundle.getSymbolicName());
                 resolvers.add(new BundleTypeConverterLoader(bundle, url3 != null));
             }
@@ -379,7 +407,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
 
     protected static class BundleTypeConverterLoader extends BaseResolver<TypeConverter> implements TypeConverterLoader {
 
-        private final AnnotationTypeConverterLoader loader = new Loader();
+        private TypeConverterLoader loader = new Loader();
         private final Bundle bundle;
         private final boolean hasFallbackTypeConverter;
 
@@ -388,6 +416,10 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             ObjectHelper.notNull(bundle, "bundle");
             this.bundle = bundle;
             this.hasFallbackTypeConverter = hasFallbackTypeConverter;
+        }
+        
+        public void setTypeConverterLoader(TypeConverterLoader typeConverterloader) {
+            this.loader = typeConverterloader;
         }
 
         public synchronized void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
