@@ -93,10 +93,12 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 String name = camelCaseToDash(row.getName());
                 String javaType = springBootJavaType(row.getJavaType());
                 String desc = row.getDescription();
+                String sourceType = row.getSourceType();
                 String defaultValue = row.getDefaultValue();
                 sb.append("    {\n");
                 sb.append("      \"name\": \"" + name + "\",\n");
                 sb.append("      \"type\": \"" + javaType + "\",\n");
+                sb.append("      \"sourceType\": \"" + sourceType + "\",\n");
                 sb.append("      \"description\": \"" + desc + "\"");
                 if (defaultValue != null) {
                     sb.append(",\n");

@@ -49,6 +49,7 @@ public class MainConfigurationParser {
         fields.forEach(f -> {
             String name = f.getName();
             String javaType = f.getType().getQualifiedName();
+            String sourceType = clazz.getQualifiedName();
             String defaultValue = f.getStringInitializer();
 
             // the field must have a setter
@@ -59,8 +60,9 @@ public class MainConfigurationParser {
                 ConfigurationModel model = new ConfigurationModel();
                 model.setName(name);
                 model.setJavaType(javaType);
-                model.setDefaultValue(defaultValue);
                 model.setDescription(desc);
+                model.setSourceType(sourceType);
+                model.setDefaultValue(defaultValue);
                 answer.add(model);
             }
         });

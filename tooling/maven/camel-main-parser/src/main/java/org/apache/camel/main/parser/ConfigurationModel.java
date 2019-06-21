@@ -20,8 +20,9 @@ public class ConfigurationModel {
 
     private String name;
     private String javaType;
-    private String defaultValue;
+    private String sourceType;
     private String description;
+    private String defaultValue;
 
     public String getName() {
         return name;
@@ -39,12 +40,12 @@ public class ConfigurationModel {
         this.javaType = javaType;
     }
 
-    public String getDefaultValue() {
-        return defaultValue;
+    public String getSourceType() {
+        return sourceType;
     }
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 
     public String getDescription() {
@@ -53,5 +54,13 @@ public class ConfigurationModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

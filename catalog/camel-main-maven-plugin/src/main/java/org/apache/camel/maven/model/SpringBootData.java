@@ -21,12 +21,14 @@ public final class SpringBootData {
     private String name;
     private String javaType;
     private String description;
+    private String sourceType;
     private String defaultValue;
 
-    public SpringBootData(String name, String javaType, String description, String defaultValue) {
+    public SpringBootData(String name, String javaType, String description, String sourceType, String defaultValue) {
         this.name = name;
         this.javaType = javaType;
         this.description = description;
+        this.sourceType = sourceType;
         this.defaultValue = defaultValue;
     }
 
@@ -52,6 +54,14 @@ public final class SpringBootData {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 
     public String getDefaultValue() {
