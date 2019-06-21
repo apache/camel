@@ -4,7 +4,7 @@
 *Available as of Camel 2.19*
 
 IMPORTANT: Starting with Camel 2.21, it will be necessary to use an OpenTracing complaint tracer that is
-compatible with OpenTracing Java API version 0.31 or higher.
+compatible with OpenTracing Java API version 0.31. From Camel 3.0.0.M4, it will be necessary to use an OpenTracing compliant tracer that is compatible with OpenTracing Java API version 0.32 or higher.
 
 The camel-opentracing component is used for tracing and timing incoming and
 outgoing Camel messages using http://opentracing.io/[OpenTracing].
