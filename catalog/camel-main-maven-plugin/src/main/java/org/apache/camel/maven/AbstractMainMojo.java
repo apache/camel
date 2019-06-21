@@ -28,13 +28,18 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.catalog.maven.MavenVersionManager;
+import org.apache.camel.maven.model.AutowireData;
+import org.apache.camel.maven.model.SpringBootData;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -91,8 +96,12 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
     @Parameter(property = "project.remoteArtifactRepositories")
     private List remoteRepositories;
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    @FunctionalInterface
+    protected interface ComponentCallback {
+        void onOption(String componentName, String name, String type, String javaType, String description, String defaultValue);
+    }
+
+    protected void doExecute(ComponentCallback callback) throws MojoExecutionException, MojoFailureException {
         catalog = new DefaultCamelCatalog();
         // add activemq as known component
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
@@ -145,6 +154,26 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
                 .addUrls(ClasspathHelper.forClassLoader(classLoader))
                 .addClassLoader(classLoader)
                 .setScanners(new SubTypesScanner()));
+
+        for (String componentName : camelComponentsOnClasspath) {
+            String json = catalog.componentJSonSchema(componentName);
+            if (json == null) {
+                getLog().debug("Cannot find component JSon metadata for component: " + componentName);
+                continue;
+            }
+
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+            Set<String> names = JSonSchemaHelper.getNames(rows);
+            for (String name : names) {
+                Map<String, String> row = JSonSchemaHelper.getRow(rows, name);
+                String type = row.get("type");
+                String javaType = safeJavaType(row.get("javaType"));
+                String desc = row.get("description");
+                String defaultValue = row.get("defaultValue");
+
+                callback.onOption(componentName, name, type, javaType, desc, defaultValue);
+            }
+        }
     }
 
     protected static String findCamelVersion(MavenProject project) {

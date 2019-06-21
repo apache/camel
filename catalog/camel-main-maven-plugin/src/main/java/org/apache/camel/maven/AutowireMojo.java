@@ -92,9 +92,6 @@ public class AutowireMojo extends AbstractMainMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // perform common tasks
-        super.execute();
-
         // load default mappings
         Properties mappingProperties = loadDefaultMappings();
         getLog().debug("Loaded default-mappings: " + mappingProperties);
@@ -115,8 +112,48 @@ public class AutowireMojo extends AbstractMainMojo {
             mappingProperties.putAll(mappingFileProperties);
         }
 
-        // find the autowire via classpath scanning
-        List<AutowireData> autowires = findAutowireComponentOptionsByClasspath(catalog, camelComponentsOnClasspath, reflections, mappingProperties);
+        final List<AutowireData> autowires = new ArrayList<>();
+        ComponentCallback callback = (componentName, name, type, javaType, description, defaultValue) -> {
+            if ("object".equals(type)) {
+                if (!isValidPropertyName(componentName, name)) {
+                    getLog().debug("Skipping property name: " + name);
+                    return;
+                }
+                try {
+                    Class clazz = classLoader.loadClass(javaType);
+                    if (clazz.isInterface() && isComplexUserType(clazz)) {
+                        Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
+                        // filter classes (must not be interfaces, must be public, must not be abstract, must be top level) and also a valid autowire class
+                        classes = classes.stream().filter(
+                                c -> !c.isInterface()
+                                        && Modifier.isPublic(c.getModifiers())
+                                        && !Modifier.isAbstract(c.getModifiers())
+                                        && c.getEnclosingClass() == null
+                                        && isValidAutowireClass(c))
+                                .collect(Collectors.toSet());
+                        Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
+                        if (best != null) {
+                            String key = "camel.component." + componentName + "." + name;
+                            String value = "#class:" + best.getName();
+                            getLog().debug(key + "=" + value);
+                            autowires.add(new AutowireData(key, value));
+
+                            // TODO: get options from best class (getter/setter pairs)
+                            // we dont have documentation
+                            // add as spring boot options
+
+                        }
+                    }
+
+                } catch (Exception e) {
+                    // ignore
+                    getLog().debug("Cannot load class: " + name, e);
+                }
+            }
+        };
+
+        // perform the work with this callback
+        doExecute(callback);
 
         if (!autowires.isEmpty()) {
             outFolder.mkdirs();
@@ -162,67 +199,6 @@ public class AutowireMojo extends AbstractMainMojo {
             }
         }
         return mappings;
-    }
-
-    protected List<AutowireData> findAutowireComponentOptionsByClasspath(CamelCatalog catalog, Set<String> components,
-                                                                   Reflections reflections, Properties mappingProperties) {
-        List<AutowireData> autowires = new ArrayList<>();
-
-        for (String componentName : components) {
-            getLog().debug("Autowiring Camel component: " + componentName);
-
-            String json = catalog.componentJSonSchema(componentName);
-            if (json == null) {
-                getLog().debug("Cannot find component JSon metadata for component: " + componentName);
-                continue;
-            }
-
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-            Set<String> names = JSonSchemaHelper.getNames(rows);
-            for (String name : names) {
-                Map<String, String> row = JSonSchemaHelper.getRow(rows, name);
-                String type = row.get("type");
-                String javaType = safeJavaType(row.get("javaType"));
-                if ("object".equals(type)) {
-                    if (!isValidPropertyName(componentName, name)) {
-                        getLog().debug("Skipping property name: " + name);
-                        continue;
-                    }
-                    try {
-                        Class clazz = classLoader.loadClass(javaType);
-                        if (clazz.isInterface() && isComplexUserType(clazz)) {
-                            Set<Class<?>> classes = reflections.getSubTypesOf(clazz);
-                            // filter classes (must not be interfaces, must be public, must not be abstract, must be top level) and also a valid autowire class
-                            classes = classes.stream().filter(
-                            c -> !c.isInterface()
-                                 && Modifier.isPublic(c.getModifiers())
-                                 && !Modifier.isAbstract(c.getModifiers())
-                                 && c.getEnclosingClass() == null
-                                 && isValidAutowireClass(c))
-                                 .collect(Collectors.toSet());
-                            Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
-                            if (best != null) {
-                                String key = "camel.component." + componentName + "." + name;
-                                String value = "#class:" + best.getName();
-                                getLog().debug(key + "=" + value);
-                                autowires.add(new AutowireData(key, value));
-
-                                // TODO: get options from best class (getter/setter pairs)
-                                // we dont have documentation
-                                // add as spring boot options
-
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        // ignore
-                        getLog().debug("Cannot load class: " + name, e);
-                    }
-                }
-            }
-        }
-
-        return autowires;
     }
 
     protected Class chooseBestKnownType(String componentName, String optionName, Class type, Set<Class<?>> candidates, Properties knownTypes) {
