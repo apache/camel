@@ -61,6 +61,9 @@ public class RouteService extends BaseRouteService {
         if (!getCamelContext().isAutoStartup()) {
             return false;
         }
+        if (!getRouteContext().isAutoStartup()) {
+            return false;
+        }
         if (routeDefinition.getAutoStartup() == null) {
             // should auto startup by default
             return true;
