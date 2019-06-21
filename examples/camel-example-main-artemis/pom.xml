@@ -113,13 +113,13 @@
                 <artifactId>camel-main-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <logClasspath>false</logClasspath>
+                    <logClasspath>true</logClasspath>
                     <!-- lets show which options are unmapped -->
                     <!-- <logUnmapped>true</logUnmapped> -->
                     <!-- just include only the jms component -->
                     <!-- <include>jms</include> -->
                     <!-- to use spring caching connection factory instead of the default -->
-                    <!-- <mappings>javax.jms.ConnectionFactory=#class:org.springframework.jms.connection.CachingConnectionFactory</mappings> -->
+                     <mappings>javax.jms.ConnectionFactory=#class:org.springframework.jms.connection.CachingConnectionFactory</mappings>
                 </configuration>
                 <executions>
                     <execution>

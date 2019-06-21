@@ -41,6 +41,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,6 +75,8 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
     protected boolean downloadVersion;
 
     protected transient ClassLoader classLoader;
+
+    protected transient ClassLoader sourcesClassLoader;
 
     protected transient CamelCatalog catalog;
 
@@ -215,7 +218,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
     protected Set<String> resolveCamelComponentsFromClasspath() throws MojoFailureException {
         Set<String> components = new TreeSet<>();
         try {
-            classLoader = getClassLoader();
+            classLoader = getClassLoader(false);
             Enumeration<URL> en = classLoader.getResources("META-INF/services/org/apache/camel/component.properties");
             while (en.hasMoreElements()) {
                 URL url = en.nextElement();
@@ -236,19 +239,38 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
         return components;
     }
 
+    protected ClassLoader getSourcesClassLoader() throws Exception {
+        if (sourcesClassLoader == null) {
+            try {
+                sourcesClassLoader = getClassLoader(true);
+            } catch (Throwable e) {
+                getLog().warn("Cannot download sources JAR to look for javadoc descriptions of the discovered options, due to: " + e.getMessage());
+            }
+        }
+        return sourcesClassLoader;
+    }
+
     /**
      * Set up a classloader for scanning
      */
-    private ClassLoader getClassLoader() throws MalformedURLException, MojoExecutionException {
+    private ClassLoader getClassLoader(boolean sourcesOnly) throws MalformedURLException, MojoExecutionException {
         Set<URL> classpathURLs = new LinkedHashSet<>();
 
         // add project classpath
-        URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
-        classpathURLs.add(mainClasses);
+        if (!sourcesOnly) {
+            URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
+            classpathURLs.add(mainClasses);
+        }
 
         // add maven dependencies
-        Set<Artifact> deps = project.getArtifacts();
-        deps.addAll(getAllNonTestScopedDependencies());
+        Set<Artifact> deps;
+        if (sourcesOnly) {
+            deps = new LinkedHashSet<>();
+            deps.addAll(getAllSourceOnlyDependencies(getAllNonTestScopedDependencies()));
+        } else {
+            deps = project.getArtifacts();
+            deps.addAll(getAllNonTestScopedDependencies());
+        }
         for (Artifact dep : deps) {
             File file = dep.getFile();
             if (file != null) {
@@ -257,7 +279,11 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
         }
 
         if (logClasspath) {
-            getLog().info("Classpath:");
+            if (sourcesOnly) {
+                getLog().info("Sources Classpath:");
+            } else {
+                getLog().info("Classpath:");
+            }
             for (URL url : classpathURLs) {
                 getLog().info("  " + url.getFile());
             }
@@ -271,7 +297,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
         for (Artifact artifact : getAllDependencies()) {
 
             // do not add test artifacts
-            if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
+            if (!Artifact.SCOPE_TEST.equals(artifact.getScope())) {
 
                 if ("google-collections".equals(artifact.getArtifactId())) {
                     // skip this as we conflict with guava
@@ -295,15 +321,51 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     // generic method to retrieve all the transitive dependencies
     private Collection<Artifact> getAllDependencies() {
-        List<Artifact> artifacts = new ArrayList<>();
+        List<Artifact> answer = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency) dependencies.next();
-            Artifact art = repositorySystem.createDependencyArtifact(dependency);
-            artifacts.add(art);
+            Dependency dep = (Dependency) dependencies.next();
+            Artifact art = repositorySystem.createDependencyArtifact(dep);
+            if (!art.isResolved()) {
+                ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+                req.setArtifact(art);
+                req.setResolveTransitively(true);
+                req.setLocalRepository(localRepository);
+                req.setRemoteRepositories(remoteRepositories);
+                ArtifactResolutionResult res = artifactResolver.resolve(req);
+                if (res.isSuccess()) {
+                    answer.addAll(res.getArtifacts());
+                }
+            } else {
+                answer.add(art);
+            }
         }
 
-        return artifacts;
+        return answer;
+    }
+
+    private Collection<Artifact> getAllSourceOnlyDependencies(Collection<Artifact> artifacts) {
+        List<Artifact> answer = new ArrayList<>();
+
+        for (Artifact art : artifacts) {
+            Artifact sourceArt = repositorySystem.createArtifactWithClassifier(art.getGroupId(), art.getArtifactId(), art.getVersion(), art.getType(), "sources");
+            if (!sourceArt.isResolved()) {
+                ArtifactResolutionRequest req = new ArtifactResolutionRequest();
+                req.setArtifact(sourceArt);
+                req.setResolveTransitively(false);
+                req.setLocalRepository(localRepository);
+                req.setRemoteRepositories(remoteRepositories);
+                ArtifactResolutionResult res = artifactResolver.resolve(req);
+                if (res.isSuccess()) {
+                    for (Artifact a : res.getArtifacts()) {
+                        answer.add(a);
+                    }
+                }
+            } else {
+                answer.add(sourceArt);
+            }
+        }
+        return answer;
     }
 
     static String safeJavaType(String javaType) {
