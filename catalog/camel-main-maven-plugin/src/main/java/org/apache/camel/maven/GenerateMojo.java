@@ -198,9 +198,14 @@ public class GenerateMojo extends AbstractMainMojo {
 
                                     InputStream is = getSourcesClassLoader().getResourceAsStream(path);
                                     if (is != null) {
-                                        String text = IOHelper.loadText(is);
-                                        IOHelper.close(is);
-                                        javaClassSource = (JavaClassSource) Roaster.parse(text);
+                                        try {
+                                            String text = IOHelper.loadText(is);
+                                            IOHelper.close(is);
+                                            javaClassSource = (JavaClassSource) Roaster.parse(text);
+                                        } catch (IOException e) {
+                                            // ignore
+                                            getLog().warn("Cannot load Java source: " + path + " from classpath due " + e.getMessage());
+                                        }
                                     }
                                     getLog().debug("Loaded source code: " + clazz);
                                 }
@@ -215,13 +220,11 @@ public class GenerateMojo extends AbstractMainMojo {
 
                                     // find the setter method and grab the javadoc
                                     String desc = extractJavaDocFromMethod(javaClassSource, m);
-                                    if (desc == null) {
+                                    desc = sanitizeDescription(desc, false);
+                                    if (desc == null || desc.isEmpty()) {
                                         desc = "";
                                     } else {
-                                        desc = sanitizeDescription(desc, false);
-                                        if (!desc.endsWith(".")) {
-                                            desc += ". ";
-                                        }
+                                        desc += ". ";
                                     }
                                     desc += "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
 
@@ -480,13 +483,35 @@ public class GenerateMojo extends AbstractMainMojo {
         }
     }
 
-    private static String extractJavaDocFromMethod(JavaClassSource clazz, Method method) {
+    private String extractJavaDocFromMethod(JavaClassSource clazz, Method method) {
         if (clazz == null) {
             return null;
         }
         MethodSource ms = clazz.getMethod(method.getName(), method.getParameterTypes()[0]);
         if (ms != null) {
             return ms.getJavaDoc().getText();
+        }
+
+        // maybe its from the super class
+        String st = clazz.getSuperType();
+        if (st != null && !"java.lang.Object".equals(st) && !"Object".equals(st)) {
+            st = clazz.resolveType(st);
+            // find this file cia classloader
+            String path = st.replace('.', '/') + ".java";
+            InputStream is = sourcesClassLoader.getResourceAsStream(path);
+            if (is != null) {
+                String text = null;
+                try {
+                    text = IOHelper.loadText(is);
+                    IOHelper.close(is);
+                    clazz = (JavaClassSource) Roaster.parse(text);
+                    getLog().debug("Loaded source code: " + clazz);
+                    return extractJavaDocFromMethod(clazz, method);
+                } catch (IOException e) {
+                    // ignore
+                    getLog().warn("Cannot load Java source: " + path + " from classpath due " + e.getMessage());
+                }
+            }
         }
         return null;
     }
