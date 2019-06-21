@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootData;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -48,6 +50,18 @@ import static org.apache.camel.util.StringHelper.camelCaseToDash;
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class GenerateMojo extends AbstractMainMojo {
+
+    /**
+     * Whether generating autowiring is enabled.
+     */
+    @Parameter(property = "camel.autowireEnabled", defaultValue = "true")
+    protected boolean autowireEnabled;
+
+    /**
+     * Whether generating spring boot tooling support is enabled.
+     */
+    @Parameter(property = "camel.springBootEnabled", defaultValue = "true")
+    protected boolean springBootEnabled;
 
     /**
      * When autowiring has detected multiple implementations (2 or more) of a given interface, which
@@ -126,10 +140,13 @@ public class GenerateMojo extends AbstractMainMojo {
             // we want to use dash in the name
             String dash = camelCaseToDash(name);
             String key = "camel.component." + componentName + "." + dash;
-            springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, defaultValue));
+            if (springBootEnabled) {
+                getLog().debug("Spring Boot option: " + key);
+                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, defaultValue));
+            }
 
             // check if we can do automatic autowire to complex singleton objects from classes in the classpath
-            if ("object".equals(type)) {
+            if (autowireEnabled && "object".equals(type)) {
                 if (!isValidAutowirePropertyName(componentName, name)) {
                     getLog().debug("Skipping property name: " + name);
                     return;
@@ -148,14 +165,28 @@ public class GenerateMojo extends AbstractMainMojo {
                                 .collect(Collectors.toSet());
                         Class best = chooseBestKnownType(componentName, name, clazz, classes, mappingProperties);
                         if (best != null) {
-                            key = "camel.component." + componentName + "." + name;
+                            key = "camel.component." + componentName + "." + dash;
                             String value = "#class:" + best.getName();
-                            getLog().debug(key + "=" + value);
+                            getLog().debug("Autowire: " + key + "=" + value);
                             autowireData.add(new AutowireData(key, value));
 
-                            // TODO: get options from best class (getter/setter pairs)
-                            // we dont have documentation
-                            // add as spring boot options
+                            if (springBootEnabled) {
+                                // gather additional spring boot data for this class
+                                // we dont have documentation or default values
+                                List<Method> setters = new ArrayList<>();
+                                extraSetterMethods(best, setters);
+                                // sort the setters
+                                setters.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+                                for (Method m : setters) {
+                                    String shortHand = IntrospectionSupport.getSetterShorthandName(m);
+                                    String bootName = camelCaseToDash(shortHand);
+                                    String bootKey = "camel.component." + componentName + "." + dash + "." + bootName;
+                                    String bootJavaType = m.getParameterTypes()[0].getName();
+                                    getLog().debug("Spring Boot option: " + bootKey);
+                                    String desc = "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
+                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, null));
+                                }
+                            }
                         }
                     }
 
@@ -183,7 +214,9 @@ public class GenerateMojo extends AbstractMainMojo {
                 sb.append("    {\n");
                 sb.append("      \"name\": \"" + row.getName() + "\",\n");
                 sb.append("      \"type\": \"" + row.getJavaType() + "\",\n");
-                sb.append("      \"description\": \"" + row.getDescription() + "\"");
+                if (row.getDescription() != null) {
+                    sb.append("      \"description\": \"" + row.getDescription() + "\"");
+                }
                 if (row.getDefaultValue() != null) {
                     sb.append(",\n");
                     if (springBootDefaultValueQuotes(row.getJavaType())) {
@@ -386,6 +419,18 @@ public class GenerateMojo extends AbstractMainMojo {
             return false;
         }
         return true;
+    }
+
+    private static void extraSetterMethods(Class<?> clazz, List<Method> answer) {
+        if (clazz == null || clazz == Object.class) {
+            return;
+        }
+        Method[] methods = clazz.getMethods();
+        for (Method m : methods) {
+            if (IntrospectionSupport.isSetter(m)) {
+                answer.add(m);
+            }
+        }
     }
 
 }
