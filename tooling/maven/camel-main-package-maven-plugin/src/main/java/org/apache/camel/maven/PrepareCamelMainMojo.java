@@ -66,11 +66,13 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             try {
                 List<ConfigurationModel> model = parser.parseConfigurationSource(file);
                 // compute prefix for name
-                String prefix = "camel.main.";
+                String prefix = "camel.";
                 if (file.getName().contains("Hystrix")) {
                     prefix += "hystrix.";
                 } else if (file.getName().contains("Rest")) {
                     prefix += "rest.";
+                } else {
+                    prefix += "main.";
                 }
                 final String namePrefix = prefix;
                 model.stream().forEach(m -> m.setName(namePrefix + m.getName()));
