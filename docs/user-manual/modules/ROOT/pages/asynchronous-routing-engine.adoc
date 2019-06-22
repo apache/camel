@@ -4,8 +4,8 @@
 *Available as of Camel 2.4*
 
 As of Camel 2.4 the asynchronous routing engine is back and kicking. +
-All the link:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] are supported as well a selected number of
+All the xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] 
+are supported as well a selected number of
 Components:
 
 * <<ahc-component,AHC>> *Camel 2.8:* (only producer)
