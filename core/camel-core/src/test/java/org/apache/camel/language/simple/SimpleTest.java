@@ -1898,6 +1898,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testBodyAsOneLine() throws Exception {
+        exchange.getIn().setBody("Hello" + System.lineSeparator() + "Great" + System.lineSeparator() + "World");
+        assertExpression("${bodyOneLine}", "HelloGreatWorld");
+        assertExpression("Hi ${bodyOneLine}", "Hi HelloGreatWorld");
+        assertExpression("Hi ${bodyOneLine} Again", "Hi HelloGreatWorld Again");
+    }
+
+    @Test
     public void testNestedTypeFunction() throws Exception {
         // when using type: function we need special logic to not lazy evaluate it so its evaluated only once
         // and won't fool Camel to think its a nested OGNL method call expression instead (CAMEL-10664)
