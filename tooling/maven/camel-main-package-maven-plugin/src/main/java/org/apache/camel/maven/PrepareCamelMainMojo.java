@@ -31,6 +31,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import static org.apache.camel.maven.PrepareHelper.sanitizeDescription;
 import static org.apache.camel.util.StringHelper.camelCaseToDash;
 
 /**
@@ -82,6 +83,16 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             }
         }
 
+        // include additional rest configuration from camel-api
+        File restConfig = new File(buildDir, "../../camel-api/src/main/java/org/apache/camel/spi/RestConfiguration.java");
+        try {
+            List<ConfigurationModel> model = parser.parseConfigurationSource(restConfig);
+            model.stream().forEach(m -> m.setName("rest." + m.getName()));
+            data.addAll(model);
+        } catch (Exception e) {
+            throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
+        }
+
         // lets sort so they are always ordered
         data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
@@ -94,7 +105,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 ConfigurationModel row = data.get(i);
                 String name = camelCaseToDash(row.getName());
                 String javaType = springBootJavaType(row.getJavaType());
-                String desc = row.getDescription();
+                String desc = sanitizeDescription(row.getDescription(), false);
                 String sourceType = row.getSourceType();
                 String defaultValue = row.getDefaultValue();
                 sb.append("    {\n");
@@ -157,4 +168,6 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         }
         return true;
     }
+
+
 }
