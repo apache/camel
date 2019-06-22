@@ -67,13 +67,13 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             try {
                 List<ConfigurationModel> model = parser.parseConfigurationSource(file);
                 // compute prefix for name
-                String prefix = "camel.";
+                String prefix;
                 if (file.getName().contains("Hystrix")) {
-                    prefix += "hystrix.";
+                    prefix = "camel.hystrix.";
                 } else if (file.getName().contains("Rest")) {
-                    prefix += "rest.";
+                    prefix = "camel.rest.";
                 } else {
-                    prefix += "main.";
+                    prefix = "camel.main.";
                 }
                 final String namePrefix = prefix;
                 model.stream().forEach(m -> m.setName(namePrefix + m.getName()));
@@ -87,14 +87,22 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         File restConfig = new File(buildDir, "../../camel-api/src/main/java/org/apache/camel/spi/RestConfiguration.java");
         try {
             List<ConfigurationModel> model = parser.parseConfigurationSource(restConfig);
-            model.stream().forEach(m -> m.setName("rest." + m.getName()));
+            model.stream().forEach(m -> m.setName("camel.rest." + m.getName()));
             data.addAll(model);
         } catch (Exception e) {
             throw new MojoFailureException("Error parsing file " + restConfig + " due " + e.getMessage(), e);
         }
 
-        // lets sort so they are always ordered
-        data.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+        // lets sort so they are always ordered (but camel.main in top)
+        data.sort((o1, o2) -> {
+            if (o1.getName().startsWith("camel.main.") && !o2.getName().startsWith("camel.main.")) {
+                return -1;
+            } else if (!o1.getName().startsWith("camel.main.") && o2.getName().startsWith("camel.main.")) {
+                return 1;
+            } else {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
 
         if (!data.isEmpty()) {
             StringBuilder sb = new StringBuilder();
