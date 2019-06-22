@@ -7,7 +7,7 @@ The CXFRS component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
 services hosted in CXF.
 
-When using CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
+When using CXF as a consumer, the xref:cxf-bean-component.adoc[CXF Bean
 Component] allows you to factor out how message payloads are received
 from their processing as a RESTful or SOAP web service. This has the
 potential of using a multitude of transports to consume web services.

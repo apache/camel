@@ -87,7 +87,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
+| *amazonS3Client* (common) | Reference to a com.amazonaws.services.s3.AmazonS3 in the xref:registry.adocRegistry. |  | AmazonS3
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket | true | boolean
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
@@ -170,7 +170,7 @@ The component supports 38 options, which are listed below.
 | *camel.component.aws-s3.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.aws-s3.configuration.accelerate-mode-enabled* | Define if Accelerate Mode enabled is true or false | false | Boolean
 | *camel.component.aws-s3.configuration.access-key* | Amazon AWS Access Key |  | String
-| *camel.component.aws-s3.configuration.amazon-s3-client* | Reference to a `com.amazonaws.services.s3.AmazonS3` in the link:registry.html[Registry]. |  | AmazonS3
+| *camel.component.aws-s3.configuration.amazon-s3-client* | Reference to a `com.amazonaws.services.s3.AmazonS3` in the xref:registry.adoc[Registry]. |  | AmazonS3
 | *camel.component.aws-s3.configuration.auto-create-bucket* | Setting the autocreation of the bucket | true | Boolean
 | *camel.component.aws-s3.configuration.autoclose-body* | If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | Boolean
 | *camel.component.aws-s3.configuration.aws-k-m-s-key-id* | Define the id of KMS key to use in case KMS is enabled |  | String
@@ -463,7 +463,7 @@ This operation will list the buckets for this account
 
 This operation will delete the bucket mycamelbucket
 
-- DownloadLink: this operation create a download link for the file specified in the key header
+- Downloadxref: this operation create a download link for the file specified in the key header
 
 [source,java]
 --------------------------------------------------------------------------------

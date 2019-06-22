@@ -141,7 +141,7 @@ from("direct:foo")
 
 ### Example
 
-See also the link:twitter-websocket-example.html[Twitter Websocket
+See also the xref:twitter-websocket-example.adoc[Twitter Websocket
 Example].
 
 ### See Also
