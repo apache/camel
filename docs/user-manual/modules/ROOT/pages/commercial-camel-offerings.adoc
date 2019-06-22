@@ -5,7 +5,7 @@ Apache Camel is a widely used project. As such, several companies have
 built products and services around Camel. This page is dedicated to
 providing descriptions of those offerings and links to more information.
 Companies are definitely encouraged to update this page directly or
-link:mailing-lists.adoc[send a mail] to the Camel PMC with a description
+xref:mailing-lists.adoc[send a mail] to the Camel PMC with a description
 of your offerings and we can update the page. The products and services
 listed on this page are provided for information use only to our users.
 The Camel PMC does not endorse or recommend any of the products or
@@ -123,4 +123,4 @@ removed. Such marketing statements can be added to your own pages on
 your own site, but not here.
 
 When in doubt, email the Camel dev list (see
-link:mailing-lists.adoc[Mailing Lists]) and ask. We'd be happy to help.
+xref:mailing-lists.adoc[Mailing Lists]) and ask. We'd be happy to help.

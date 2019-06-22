@@ -4,7 +4,7 @@
 *Available as of Camel 2.7*
 
 This example is located in the
-link:https://github.com/apache/camel/blob/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]
+https://github.com/apache/camel/blob/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]
 directory of the Camel distribution.
 There is a `README.txt` file with instructions how to run it.
 
@@ -116,6 +116,6 @@ http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 [[ServletTomcatExample-SeeAlso]]
 ==== See Also
 
-* link:examples.adoc[Examples]
+* xref:examples.adoc[Examples]
 *  <<servlet-component,Servlet>>
 *  <<http-component,HTTP>>

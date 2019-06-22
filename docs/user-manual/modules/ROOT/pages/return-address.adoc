@@ -2,7 +2,7 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
-Address] from the link:enterprise-integration-patterns.html[EIP
+Address] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by using the `JMSReplyTo` header.
 
 image:http://www.enterpriseintegrationpatterns.com/img/ReturnAddressSolution.gif[image]

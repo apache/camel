@@ -8,13 +8,13 @@ API which provides thread pools, named `ExecutorService`.
 
 Camel leverages thread pools in the following places:
 
-* several link:eip.html[EIP] patterns supports using thread pools for
+* several xref:eip.adoc[EIP] patterns supports using thread pools for
 concurrency
-* link:seda.html[SEDA] component for asynchronous connectivity
-* link:async.html[Threads DSL] in the Camel route
-* link:servicepool.html[ServicePool] for pooling services
+* xref:seda.adoc[SEDA] component for asynchronous connectivity
+* xref:async.adoc[Threads DSL] in the Camel route
+* xref:servicepool.adoc[ServicePool] for pooling services
 * And some component provide thread pools by nature such as
-link:jms.html[JMS], link:jetty.html[Jetty]
+xref:jms.adoc[JMS], xref:jetty.adoc[Jetty]
 
 [[ThreadingModel-Threadpoolprofiles]]
 ==== Thread pool profiles
@@ -30,7 +30,7 @@ default thread pool profile which is:
 --------------------------------------------------------------------------------------------------------
 
 What that means is that for example when you use
-link:multicast.html[Multicast] with `parallelProcessing=true` enabled,
+xref:multicast.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
@@ -76,11 +76,11 @@ attribute as shown:
 ---------------------------------------------------------------------------
 
 What Camel will do at runtime is to lookup in the
-link:registry.html[Registry] for a `ExecutorService` with the id =
+xref:registry.adoc[Registry] for a `ExecutorService` with the id =
 fooProfile. If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. And in this example there is
 and so the profile is used for creating a new `ExecutorService` which is
-handed back to the link:multicast.html[Multicast] EIP to use in the
+handed back to the xref:multicast.adoc[Multicast] EIP to use in the
 route.
 
 [[ThreadingModel-Createcustomthreadpool]]
@@ -109,7 +109,7 @@ provider, for example from a WorkManager in a J2EE server etc. +
 you should implement and hook into the WorkManager.
 
 See
-link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring] for how to configure it.
 
 You can configure it on the `CamelContext` from Java DSL using the
@@ -132,7 +132,7 @@ simpler then the former `ExecutorServiceStrategy` and makes the job of
 integrators much easier.
 
 See
-link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring] for how to configure it.
 
 [[ThreadingModel-Customizingthreadnames]]
@@ -150,11 +150,11 @@ The default pattern is for:
 * *Camel 2.10 onwards:* `Camel (#camelId#) thread ##counter# - #name#`
 
 Notice we renamed the tokens from Camel 2.10 onwards to not clash with
-tokens by the link:using-propertyplaceholder.html[Property Placeholder].
+tokens by the xref:using-propertyplaceholder.adoc[Property Placeholder].
 
 In the pattern you can use the following placeholders
 
-* $\{camelId} *Camel 2.6:* is the link:camelcontext.html[CamelContext]
+* $\{camelId} *Camel 2.6:* is the xref:camelcontext.adoc[CamelContext]
 name
 * $\{counter} is a unique incrementing counter.
 * $\{name} is the regular thread name.
@@ -239,6 +239,6 @@ completed or a timeout value is hit.
 [[ThreadingModel-SeeAlso]]
 ==== See Also
 
-* link:architecture.html[Architecture]
-* link:async.html[Async]
+* xref:architecture.adoc[Architecture]
+* xref:async.adoc[Async]
 

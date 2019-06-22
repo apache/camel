@@ -188,6 +188,6 @@ RouteBuilder builder = new RouteBuilder() {
 [[JavaDSL-SeeAlso]]
 ==== See Also
 
-* link:dsl.adoc[DSL]
+* xref:dsl.adoc[DSL]
 
 

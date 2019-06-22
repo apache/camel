@@ -37,13 +37,13 @@ Camel provides the following policies out of the box:
 * *`org.apache.camel.impl.ThrottlingInflightRoutePolicy`* - a throttling
 based policy that automatic suspends/resumes route(s) based on metrics
 from the current in flight exchanges. You can use this to dynamically
-throttle e.g. a link:jms.html[JMS] consumer, to avoid it consuming too
+throttle e.g. a xref:jms.adoc[JMS] consumer, to avoid it consuming too
 fast.
 
 As of *Camel 2.5*, Camel also provides an ability to schedule routes to
 be activated, deactivated, suspended and/or resumed at certain times
 during the day using a
-link:scheduledroutepolicy.html[ScheduledRoutePolicy] (offered via the
+xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] (offered via the
 http://camel.apache.org/quartz.html[camel-quartz] component).
 
 [[RoutePolicy-SuspendableService]]
@@ -61,8 +61,8 @@ operations as it support fallback for regular
 ==== `ThrottlingInflightRoutePolicy`
 
 The *`ThrottlingInflightRoutePolicy`* is triggered when an
-link:exchange.adoc[Exchange] is complete, which means that it requires
-at least one link:exchange.adoc[Exchange] to be complete before it
+xref:exchange.adoc[Exchange] is complete, which means that it requires
+at least one xref:exchange.adoc[Exchange] to be complete before it
 _works_.
 
 The throttling inflight route policy has the following options:
@@ -92,14 +92,14 @@ again in case it has been suspended.
 ====  ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The *`ThrottlingInflightRoutePolicy`* compared to
-link:throttler.html[Throttler] is that it does *not* block during
+xref:throttler.adoc[Throttler] is that it does *not* block during
 throttling. It does throttling that is approximate based, meaning that
 its more coarse grained and not explicit precise as the
-link:throttler.html[Throttler]. The link:throttler.html[Throttler] can
+xref:throttler.adoc[Throttler]. The xref:throttler.adoc[Throttler] can
 be much more accurate and only allow a specific number of messages being
 passed per a given time unit. Also the *`ThrottlingInflightRoutePolicy`*
 is based its metrics on number of inflight exchanges where as
-link:throttler.html[Throttler] is based on number of messages per time
+xref:throttler.adoc[Throttler] is based on number of messages per time
 unit.
 
 [[RoutePolicy-ScheduledRoutePolicy(SimpleandCronbased)usingcamelQuartz]]
@@ -215,13 +215,13 @@ as *`<bean>`* in XML.
 [[RoutePolicy-SeeAlso]]
 ==== See Also
 
-* link:route-throttling-example.html[Route Throttling Example] for an
+* xref:route-throttling-example.adoc[Route Throttling Example] for an
 example using this in practice with
 the *`ThrottlingInflightRoutePolicy`*
-* link:scheduledroutepolicy.html[ScheduledRoutePolicy] for information
+* xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] for information
 on policy based scheduling capability for camel routes
-* link:metrics-component.html[MetricsRoutePolicyFactory] for information
+* xref:metrics-component.adoc[MetricsRoutePolicyFactory] for information
 on a policy using the metrics component to expose route statistics using
 the metrics library.
-* link:architecture.html[Architecture]
+* xref:architecture.adoc[Architecture]
 

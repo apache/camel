@@ -7,5 +7,5 @@ and is refactoring safe.
 
 For more information see:
 
-* link:dsl.adoc[Java Domain Specific Language]
-* link:xml-configuration.adoc[XML Configuration]
+* xref:dsl.adoc[Java Domain Specific Language]
+* xref:xml-configuration.adoc[XML Configuration]

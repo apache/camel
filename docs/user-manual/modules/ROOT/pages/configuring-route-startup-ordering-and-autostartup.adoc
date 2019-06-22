@@ -115,7 +115,7 @@ lowest `startupOrder` are started first and the ones with the highest are
 started last.
 
 IMPORTANT: All `startupOrder` defined must be unique among all routes in your
-link:camelcontext.adoc[CamelContext]. Otherwise if there are clashes in
+xref:camelcontext.adoc[CamelContext]. Otherwise if there are clashes in
 `startupOrder` numbers among routes, the routes will fail to start up throwing
 `org.apache.camel.FailedToStartRouteException`.
 
@@ -261,11 +261,11 @@ they were started.
 *Camel 2.3:* Camel will shutdown the routes in the *reverse* order that
 they were started.
 
-See also link:graceful-shutdown.adoc[Graceful Shutdown].
+See also xref:graceful-shutdown.adoc[Graceful Shutdown].
 
 [[Configuringroutestartuporderingandautostartup-Seealso]]
 ==== See also
 
-* link:configuring-camel.adoc[Configuring Camel]
-* link:graceful-shutdown.adoc[Graceful Shutdown]
-* link:user-guide.html[User Guide]
+* xref:configuring-camel.adoc[Configuring Camel]
+* xref:graceful-shutdown.adoc[Graceful Shutdown]
+* xref:user-guide.adoc[User Guide]

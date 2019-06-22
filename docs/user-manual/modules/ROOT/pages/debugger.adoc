@@ -113,5 +113,5 @@ image:debugger.data/debug.png[image]
 ==== See Also
 
 * Tracer
-* link:backlogdebugger.adoc[BacklogDebugger]
+* xref:backlogdebugger.adoc[BacklogDebugger]
 

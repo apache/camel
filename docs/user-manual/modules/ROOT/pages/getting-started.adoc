@@ -9,11 +9,11 @@ Then come back here and you might want to read the following
 documentation before continuing:
 
 * Longer Getting Started Guide
-* Find out about link:enterprise-integration-patterns.adoc[Enterprise
+* Find out about xref:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] and how to implement them with Camel
 * Review the Architecture guide to see how to
 build Routes using the Java DSL or
-Spring based link:xml-configuration.adoc[Xml
+Spring based xref:xml-configuration.adoc[Xml
 Configuration]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
@@ -22,7 +22,7 @@ Configuration]
 To get started with Camel:
 
 1.  Create a CamelContext.
-2.  Optionally, link:configuring-camel.adoc[configure components or
+2.  Optionally, xref:configuring-camel.adoc[configure components or
 endpoints].
 3.  Add whatever routing rules you wish using the DSL and
 RouteBuilder or using
@@ -32,9 +32,9 @@ XML Configuration.
 When your application is closing you may wish to
 stop the context
 
-When you are ready, why not link:walk-through-an-example.adoc[Walk
+When you are ready, why not xref:walk-through-an-example.adoc[Walk
 through an Example]? +
- And then continue the walk link:walk-through-another-example.html[Walk
+ And then continue the walk xref:walk-through-another-example.adoc[Walk
 through another example] +
  And after the walks head over to the tutorials.
 

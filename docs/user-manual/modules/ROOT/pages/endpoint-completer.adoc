@@ -2,7 +2,7 @@
 === EndpointCompleter
 
 As of *Camel 2.12*.
-This API is an optional SPI interface for link:component.adoc[Component]
+This API is an optional SPI interface for xref:component.adoc[Component]
 implementors. It provides a completion hook; rather like bash tab
 completion, or the completion in the
 http://karaf.apache.org/manual/latest/#_using_the_console[Karaf
@@ -23,5 +23,5 @@ code in the FileComponent to implement completeEndpointPath()].
 
 Some example implementations include:
 
-* link:file2.adoc[File]
+* xref:file2.adoc[File]
 

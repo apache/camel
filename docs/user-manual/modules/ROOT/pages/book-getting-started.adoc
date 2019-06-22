@@ -160,11 +160,11 @@ a server can read an incoming message from a mail server.
 
 In a Camel-based application, you create (Camel wrappers around) some
 endpoints and connect these endpoints with __routes__, which I will
-discuss later in link:book-getting-started.html[Section 4.8 ("Routes,
+discuss later in xref:book-getting-started.adoc[Section 4.8 ("Routes,
 RouteBuilders and Java DSL")]. Camel defines a Java interface called
 `Endpoint`. Each Camel-supported endpoint has a class that implements
 this `Endpoint` interface. As I discussed in
-link:book-getting-started.html[Section 3.3 ("Online Javadoc
+xref:book-getting-started.adoc[Section 3.3 ("Online Javadoc
 documentation")], Camel provides a separate Javadoc hierarchy for each
 communications technology supported by Camel. Because of this, you will
 find documentation on, say, the `JmsEndpoint` class in the
@@ -218,11 +218,11 @@ other open-source projects, such as the `TransactionTemplate` and
 
 The `CamelTemplate` class is a thin wrapper around the `CamelContext`
 class. It has methods that send a `Message` or `Exchange` – both
-discussed in link:book-getting-started.html[Section 4.6 ("Message and
+discussed in xref:book-getting-started.adoc[Section 4.6 ("Message and
 Exchange")]) – to an `Endpoint` – discussed in
 Section 4.1 ("Endpoint"). This provides
 a way to enter messages into source endpoints, so that the messages will
-move along routes – discussed in link:book-getting-started.html[Section
+move along routes – discussed in xref:book-getting-started.adoc[Section
 4.8 ("Routes, RouteBuilders and Java DSL")] – to destination endpoints.
 
 [[BookGettingStarted-url-uri-urn-iri]]
@@ -377,7 +377,7 @@ documentation and the Camel source code both claim the parameter is a
 URI. In reality, the parameter is restricted to being a URL. This is
 because when Camel extracts the component name from the parameter, it
 looks for the first ":", which is a simplistic algorithm. To understand
-why, recall from link:book-getting-started.html[Section 4.4 ("The
+why, recall from xref:book-getting-started.adoc[Section 4.4 ("The
 Meaning of URL, URI, URN and IRI")] that a URI can be a URL _or_ a URN.
 Now consider the following calls to `getEndpoint`:
 

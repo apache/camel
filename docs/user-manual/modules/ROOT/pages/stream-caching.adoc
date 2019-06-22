@@ -197,7 +197,7 @@ And in XML you do:
 *Available as of Camel 2.12*
 
 Stream caching is from Camel 2.12 onwards intended to be configured using `org.apache.camel.spi.StreamCachingStrategy`.
-The old kind of configuration using properties on the link:camelcontext.adoc[CamelContext] has been marked as deprecated.
+The old kind of configuration using properties on the xref:camelcontext.adoc[CamelContext] has been marked as deprecated.
 
 The strategy has the following options:
 
@@ -227,7 +227,7 @@ The strategy has the following options:
 | Initial size if in-memory created stream buffers.
 
 | removeSpoolDirectoryWhenStopping | true
-| Whether to remove the spool directory when stopping link:camelcontext.adoc[CamelContext].
+| Whether to remove the spool directory when stopping xref:camelcontext.adoc[CamelContext].
 
 | statisticsEnabled | false
 | Whether utilization statistics is enabled. By enabling this you can see these statics for example with JMX.

@@ -9,7 +9,7 @@ Apache Camel is designed to work nicely with the Spring Framework in a number of
 * Camel supports a powerful version of Spring Remoting which can use powerful routing between the client and server side along with using all of the available Components for the transport
 * Camel provides powerful Bean Integration with any bean defined in a Spring ApplicationContext.
 * Camel integrates with various Spring helper classes; such as providing Type Converter support for Spring Resources etc
-* Allows Spring to dependency inject Component instances or the link:camelcontext.adoc[CamelContext] instance itself and auto-expose Spring beans as components and endpoints.
+* Allows Spring to dependency inject Component instances or the xref:camelcontext.adoc[CamelContext] instance itself and auto-expose Spring beans as components and endpoints.
 * Allows you to reuse the Spring Testing framework to simplify your unit and integration testing using Enterprise Integration Patterns and Camel's powerful Mock and Test endpoints
 * From Camel 2.15: Camel supports Spring Boot using the camel-spring-boot component.
 * From Camel 2.17.1: Camel supports Spring Cache based Idempotent repository
@@ -87,7 +87,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
 See more details at Advanced configuration of CamelContext using Spring
 
 === Using Java Code
-You can use Java Code to define your link:route-builder.adoc[RouteBuilder] implementations. These can be defined as beans in spring and then referenced in your camel context e.g.
+You can use Java Code to define your xref:route-builder.adoc[RouteBuilder] implementations. These can be defined as beans in spring and then referenced in your camel context e.g.
 [source,xml]
 --------------------------------------------------------------------------------------------------------------
 <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring">
@@ -218,7 +218,7 @@ protected Class[] excludeRoutes() {
 
 
 === Using Spring XML
-You can use Spring 2.0 XML configuration to specify your XML Configuration for link:routes.adoc[Routes] such as in the following http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/routingUsingCamelContextFactory.xml[example].
+You can use Spring 2.0 XML configuration to specify your XML Configuration for xref:routes.adoc[Routes] such as in the following http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/routingUsingCamelContextFactory.xml[example].
 [source,xml]
 --------------------------------------------------------------------------------------------------------------
 <camelContext id="camel-A" xmlns="http://camel.apache.org/schema/spring">
@@ -231,7 +231,7 @@ You can use Spring 2.0 XML configuration to specify your XML Configuration for l
 
 Configuring Components and Endpoints
 
-You can configure your Component or link:endpoint.adoc[Endpoint] instances in your Spring XML as follows in this example.
+You can configure your Component or xref:endpoint.adoc[Endpoint] instances in your Spring XML as follows in this example.
 [source,xml]
 --------------------------------------------------------------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -275,7 +275,7 @@ Available as of *Camel 2.17.1*
 --------------------------------------------------------------------------------------------------------------
 
 CamelContextAware
-If you want to be injected with the link:camelcontext.adoc[CamelContext] in your POJO just implement the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware interface]; then when Spring creates your POJO the CamelContext will be injected into your POJO. Also see the Bean Integration for further injections.
+If you want to be injected with the xref:camelcontext.adoc[CamelContext] in your POJO just implement the http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware interface]; then when Spring creates your POJO the CamelContext will be injected into your POJO. Also see the Bean Integration for further injections.
 
 === Integration Testing
 

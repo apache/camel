@@ -9,15 +9,15 @@ image:http://camel.apache.org/images/camel-box-small.png[image]
 Grab these releases while they are hot!
 
 * The latest release for Camel 2.20.x is:
-link:release-notes/camel-2202-release.adoc[Camel 2.20.2 Release]
+xref:release-notes/camel-2202-release.adoc[Camel 2.20.2 Release]
 * The latest release for Camel 2.19.x is:
-link:release-notes/camel-2194-release.adoc[Camel 2.19.4 Release]
+xref:release-notes/camel-2194-release.adoc[Camel 2.19.4 Release]
 * Camel versions 2.18.x and older are no longer actively developed.
 
 [[Download-OlderReleases]]
 ==== Older Releases
 
-See: link:download-archives.adoc[Download Archives]
+See: xref:download-archives.adoc[Download Archives]
 
 [[Download-Gettingthelatestdistributions]]
 ==== Getting the latest distributions
@@ -100,7 +100,7 @@ POM] is:
 [[Download-Gettingpastreleases]]
 ==== Getting past releases
 
-See the link:download-archives.adoc[Download Archives] for all time
+See the xref:download-archives.adoc[Download Archives] for all time
 releases.
 
 [[Download-ReleasesInProgress]]
@@ -108,10 +108,10 @@ releases.
 
 The following releases are currently in progress:
 
-* link:release-notes/camel-2203-release.adoc[Camel 2.20.3 Release]
-* link:copy-of-camel-2195-release-template.html[Copy of Camel 2.19.5 Release (template)]
-* link:release-notes/camel-2210-release.adoc[Camel 2.21.0 Release]
-* link:camel-xyz-release-template.html[Camel x.y.z Release (template)]
+* xref:release-notes/camel-2203-release.adoc[Camel 2.20.3 Release]
+* xref:copy-of-camel-2195-release-template.adoc[Copy of Camel 2.19.5 Release (template)]
+* xref:release-notes/camel-2210-release.adoc[Camel 2.21.0 Release]
+* xref:camel-xyz-release-template.adoc[Camel x.y.z Release (template)]
 
 [[Download-Maven2Repositories]]
 ==== Maven 2 Repositories

@@ -105,7 +105,7 @@ stop the route instead.
 [[Lifecycle-SeeAlso]]
 ==== See Also
 
-* link:camelcontext.adoc[CamelContext]
-* link:architecture.adoc[Architecture]
+* xref:camelcontext.adoc[CamelContext]
+* xref:architecture.adoc[Architecture]
 * JMX
 

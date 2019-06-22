@@ -14,6 +14,6 @@ This happens with types that are streaming based, such as
 A number of Camel components supports and use streaming types out of the
 box. For example the HTTP related components, CXF, etc.
 
-Camel offers a functionality link:stream-caching.adoc[Stream caching];
+Camel offers a functionality xref:stream-caching.adoc[Stream caching];
 that caches the stream, so it can be re-readable. By enabling this
 cache, the message body would no longer be empty.

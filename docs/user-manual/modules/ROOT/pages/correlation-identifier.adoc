@@ -3,11 +3,11 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
-Identifier] from the link:enterprise-integration-patterns.html[EIP
+Identifier] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by getting or setting a header on a
-link:message.html[Message].
+xref:message.adoc[Message].
 
-When working with the link:activemq.html[ActiveMQ] or link:jms.html[JMS]
+When working with the xref:activemq.adoc[ActiveMQ] or xref:jms.adoc[JMS]
 components the correlation identifier header is called
 *JMSCorrelationID*. You can add your own correlation identifier to any
 message exchange to help correlate messages together to a single
@@ -16,17 +16,17 @@ conversation (or business process).
 image:http://www.enterpriseintegrationpatterns.com/img/CorrelationIdentifierSolution.gif[image]
 
 The use of a Correlation Identifier is key to working with the
-link:bam.html[Camel Business Activity Monitoring Framework] and can also
+xref:bam.adoc[Camel Business Activity Monitoring Framework] and can also
 be highly useful when testing with simulation or canned data such as
 with the <<mock-component,Mock testing framework>>
 
-Some link:eip.html[EIP] patterns will spin off a sub message, and in
+Some xref:eip.adoc[EIP] patterns will spin off a sub message, and in
 those cases, Camel will add a correlation id on the
-link:exchange.html[Exchange] as a property with they key
+xref:exchange.adoc[Exchange] as a property with they key
 `Exchange.CORRELATION_ID`, which links back to the source
-link:exchange.html[Exchange]. For example the
-link:splitter.html[Splitter], link:multicast.html[Multicast],
-link:recipient-list.html[Recipient List], and link:wire-tap.html[Wire
+xref:exchange.adoc[Exchange]. For example the
+xref:splitter.adoc[Splitter], xref:multicast.adoc[Multicast],
+xref:recipient-list.adoc[Recipient List], and xref:wire-tap.adoc[Wire
 Tap] EIP does this.
 
 The following example demonstrates using the Camel JMSMessageID as the

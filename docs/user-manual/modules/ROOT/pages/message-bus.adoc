@@ -3,7 +3,7 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Message
-Bus] from the link:enterprise-integration-patterns.html[EIP patterns].
+Bus] from the xref:enterprise-integration-patterns.adoc[EIP patterns].
 You could view Camel as a Message Bus itself as it allows producers and
 consumers to be decoupled.
 
