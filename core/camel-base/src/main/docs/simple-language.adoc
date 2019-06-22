@@ -78,6 +78,8 @@ classname. The converted body can be null.
 classname and then invoke methods using a Camel OGNL expression. The
 converted body can be null.
 
+|bodyOneLine | String | Converts the body to a String and removes all line-breaks so the string is in one line.
+
 |mandatoryBodyAs(_type_) |Type |Converts the body to the given type determined by its
 classname, and expects the body to be not null.
 

@@ -410,6 +410,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "out.body")) {
             return ExpressionBuilder.outBodyExpression();
+        } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
+            return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "id")) {
             return ExpressionBuilder.messageIdExpression();
         } else if (ObjectHelper.equal(expression, "exchangeId")) {

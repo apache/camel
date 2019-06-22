@@ -1640,6 +1640,27 @@ public class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns the expression for the message body as a one-line string
+     */
+    public static Expression bodyOneLine() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String body = exchange.getIn().getBody(String.class);
+                if (body == null) {
+                    return null;
+                }
+                body = StringHelper.replaceAll(body, System.lineSeparator(), "");
+                return body;
+            }
+
+            @Override
+            public String toString() {
+                return "bodyOneLine()";
+            }
+        };
+    }
+
     protected static void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
             IntrospectionSupport.setProperty(camelContext, bean, name, value);
@@ -1647,5 +1668,4 @@ public class ExpressionBuilder {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }
     }
-
 }
