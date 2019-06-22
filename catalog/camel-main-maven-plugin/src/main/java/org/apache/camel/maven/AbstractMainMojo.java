@@ -98,7 +98,8 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     @FunctionalInterface
     protected interface ComponentCallback {
-        void onOption(String componentName, String componentJavaType, String name, String type, String javaType, String description, String defaultValue);
+        void onOption(String componentName, String componentJavaType, String name, String type, String javaType,
+                      String description, String defaultValue, boolean deprecated);
     }
 
     protected void doExecute(ComponentCallback callback) throws MojoExecutionException, MojoFailureException {
@@ -173,8 +174,9 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
                 String javaType = safeJavaType(row.get("javaType"));
                 String desc = safeValue(row.get("description"));
                 String defaultValue = row.get("defaultValue");
+                boolean deprecated = "true".equals(row.getOrDefault("deprecated", "false"));
 
-                callback.onOption(componentName, componentJavaType, name, type, javaType, desc, defaultValue);
+                callback.onOption(componentName, componentJavaType, name, type, javaType, desc, defaultValue, deprecated);
             }
         }
     }
