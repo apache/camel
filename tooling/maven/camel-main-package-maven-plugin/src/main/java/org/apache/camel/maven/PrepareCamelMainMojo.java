@@ -128,8 +128,13 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                     } else {
                         sb.append("      \"defaultValue\": " + defaultValue + "\n");
                     }
-                } else {
+                } else if (!row.isDeprecated()) {
                     sb.append("\n");
+                }
+                if (row.isDeprecated()) {
+                    sb.append(",\n");
+                    sb.append("      \"deprecated\": true,\n");
+                    sb.append("      \"deprecation\": {}\n");
                 }
                 if (i < data.size() - 1) {
                     sb.append("    },\n");

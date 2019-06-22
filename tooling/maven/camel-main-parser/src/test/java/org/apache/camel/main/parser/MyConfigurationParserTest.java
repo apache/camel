@@ -41,5 +41,9 @@ public class MyConfigurationParserTest extends TestCase {
         assertEquals("int", list.get(4).getJavaType());
         assertEquals("300", list.get(4).getDefaultValue());
         assertEquals("Timeout in seconds to graceful shutdown Camel.", list.get(4).getDescription());
+
+        assertEquals("tracing", list.get(25).getName());
+        assertEquals("boolean", list.get(25).getJavaType());
+        assertTrue(list.get(25).isDeprecated());
     }
 }

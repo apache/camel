@@ -391,6 +391,7 @@ public class MyConfiguration {
      *
      * Default is false.
      */
+    @Deprecated
     public void setTracing(boolean tracing) {
         this.tracing = tracing;
     }
