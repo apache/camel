@@ -166,8 +166,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             if (!running || sync) {
                 running = true;
                 executor.runningWorkers.incrementAndGet();
-//                Thread thread = Thread.currentThread();
-//                String name = thread.getName();
                 try {
                     for (;;) {
                         final Runnable polled = queue.poll();
@@ -181,7 +179,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         }
                         try {
                             executor.pendingTasks.decrementAndGet();
-//                            thread.setName(name + " - " + polled.toString());
                             if (LOG.isTraceEnabled()) {
                                 LOG.trace("Running: {}", runnable);
                             }
@@ -191,12 +188,13 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                         }
                     }
                 } finally {
-//                    thread.setName(name);
                     running = false;
                     executor.runningWorkers.decrementAndGet();
                 }
             } else {
-                LOG.debug("Queuing reactive work: {}", runnable);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Queuing reactive work: {}", runnable);
+                }
             }
         }
 
@@ -205,11 +203,8 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             if (polled == null) {
                 return false;
             }
-            Thread thread = Thread.currentThread();
-            String name = thread.getName();
             try {
                 executor.pendingTasks.decrementAndGet();
-                thread.setName(name + " - " + polled.toString());
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Running: {}", polled);
                 }
@@ -217,8 +212,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             } catch (Throwable t) {
                 // should not happen
                 LOG.warn("Error executing reactive work due to " + t.getMessage() + ". This exception is ignored.", t);
-            } finally {
-                thread.setName(name);
             }
             return true;
         }
