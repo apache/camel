@@ -23,13 +23,15 @@ public final class SpringBootData {
     private String description;
     private String sourceType;
     private String defaultValue;
+    private boolean deprecated;
 
-    public SpringBootData(String name, String javaType, String description, String sourceType, String defaultValue) {
+    public SpringBootData(String name, String javaType, String description, String sourceType, String defaultValue, boolean deprecated) {
         this.name = name;
         this.javaType = javaType;
         this.description = description;
         this.sourceType = sourceType;
         this.defaultValue = defaultValue;
+        this.deprecated = deprecated;
     }
 
     public String getName() {
@@ -70,5 +72,13 @@ public final class SpringBootData {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 }

@@ -1934,7 +1934,9 @@
       "name": "camel.component.rest.component-name",
       "type": "java.lang.String",
       "sourceType": "org.apache.camel.component.rest.RestComponent",
-      "description": "The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used."
+      "description": "The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used.",
+      "deprecated": true,
+      "deprecation": {}
     },
     {
       "name": "camel.component.rest.api-doc",

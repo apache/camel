@@ -147,7 +147,7 @@ public class GenerateMojo extends AbstractMainMojo {
         final List<AutowireData> autowireData = new ArrayList<>();
         final List<SpringBootData> springBootData = new ArrayList<>();
 
-        ComponentCallback callback = (componentName, componentJavaType, name, type, javaType, description, defaultValue) -> {
+        ComponentCallback callback = (componentName, componentJavaType, name, type, javaType, description, defaultValue, deprecated) -> {
             // gather spring boot data
             // we want to use dash in the name
             String dash = camelCaseToDash(name);
@@ -155,7 +155,7 @@ public class GenerateMojo extends AbstractMainMojo {
             if (springBootEnabled) {
                 getLog().debug("Spring Boot option: " + key);
                 String sourceType = componentJavaType;
-                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, sourceType, defaultValue));
+                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, sourceType, defaultValue, deprecated));
             }
 
             // check if we can do automatic autowire to complex singleton objects from classes in the classpath
@@ -216,6 +216,7 @@ public class GenerateMojo extends AbstractMainMojo {
                                     String bootKey = "camel.component." + componentName + "." + dash + "." + bootName;
                                     String bootJavaType = m.getParameterTypes()[0].getName();
                                     String sourceType = best.getName();
+                                    boolean bootDeprecated = m.getAnnotation(Deprecated.class) != null;
                                     getLog().debug("Spring Boot option: " + bootKey);
 
                                     // find the setter method and grab the javadoc
@@ -232,7 +233,7 @@ public class GenerateMojo extends AbstractMainMojo {
                                     }
                                     desc += "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
 
-                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null));
+                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null, bootDeprecated));
                                 }
                             }
                         }
@@ -271,8 +272,13 @@ public class GenerateMojo extends AbstractMainMojo {
                     } else {
                         sb.append("      \"defaultValue\": " + row.getDefaultValue() + "\n");
                     }
-                } else {
+                } else if (!row.isDeprecated()) {
                     sb.append("\n");
+                }
+                if (row.isDeprecated()) {
+                    sb.append(",\n");
+                    sb.append("      \"deprecated\": true,\n");
+                    sb.append("      \"deprecation\": {}\n");
                 }
                 if (i < springBootData.size() - 1) {
                     sb.append("    },\n");
