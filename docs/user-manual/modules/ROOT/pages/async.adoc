@@ -121,8 +121,8 @@ application is still waiting. +
  3. The message is processed completely and the control is returned to
 the client.
 
-So why do you want to use synchronous link:event-message.html[Request
-Only]? Well if you want to know whether the message was processed
+So why do you want to use synchronous xref:event-message.adoc[Request Only]? 
+Well if you want to know whether the message was processed
 successfully or not before continuing. With synchronous it allows you to
 wait while the message is being processed. In case the processing was
 successful the control is returned to the client with no notion of error.
@@ -485,8 +485,8 @@ The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
 Async. What happens is that from the point forwards
 from `threads` the messages is routed asynchronous in a new thread.
-Camel leverages the link:asynchronous-processing.html[asynchronous
-routing engine], which was re-introduced in Camel 2.4, to continue
+Camel leverages the xref:asynchronous-processing.adoc[asynchronous routing engine], 
+which was re-introduced in Camel 2.4, to continue
 routing the Exchange asynchronously.
 
 The `threads` DSL supports the following options:
