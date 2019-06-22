@@ -8,7 +8,7 @@ notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
 and <<dataset-component,DataSet>> endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-link:enterprise-integration-patterns.html[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 

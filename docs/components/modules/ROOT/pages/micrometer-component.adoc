@@ -14,8 +14,8 @@ endif::[]
 
 The **micrometer:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are link:#MicrometerComponent-counter[counter], link:#MicrometerComponent-distributionSummary[summary],
-and link:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
+are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-distributionSummary[summary],
+and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
 simple way to measure the behaviour of an application. Configurable
 reporting backends (via Micrometer registries) enable different integration options for
 collecting and visualizing statistics.
@@ -194,9 +194,9 @@ class MyBean extends RouteBuilder {
 ### Usage of producers
 
 Each meter has type and name. Supported types are
-link:#MicrometerComponent-counter[counter],
-link:#MicrometerComponent-summary[distribution summary] and
-link:#MetricsComponent-timer[timer]. If no type is provided then a counter is used by default.
+xref:#MicrometerComponent-counter[counter],
+xref:#MicrometerComponent-summary[distribution summary] and
+xref:#MetricsComponent-timer[timer]. If no type is provided then a counter is used by default.
 
 The meter name is a string that is evaluated as `Simple` expression. In addition to using the `CamelMetricsName`
 header (see below), this allows to select the meter depending on exchange data.

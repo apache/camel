@@ -206,5 +206,5 @@ And the equivalent Spring sample:
 * Endpoint
 * Getting Started
 
-* link:../../../../camel-ahc/src/main/docs/readme.html[AHC]
+* xref:../../../../camel-ahc/src/main/docs/readme.adoc[AHC]
 * <<atmosphere-websocket-component,Atmosphere-Websocket>>

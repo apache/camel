@@ -76,4 +76,4 @@ from("direct:start")
 
 ### See Also
 
-* link:http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]
+* http://camel.apache.org/servicecall-eip.html[ServiceCall EIP]
