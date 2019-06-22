@@ -3626,7 +3626,7 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-spring</artifactId>
-        <version>4.5</version>
+        <version>4.14</version>
       </dependency>
       <dependency>
         <groupId>org.apache.zookeeper</groupId>
