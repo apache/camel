@@ -30,8 +30,8 @@ Currently, the Flink Component supports only Producers. One can create DataSet, 
 
 [source,java]
 -------------------------------------------------
-fxref:dataset?dataset=#myDataSet&dataSetCallback=#dataSetCallback
-fxref:datastream?datastream=#myDataStream&dataStreamCallback=#dataStreamCallback
+flink:dataset?dataset=#myDataSet&dataSetCallback=#dataSetCallback
+flink:datastream?datastream=#myDataStream&dataStreamCallback=#dataStreamCallback
 -------------------------------------------------
 
 [[Flink-FlinkEndpointOptions]]
@@ -43,7 +43,7 @@ FlinkEndpoint Options
 The Apache Flink endpoint is configured using URI syntax:
 
 ----
-fxref:endpointType
+flink:endpointType
 ----
 
 with the following path and query parameters:
@@ -183,7 +183,7 @@ String pattern = "foo";
 try {
     ProducerTemplate template = camelContext.createProducerTemplate();
     camelContext.start();
-    Long count = template.requestBody("fxref:dataSet?dataSet=#myDataSet&dataSetCallback=#countLinesContaining", pattern, Long.class);
+    Long count = template.requestBody("flink:dataSet?dataSet=#myDataSet&dataSetCallback=#countLinesContaining", pattern, Long.class);
     } finally {
         camelContext.stop();
     }
