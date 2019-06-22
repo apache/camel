@@ -8,15 +8,15 @@ components.
 [[Transport-ComponentsIncluded]]
 ==== Components Included
 
-Camel includes the following Component implementations via link:uris.adoc[URIs].
+Camel includes the following Component implementations via xref:uris.adoc[URIs].
 
 [IMPORTANT]
 ====
-Make sure to read link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+Make sure to read xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 to learn more about configuring endpoints. For
-example how to refer to beans in the link:registry.adoc[Registry] or how
+example how to refer to beans in the xref:registry.adoc[Registry] or how
 to use raw values for password options, and using
-link:using-propertyplaceholder.adoc[property placeholders] etc.
+xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
 ===== Core Components
@@ -31,9 +31,9 @@ include::../../../components/readme.adoc[]
 [[Transport-SeeAlso]]
 ==== See Also
 
-* link:endpoint.adoc[Endpoint]
-* link:uris.adoc[URIs]
-* link:writing-components.adoc[Writing Components]
-* link:configuring-camel.adoc[How do I add a component?]
-* link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
-* link:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]
+* xref:endpoint.adoc[Endpoint]
+* xref:uris.adoc[URIs]
+* xref:writing-components.adoc[Writing Components]
+* xref:configuring-camel.adoc[How do I add a component?]
+* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

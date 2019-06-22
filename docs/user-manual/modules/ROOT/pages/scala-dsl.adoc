@@ -16,7 +16,7 @@ you basic information on how to use the Scala DSL.
 * Scala DSL - EIP shows you the Scala DSL
 syntax for every EIP supported. Scala DSL supports
 every EIP from the Java DSL.
-* link:scala-dsl-supported-languages.html[Scala DSL - Supported
+* xref:scala-dsl-supported-languages.adoc[Scala DSL - Supported
 languages] explains the usage of traits to add support for other
 languages (e.g. XPath)
 

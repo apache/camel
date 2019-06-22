@@ -45,7 +45,7 @@ From Camel 3 onwards there type converter registry implementation uses source co
 
 Exposed the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/TypeConverterRegistry.html[TypeConverterRegistry]
-from link:camelcontext.adoc[CamelContext] so end users more easily will
+from xref:camelcontext.adoc[CamelContext] so end users more easily will
 be able to add type converters at runtime. This is also usable in
 situations where the default discovering of type converters fails on
 platforms with classloading issues.

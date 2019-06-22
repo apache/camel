@@ -22,7 +22,7 @@ public class MyProcessor implements Processor {
 
 You can then easily use this inside a route by declaring the bean in
 Spring, say via the XML (or registering it in JNDI if that is your
-link:registry.adoc[Registry]):
+xref:registry.adoc[Registry]):
 
 [source,xml]
 ----
@@ -49,7 +49,7 @@ Processor myProcessor = new MyProcessor();
 from("activemq:myQueue").process(myProcessor);
 ----
 
-If you need to lookup the processor in the link:registry.adoc[Registry]
+If you need to lookup the processor in the xref:registry.adoc[Registry]
 then you should use the `processRef` DSL:
 
 [source,java]
@@ -82,14 +82,14 @@ refactor it into a separate class.
 
 There is a base class called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
-which supports the full link:endpoint.adoc[Endpoint] semantics given a
+which supports the full xref:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
-So you just need to create a link:component.adoc[Component] class by
+So you just need to create a xref:component.adoc[Component] class by
 deriving from
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
-link:writing-components.adoc[Writing Components]
+xref:writing-components.adoc[Writing Components]
 
 [[Processor-SeeAlso]]
 ==== See Also

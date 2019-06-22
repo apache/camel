@@ -2,7 +2,7 @@
 === Camel XML Reference
 
 This page contains a link to the XML schema documents for
-link:xml-configuration.adoc[XML Configuration] with Camel releases. You
+xref:xml-configuration.adoc[XML Configuration] with Camel releases. You
 can refer to http://camel.apache.org/schema/ to see the individual XSDs
 available.
 
@@ -1402,7 +1402,7 @@ available.
 [[XMLReference-UsingtheXSDsinconfigurationfiles]]
 ==== Using the XSDs in configuration files
 
-When you are using link:spring.adoc[Spring]'s 2.5 XML handling to parse
+When you are using xref:spring.adoc[Spring]'s 2.5 XML handling to parse
 the XML then you need to refer to the XSD locations in your XML
 document.
 

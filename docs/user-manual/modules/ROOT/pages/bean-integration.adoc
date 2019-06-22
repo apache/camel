@@ -19,11 +19,11 @@ The following annotations is supported and inject by Camel's
 |=======================================================================
 |Annotation |Description
 
-|`@EndpointInject` |To inject an endpoint, see more details at link:pojo-producing.html[POJO
+|`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO
 Producing].
 
 |`@BeanInject` |*Camel 2.13:* To inject a bean obtained from the
-Registry. See link:bean-injection.html[Bean
+Registry. See xref:bean-injection.adoc[Bean
 Injection].
 
 |`@PropertyInject` |*Camel 2.12:* To inject a value using
@@ -32,7 +32,7 @@ property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See
 POJO Producing.
 
-|`@Consume` |To inject a consumer on a method. See link:pojo-consuming.adoc[POJO
+|`@Consume` |To inject a consumer on a method. See xref:pojo-consuming.adoc[POJO
 Consuming].
 |=======================================================================
 
@@ -50,7 +50,7 @@ creating a Recipient List from a POJO method
 a Routing Slip for a POJO method
 * Bean Injection to inject Camel related
 resources into your POJOs
-* link:using-exchange-pattern-annotations.html[Using Exchange Pattern
+* xref:using-exchange-pattern-annotations.adoc[Using Exchange Pattern
 Annotations] describes how the pattern annotations can be used to change
 the behaviour of method invocations with
 Spring Remoting or
@@ -81,7 +81,7 @@ uses Camel as the underlying transport mechanism. The nice thing about
 this approach is we can use any of the Camel transport
 Components to communicate between beans. It also
 means we can use Content Based Router
-and the other link:enterprise-integration-patterns.adoc[Enterprise
+and the other xref:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in between the beans; in particular we can use
 Message Translator to be able to convert
 what the on-the-wire messages look like in addition to adding various
@@ -90,7 +90,7 @@ headers and so forth.
 *Bean binding*
 
 Whenever Camel invokes a bean method via one of the above methods
-(<<bean-component,Bean>> component, link:spring-remoting.html[Spring
+(<<bean-component,Bean>> component, xref:spring-remoting.adoc[Spring
 Remoting] or POJO Consuming) then the
 *Bean Binding* mechanism is used to figure out
 what method to use (if it is not explicit) and how to bind the

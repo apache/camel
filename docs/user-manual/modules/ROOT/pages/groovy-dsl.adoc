@@ -6,7 +6,7 @@ DSL, but it additionally allows to use Groovy language
 features in your routes, particularly
 http://www.groovy-lang.org/closures.html[Closures] acting as
 Processor, Expression,
-Predicate, or link:aggregator.html[Aggregation
+Predicate, or xref:aggregator.adoc[Aggregation
 Strategy]. +
  With the Groovy DSL you write your RouteBuilder classes entirely in
 Groovy, while the scripting component
@@ -397,4 +397,4 @@ Using the plain Java DSL, the route would look something like this:
 [[GroovyDSL-SeeAlso]]
 ==== See Also
 
-* link:dsl.adoc[DSL]
+* xref:dsl.adoc[DSL]

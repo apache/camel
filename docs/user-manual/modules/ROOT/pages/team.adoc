@@ -70,7 +70,7 @@ sort it in alphabetical order.
 
 If you have been contributing to the Apache Camel project, and you want
 your name added to the list below. Then you can get in touch with the
-Camel team from the link:mailing-lists.adoc[Mailing Lists] and ask to be
+Camel team from the xref:mailing-lists.adoc[Mailing Lists] and ask to be
 added.
 ====
 

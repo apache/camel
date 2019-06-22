@@ -15,7 +15,7 @@ The following data formats are currently supported:
 ** <<avro-dataformat,Avro>>
 ** <<boon-dataformat,Boon>>
 ** <<hessian-dataformat,Hessian>>
-** link:json.adoc[JSON]
+** xref:json.adoc[JSON]
 ** <<protobuf-dataformat,Protobuf>>
 ** <<yaml-snakeyaml-dataformat,YAML>>
 
@@ -71,22 +71,22 @@ custom implementation
 And related is the following:
 
 * <<dataformat-component,DataFormat Component>> for working with
-  Data Formats as if it was a regular link:component.adoc[Component]
-  supporting link:endpoint.adoc[Endpoints] and link:uris.adoc[URIs].
-* link:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
+  Data Formats as if it was a regular xref:component.adoc[Component]
+  supporting xref:endpoint.adoc[Endpoints] and xref:uris.adoc[URIs].
+* xref:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
   type converting POJOs
 
 [[DataFormat-Unmarshalling]]
 ==== Unmarshalling
 
 If you receive a message from one of the Camel
-link:component.adoc[Components] such as <<file-component,File>>,
+xref:component.adoc[Components] such as <<file-component,File>>,
 <<http-component,HTTP>> or <<jms-component,JMS>> you often want to unmarshal
 the payload into some bean so that you can process it using some
-link:bean-integration.adoc[Bean Integration] or perform
-link:predicate.adoc[Predicate] evaluation and so forth. To do this use
-the `unmarshal` word in the link:dsl.adoc[DSL] in Java or the
-link:xml-configuration.adoc[XML Configuration].
+xref:bean-integration.adoc[Bean Integration] or perform
+xref:predicate.adoc[Predicate] evaluation and so forth. To do this use
+the `unmarshal` word in the xref:dsl.adoc[DSL] in Java or the
+xref:xml-configuration.adoc[XML Configuration].
 
 For example:
 
@@ -102,12 +102,12 @@ from("activemq:My.Queue").
 The above uses a named DataFormat of `jaxb` which is configured with a
 number of Java package names. You can if you prefer use a named
 reference to a data format which can then be defined in your
-link:registry.adoc[Registry] such as via your link:spring.adoc[Spring]
+xref:registry.adoc[Registry] such as via your xref:spring.adoc[Spring]
 XML file.
 
 You can also use the DSL itself to define the data format as you use it.
 For example the following uses Java serialization to unmarshal a binary
-file then send it as an ObjectMessage to link:activemq.adoc[ActiveMQ]
+file then send it as an ObjectMessage to xref:activemq.adoc[ActiveMQ]
 
 [source,java]
 ----
@@ -121,11 +121,11 @@ from("file://foo/bar").
 
 Marshalling is the opposite of unmarshalling, where a bean is marshalled
 into some binary or textual format for transmission over some transport
-via a Camel link:component.adoc[Component]. Marshalling is used in the
-same way as unmarshalling above; in the link:dsl.adoc[DSL] you can use a
+via a Camel xref:component.adoc[Component]. Marshalling is used in the
+same way as unmarshalling above; in the xref:dsl.adoc[DSL] you can use a
 DataFormat instance, you can configure the DataFormat dynamically using
 the DSL or you can refer to a named instance of the format in the
-link:registry.adoc[Registry].
+xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of

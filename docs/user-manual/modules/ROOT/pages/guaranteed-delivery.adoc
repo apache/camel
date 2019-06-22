@@ -3,10 +3,10 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
-Delivery] from the link:enterprise-integration-patterns.html[EIP
+Delivery] from the xref:enterprise-integration-patterns.html[EIP
 patterns] using among others the following components:
 
-* link:file2.html[File] for using file systems as a persistent store of
+* xref:file2.adoc[File] for using file systems as a persistent store of
 messages
 * <<jms-component,JMS>> when using persistent delivery (the default) for
 working with JMS Queues and Topics for high performance, clustering and
@@ -15,8 +15,8 @@ load balancing
 any of the many other database component such as <<sql-component,SQL>>,
 <<jdbc-component,JDBC>>,
 <<mybatis-component,MyBatis>>,
-link:hibernate.html[Hibernate]
-* link:hawtdb.html[HawtDB] for a lightweight key-value persistent store
+xref:hibernate.adoc[Hibernate]
+* xref:hawtdb.adoc[HawtDB] for a lightweight key-value persistent store
 
 image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSolution.gif[image]
 

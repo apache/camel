@@ -16,11 +16,11 @@ it is configured to:
 * no dead letter queue (not possible)
 
 By default, any exception thrown during routing will be propagated back
-to the caller and the link:exchange.adoc[Exchange] ends immediately.
-However, you can use the link:exception-clause.adoc[Exception Clause] to
+to the caller and the xref:exchange.adoc[Exchange] ends immediately.
+However, you can use the xref:exception-clause.adoc[Exception Clause] to
 catch a given exception and lower the exception by marking it as
 handled. If so, the exception will *not* be sent back to the caller, and
-the link:exchange.adoc[Exchange] continues to be routed.
+the xref:exchange.adoc[Exchange] continues to be routed.
 
 [[DefaultErrorHandler-Example]]
 ==== Example
@@ -54,7 +54,7 @@ from("jetty:http://localhost/myservice/order")
 When the `ValidationException` is thrown from the `validateOrder` bean,
 it is intercepted by the DefaultErrorHandler that lets the
 `onException(ValidationException.class)` handle it, so the
-link:exchange.adoc[Exchange] is routed to this onException route, and
+xref:exchange.adoc[Exchange] is routed to this onException route, and
 since we use `handled(true)`, then the original exception is cleared,
 and we transform the message into a fixed response that is returned to
 jetty endpoint that returns it to the original caller.
@@ -62,5 +62,5 @@ jetty endpoint that returns it to the original caller.
 [[DefaultErrorHandler-SeeAlso]]
 ==== See Also
 
-* link:error-handler.adoc[Error Handler]
+* xref:error-handler.adoc[Error Handler]
 * <<deadLetterChannel-eip,Dead Letter Channel>>

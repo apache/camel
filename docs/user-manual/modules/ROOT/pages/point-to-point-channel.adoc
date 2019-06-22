@@ -3,7 +3,7 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
-to Point Channel] from the link:enterprise-integration-patterns.html[EIP
+to Point Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using the following components
 
 * <<seda-component,SEDA>> for in-VM seda based messaging

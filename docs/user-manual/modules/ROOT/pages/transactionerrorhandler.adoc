@@ -7,15 +7,15 @@ This is the new default transaction error handler in Camel 2.0 onwards,
 used for transacted routes.
 
 It uses the same base as the
-link:defaulterrorhandler.adoc[DefaultErrorHandler] so it has the same
+xref:defaulterrorhandler.adoc[DefaultErrorHandler] so it has the same
 feature set as this error handler.
 
 By default any exception thrown during routing will be propagated back
-to the caller and the link:exchange.adoc[Exchange] ends immediately.
-However you can use the link:exception-clause.adoc[Exception Clause] to
+to the caller and the xref:exchange.adoc[Exchange] ends immediately.
+However you can use the xref:exception-clause.adoc[Exception Clause] to
 catch a given exception and lower the exception by marking it as
 handled. If so the exception will *not* be sent back to the caller and
-the link:exchange.adoc[Exchange] continues to be routed.
+the xref:exchange.adoc[Exchange] continues to be routed.
 
 [[TransactionErrorHandler-Example]]
 ==== Example
@@ -42,9 +42,9 @@ from("jetty:http://localhost/myservice/order").transacted().to("bean:validateOrd
 
 When the *ValidationException* is thrown from the validate order bean it
 is intercepted by the
-link:transactionerrorhandler.adoc[TransactionErrorHandler] and it let
+xref:transactionerrorhandler.adoc[TransactionErrorHandler] and it let
 the `onException(ValidationException.class` handle it so the
-link:exchange.adoc[Exchange] is routed to this route and since we use
+xref:exchange.adoc[Exchange] is routed to this route and since we use
 *handled(true)* then the original exception is lowered (= cleared) and
 we transform the message into a fixed response that are returned to
 jetty endpoint that returns it to the original caller.
@@ -109,7 +109,7 @@ TransactionTemplate or a PlatformTransactionManager.
 [[TransactionErrorHandler-UsingCameltodoredeliveries]]
 ==== Using Camel to do redeliveries
 
-As the link:transactionerrorhandler.adoc[TransactionErrorHandler] also
+As the xref:transactionerrorhandler.adoc[TransactionErrorHandler] also
 supports to let Camel do redeliveries you can use both worlds. Letting
 Camel do some redeliveries and at the end the backing transaction
 manager doing other redeliveries. In fact in the end the transaction
@@ -127,7 +127,7 @@ transaction manager that will do a rollback, and a redelivery if it was
 configured to do so.
 
 Notice that as we have all the powers from
-link:defaulterrorhandler.adoc[DefaultErrorHandler] we can configure an
+xref:defaulterrorhandler.adoc[DefaultErrorHandler] we can configure an
 *onException* where we state that in case of this particular exception,
 an IllegalArgumentException we will only do redeliveries up till 4
 times. (Yes the code is based on an unit test).
@@ -173,6 +173,6 @@ from("direct:fail")
 [[TransactionErrorHandler-SeeAlso]]
 ==== See Also
 
-* link:error-handler.adoc[Error Handler]
-* link:error-handling-in-camel.adoc[Error handling in Camel]
+* xref:error-handler.adoc[Error Handler]
+* xref:error-handling-in-camel.adoc[Error handling in Camel]
 * <<transactionalClient-eip,Transactional Client>>

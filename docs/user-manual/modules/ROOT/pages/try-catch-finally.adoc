@@ -21,7 +21,7 @@ names.
 ===== Camel error handling is disabled
 
 When using `doTry .. doCatch .. doFinally` then the regular Camel
-link:error-handler.adoc[Error Handler] does not apply. That means any
+xref:error-handler.adoc[Error Handler] does not apply. That means any
 `onException` or the likes does not trigger. The reason is that
 `doTry .. doCatch .. doFinally` is in fact its own error handler and
 that it aims to mimic and work like how try/catch/finally works in Java.
@@ -47,7 +47,7 @@ Camel will still match a `doCatch` block defined with an
 multiple `doCatch` blocks matter. Camel will iterate from the top going
 down and use the first `doCatch` that matches the exception. The reason
 is to keep it similar to the regular java and how it selects a catch
-block. This differers from the link:exception-clause.adoc[Exception
+block. This differers from the xref:exception-clause.adoc[Exception
 Clause] that has a more intelligent exception selection strategy among
 multiple `onException` definitions, where it also consider the delta in
 the exception hierarchy to select the best definition.
@@ -57,7 +57,7 @@ the catch should trigger or not at runtime.
 
 And to simulate _rethrowing_ an exception from a `doCatch` you should
 use the `handled` predicate. If its evaluated to `false` Camel will
-reattach the exception on the link:exchange.adoc[Exchange].
+reattach the exception on the xref:exchange.adoc[Exchange].
 
 [[TryCatchFinally-UsingtrycatchfinallyinJavaDSL]]
 ==== Using try .. catch .. finally in Java DSL
@@ -126,6 +126,6 @@ https://github.com/apache/camel/tree/master/components/camel-spring/src/test/res
 [[TryCatchFinally-SeeAlso]]
 ==== See Also
 
-* link:error-handling-in-camel.adoc[Error handling in Camel]
-* link:error-handler.adoc[Error Handler]
-* link:exception-clause.adoc[Exception Clause]
+* xref:error-handling-in-camel.adoc[Error handling in Camel]
+* xref:error-handler.adoc[Error Handler]
+* xref:exception-clause.adoc[Exception Clause]

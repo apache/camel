@@ -1,7 +1,7 @@
 [[ExceptionClause-ExceptionClause]]
 === Exception Clause
 
-You can use the _Exception Clause_ in the Java link:dsl.adoc[DSL] to
+You can use the _Exception Clause_ in the Java xref:dsl.adoc[DSL] to
 specify the error handling you require on a per exception type basis
 using the *`onException()`* method. To get started we give quick sample
 before digging into how it works.
@@ -161,7 +161,7 @@ select the *`onException(IOException.class)`* clause.
 
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
 requires to use the <<deadLetterChannel-eip,Dead Letter Channel>>
-as the link:error-handler.adoc[Error Handler]. Dead Letter Channel
+as the xref:error-handler.adoc[Error Handler]. Dead Letter Channel
 supports attempting to redeliver the message exchange a number of times
 before sending it to a dead letter endpoint. See
 <<deadLetterChannel-eip,Dead Letter Channel>> for further
@@ -169,7 +169,7 @@ information about redeliver and which redeliver options exists.
 
 ===== No redelivery is default for onException
 
-By default any link:exception-clause.adoc[Exception Clause] will *not*
+By default any xref:exception-clause.adoc[Exception Clause] will *not*
 redeliver! (as it sets the `maximumRedeliveries` option to 0).
 
 Sometimes you want to configure the redelivery policy on a per exception
@@ -268,7 +268,7 @@ redelivery policies.
 
 By default the error handler will create and use a scheduled thread pool
 to trigger redelivery in the future. From *Camel 2.8*: you can configure
-the *`executorServiceRef`* on the link:error-handler.adoc[Error Handler]
+the *`executorServiceRef`* on the xref:error-handler.adoc[Error Handler]
 to indicate a reference to either a shared thread pool you can enlist in
 the registry, or a thread pool profile in case you want to be able to
 control pool settings.
@@ -341,13 +341,13 @@ feature in Camel. However prior to Camel 1.5 you could not mark the
 exception as being handled, so the caller would still receive the caused
 exception as a response. In Camel 1.5 you can now change this behavior
 with the new *handle* DSL. The handle is a
-link:predicate.adoc[Predicate] that is overloaded to accept three types
+xref:predicate.adoc[Predicate] that is overloaded to accept three types
 of parameters:
 
 * Boolean
-* link:predicate.adoc[Predicate]
-* link:expression.adoc[Expression] that will be evaluates as a
-link:predicate.adoc[Predicate] using this rule set: If the expressions
+* xref:predicate.adoc[Predicate]
+* xref:expression.adoc[Expression] that will be evaluates as a
+xref:predicate.adoc[Predicate] using this rule set: If the expressions
 returns a Boolean its used directly. For any other response its regarded
 as `true` if the response is `not null`.
 
@@ -370,7 +370,7 @@ to the caller. First we setup our routing as:
 /camel-core/src/test/java/org/apache/camel/processor/DeadLetterChannelHandledExampleTest.java
 
 Then we have our service beans that is just plain POJO demonstrating how you
-can use link:bean-integration.adoc[Bean Integration] in Camel to avoid
+can use xref:bean-integration.adoc[Bean Integration] in Camel to avoid
 being tied to the Camel API:
 
 /camel-core/src/test/java/org/apache/camel/processor/DeadLetterChannelHandledExampleTest.java
@@ -417,7 +417,7 @@ message instead of the fixed text `Sorry`:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java
 
-And we can use the link:simple-language.adoc[Simple] language to set a readable error
+And we can use the xref:simple-language.adoc[Simple] language to set a readable error
 message with the caused exception message:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java
@@ -443,7 +443,7 @@ onException(IDontCareException)
 You can maybe compare continued with a having a *`try ... catch`* block
 around each step and then just ignore the exception. Using continued
 makes it easier in Camel as you otherwise had to use
-link:try-catch-finally.adoc[Try Catch Finally] style for this kind of
+xref:try-catch-finally.adoc[Try Catch Finally] style for this kind of
 use case.
 
 [[ExceptionClause-ExampleUsingcontinued]]
@@ -492,10 +492,10 @@ from("jms:queue:order:input")
 ----
 
 The route listen for JMS messages and validates, transforms and handle
-it. During this the link:exchange.adoc[Exchange] payload is
+it. During this the xref:exchange.adoc[Exchange] payload is
 transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can add an
-*`onException`*. But when we move the link:exchange.adoc[Exchange] to
+*`onException`*. But when we move the xref:exchange.adoc[Exchange] to
 this destination we do not know in which state the message is in. Did
 the error happen in before the *`transformOrder`* or after? So to be
 sure we want to move the original input message we received from
@@ -533,7 +533,7 @@ would be:
 ----
 
 [[ExceptionClause-AdvancedUsageofExceptionClause]]
-=== Advanced Usage of link:exception-clause.adoc[Exception Clause]
+=== Advanced Usage of xref:exception-clause.adoc[Exception Clause]
 
 [[ExceptionClause-UsingGlobalandPerRouteExceptionClauses]]
 ==== Using Global and Per Route Exception Clauses
@@ -591,9 +591,9 @@ that is selected.
 
 *Available as of Camel 1.5.1 or later*
 
-You can attach an link:expression.adoc[Expression] to the exception
+You can attach an xref:expression.adoc[Expression] to the exception
 clause to have fine grained control when a clause should be selected or
-not. As it's an link:expression.adoc[Expression] you can use any kind of
+not. As it's an xref:expression.adoc[Expression] you can use any kind of
 code to perform the test. Here is a sample:
 
 /camel-core/src/test/java/org/apache/camel/processor/exceptionpolicy/DefaultExceptionPolicyStrategyUsingWhenTest.java
@@ -617,10 +617,10 @@ default error handler will kick in.
 for *`onRedelivery`* to allow custom processing of a Message before its
 being redelivered. It can be used to add some customer header or
 whatnot. In Camel 2.0 we have added this feature to
-link:exception-clause.adoc[Exception Clause] as well, so you can use per
+xref:exception-clause.adoc[Exception Clause] as well, so you can use per
 exception scoped on redelivery. Camel will fallback to use the one
 defined on <<deadLetterChannel-eip,Dead Letter Channel>> if any, if
-none exists on the link:exception-clause.adoc[Exception Clause]. See
+none exists on the xref:exception-clause.adoc[Exception Clause]. See
 <<deadLetterChannel-eip,Dead Letter Channel>> for more details on
 *`onRedelivery`*.
 
@@ -760,6 +760,6 @@ Spring DSL as well. Here are a few examples:
 [[ExceptionClause-Seealso]]
 ==== See also
 
-* The link:error-handler.adoc[Error Handler] for the general error handling documentation
+* The xref:error-handler.adoc[Error Handler] for the general error handling documentation
 * The <<deadLetterChannel-eip,Dead Letter Channel>> for further details
 * The <<transactionalClient-eip,Transactional Client>> for transactional behavior

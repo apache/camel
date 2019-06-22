@@ -15,7 +15,7 @@ behavior.
 For example with Camel you can configure a
 CamelContext; capable of creating on demand
 Component and Endpoint
-instances along with providing a powerful link:type-converter.html[Type
+instances along with providing a powerful xref:type-converter.adoc[Type
 Converter] registry all by using a single XML element...
 
 [source,java]

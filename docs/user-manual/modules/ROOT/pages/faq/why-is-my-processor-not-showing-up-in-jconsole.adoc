@@ -32,4 +32,4 @@ to not depend on Spring JARs anymore.
 [[WhyismyprocessornotshowingupinJConsole-Seealso]]
 ==== See also
 
-* link:camel-jmx.adoc[Camel JMX]
+* xref:camel-jmx.adoc[Camel JMX]
