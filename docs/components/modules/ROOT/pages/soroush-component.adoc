@@ -8,8 +8,8 @@ It allows a Camel-based application to send and receive messages by acting as a 
 
 A Soroush Bot must be created before using this component, following the
 instruction at the
-link:https://soroush-app.ir/developer.html[Soroush Bot Developers home].
-when a new Bot is created, the link:https://sapp.ir/mrbot[MrBot] provides
+https://soroush-app.ir/developer.html[Soroush Bot Developers home].
+when a new Bot is created, the https://sapp.ir/mrbot[MrBot] provides
 an **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter for camel-soroush endpoint.
 
 Maven users will need to add the following dependency to their `pom.xml`

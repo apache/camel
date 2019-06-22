@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-NOTE: When using Apache CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
+NOTE: When using Apache CXF as a consumer, the xref:cxf-bean-component.adoc[CXF Bean
 Component] allows you to factor out how message payloads are received
 from their processing as a RESTful or SOAP web service. This has the
 potential of using a multitude of transports to consume web services.
@@ -17,50 +17,50 @@ The CXF component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
 hosted in CXF.
 
-* link:#cxf-component[CXF Component]
-** link:#uri-format[URI format]
-** link:#options[Options]
-*** link:#descriptions-of-the-dataformats[Descriptions of the
+* xref:#cxf-component[CXF Component]
+** xref:#uri-format[URI format]
+** xref:#options[Options]
+*** xref:#descriptions-of-the-dataformats[Descriptions of the
 dataformats]
-**** link:#how-to-enable-cxfs-loggingoutinterceptor-in-message-mode[How to
+**** xref:#how-to-enable-cxfs-loggingoutinterceptor-in-message-mode[How to
 enable CXF's LoggingOutInterceptor in MESSAGE mode]
-*** link:#description-of-relayheaders-option[Description of
+*** xref:#description-of-relayheaders-option[Description of
 relayHeaders option]
-**** link:#available-only-in-pojo-mode[Available only in POJO mode]
-**** link:#changes-since-release20[Changes since Release 2.0]
-** link:#configure-the-cxf-endpoints-with-spring[Configure the CXF
+**** xref:#available-only-in-pojo-mode[Available only in POJO mode]
+**** xref:#changes-since-release20[Changes since Release 2.0]
+** xref:#configure-the-cxf-endpoints-with-spring[Configure the CXF
 endpoints with Spring]
-** link:#configuring-the-cxf-endpoints-with-apache-aries-blueprint[Configuring
+** xref:#configuring-the-cxf-endpoints-with-apache-aries-blueprint[Configuring
 the CXF Endpoints with Apache Aries Blueprint.]
-** link:#how-to-make-the-camel-cxf-component-use-log4j-instead-of-javautillogging[How
+** xref:#how-to-make-the-camel-cxf-component-use-log4j-instead-of-javautillogging[How
 to make the camel-cxf component use log4j instead of java.util.logging]
-** link:#how-to-let-camel-cxf-response-message-with-xml-start-document[How to
+** xref:#how-to-let-camel-cxf-response-message-with-xml-start-document[How to
 let camel-cxf response message with xml start document]
-** link:#how-to-override-the-cxf-producer-address-from-message-header[How to
+** xref:#how-to-override-the-cxf-producer-address-from-message-header[How to
 override the CXF producer address from message header]
-** link:#how-to-consume-a-message-from-a-camel-cxf-endpoint-in-pojo-data-format[How
+** xref:#how-to-consume-a-message-from-a-camel-cxf-endpoint-in-pojo-data-format[How
 to consume a message from a camel-cxf endpoint in POJO data format]
-** link:#how-to-prepare-the-message-for-the-camel-cxf-endpoint-in-pojo-data-format[How
+** xref:#how-to-prepare-the-message-for-the-camel-cxf-endpoint-in-pojo-data-format[How
 to prepare the message for the camel-cxf endpoint in POJO data format]
-** link:#how-to-deal-with-the-message-for-a-camel-cxf-endpoint-in-payload-dataformat[How
+** xref:#how-to-deal-with-the-message-for-a-camel-cxf-endpoint-in-payload-dataformat[How
 to deal with the message for a camel-cxf endpoint in PAYLOAD data
 format]
-** link:#how-to-get-and-set-soap-headers-in-pojo-mode[How to get and set SOAP
+** xref:#how-to-get-and-set-soap-headers-in-pojo-mode[How to get and set SOAP
 headers in POJO mode]
-** link:#how-to-get-and-set-soap-headers-in-payload-mode[How to get and set
+** xref:#how-to-get-and-set-soap-headers-in-payload-mode[How to get and set
 SOAP headers in PAYLOAD mode]
-** link:#soap-headers-are-not-available-in-message-mode[SOAP headers are
+** xref:#soap-headers-are-not-available-in-message-mode[SOAP headers are
 not available in MESSAGE mode]
-** link:#how-to-throw-a-soap-fault-from-camel[How to throw a SOAP Fault
+** xref:#how-to-throw-a-soap-fault-from-camel[How to throw a SOAP Fault
 from Camel]
-** link:#how-to-propagate-a-camel-cxf-endpoints-request-and-response-context[How
+** xref:#how-to-propagate-a-camel-cxf-endpoints-request-and-response-context[How
 to propagate a camel-cxf endpoint's request and response context]
-** link:#attachment-support[Attachment Support]
-** link:#streaming-support-in-payload-mode[Streaming Support in PAYLOAD
+** xref:#attachment-support[Attachment Support]
+** xref:#streaming-support-in-payload-mode[Streaming Support in PAYLOAD
 mode]
-** link:#using-the-generic-cxf-dispatch-mode[Using the generic CXF
+** xref:#using-the-generic-cxf-dispatch-mode[Using the generic CXF
 Dispatch mode]
-** link:#see-also[See Also]
+** xref:#see-also[See Also]
 
 Maven users must add the following dependency to their `pom.xml`
 for this component:
