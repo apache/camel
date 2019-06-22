@@ -23,6 +23,7 @@ public class ConfigurationModel {
     private String sourceType;
     private String description;
     private String defaultValue;
+    private boolean deprecated;
 
     public String getName() {
         return name;
@@ -62,5 +63,13 @@ public class ConfigurationModel {
 
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
     }
 }

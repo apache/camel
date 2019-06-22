@@ -57,12 +57,14 @@ public class MainConfigurationParser {
             MethodSource setter = clazz.getMethod(setterName, javaType);
             if (setter != null) {
                 String desc = setter.getJavaDoc().getFullText();
+                boolean deprecated = setter.getAnnotation(Deprecated.class) != null;
                 ConfigurationModel model = new ConfigurationModel();
                 model.setName(name);
                 model.setJavaType(javaType);
                 model.setDescription(desc);
                 model.setSourceType(sourceType);
                 model.setDefaultValue(defaultValue);
+                model.setDeprecated(deprecated);
                 answer.add(model);
             }
         });
