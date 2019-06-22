@@ -13,7 +13,7 @@ Invoice from system B within a specific time period.
 [[BAM-HowCamelBAMWorks]]
 ==== How Camel BAM Works
 
-Camel BAM uses a link:correlation-identifier.html[Correlation
+Camel BAM uses a xref:correlation-identifier.adoc[Correlation
 Identifier] on an input message to determine the _Process Instance_ to
 which it belongs. The process instance is an entity bean which can
 maintain state for each _Activity_ (where an activity typically maps to
@@ -64,8 +64,8 @@ added to any CamelContext.
 [[BAM-CompleteExample]]
 ==== Complete Example
 
-For a complete example please see the link:bam-example.html[BAM
-Example], which is part of the standard Camel
+For a complete example please see the xref:bam-example.adoc[BAM Example],
+ which is part of the standard Camel
 Examples
 
 [[BAM-UseCases]]

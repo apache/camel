@@ -2,7 +2,7 @@
 === Expressions
 
 Expressions and Predicates can then be used to
-create the various link:enterprise-integration-patterns.adoc[Enterprise
+create the various xref:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in the DSL or
 XML Configuration like the
 Recipient List. +
@@ -96,7 +96,7 @@ The following languages are supported out of the box
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
-link:annotation-based-expression-language.html[Annotation Based
+xref:annotation-based-expression-language.adoc[Annotation Based
 Expression Language].
 
 [[Expression-UsingExpressionsinyourIDE]]

@@ -3,7 +3,7 @@
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
-Based Router] from the link:enterprise-integration-patterns.html[EIP
+Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] allows you to route messages to the correct destination based
 on the contents of the message exchanges.
 
@@ -26,7 +26,7 @@ The Choice EIP supports 2 options which are listed below:
 
 The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
-the evaluation of various link:predicate.html[Predicate] expressions
+the evaluation of various xref:predicate.adoc[Predicate] expressions
 
 [source,java]
 ----
@@ -44,7 +44,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----
 
-TIP: See link:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html[Why
+TIP: See xref:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
 can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 

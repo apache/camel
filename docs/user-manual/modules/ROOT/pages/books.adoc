@@ -3,7 +3,7 @@
 
 This page lists the known books about Apache Camel. If you happen to
 know a book which is not listed then please contact us, for example
-using the link:mailing-lists.html[Mailing Lists].
+using the xref:mailing-lists.adoc[Mailing Lists].
 
 * http://manning.com/ibsen2/[Camel in Action 2nd edition]
 * http://www.manning.com/ibsen[Camel in Action]
@@ -131,7 +131,7 @@ https://www.packtpub.com/application-development/mastering-apache-camel[Masterin
 Apache Camel] by https://twitter.com/jbonofre[Jean-Baptiste Onofré].
 Published by http://www.packtpub.com/[Packt publishing] in June 2015.
 
-link:books/3151EN_Mastering_Apache_Camel.jpg?version=1&modificationDate=1453112264000&api=v2[image:books/3151EN_Mastering_Apache_Camel.jpg[image]]
+xref:books/3151EN_Mastering_Apache_Camel.jpg?version=1&modificationDate=1453112264000&api=v2[image:books/3151EN_Mastering_Apache_Camel.jpg[image]]
 
 This book will provide you with the skills you need to efficiently
 create routes using Apache Camel.

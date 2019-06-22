@@ -2,7 +2,7 @@
 === Mailing Lists
 
 The following mailing lists are available. Before posting you might want
-to read the link:support.adoc[Support] page before posting to the
+to read the xref:support.adoc[Support] page before posting to the
 mailing list.
 
 [IMPORTANT]

@@ -258,6 +258,6 @@ Endpoint then the `interceptFrom` is not triggered.
 [[Intercept-SeeAlso]]
 ==== See Also
 
-* link:architecture.adoc[Architecture]
+* xref:architecture.adoc[Architecture]
 
 

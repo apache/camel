@@ -40,7 +40,7 @@ extends CamelModule so that all bound RouteBuilder instances will be
 injected into the CamelContext or you can supply an optional Matcher to
 find RouteBuilder instances matching some kind of predicate.
 
-So you can specify the exact link:route-builder.adoc[RouteBuilder]
+So you can specify the exact xref:route-builder.adoc[RouteBuilder]
 instances you want:
 
 [source,java]
@@ -85,9 +85,9 @@ to load right jndi properties file.
 ==== Configuring Component, Endpoint or RouteBuilder instances
 
 You can use Guice to dependency inject whatever objects
-you need to create, be it an link:endpoint.adoc[Endpoint],
-link:component.adoc[Component], link:route-builder.adoc[RouteBuilder] or
-arbitrary link:bean-integration.adoc[bean used within a route].
+you need to create, be it an xref:endpoint.adoc[Endpoint],
+xref:component.adoc[Component], xref:route-builder.adoc[RouteBuilder] or
+arbitrary xref:bean-integration.adoc[bean used within a route].
 
 The easiest way to do this is to create your own Guice Module class
 which extends one of the above module classes and add a provider method
@@ -122,7 +122,7 @@ change based on development, testing, production, etc.
 ==== Creating multiple RouteBuilder instances per type
 
 It is sometimes useful to create multiple instances of a particular
-link:route-builder.adoc[RouteBuilder] with different configurations.
+xref:route-builder.adoc[RouteBuilder] with different configurations.
 
 To do this just create multiple provider methods for each configuration;
 or create a single provider method that returns a collection of
@@ -148,8 +148,8 @@ public class MyModule extends CamelModuleWithMatchingRoutes {
 [[Guice-SeeAlso]]
 ==== See Also
 
-* There are a number of link:examples.adoc[Examples] you can look at to
-see Guice and Camel being used such as link:guice-jms-example.adoc[Guice
+* There are a number of xref:examples.adoc[Examples] you can look at to
+see Guice and Camel being used such as xref:guice-jms-example.adoc[Guice
 JMS Example]
-* link:guice-maven-plugin.adoc[Guice Maven Plugin] for running your
+* xref:guice-maven-plugin.adoc[Guice Maven Plugin] for running your
 Guice based routes via Maven

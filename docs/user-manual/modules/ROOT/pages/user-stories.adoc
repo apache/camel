@@ -9,13 +9,13 @@ entry or comment; or post to the mailing list.
 |=======================================================================
 |Company, Product, or Project |Description
 |http://activemq.apache.org/[Apache ActiveMQ] |Uses Camel to add
-link:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 support into the
 http://activemq.apache.org/enterprise-integration-patterns.html[ActiveMQ
 broker]. If you run an out of the box ActiveMQ broker, look in
 conf/camel.xml and you'll see `<camelContext>` with some example routing
 rules. Can be used to bridge ActiveMQ with any of the camel
-link:component.adoc[Components].
+xref:component.adoc[Components].
 
 |http://servicemix.apache.org/home.html[Apache ServiceMix] |Uses Camel
 as a routing engine as a

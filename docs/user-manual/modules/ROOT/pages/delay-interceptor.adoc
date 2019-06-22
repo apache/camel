@@ -66,5 +66,5 @@ with 200 millis.
 ==== See Also
 
 * Tracer
-* link:debugger.adoc[Debugger]
+* xref:debugger.adoc[Debugger]
 

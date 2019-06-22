@@ -5,13 +5,13 @@
 
 Camel now provides a new `PropertiesComponent` in `camel-core` which
 allows you to use property placeholders when defining Camel
-link:endpoint.adoc[Endpoint] URIs. This works much like you would do if
+xref:endpoint.adoc[Endpoint] URIs. This works much like you would do if
 using Spring's `<property-placeholder>` tag. However Spring has a
 limitation that prevents third-party frameworks from fully leveraging
 Spring property placeholders.
 
 For more details see:
-link:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
+xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
 I use Spring Property Placeholder with Camel XML].
 
 [[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders]]
@@ -24,7 +24,7 @@ The property placeholder is typically used when trying to do any of the
 following:
 
 * Lookup or creating endpoints
-* Lookup of beans in the link:registry.adoc[Registry]
+* Lookup of beans in the xref:registry.adoc[Registry]
 * Additional supported in Spring XML (see below in examples)
 * Using Blueprint `PropertyPlaceholder` with Camel
 <<properties-component,Properties>> component
@@ -70,7 +70,7 @@ specify their own resolver to use for the lookup of properties.
 Camel provides a default implementation
 `org.apache.camel.component.properties.DefaultPropertiesResolver`
 which is capable of loading properties from the file system, classpath
-or link:registry.adoc[Registry]. To indicate which source to use the
+or xref:registry.adoc[Registry]. To indicate which source to use the
 location must contain the appropriate prefix.
 
 The list of prefixes is:
@@ -78,7 +78,7 @@ The list of prefixes is:
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Prefix |Description
-|`ref:` |Lookup in the link:registry.adoc[Registry.]
+|`ref:` |Lookup in the xref:registry.adoc[Registry.]
 
 |`file:` |Load the from file system.
 
@@ -243,14 +243,14 @@ option both inside the Spring as well as the Blueprint XML.
 
 
 [[UsingPropertyPlaceholder-UsingaPropertiesfromthe]]
-==== Using a Properties from the link:registry.adoc[Registry]
+==== Using a Properties from the xref:registry.adoc[Registry]
 
 *Available as of Camel 2.4*
 
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
-Then you could setup the link:properties.adoc[Properties] component as
+Then you could setup the xref:properties.adoc[Properties] component as
 follows:
 
 [source,xml]
@@ -260,7 +260,7 @@ follows:
 
 Where `myProperties` is the id to use for lookup in the OSGi registry.
 Notice we use the `ref:` prefix to tell Camel that it should lookup
-the properties for the link:registry.adoc[Registry].
+the properties for the xref:registry.adoc[Registry].
 
 [[UsingPropertyPlaceholder-ExamplesUsingPropertiesComponent]]
 ==== Examples Using Properties Component
@@ -353,7 +353,7 @@ from("{{cool.start}}")
 ----
 
 You can also your property placeholders when using
-link:producertemplate.adoc[ProducerTemplate] for example:
+xref:producertemplate.adoc[ProducerTemplate] for example:
 
 
 [source,java]
@@ -491,7 +491,7 @@ placeholder namespace.
 In the example below we use the `prop` prefix for the namespace
 `http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use
-that in the link:multicast.adoc[Multicast] to indicate that the option
+that in the xref:multicast.adoc[Multicast] to indicate that the option
 `stopOnException` should be the value of the placeholder with the key
 `stop`.
 
@@ -555,7 +555,7 @@ from("direct:start")
 
 *Available as of Camel 2.7*
 
-Camel supports link:using-osgi-blueprint-with-camel.adoc[Blueprint]
+Camel supports xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
 which also offers a property placeholder service. Camel supports
 convention over configuration, so all you have to do is to define the
 OSGi Blueprint property placeholder in the XML file as shown below:
@@ -964,8 +964,8 @@ with `ignoreUnresolvablePlaceholders` option to `true`.
 
 *Available as of Camel 2.10*
 
-When link:testing.adoc[Testing] with Camel and using the
-link:properties.adoc[Properties] component, you may want to be able to
+When xref:testing.adoc[Testing] with Camel and using the
+xref:properties.adoc[Properties] component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. This is now possible from Camel 2.10, as the Camel test
 kits, e.g., `CamelTestSupport` class offers the following methods
@@ -1053,7 +1053,7 @@ private int timeout;
 
 *Available as of Camel 2.14.1*
 
-The link:properties.adoc[Properties] component includes the following
+The xref:properties.adoc[Properties] component includes the following
 functions out of the box
 
 * `env` - A function to lookup the property from OS environment
@@ -1115,7 +1115,7 @@ export $FOO_SERVICE_HOST=myserver export $FOO_SERVICE_PORT=8888
 
 For example if the `FOO` service a remote HTTP service, then we can
 refer to the service in the Camel endpoint URI, and use
-the link:http.adoc[HTTP] component to make the HTTP call:
+the xref:http.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----
@@ -1145,7 +1145,7 @@ example to call a service on localhost, maybe for unit testing etc:
 
 *Available as of Camel 2.14.1*
 
-The link:properties.adoc[Properties] component allow to plugin 3rd party
+The xref:properties.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the
 placeholders, such as looking up in databases, do custom computations,

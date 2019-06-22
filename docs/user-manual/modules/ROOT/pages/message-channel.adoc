@@ -3,7 +3,7 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
-Channel] from the link:enterprise-integration-patterns.html[EIP
+Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns]. The Message Channel is an internal implementation detail of
 the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
@@ -47,5 +47,5 @@ And in XML:
 
 For more details see
 
-* link:message.html[Message]
+* xref:message.adoc[Message]
 * <<messageEndpoint-eip,Message Endpoint>>

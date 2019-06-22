@@ -21,7 +21,7 @@ Exception Clause.
 
 *Using try ... catch ... finally*
 
-Related to error handling is the link:try-catch-finally.html[Try Catch
+Related to error handling is the xref:try-catch-finally.adoc[Try Catch
 Finally] as DSL you can use directly in your route. Its basically a
 mimic of the regular try catch finally in the Java language but with
 more power.
@@ -60,7 +60,7 @@ a single RouteBuilder
 ===== DefaultErrorHandler
 
 The DefaultErrorHandler is the default
-error handler in Camel. Unlike link:dead-letter-channel.html[Dead Letter
+error handler in Camel. Unlike xref:dead-letter-channel.adoc[Dead Letter
 Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
@@ -331,7 +331,7 @@ and use another error handler.
 [[ErrorHandler-Springbasedconfigurationsample]]
 ===== Spring based configuration sample
 
-In this sample we configure a link:dead-letter-channel.html[Dead Letter
+In this sample we configure a xref:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
 the `errorHandlerRef` attribute on the `route` tag.

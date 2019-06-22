@@ -91,8 +91,8 @@ Components such as ActiveMQ,
 [[BAMExample-Runningtheexample]]
 ==== Running the example
 
-To run the example we use the link:camel-maven-plugin.adoc[Camel Maven
-Plugin]. For example from the source or binary distribution the
+To run the example we use the xref:camel-maven-plugin.adoc[Camel Maven Plugin].
+For example from the source or binary distribution the
 following should work
 
 [source,bash]

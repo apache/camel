@@ -3,11 +3,11 @@
 
 The ProducerTemplate interface allows you to send message exchanges to
 endpoints in a variety of different ways to make it easy to work with
-Camel link:endpoint.adoc[Endpoint] instances from Java code.
+Camel xref:endpoint.adoc[Endpoint] instances from Java code.
 
 It can be configured with a default endpoint if you just want to send
 lots of messages to the same endpoint; or you can specify an
-link:endpoint.adoc[Endpoint] or uri as the first parameter.
+xref:endpoint.adoc[Endpoint] or uri as the first parameter.
 
 The `sendBody()` method allows you to send any object to an endpoint
 easily.

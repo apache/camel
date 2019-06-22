@@ -439,7 +439,7 @@ SSLEngine engine = scp.createSSLEngine();
 Using Camel Property Placeholders
 
 This configuration utility fully supports the use of property
-placeholders (see link:using-propertyplaceholder.html[Using
+placeholders (see xref:using-propertyplaceholder.adoc[Using
 PropertyPlaceholder]) in all configuration fields.  In order to support
 this feature, the configuration utility objects must be configured with
 a reference to a Camel context.  All of the utility classes except for
@@ -557,7 +557,7 @@ exclude any cipher suites that match the patterns .*_NULL_.* and
 Using Camel Property Placeholders
 
 This configuration utility fully supports the use of property
-placeholders (see link:using-propertyplaceholder.html[Using
+placeholders (see xref:using-propertyplaceholder.adoc[Using
 PropertyPlaceholder]) in all configuration fields for XML based
 configuration as well.  In order to support this feature, the
 configuration utility objects must be configured with a reference to a

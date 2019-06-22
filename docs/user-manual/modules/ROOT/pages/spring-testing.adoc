@@ -385,7 +385,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 ==== Sending and receiving messages
 
 It might be that the
-link:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] you have defined in either Spring XML or
 using the Java DSL do all of the sending and receiving
 and you might just work with the <<mock-component,Mock>> endpoints as
