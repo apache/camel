@@ -213,7 +213,7 @@ placeholder for such data, and should be in the message body for the producer.
 Likewise it will be returned in the body per search
 result for the consumer.
 
-As of Camel 2.16.0 you can send raw data to Splunk by setting the raw
+You can send raw data to Splunk by setting the raw
 option on the producer endpoint. This is useful for eg. json/xml and
 other payloads where Splunk has build in support. 
 

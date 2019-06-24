@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.1*
 
-The *seda:* component provides asynchronous
+The SEDA component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
 messages are exchanged on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
@@ -191,16 +191,6 @@ incoming requests. The request is routed to the `seda:input` queue. As
 it is a Request Reply message, we wait for the
 response. When the consumer on the `seda:input` queue is complete, it
 copies the response to the original message response.
-
-NOTE: *until 2.2: Works only with 2 endpoints*
-Using Request Reply over SEDA
-or <<vm-component,VM>> only works with 2 endpoints. You *cannot* chain
-endpoints by sending to A -> B -> C etc. Only between A -> B. The reason
-is the implementation logic is fairly simple. To support 3+ endpoints
-makes the logic much more complex to handle ordering and notification
-between the waiting threads properly.
-This has been improved in *Camel 2.3* onwards, which allows you to chain
-as many endpoints as you like.
 
 === Concurrent consumers
 

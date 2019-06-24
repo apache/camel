@@ -22,8 +22,6 @@ their `pom.xml` for this component:
 The camel-swagger-java module can be used from
 the REST components (without the need for servlet)
 
-NOTE: The camel-swagger-java component requires JMX enabled when using Camel 2.x.
-
 === Using Swagger in rest-dsl
 
 You can enable the swagger api from the rest-dsl by configuring the
@@ -84,12 +82,7 @@ false.
 |host |String |To setup the hostname. If not configured camel-swagger-java will
 calculate the name as localhost based.
 
-|schemas |String |The protocol schemes to use. Multiple values can be separated by comma
-such as "http,https". The default value is "http". This option is
-*deprecated* from Camel 2.17 onwards due it should have been named
-schemes.
-
-|schemes |String |*Camel 2.17:* The protocol schemes to use. Multiple values can be
+|schemes |String |The protocol schemes to use. Multiple values can be
 separated by comma such as "http,https". The default value is "http".
 
 |base.path |String |*Required*: To setup the base path where the REST services is available.

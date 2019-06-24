@@ -27,8 +27,7 @@ framework to simplify your unit and integration testing using
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful <<mock-component,Mock>> and
 <<test-component,Test>> endpoints
-* From *Camel 2.15* onwards Camel supports Spring Boot using
-the `camel-spring-boot` component.
+Camel supports Spring Boot using the `camel-spring-boot` component.
 
 === Using Spring to configure the CamelContext
 
@@ -46,20 +45,6 @@ instances.
 ** Using Spring XML
 
 === Adding Camel Schema
-
-For Camel 1.x you need to use the following namespace:
-
-[source,java]
-----------------------------------------------
-http://activemq.apache.org/camel/schema/spring
-----------------------------------------------
-
-with the following schema location:
-
-[source,java]
----------------------------------------------------------------
-http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
----------------------------------------------------------------
 
 You need to add Camel to the `schemaLocation` declaration
 
@@ -158,10 +143,10 @@ using `<routeBuilder ref="theBeanId"/>` or the `<contextScan>` feature.
 
 ==== Using <packageScan>
 
-In Camel 2.0 this has been extended to allow selective inclusion and
+The component allows selective inclusion and
 exclusion of discovered route classes using Ant like path matching. In
 spring this is specified by adding a <packageScan/> tag. The tag must
-contain one or more 'package' elements (similar to 1.x), and optionally
+contain one or more 'package' elements, and optionally
 one or more 'includes' or 'excludes' elements specifying patterns to be
 applied to the fully qualified names of the discovered classes. e.g.
 
@@ -250,14 +235,13 @@ application if some of the routes are in separate XML files. You may
 also want to store common and reusable routes in other XML files, which
 you can simply import when needed.
 
-In *Camel 2.3* it is now possible to define routes outside
+It is possible to define routes outside
 `<camelContext/>` which you do in a new `<routeContext/>` tag.
 
 *Notice:* When you use <routeContext> then they are separated, and
 cannot reuse existing <onException>, <intercept>, <dataFormats> and
 similar cross cutting functionality defined in the <camelContext>. In
-other words the <routeContext> is currently isolated. This may change in
-Camel 3.x.
+other words the <routeContext> is currently isolated.
 
 For example we could have a file named `myCoolRoutes.xml` which contains
 a couple of routes as shown:

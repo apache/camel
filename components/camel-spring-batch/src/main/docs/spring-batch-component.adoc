@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.10*
 
-The *spring-batch:* component and support classes provide integration
+The Spring Batch component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring
 Batch] infrastructure.
 
@@ -170,7 +170,7 @@ explicitly.
 from("direct:startBatch").to("spring-batch:myJob?jobLauncherRef=myJobLauncher");
 --------------------------------------------------------------------------------
 
-Starting from the Camel *2.11.1* `JobExecution` instance returned by the
+A `JobExecution` instance returned by the
 `JobLauncher` is forwarded by the `SpringBatchProducer` as the output
 message. You can use the `JobExecution` instance to perform some
 operations using the Spring Batch API directly.
