@@ -36,8 +36,7 @@ example:
 stax:org.superbiz.FooContentHandler
 -----------------------------------
 
-From *Camel 2.11.1* onwards you can lookup a
-`org.xml.sax.ContentHandler` bean from the Registry
+You can lookup a `org.xml.sax.ContentHandler` bean from the Registry
 using the # syntax as shown:
 
 [source,java]
@@ -238,7 +237,7 @@ from("file:target/in")
 Where `stax` is a static method on
 `org.apache.camel.component.stax.StAXBuilder` which you can static
 import in the Java code. The stax builder is by default namespace aware
-on the XMLReader it uses. From *Camel 2.11.1* onwards you can turn this
+on the XMLReader it uses. You can turn this
 off by setting the boolean parameter to false, as shown below:
 
 [source,java]

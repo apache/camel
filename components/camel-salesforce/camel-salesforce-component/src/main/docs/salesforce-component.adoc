@@ -78,7 +78,7 @@ You can append query options to the URI in the following format,
 
 === Passing in Salesforce headers and fetching Salesforce response headers
 
-With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
+There is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
 `x-sfdc` on the Camel message will be passed on in the request, and
 response headers that start with `Sforce` will be present in the outbound

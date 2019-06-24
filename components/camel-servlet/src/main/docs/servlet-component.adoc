@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.0*
 
-The *servlet:* component provides HTTP based
+The Servlet component provides HTTP based
 endpoints for consuming HTTP requests that arrive at
 a HTTP endpoint that is bound to a published Servlet.
 
@@ -212,7 +212,7 @@ And in your Camel endpoints then include the servlet name as well
 </route>
 ---------------------------------------------------
 
-From *Camel 2.11* onwards Camel will detect this duplicate and fail to
+Camel detects this duplicate and fail to
 start the application. You can control to ignore this duplicate by
 setting the servlet init-parameter ignoreDuplicateServletName to true as
 follows:
@@ -236,8 +236,7 @@ side-effects.
 
 === Sample
 
-NOTE: From Camel 2.7 onwards it's easier to use <<servlet-component,Servlet>> in
-Spring web applications. See
+Use <<servlet-component,Servlet>> in Spring web applications for simplicity's sake. See
 <<ServletTomcatExample-ServletTomcatExample,Servlet Tomcat Example>> for details.
 
 In this sample, we define a route that exposes a HTTP service at
@@ -338,7 +337,7 @@ like this:
 
 ==== Sample when using OSGi
 
-From *Camel 2.6.0*, you can publish the
+You can publish the
 https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 as an OSGi service with Blueprint like this:
 
@@ -407,7 +406,7 @@ Then use this service in your Camel route like this:
 </blueprint>
 -------------------------------------------------------------------------
 
-For versions prior to Camel 2.6 you can use an `Activator` to publish
+You can use an `Activator` to publish
 the
 https://github.com/apache/camel/blob/master/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform:
@@ -488,8 +487,7 @@ public final class ServletActivator implements BundleActivator, BundleContextAwa
 -------------------------------------------------------------------------
 
 ==== Usage with Spring-Boot
-
-From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
+The _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
 The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
 The automatic mapping of the Camel servlet can also be disabled.
 

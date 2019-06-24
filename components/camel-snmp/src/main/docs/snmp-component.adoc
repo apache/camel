@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.1*
 
-The *snmp:* component gives you the ability to poll SNMP capable devices
+The SNMP component gives you the ability to poll SNMP capable devices
 or receiving traps
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -221,7 +221,7 @@ Setting up a trap receiver (*Note that no OID info is needed here!*):
 snmp:127.0.0.1:162?protocol=udp&type=TRAP
 -----------------------------------------
 
-*From Camel 2.10.0*, you can get the community of SNMP TRAP with message
+You can get the community of SNMP TRAP with message
 header 'securityName', +
  peer address of the SNMP TRAP with message header 'peerAddress'.
 
