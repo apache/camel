@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.15*
 
-The *scheduler:* component is used to generate message exchanges when a
+The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
  <<timer-component,Timer>> component, but it offers more functionality in
 terms of scheduling. Also this component uses

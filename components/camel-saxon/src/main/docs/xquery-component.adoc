@@ -268,8 +268,6 @@ The following example shows how to take a message of an ActiveMQ queue
   </camelContext>
 -------------------------------------------------------------------------
 
-Currently custom functions in XQuery might result in a NullPointerException (Camel 2.18, 2.19 and 2.20). This is expected to be fixed in Camel 2.21
-
 ### Examples
 
 Here is a simple

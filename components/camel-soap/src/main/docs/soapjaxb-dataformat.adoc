@@ -7,11 +7,6 @@ SOAP is a Data Format which uses JAXB2 and JAX-WS
 annotations to marshal and unmarshal SOAP payloads. It provides the
 basic features of Apache CXF without need for the CXF Stack.
 
-*Supported SOAP versions*
-
-SOAP 1.1 is supported by default. SOAP 1.2 is supported from Camel 2.11
-onwards.
-
 *Namespace prefix mapping*
 
 See <<jaxb-dataformat,JAXB>> for details how you can control namespace
@@ -267,6 +262,6 @@ following dependency to your pom.
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-soap</artifactId>
-  <version>2.3.0</version>
+  <version>x.y.z</version>
 </dependency>
 -------------------------------------

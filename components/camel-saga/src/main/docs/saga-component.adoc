@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.21*
 
-The *saga* component provides a bridge to execute custom actions within a route using the Saga EIP.
+The Saga component provides a bridge to execute custom actions within a route using the Saga EIP.
 
 The component should be used for advanced tasks, such as deciding to complete or compensate a Saga
 with completionMode set to *MANUAL*.

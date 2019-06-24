@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.3*
 
-The *camel-spring-security* component provides role-based authorization
+The Camel Spring Security component provides role-based authorization
 for Camel routes. It leverages the authentication and user services
 provided by
 http://static.springsource.org/spring-security/site/index.html[Spring
@@ -46,7 +46,7 @@ context
 |`accessDecisionManager` |`accessDecisionManager` |The name of the Spring Security `AccessDecisionManager` object in the
 context
 
-|`authenticationAdapter` |DefaultAuthenticationAdapter |*Camel 2.4* The name of a *camel-spring-security*
+|`authenticationAdapter` |DefaultAuthenticationAdapter |The name of a *camel-spring-security*
 `AuthenticationAdapter` object in the context that is used to convert a
 `javax.security.auth.Subject` into a Spring Security `Authentication`
 instance.
@@ -190,7 +190,7 @@ for this component:
 <dependency> 
   <groupId>org.apache.camel</groupId> 
   <artifactId>camel-spring-security</artifactId> 
-  <version>2.4.0</version> 
+  <version>x.y.z</version>
 </dependency> 
 -------------------------------------------------
 
