@@ -25,7 +25,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * Default class resolver that uses regular class loader to load classes.
@@ -108,12 +107,10 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     }
 
     public InputStream loadResourceAsStream(String uri) {
-        StringHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourceAsStream(uri, getApplicationContextClassLoader());
     }
 
     public URL loadResourceAsURL(String uri) {
-        StringHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourceAsURL(uri, getApplicationContextClassLoader());
     }
 
@@ -122,12 +119,10 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
     }
 
     public Enumeration<URL> loadAllResourcesAsURL(String uri) {
-        StringHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourcesAsURL(uri);
     }
 
     protected Class<?> loadClass(String name, ClassLoader loader) {
-        StringHelper.notEmpty(name, "name");
         return ObjectHelper.loadClass(name, loader);
     }
 
