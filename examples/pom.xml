@@ -85,6 +85,7 @@
         <module>camel-example-loan-broker-jms</module>
         <module>camel-example-main</module>
         <module>camel-example-main-artemis</module>
+        <module>camel-example-main-tiny</module>
         <module>camel-example-management</module>
         <module>camel-example-micrometer</module>
         <module>camel-example-mybatis</module>
