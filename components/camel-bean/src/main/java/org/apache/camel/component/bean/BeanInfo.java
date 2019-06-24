@@ -489,13 +489,17 @@ public class BeanInfo {
     }
 
     protected void collectParameterAnnotations(Class<?> c, Method m, List<Annotation>[] a) {
+        // because we are only looking for camel annotations then skip all stuff from JDKs
+        if (c.getName().startsWith("java")) {
+            return;
+        }
         try {
             Annotation[][] pa = c.getDeclaredMethod(m.getName(), m.getParameterTypes()).getParameterAnnotations();
             for (int i = 0; i < pa.length; i++) {
                 a[i].addAll(Arrays.asList(pa[i]));
             }
         } catch (NoSuchMethodException e) {
-            // no method with signature of m declared on c
+            // ignore no method with signature of m declared on c
         }
         for (Class<?> i : c.getInterfaces()) {
             collectParameterAnnotations(i, m, a);
