@@ -198,7 +198,7 @@ and topics that the user is following.
 |yammer:private?[options]
 |Private messages received by the user.
 |yammer:received?[options]
-|*Camel 2.12.1:* All messages received by the user
+|All messages received by the user
 |=======================================================================
 
 

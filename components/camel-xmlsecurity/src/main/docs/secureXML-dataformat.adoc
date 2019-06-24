@@ -65,7 +65,7 @@ The XML Security dataformat supports 13 options, which are listed below.
 
 #### Key Cipher Algorithm
 
-As of Camel 2.12.0, the default Key Cipher Algorithm is now
+The default Key Cipher Algorithm is now
 XMLCipher.RSA_OAEP instead of XMLCipher.RSA_v1dot5. Usage of
 XMLCipher.RSA_v1dot5 is discouraged due to various attacks. Requests
 that use RSA v1.5 as the key cipher algorithm will be rejected unless it
