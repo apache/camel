@@ -19,10 +19,14 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.main.parser.ConfigurationModel;
 import org.apache.camel.main.parser.MainConfigurationParser;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -105,51 +109,59 @@ public class PrepareCamelMainMojo extends AbstractMojo {
         });
 
         if (!data.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append("{\n");
-            sb.append("  \"properties\": [\n");
+            List list = new ArrayList();
             for (int i = 0; i < data.size(); i++) {
                 ConfigurationModel row = data.get(i);
                 String name = camelCaseToDash(row.getName());
-                String javaType = springBootJavaType(row.getJavaType());
+                String javaType = row.getJavaType();
                 String desc = sanitizeDescription(row.getDescription(), false);
                 String sourceType = row.getSourceType();
                 String defaultValue = row.getDefaultValue();
-                sb.append("    {\n");
-                sb.append("      \"name\": \"" + name + "\",\n");
-                sb.append("      \"type\": \"" + javaType + "\",\n");
-                sb.append("      \"sourceType\": \"" + sourceType + "\",\n");
-                sb.append("      \"description\": \"" + desc + "\"");
+
+                Map p = new LinkedHashMap();
+                p.put("name", name);
+                p.put("type", javaType);
+                p.put("sourceType", sourceType);
+                p.put("description", desc);
                 if (defaultValue != null) {
-                    sb.append(",\n");
-                    if (springBootDefaultValueQuotes(javaType)) {
-                        sb.append("      \"defaultValue\": \"" + defaultValue + "\"\n");
-                    } else {
-                        sb.append("      \"defaultValue\": " + defaultValue + "\n");
-                    }
-                } else if (!row.isDeprecated()) {
-                    sb.append("\n");
+                    p.put("defaultValue", defaultValue);
                 }
                 if (row.isDeprecated()) {
-                    sb.append(",\n");
-                    sb.append("      \"deprecated\": true,\n");
-                    sb.append("      \"deprecation\": {}\n");
+                    p.put("deprecated", true);
+                    p.put("deprecation", Collections.EMPTY_MAP);
                 }
-                if (i < data.size() - 1) {
-                    sb.append("    },\n");
-                } else {
-                    sb.append("    }\n");
-                }
+                list.add(p);
             }
-            sb.append("  ]\n");
-            sb.append("}\n");
+
+            List groups = new ArrayList();
+            Map group1 = new LinkedHashMap();
+            group1.put("name", "camel.main");
+            group1.put("description", "camel-main configurations.");
+            group1.put("sourceType", "org.apache.camel.main.DefaultConfigurationProperties");
+            Map group2 = new LinkedHashMap();
+            group2.put("name", "camel.hystrix");
+            group2.put("description", "camel-hystrix configurations.");
+            group2.put("sourceType", "org.apache.camel.main.HystrixConfigurationProperties");
+            Map group3 = new LinkedHashMap();
+            group3.put("name", "camel.rest");
+            group3.put("description", "camel-rest configurations.");
+            group3.put("sourceType", "org.apache.camel.spi.RestConfiguration");
+            groups.add(group1);
+            groups.add(group2);
+            groups.add(group3);
+
+            Map map = new LinkedHashMap();
+            map.put("groups", groups);
+            map.put("properties", list);
+
+            String json = Jsoner.serialize(map);
+            json = Jsoner.prettyPrint(json);
 
             outFolder.mkdirs();
             File file = new File(outFolder, "camel-main-configuration-metadata.json");
             try {
                 FileOutputStream fos = new FileOutputStream(file, false);
-                fos.write(sb.toString().getBytes());
+                fos.write(json.getBytes());
                 fos.close();
                 getLog().info("Created file: " + file);
             } catch (Throwable e) {
@@ -157,30 +169,5 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             }
         }
     }
-
-    private static String springBootJavaType(String javaType) {
-        if ("boolean".equalsIgnoreCase(javaType)) {
-            return "java.lang.Boolean";
-        } else if ("int".equalsIgnoreCase(javaType)) {
-            return "java.lang.Integer";
-        } else if ("long".equalsIgnoreCase(javaType)) {
-            return "java.lang.Long";
-        } else if ("string".equalsIgnoreCase(javaType)) {
-            return "java.lang.String";
-        }
-        return javaType;
-    }
-
-    private static boolean springBootDefaultValueQuotes(String javaType) {
-        if ("java.lang.Boolean".equalsIgnoreCase(javaType)) {
-            return false;
-        } else if ("java.lang.Integer".equalsIgnoreCase(javaType)) {
-            return false;
-        } else if ("java.lang.Long".equalsIgnoreCase(javaType)) {
-            return false;
-        }
-        return true;
-    }
-
 
 }

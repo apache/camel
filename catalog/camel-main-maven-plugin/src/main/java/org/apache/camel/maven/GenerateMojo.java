@@ -24,18 +24,23 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.model.AutowireData;
-import org.apache.camel.maven.model.SpringBootData;
+import org.apache.camel.maven.model.SpringBootGroupData;
+import org.apache.camel.maven.model.SpringBootPropertyData;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -145,17 +150,19 @@ public class GenerateMojo extends AbstractMainMojo {
         }
 
         final List<AutowireData> autowireData = new ArrayList<>();
-        final List<SpringBootData> springBootData = new ArrayList<>();
+        final List<SpringBootPropertyData> propertyData = new ArrayList<>();
+        final List<SpringBootGroupData> groupData = new ArrayList<>();
 
-        ComponentCallback callback = (componentName, componentJavaType, name, type, javaType, description, defaultValue, deprecated) -> {
+        ComponentCallback callback = (componentName, componentJavaType, componentDescription,
+                                      name, type, javaType, description, defaultValue, deprecated) -> {
             // gather spring boot data
             // we want to use dash in the name
             String dash = camelCaseToDash(name);
             String key = "camel.component." + componentName + "." + dash;
             if (springBootEnabled) {
                 getLog().debug("Spring Boot option: " + key);
-                String sourceType = componentJavaType;
-                springBootData.add(new SpringBootData(key, springBootJavaType(javaType), description, sourceType, defaultValue, deprecated));
+                propertyData.add(new SpringBootPropertyData(key, springBootJavaType(javaType), description, componentJavaType, defaultValue, deprecated));
+                groupData.add(new SpringBootGroupData("camel.component." + componentName, componentDescription, componentJavaType));
             }
 
             // check if we can do automatic autowire to complex singleton objects from classes in the classpath
@@ -233,7 +240,7 @@ public class GenerateMojo extends AbstractMainMojo {
                                     }
                                     desc += "Auto discovered option from class: " + best.getName() + " to set the option via setter: " + m.getName();
 
-                                    springBootData.add(new SpringBootData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null, bootDeprecated));
+                                    propertyData.add(new SpringBootPropertyData(bootKey, springBootJavaType(bootJavaType), desc, sourceType, null, bootDeprecated));
                                 }
                             }
                         }
@@ -251,43 +258,28 @@ public class GenerateMojo extends AbstractMainMojo {
 
         // write the output files
         writeAutowireFile(autowireData);
-        writeSpringBootFile(springBootData);
+        writeSpringBootFile(propertyData, groupData);
     }
 
-    protected void writeSpringBootFile(List<SpringBootData> springBootData) throws MojoFailureException {
-        if (!springBootData.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
+    protected void writeSpringBootFile(List<SpringBootPropertyData> propertyData, List<SpringBootGroupData> groupData) throws MojoFailureException {
+        if (!propertyData.isEmpty()) {
+            List options = new ArrayList();
 
-            for (int i = 0; i < springBootData.size(); i++) {
-                SpringBootData row = springBootData.get(i);
-                sb.append("    {\n");
-                sb.append("      \"name\": \"" + row.getName() + "\",\n");
-                sb.append("      \"type\": \"" + row.getJavaType() + "\",\n");
-                sb.append("      \"sourceType\": \"" + row.getSourceType() + "\",\n");
-                sb.append("      \"description\": \"" + row.getDescription() + "\"");
+            for (SpringBootPropertyData row : propertyData) {
+                Map p = new LinkedHashMap();
+                p.put("name", row.getName());
+                p.put("type", row.getJavaType());
+                p.put("sourceType", row.getSourceType());
+                p.put("description", row.getDescription());
                 if (row.getDefaultValue() != null) {
-                    sb.append(",\n");
-                    if (springBootDefaultValueQuotes(row.getJavaType())) {
-                        sb.append("      \"defaultValue\": \"" + row.getDefaultValue() + "\"\n");
-                    } else {
-                        sb.append("      \"defaultValue\": " + row.getDefaultValue() + "\n");
-                    }
-                } else if (!row.isDeprecated()) {
-                    sb.append("\n");
+                    p.put("defaultValue", row.getDefaultValue());
                 }
                 if (row.isDeprecated()) {
-                    sb.append(",\n");
-                    sb.append("      \"deprecated\": true,\n");
-                    sb.append("      \"deprecation\": {}\n");
+                    p.put("deprecated", true);
+                    p.put("deprecation", Collections.EMPTY_MAP);
                 }
-                if (i < springBootData.size() - 1) {
-                    sb.append("    },\n");
-                } else {
-                    sb.append("    }\n");
-                }
+                options.add(p);
             }
-            sb.append("  ]\n");
-            sb.append("}\n");
 
             // okay then add the components into the main json at the end so they get merged together
             // load camel-main metadata
@@ -297,16 +289,34 @@ public class GenerateMojo extends AbstractMainMojo {
                         + " Not possible to build spring boot configuration file for this project");
                 return;
             }
-            int pos = mainJson.lastIndexOf("    }");
-            String newJson = mainJson.substring(0, pos);
-            newJson = newJson + "    },\n";
-            newJson = newJson + sb.toString();
+
+            String json;
+            try {
+                Map map = (Map) Jsoner.deserialize(mainJson);
+                List props = (List) map.get("properties");
+                props.addAll(options);
+
+                // include groups
+                List groups = (List) map.get("groups");
+                groupData.forEach(g -> {
+                    Map group = new LinkedHashMap();
+                    group.put("name", g.getName());
+                    group.put("description", g.getDescription());
+                    group.put("sourceType", g.getSourceType());
+                    groups.add(group);
+                });
+
+                json = Jsoner.serialize(map);
+                json = Jsoner.prettyPrint(json);
+            } catch (Throwable e) {
+                throw new MojoFailureException("Cannot serialize or deserialize json due " + e.getMessage(), e);
+            }
 
             outSpringBootFolder.mkdirs();
             File file = new File(outSpringBootFolder, "spring-configuration-metadata.json");
             try {
                 FileOutputStream fos = new FileOutputStream(file, false);
-                fos.write(newJson.getBytes());
+                fos.write(json.getBytes());
                 IOHelper.close(fos);
                 getLog().info("Created file: " + file);
             } catch (Throwable e) {
