@@ -14,23 +14,23 @@ import org.apache.any23.writer.TripleHandler;
  * @author joe
  */
 public class Any23Parameters {
-  
-private  ByteArrayOutputStream OUT;
+
+  private ByteArrayOutputStream OUT;
 //public static  final TripleHandler TRIPLEHANDLER ;
 
-private TripleHandler triplehandler ;
+  private TripleHandler triplehandler;
 
-public TripleHandler getTripleHandlerOutput (){
- return triplehandler;
-}
+  public TripleHandler getTripleHandlerOutput() {
+    return triplehandler;
+  }
 
-public void setTripleHandlerOutput (TripleHandler triplehandler ){
-this.triplehandler = triplehandler;
-}
- 
-public Any23Parameters (ByteArrayOutputStream out) {
- this.OUT = out;
- this.triplehandler = new NTriplesWriter(out);
-}
-  
+  public void setTripleHandlerOutput(TripleHandler triplehandler) {
+    this.triplehandler = triplehandler;
+  }
+
+  public Any23Parameters(ByteArrayOutputStream out) {
+    this.OUT = out;
+    this.triplehandler = new NTriplesWriter(out);
+  }
+
 }

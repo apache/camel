@@ -86,13 +86,24 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
 
 
 
-     /**
+    /**
      * Uses the Any23 data format
      */
-    public T any23() {
-        return dataFormat(new Any23DataFormat());
-    }
+  public T any23(String baseuri) {
+    return dataFormat(new Any23DataFormat(baseuri));
+  }
 
+  public T any23(String baseuri, String outputformat) {
+    return dataFormat(new Any23DataFormat(baseuri, outputformat));
+  }
+
+  public T any23(String baseuri, String outputformat, String configurations) {
+    return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations));
+  }
+
+  public T any23(String baseuri, String outputformat, String configurations, String extractors) {
+    return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations, extractors));
+  }
 
     /**
      * Uses the Avro data format

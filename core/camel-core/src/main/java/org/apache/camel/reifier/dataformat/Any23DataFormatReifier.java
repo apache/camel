@@ -17,38 +17,24 @@
 package org.apache.camel.reifier.dataformat;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.spi.DataFormat;
 
 public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
-    public Any23DataFormatReifier(DataFormatDefinition definition) {
-        super((Any23DataFormat) definition);
-    }
+  public Any23DataFormatReifier(DataFormatDefinition definition) {
+    super((Any23DataFormat) definition);
+  }
 
-   /* @Override
-    protected DataFormat doCreateDataFormat(CamelContext camelContext) {
-        if (definition.getDataObjectType() == null && definition.getDataObjectTypeName() != null) {
-            try {
-                definition.setDataObjectType(camelContext.getClassResolver().resolveMandatoryClass(definition.getDataObjectTypeName()));
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return super.doCreateDataFormat(camelContext);
-    }*/
-
-    @Override
-    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        /*if (definition.getDataObjectType() != null) {
-            setProperty(camelContext, dataFormat, "dataObjectType", definition.getDataObjectType());
-        }
-        if (definition.getOmitXmlDeclaration() != null) {
-            setProperty(camelContext, dataFormat, "omitXmlDeclaration", definition.getOmitXmlDeclaration());
-        }*/
-    }
+  @Override
+  protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+//    if (definition.getDataObjectType() != null) {
+//      setProperty(camelContext, dataFormat, "dataObjectType", definition.getDataObjectType());
+//    }
+//    if (definition.getOmitXmlDeclaration() != null) {
+//      setProperty(camelContext, dataFormat, "omitXmlDeclaration", definition.getOmitXmlDeclaration());
+//    }
+  }
 
 }

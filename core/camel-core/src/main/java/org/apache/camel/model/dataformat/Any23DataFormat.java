@@ -16,14 +16,10 @@
  */
 package org.apache.camel.model.dataformat;
 
-
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
@@ -34,10 +30,74 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "any23")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Any23DataFormat extends DataFormatDefinition {
-   
-    public Any23DataFormat() {
-        super("any23");
-        
-    }
+
+  @XmlAttribute
+  @Metadata(defaultValue = "MODEL")
+  private String outputFormat;
+  @XmlAttribute
+  private String configurations;
+  @XmlAttribute
+  private String extractors;
+  @XmlAttribute
+  private String baseuri;
+
+  public Any23DataFormat() {
+    super("any23");
+  }
+
+  public Any23DataFormat(String baseuri) {
+    this();
+    this.baseuri = baseuri;
+  }
+
+  public Any23DataFormat(String baseuri, String outputFormat) {
+    this(baseuri);
+    this.outputFormat = outputFormat;
+  }
+
+  public Any23DataFormat(String baseuri, String outputFormat, String configurations) {
+    this(baseuri, outputFormat);
+    this.outputFormat = outputFormat;
+    this.configurations = configurations;
+  }
+
+  public Any23DataFormat(String baseuri, String outputFormat, String configurations, String extractors) {
+    this(baseuri, outputFormat, configurations);
+    this.outputFormat = outputFormat;
+    this.configurations = configurations;
+    this.extractors = extractors;
+  }
+
+  public String getOutputFormat() {
+    return outputFormat;
+  }
+
+  public void setOutputFormat(String outputFormat) {
+    this.outputFormat = outputFormat;
+  }
+
+  public String getConfigurations() {
+    return configurations;
+  }
+
+  public void setConfigurations(String configurations) {
+    this.configurations = configurations;
+  }
+
+  public String getExtractors() {
+    return extractors;
+  }
+
+  public void setExtractors(String extractors) {
+    this.extractors = extractors;
+  }
+
+  public String getBaseuri() {
+    return baseuri;
+  }
+
+  public void setBaseuri(String baseuri) {
+    this.baseuri = baseuri;
+  }
 
 }
