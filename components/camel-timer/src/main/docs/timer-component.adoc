@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.0*
 
-The *timer:* component is used to generate message exchanges when a
+The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 
 === URI format
@@ -28,8 +28,8 @@ See also the <<quartz-component,Quartz>> component that supports much more
 advanced scheduling.
 
 TIP:*Specify time in human friendly format*
-In *Camel 2.3* onwards you can specify the time in
-xref:how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
+You can specify the time in
+link:how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
 friendly syntax].
 
 
@@ -136,7 +136,7 @@ to the `Exchange`:
 
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 
-|`Exchange.TIMER_COUNTER` |`Long` |*Camel 2.8:* The current fire counter. Starts from 1.
+|`Exchange.TIMER_COUNTER` |`Long` |The current fire counter. Starts from 1.
 |===
 
 === Sample

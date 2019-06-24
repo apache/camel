@@ -103,7 +103,7 @@ available to the JRE.
 
 ### How to set the XML encoding in Xstream DataFormat?
 
-From Camel 2.2.0, you can set the encoding of XML in Xstream DataFormat
+You can set the encoding of XML in Xstream DataFormat
 by setting the Exchange's property with the key `Exchange.CHARSET_NAME`,
 or setting the encoding property on Xstream from DSL or Spring config.
 
@@ -118,8 +118,7 @@ from("activemq:My.Queue").
 
 In Camel, one can always use its own processing step in the route to
 filter and block certain XML documents to be routed to the XStream's
-unmarhall step. From Camel 2.16.1, 2.15.5, you can
-set http://x-stream.github.io/security.html[XStream's type
+unmarhall step. You can set http://x-stream.github.io/security.html[XStream's type
 permissions] to automatically allow or deny the instantiation of certain
 types.
 
