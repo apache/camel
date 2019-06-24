@@ -169,46 +169,126 @@ public final class DefaultConfigurationConfigurer {
      * Similar code in camel-core-xml module in class org.apache.camel.core.xml.AbstractCamelContextFactoryBean
      * or in camel-spring-boot module in class org.apache.camel.spring.boot.CamelAutoConfiguration.
      */
-    public static void afterPropertiesSet(CamelContext camelContext) throws Exception {
+    public static void afterPropertiesSet(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
+        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
-        registerPropertyForBeanType(registry, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
-        registerPropertyForBeanType(registry, HandleFault.class, camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
-        registerPropertyForBeanType(registry, InflightRepository.class, camelContext::setInflightRepository);
-        registerPropertyForBeanType(registry, AsyncProcessorAwaitManager.class, camelContext.adapt(ExtendedCamelContext.class)::setAsyncProcessorAwaitManager);
-        registerPropertyForBeanType(registry, ManagementStrategy.class, camelContext::setManagementStrategy);
-        registerPropertyForBeanType(registry, ManagementObjectNameStrategy.class, managementStrategy::setManagementObjectNameStrategy);
-        registerPropertyForBeanType(registry, EventFactory.class, managementStrategy::setEventFactory);
-        registerPropertyForBeanType(registry, UnitOfWorkFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setUnitOfWorkFactory);
-        registerPropertyForBeanType(registry, RuntimeEndpointRegistry.class, camelContext::setRuntimeEndpointRegistry);
-        registerPropertyForBeanType(registry, ModelJAXBContextFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setModelJAXBContextFactory);
-        registerPropertyForBeanType(registry, ClassResolver.class, camelContext::setClassResolver);
-        registerPropertyForBeanType(registry, FactoryFinderResolver.class, camelContext.adapt(ExtendedCamelContext.class)::setFactoryFinderResolver);
-        registerPropertyForBeanType(registry, RouteController.class, camelContext::setRouteController);
-        registerPropertyForBeanType(registry, UuidGenerator.class, camelContext::setUuidGenerator);
-        registerPropertyForBeanType(registry, ExecutorServiceManager.class, camelContext::setExecutorServiceManager);
-        registerPropertyForBeanType(registry, ThreadPoolFactory.class, camelContext.getExecutorServiceManager()::setThreadPoolFactory);
-        registerPropertyForBeanType(registry, ProcessorFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setProcessorFactory);
-        registerPropertyForBeanType(registry, Debugger.class, camelContext::setDebugger);
-        registerPropertyForBeanType(registry, NodeIdFactory.class, camelContext.adapt(ExtendedCamelContext.class)::setNodeIdFactory);
-        registerPropertyForBeanType(registry, MessageHistoryFactory.class, camelContext::setMessageHistoryFactory);
-        registerPropertyForBeanType(registry, ReactiveExecutor.class, camelContext::setReactiveExecutor);
-        registerPropertyForBeanType(registry, ShutdownStrategy.class, camelContext::setShutdownStrategy);
-
-        registerPropertiesForBeanTypes(registry, TypeConverters.class, camelContext.getTypeConverterRegistry()::addTypeConverters);
-        registerPropertiesForBeanTypes(registry, EndpointStrategy.class, camelContext.adapt(ExtendedCamelContext.class)::registerEndpointCallback);
-        registerPropertiesForBeanTypes(registry, CamelClusterService.class, addServiceToContext(camelContext));
-        registerPropertiesForBeanTypes(registry, RoutePolicyFactory.class, camelContext::addRoutePolicyFactory);
+        BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
+        if (bt != null) {
+            ecc.setExtension(BacklogTracer.class, bt);
+        }
+        HandleFault hf = getSingleBeanOfType(registry, HandleFault.class);
+        if (hf != null) {
+            ecc.addInterceptStrategy(hf);
+        }
+        InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
+        if (ir != null) {
+            ecc.setInflightRepository(ir);
+        }
+        AsyncProcessorAwaitManager apam = getSingleBeanOfType(registry, AsyncProcessorAwaitManager.class);
+        if (apam != null) {
+            ecc.setAsyncProcessorAwaitManager(apam);
+        }
+        ManagementStrategy ms = getSingleBeanOfType(registry, ManagementStrategy.class);
+        if (ms != null) {
+            ecc.setManagementStrategy(ms);
+        }
+        ManagementObjectNameStrategy mons = getSingleBeanOfType(registry, ManagementObjectNameStrategy.class);
+        if (mons != null) {
+            managementStrategy.setManagementObjectNameStrategy(mons);
+        }
+        EventFactory ef = getSingleBeanOfType(registry, EventFactory.class);
+        if (ef != null) {
+            managementStrategy.setEventFactory(ef);
+        }
+        UnitOfWorkFactory uowf = getSingleBeanOfType(registry, UnitOfWorkFactory.class);
+        if (uowf != null) {
+            ecc.setUnitOfWorkFactory(uowf);
+        }
+        RuntimeEndpointRegistry rer = getSingleBeanOfType(registry, RuntimeEndpointRegistry.class);
+        if (rer != null) {
+            ecc.setRuntimeEndpointRegistry(rer);
+        }
+        ModelJAXBContextFactory mjcf = getSingleBeanOfType(registry, ModelJAXBContextFactory.class);
+        if (mjcf != null) {
+            ecc.setModelJAXBContextFactory(mjcf);
+        }
+        ClassResolver cr = getSingleBeanOfType(registry, ClassResolver.class);
+        if (cr != null) {
+            ecc.setClassResolver(cr);
+        }
+        FactoryFinderResolver ffr = getSingleBeanOfType(registry, FactoryFinderResolver.class);
+        if (ffr != null) {
+            ecc.setFactoryFinderResolver(ffr);
+        }
+        RouteController rc = getSingleBeanOfType(registry, RouteController.class);
+        if (rc != null) {
+            ecc.setRouteController(rc);
+        }
+        UuidGenerator ug = getSingleBeanOfType(registry, UuidGenerator.class);
+        if (ug != null) {
+            ecc.setUuidGenerator(ug);
+        }
+        ExecutorServiceManager esm = getSingleBeanOfType(registry, ExecutorServiceManager.class);
+        if (esm != null) {
+            ecc.setExecutorServiceManager(esm);
+        }
+        ThreadPoolFactory tpf = getSingleBeanOfType(registry, ThreadPoolFactory.class);
+        if (tpf != null) {
+            ecc.getExecutorServiceManager().setThreadPoolFactory(tpf);
+        }
+        ProcessorFactory pf = getSingleBeanOfType(registry, ProcessorFactory.class);
+        if (pf != null) {
+            ecc.setProcessorFactory(pf);
+        }
+        Debugger debugger = getSingleBeanOfType(registry, Debugger.class);
+        if (debugger != null) {
+            ecc.setDebugger(debugger);
+        }
+        NodeIdFactory nif = getSingleBeanOfType(registry, NodeIdFactory.class);
+        if (nif != null) {
+            ecc.setNodeIdFactory(nif);
+        }
+        MessageHistoryFactory mhf = getSingleBeanOfType(registry, MessageHistoryFactory.class);
+        if (mhf != null) {
+            ecc.setMessageHistoryFactory(mhf);
+        }
+        ReactiveExecutor re = getSingleBeanOfType(registry, ReactiveExecutor.class);
+        if (re != null) {
+            ecc.setReactiveExecutor(re);
+        }
+        ShutdownStrategy ss = getSingleBeanOfType(registry, ShutdownStrategy.class);
+        if (ss != null) {
+            ecc.setShutdownStrategy(ss);
+        }
+        Set<TypeConverters> tcs = registry.findByType(TypeConverters.class);
+        if (!tcs.isEmpty()) {
+            tcs.forEach(t -> camelContext.getTypeConverterRegistry().addTypeConverters(t));
+        }
+        Set<EndpointStrategy> ess = registry.findByType(EndpointStrategy.class);
+        if (!ess.isEmpty()) {
+            ess.forEach(ecc::registerEndpointCallback);
+        }
+        Set<CamelClusterService> csss = registry.findByType(CamelClusterService.class);
+        if (!csss.isEmpty()) {
+            for (CamelClusterService css : csss) {
+                camelContext.addService(css);
+            }
+        }
+        Set<RoutePolicyFactory> rpfs = registry.findByType(RoutePolicyFactory.class);
+        if (!rpfs.isEmpty()) {
+            rpfs.forEach(camelContext::addRoutePolicyFactory);
+        }
 
         final Predicate<EventNotifier> containsEventNotifier = managementStrategy.getEventNotifiers()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(), managementStrategy::addEventNotifier);
-
         final Predicate<InterceptStrategy> containsInterceptStrategy = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(), camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
-
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(), camelContext::addLifecycleStrategy);
+        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
+        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
 
         // service registry
         Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);
@@ -241,11 +321,15 @@ public final class DefaultConfigurationConfigurer {
             healthCheckRegistry = HealthCheckRegistry.get(camelContext);
             healthCheckRegistry.setCamelContext(camelContext);
         }
-        registerPropertiesForBeanTypes(registry, HealthCheckRepository.class, healthCheckRegistry::addRepository);
-        registerPropertyForBeanType(registry, HealthCheckService.class, addServiceToContext(camelContext));
+        Set<HealthCheckRepository> hcrs = registry.findByType(HealthCheckRepository.class);
+        if (!hcrs.isEmpty()) {
+            hcrs.forEach(healthCheckRegistry::addRepository);
+        }
 
-        final Predicate<LogListener> containsLogListener = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(), camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
+        HealthCheckService hcs = getSingleBeanOfType(registry, HealthCheckService.class);
+        if (hcs != null) {
+            camelContext.addService(hcs);
+        }
 
         // set the default thread pool profile if defined
         initThreadPoolProfiles(registry, camelContext);
