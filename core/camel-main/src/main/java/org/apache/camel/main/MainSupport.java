@@ -905,17 +905,19 @@ public abstract class MainSupport extends ServiceSupport {
         Properties prop = new OrderedProperties();
         try {
             InputStream is = camelContext.getClassResolver().loadResourceAsStream("/META-INF/services/org/apache/camel/autowire.properties");
-            prop.load(is);
-            if (!prop.isEmpty()) {
-                LOG.info("Loaded {} properties from classpath: META-INF/services/org/apache/camel/autowire.properties", prop.size());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
-                    for (String key : prop.stringPropertyNames()) {
-                        LOG.debug("    {}={}", key, prop.getProperty(key));
+            if (is != null) {
+                prop.load(is);
+                if (!prop.isEmpty()) {
+                    LOG.info("Loaded {} properties from classpath: META-INF/services/org/apache/camel/autowire.properties", prop.size());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
+                        for (String key : prop.stringPropertyNames()) {
+                            LOG.debug("    {}={}", key, prop.getProperty(key));
+                        }
                     }
                 }
+                IOHelper.close(is);
             }
-            IOHelper.close(is);
         } catch (Throwable e) {
             // ignore as this file is optional
         }
