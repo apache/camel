@@ -81,7 +81,7 @@ jpa:entityClassName[?options]
 -----------------------------
 
 For sending to the endpoint, the _entityClassName_ is optional. If
-specified, it helps the link:http://camel.apache.org/type-converter.html[Type Converter] to
+specified, it helps the http://camel.apache.org/type-converter.html[Type Converter] to
 ensure the body is of the correct type.
 
 For consuming, the _entityClassName_ is mandatory.
@@ -401,7 +401,7 @@ the message body.
 
 ### Example
 
-See link:http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
+See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
 <<jpa-component,JPA>> to store traced messages into a database.
 
 ### Using the JPA-Based Idempotent Repository
@@ -480,9 +480,9 @@ argument to the JVM:
 
 ### See Also
 
-* link:http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* link:http://camel.apache.org/component.html[Component]
-* link:http://camel.apache.org/endpoint.html[Endpoint]
-* link:http://camel.apache.org/getting-started.html[Getting Started]
+* http://camel.apache.org/configuring-camel.html[Configuring Camel]
+* http://camel.apache.org/component.html[Component]
+* http://camel.apache.org/endpoint.html[Endpoint]
+* http://camel.apache.org/getting-started.html[Getting Started]
 
-* link:http://camel.apache.org/tracer-example.html[Tracer Example]
+* http://camel.apache.org/tracer-example.html[Tracer Example]
