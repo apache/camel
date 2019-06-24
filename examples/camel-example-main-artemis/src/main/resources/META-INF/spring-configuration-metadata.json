@@ -1065,13 +1065,6 @@
 			"defaultValue":"1000"
 		},
 		{
-			"name":"camel.main.duration",
-			"type":"long",
-			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
-			"description":"Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value = 0 will run forever.",
-			"defaultValue":"-1"
-		},
-		{
 			"name":"camel.main.duration-hit-exit-code",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",

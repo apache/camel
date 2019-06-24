@@ -31,9 +31,14 @@
 			"sourceType":"org.apache.camel.component.bean.BeanComponent"
 		},
 		{
-			"name":"camel.component.class",
-			"description":"The class component is for invoking Java classes (Java beans) from Camel.",
-			"sourceType":"org.apache.camel.component.beanclass.ClassComponent"
+			"name":"camel.component.browse",
+			"description":"The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent"
+		},
+		{
+			"name":"camel.component.browse",
+			"description":"The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent"
 		},
 		{
 			"name":"camel.component.class",
@@ -46,6 +51,146 @@
 			"sourceType":"org.apache.camel.component.beanclass.ClassComponent"
 		},
 		{
+			"name":"camel.component.class",
+			"description":"The class component is for invoking Java classes (Java beans) from Camel.",
+			"sourceType":"org.apache.camel.component.beanclass.ClassComponent"
+		},
+		{
+			"name":"camel.component.controlbus",
+			"description":"The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent"
+		},
+		{
+			"name":"camel.component.controlbus",
+			"description":"The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent"
+		},
+		{
+			"name":"camel.component.dataformat",
+			"description":"The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent"
+		},
+		{
+			"name":"camel.component.dataformat",
+			"description":"The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent"
+		},
+		{
+			"name":"camel.component.dataset",
+			"description":"The dataset component provides a mechanism to easily perform load & soak testing of your system.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent"
+		},
+		{
+			"name":"camel.component.dataset",
+			"description":"The dataset component provides a mechanism to easily perform load & soak testing of your system.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent"
+		},
+		{
+			"name":"camel.component.dataset-test",
+			"description":"The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent"
+		},
+		{
+			"name":"camel.component.dataset-test",
+			"description":"The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent"
+		},
+		{
+			"name":"camel.component.direct",
+			"description":"The direct component provides direct, synchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent"
+		},
+		{
+			"name":"camel.component.direct",
+			"description":"The direct component provides direct, synchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent"
+		},
+		{
+			"name":"camel.component.direct",
+			"description":"The direct component provides direct, synchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent"
+		},
+		{
+			"name":"camel.component.direct",
+			"description":"The direct component provides direct, synchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.direct-vm",
+			"description":"The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent"
+		},
+		{
+			"name":"camel.component.file",
+			"description":"The file component is used for reading or writing files.",
+			"sourceType":"org.apache.camel.component.file.FileComponent"
+		},
+		{
+			"name":"camel.component.file",
+			"description":"The file component is used for reading or writing files.",
+			"sourceType":"org.apache.camel.component.file.FileComponent"
+		},
+		{
+			"name":"camel.component.language",
+			"description":"The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent"
+		},
+		{
+			"name":"camel.component.language",
+			"description":"The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent"
+		},
+		{
+			"name":"camel.component.log",
+			"description":"The log component logs message exchanges to the underlying logging mechanism.",
+			"sourceType":"org.apache.camel.component.log.LogComponent"
+		},
+		{
+			"name":"camel.component.log",
+			"description":"The log component logs message exchanges to the underlying logging mechanism.",
+			"sourceType":"org.apache.camel.component.log.LogComponent"
+		},
+		{
+			"name":"camel.component.log",
+			"description":"The log component logs message exchanges to the underlying logging mechanism.",
+			"sourceType":"org.apache.camel.component.log.LogComponent"
+		},
+		{
+			"name":"camel.component.mock",
+			"description":"The mock component is used for testing routes and mediation rules using mocks.",
+			"sourceType":"org.apache.camel.component.mock.MockComponent"
+		},
+		{
+			"name":"camel.component.mock",
+			"description":"The mock component is used for testing routes and mediation rules using mocks.",
+			"sourceType":"org.apache.camel.component.mock.MockComponent"
+		},
+		{
 			"name":"camel.component.properties",
 			"description":"The properties component is used for using property placeholders in endpoint uris.",
 			"sourceType":"org.apache.camel.component.properties.PropertiesComponent"
@@ -199,6 +344,261 @@
 			"name":"camel.component.quartz2",
 			"description":"Provides a scheduled delivery of messages using the Quartz 2.x scheduler.",
 			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent"
+		},
+		{
+			"name":"camel.component.ref",
+			"description":"The ref component is used for lookup of existing endpoints bound in the Registry.",
+			"sourceType":"org.apache.camel.component.ref.RefComponent"
+		},
+		{
+			"name":"camel.component.ref",
+			"description":"The ref component is used for lookup of existing endpoints bound in the Registry.",
+			"sourceType":"org.apache.camel.component.ref.RefComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest",
+			"description":"The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).",
+			"sourceType":"org.apache.camel.component.rest.RestComponent"
+		},
+		{
+			"name":"camel.component.rest-api",
+			"description":"The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent"
+		},
+		{
+			"name":"camel.component.rest-api",
+			"description":"The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent"
+		},
+		{
+			"name":"camel.component.saga",
+			"description":"The saga component provides access to advanced options for managing the flow in the Saga EIP.",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent"
+		},
+		{
+			"name":"camel.component.saga",
+			"description":"The saga component provides access to advanced options for managing the flow in the Saga EIP.",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent"
+		},
+		{
+			"name":"camel.component.scheduler",
+			"description":"The scheduler component is used for generating message exchanges when a scheduler fires.",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent"
+		},
+		{
+			"name":"camel.component.scheduler",
+			"description":"The scheduler component is used for generating message exchanges when a scheduler fires.",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent"
+		},
+		{
+			"name":"camel.component.scheduler",
+			"description":"The scheduler component is used for generating message exchanges when a scheduler fires.",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.seda",
+			"description":"The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.stub",
+			"description":"The stub component provides a simple way to stub out any physical endpoints while in development or testing.",
+			"sourceType":"org.apache.camel.component.stub.StubComponent"
+		},
+		{
+			"name":"camel.component.timer",
+			"description":"The timer component is used for generating message exchanges when a timer fires.",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent"
+		},
+		{
+			"name":"camel.component.timer",
+			"description":"The timer component is used for generating message exchanges when a timer fires.",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent"
+		},
+		{
+			"name":"camel.component.validator",
+			"description":"Validates the payload of a message using XML Schema and JAXP Validation.",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent"
+		},
+		{
+			"name":"camel.component.validator",
+			"description":"Validates the payload of a message using XML Schema and JAXP Validation.",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent"
+		},
+		{
+			"name":"camel.component.validator",
+			"description":"Validates the payload of a message using XML Schema and JAXP Validation.",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.vm",
+			"description":"The vm component provides asynchronous call to another endpoint from the same CamelContext.",
+			"sourceType":"org.apache.camel.component.vm.VmComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
+		},
+		{
+			"name":"camel.component.xslt",
+			"description":"Transforms the message using a XSLT template.",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent"
 		}
 	],
 	"properties":[
@@ -886,6 +1286,20 @@
 			"defaultValue":"false"
 		},
 		{
+			"name":"camel.component.browse.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.browse.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.browse.BrowseComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
 			"name":"camel.component.class.cache",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.camel.component.beanclass.ClassComponent",
@@ -902,6 +1316,193 @@
 			"name":"camel.component.class.basic-property-binding",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.camel.component.beanclass.ClassComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.controlbus.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.controlbus.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.controlbus.ControlBusComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataformat.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataformat.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataformat.DataFormatComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataset.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataset.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.dataset-test.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.dataset-test.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.dataset.DataSetTestComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.direct.block",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct.timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"The timeout value to use if block is enabled.",
+			"defaultValue":"30000"
+		},
+		{
+			"name":"camel.component.direct.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.direct.DirectComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.direct-vm.block",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"The timeout value to use if block is enabled.",
+			"defaultValue":"30000"
+		},
+		{
+			"name":"camel.component.direct-vm.header-filter-strategy",
+			"type":"org.apache.camel.spi.HeaderFilterStrategy",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none."
+		},
+		{
+			"name":"camel.component.direct-vm.propagate-properties",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether to propagate or not properties from the producer side to the consumer side, and vice versa. Default value: true.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.direct-vm.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.directvm.DirectVmComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.file.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.file.FileComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.file.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.file.FileComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.language.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.language.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.language.LanguageComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.log.exchange-formatter",
+			"type":"org.apache.camel.spi.ExchangeFormatter",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified, we default to DefaultExchangeFormatter."
+		},
+		{
+			"name":"camel.component.log.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.log.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.log.LogComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.mock.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.mock.MockComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.mock.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.mock.MockComponent",
 			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
 			"defaultValue":"false"
 		},
@@ -1105,6 +1706,350 @@
 			"name":"camel.component.quartz2.basic-property-binding",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.camel.component.quartz2.QuartzComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.ref.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.ref.RefComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.ref.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.ref.RefComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.rest.consumer-component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (consumer) the REST transport, such as jetty, servlet, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used."
+		},
+		{
+			"name":"camel.component.rest.producer-component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used."
+		},
+		{
+			"name":"camel.component.rest.component-name",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The Camel Rest component to use for (producer) the REST transport, such as http, undertow. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is being used.",
+			"deprecated":true,
+			"deprecation":{
+				
+			}
+		},
+		{
+			"name":"camel.component.rest.api-doc",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format."
+		},
+		{
+			"name":"camel.component.rest.host",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Host and port of HTTP service to use (override host in swagger schema)"
+		},
+		{
+			"name":"camel.component.rest.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.rest.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.rest-api.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.rest-api.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.rest.RestApiComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.saga.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.saga.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.saga.SagaComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.scheduler.concurrent-tasks",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Number of threads used by the scheduling thread pool. Is by default using a single thread",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.scheduler.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.scheduler.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.scheduler.SchedulerComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.seda.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.seda.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.seda.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.seda.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.seda.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.seda.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.seda.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.seda.SedaComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.stub.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.stub.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.stub.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.stub.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.stub.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.stub.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.stub.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.stub.StubComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.timer.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.timer.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.timer.TimerComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.validator.resource-resolver-factory",
+			"type":"org.apache.camel.component.validator.ValidatorResourceResolverFactory",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI"
+		},
+		{
+			"name":"camel.component.validator.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.validator.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.validator.ValidatorComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.vm.queue-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold).",
+			"defaultValue":"1000"
+		},
+		{
+			"name":"camel.component.vm.concurrent-consumers",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default number of concurrent threads processing exchanges.",
+			"defaultValue":"1"
+		},
+		{
+			"name":"camel.component.vm.default-queue-factory",
+			"type":"org.apache.camel.component.seda.BlockingQueueFactory",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Sets the default queue factory."
+		},
+		{
+			"name":"camel.component.vm.default-block-when-full",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.vm.default-offer-timeout",
+			"type":"java.lang.Long",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue"
+		},
+		{
+			"name":"camel.component.vm.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.vm.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.vm.VmComponent",
+			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.xslt.uri-resolver-factory",
+			"type":"org.apache.camel.component.xslt.XsltUriResolverFactory",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'."
+		},
+		{
+			"name":"camel.component.xslt.uri-resolver",
+			"type":"javax.xml.transform.URIResolver",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'."
+		},
+		{
+			"name":"camel.component.xslt.content-cache",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.xslt.saxon",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.",
+			"defaultValue":"false"
+		},
+		{
+			"name":"camel.component.xslt.saxon-extension-functions",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup."
+		},
+		{
+			"name":"camel.component.xslt.saxon-configuration",
+			"type":"java.lang.Object",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To use a custom Saxon configuration"
+		},
+		{
+			"name":"camel.component.xslt.saxon-configuration-properties",
+			"type":"java.util.Map",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"To set custom Saxon configuration properties"
+		},
+		{
+			"name":"camel.component.xslt.resolve-property-placeholders",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
+			"description":"Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.component.xslt.basic-property-binding",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.component.xslt.XsltComponent",
 			"description":"Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities",
 			"defaultValue":"false"
 		}
