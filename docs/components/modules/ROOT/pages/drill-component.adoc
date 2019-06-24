@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.19*
 
-The *drill:* component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]
+The *drill:* component gives you the ability to query an https://drill.apache.org/[Apache Drill Cluster]
 
 Drill is an Apache open-source SQL query engine for Big Data exploration. Drill is designed from the ground up to support high-performance analysis on the semi-structured and rapidly evolving data coming from modern Big Data applications, while still providing the familiarity and ecosystem of ANSI SQL, the industry-standard query language
 
@@ -32,7 +32,7 @@ You can append query options to the URI in the following format,
 
 ### Drill Producer 
 
-The producer execute query using *CamelDrillQuery* header and put results into body.
+The producer executes a query using the *CamelDrillQuery* header and puts the results into the body.
 
 ### Options
 
