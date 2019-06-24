@@ -138,7 +138,7 @@ public abstract class MainSupport extends ServiceSupport {
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
                     parameter = parameter.substring(0, parameter.length() - 1);
                 }
-                configure().setDuration(Integer.parseInt(parameter));
+                configure().setDurationMaxSeconds(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
@@ -363,8 +363,8 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     @Deprecated
-    public long getDuration() {
-        return mainConfigurationProperties.getDuration();
+    public int getDuration() {
+        return mainConfigurationProperties.getDurationMaxSeconds();
     }
 
     /**
@@ -373,8 +373,8 @@ public abstract class MainSupport extends ServiceSupport {
      * @deprecated use {@link #configure()}
      */
     @Deprecated
-    public void setDuration(long duration) {
-        mainConfigurationProperties.setDuration(duration);
+    public void setDuration(int duration) {
+        mainConfigurationProperties.setDurationMaxSeconds(duration);
     }
 
     @Deprecated
@@ -551,9 +551,10 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 int idle = mainConfigurationProperties.getDurationMaxIdleSeconds();
                 int max = mainConfigurationProperties.getDurationMaxMessages();
-                if (mainConfigurationProperties.getDuration() > 0) {
-                    LOG.info("Waiting for: {} seconds", mainConfigurationProperties.getDuration());
-                    latch.await(mainConfigurationProperties.getDuration(), TimeUnit.SECONDS);
+                long sec = mainConfigurationProperties.getDurationMaxSeconds();
+                if (sec > 0) {
+                    LOG.info("Waiting for: {} seconds", sec);
+                    latch.await(sec, TimeUnit.SECONDS);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
                     completed.set(true);
                 } else if (idle > 0 || max > 0) {

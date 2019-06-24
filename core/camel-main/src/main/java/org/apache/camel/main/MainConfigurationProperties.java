@@ -25,7 +25,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
-    private long duration = -1;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
 
@@ -123,18 +122,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
     }
 
-    public long getDuration() {
-        return duration;
-    }
-
-    /**
-     * Sets the duration (in seconds) to run the application until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
-     */
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
     public boolean isHangupInterceptorEnabled() {
         return hangupInterceptorEnabled;
     }
@@ -217,15 +204,6 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutowireComponentPropertiesAllowPrivateSetter(boolean autowireComponentPropertiesAllowPrivateSetter) {
         this.autowireComponentPropertiesAllowPrivateSetter = autowireComponentPropertiesAllowPrivateSetter;
-        return this;
-    }
-
-    /**
-     * Sets the duration (in seconds) to run the application until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
-     */
-    public MainConfigurationProperties withDuration(long duration) {
-        this.duration = duration;
         return this;
     }
 
