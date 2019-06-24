@@ -98,8 +98,8 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
     @FunctionalInterface
     protected interface ComponentCallback {
-        void onOption(String componentName, String componentJavaType, String name, String type, String javaType,
-                      String description, String defaultValue, boolean deprecated);
+        void onOption(String componentName, String componentJavaType, String componentDescription,
+                      String name, String type, String javaType, String description, String defaultValue, boolean deprecated);
     }
 
     protected void doExecute(ComponentCallback callback) throws MojoExecutionException, MojoFailureException {
@@ -165,6 +165,7 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
 
             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
             String componentJavaType = getComponentJavaType(rows);
+            String componentDescription = getComponentDescription(rows);
 
             rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
             Set<String> names = JSonSchemaHelper.getNames(rows);
@@ -176,7 +177,8 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
                 String defaultValue = row.get("defaultValue");
                 boolean deprecated = "true".equals(row.getOrDefault("deprecated", "false"));
 
-                callback.onOption(componentName, componentJavaType, name, type, javaType, desc, defaultValue, deprecated);
+                callback.onOption(componentName, componentJavaType, componentDescription,
+                        name, type, javaType, desc, defaultValue, deprecated);
             }
         }
     }
@@ -212,6 +214,15 @@ public abstract class AbstractMainMojo extends AbstractExecMojo {
         for (Map<String, String> row : rows) {
             if (row.containsKey("javaType")) {
                 return row.get("javaType");
+            }
+        }
+        return null;
+    }
+
+    public static String getComponentDescription(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("description")) {
+                return row.get("description");
             }
         }
         return null;

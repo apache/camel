@@ -16,7 +16,7 @@
  */
 package org.apache.camel.maven.model;
 
-public final class SpringBootData {
+public final class SpringBootPropertyData {
 
     private String name;
     private String javaType;
@@ -25,7 +25,7 @@ public final class SpringBootData {
     private String defaultValue;
     private boolean deprecated;
 
-    public SpringBootData(String name, String javaType, String description, String sourceType, String defaultValue, boolean deprecated) {
+    public SpringBootPropertyData(String name, String javaType, String description, String sourceType, String defaultValue, boolean deprecated) {
         this.name = name;
         this.javaType = javaType;
         this.description = description;
