@@ -252,7 +252,10 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
                                 new BundleTypeConverterLoader(bundle, url3 != null);
                             bundleTypeConverterLoader.setTypeConverterLoader((TypeConverterLoader)clazz.newInstance());
                             resolvers.add(bundleTypeConverterLoader);
+                            BundleTypeConverterLoader fallBackBundleTypeConverterLoader =
+                                new BundleTypeConverterLoader(bundle, url3 != null);
                             // the class could be found and loaded so continue to next
+                            resolvers.add(fallBackBundleTypeConverterLoader);
                             continue;
                         } catch (Throwable t) {
                             // Ignore
