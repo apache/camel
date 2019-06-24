@@ -97,7 +97,7 @@ The component supports 5 options, which are listed below.
 
 ### Samples
 
-For example you could use Mvel inside a link:message-filter.html[Message
+For example you could use Mvel inside a xref:message-filter.adoc[Message
 Filter] in XML
 
 [source,java]

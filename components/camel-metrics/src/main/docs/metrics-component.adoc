@@ -14,8 +14,8 @@ endif::[]
 
 The **metrics:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are link:#MetricsComponent-counter[counter], link:#MetricsComponent-histogram[histogram],
-link:#MetricsComponent-meter[meter], link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
+are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
+xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
 simple way to measure behaviour of application. Configurable
 reporting backend is enabling different integration options for
 collecting and visualizing statistics. The component also provides
@@ -189,9 +189,9 @@ class MyBean extends RouteBuilder {
 ### Usage
 
 Each metric has type and name. Supported types are
-link:#MetricsComponent-counter[counter],
-link:#MetricsComponent-histogram[histogram], link:#MetricsComponent-meter[meter],
-link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge].
+xref:#MetricsComponent-counter[counter],
+xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
+xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge].
 Metric name is simple string. If metric type is not provided then type meter is used by default.
 
 #### Headers

@@ -254,5 +254,5 @@ on the address "camel://direct:EndpointA" and "camel://direct:EndpointB"
 [[CamelTransportforCXF-CompleteHowtoandExampleforattachingCameltoCXF]]
 === Complete Howto and Example for attaching Camel to CXF
 
-link:better-jms-transport-for-cxf-webservice-using-apache-camel.html[Better
+xref:better-jms-transport-for-cxf-webservice-using-apache-camel.adoc[Better
 JMS Transport for CXF Webservice using Apache Camel] 

@@ -8,8 +8,8 @@ It allows a Camel-based application to send and receive messages by acting as a 
 direct conversations with normal users, private and public groups or channels.
 
 A Telegram Bot must be created before using this component, following the instructions at the
-link:https://core.telegram.org/bots#3-how-do-i-create-a-bot[Telegram Bot developers home].
-When a new Bot is created, the link:https://telegram.me/botfather[BotFather] provides an
+https://core.telegram.org/bots#3-how-do-i-create-a-bot[Telegram Bot developers home].
+When a new Bot is created, the https://telegram.me/botfather[BotFather] provides an
 **authorization token** corresponding to the Bot. The authorization token is a mandatory parameter
 for the camel-telegram endpoint.
 

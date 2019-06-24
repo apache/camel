@@ -314,7 +314,7 @@ With Spring XML:
 === Dynamic stylesheets
 
 To provide a dynamic stylesheet at runtime you can define a dynamic URI.
-See link:how-to-use-a-dynamic-uri-in-to.html[How to use a dynamic URI in
+See xref:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
 to()] for more information.
 
 *Available as of Camel 2.9 (removed in 2.11.4, 2.12.3 and 2.13.0)* +
