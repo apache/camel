@@ -21,6 +21,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 
 class BeanReifier extends ProcessorReifier<BeanDefinition> {
@@ -39,8 +40,11 @@ class BeanReifier extends ProcessorReifier<BeanDefinition> {
         String beanType = definition.getBeanType();
         Class<?> beanClass = definition.getBeanClass();
 
-        return camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory().createBeanProcessor(camelContext,
-                bean, beanType, beanClass, ref, method, isCacheBean());
+        BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
+        if (fac == null) {
+            throw new IllegalStateException("Cannot find BeanProcessorFactory. Make sure camel-bean is on the classpath.");
+        }
+        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, isCacheBean());
     }
 
     private boolean isCacheBean() {
