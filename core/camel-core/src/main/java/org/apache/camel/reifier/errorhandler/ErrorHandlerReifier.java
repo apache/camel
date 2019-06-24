@@ -17,9 +17,7 @@
 package org.apache.camel.reifier.errorhandler;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -110,34 +108,34 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             return null;
         }
         Map<RedeliveryOption, String> policy = new HashMap<>();
-        setoption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
-        setoption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay());
-        setoption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());
-        setoption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier());
-        setoption(policy, RedeliveryOption.useExponentialBackOff, definition.getUseExponentialBackOff());
-        setoption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor());
-        setoption(policy, RedeliveryOption.useCollisionAvoidance, definition.getUseCollisionAvoidance());
-        setoption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay());
-        setoption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel());
-        setoption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel());
-        setoption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval());
-        setoption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted());
-        setoption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace());
-        setoption(policy, RedeliveryOption.logRetryStackTrace, definition.getLogRetryStackTrace());
-        setoption(policy, RedeliveryOption.logHandled, definition.getLogHandled());
-        setoption(policy, RedeliveryOption.logNewException, definition.getLogNewException());
-        setoption(policy, RedeliveryOption.logContinued, definition.getLogContinued());
-        setoption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted());
-        setoption(policy, RedeliveryOption.logExhaustedMessageHistory, definition.getLogExhaustedMessageHistory());
-        setoption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
-        setoption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
-        setoption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
-        setoption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping());
-        setoption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
+        setOption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
+        setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay());
+        setOption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());
+        setOption(policy, RedeliveryOption.backOffMultiplier, definition.getBackOffMultiplier());
+        setOption(policy, RedeliveryOption.useExponentialBackOff, definition.getUseExponentialBackOff());
+        setOption(policy, RedeliveryOption.collisionAvoidanceFactor, definition.getCollisionAvoidanceFactor());
+        setOption(policy, RedeliveryOption.useCollisionAvoidance, definition.getUseCollisionAvoidance());
+        setOption(policy, RedeliveryOption.maximumRedeliveryDelay, definition.getMaximumRedeliveryDelay());
+        setOption(policy, RedeliveryOption.retriesExhaustedLogLevel, definition.getRetriesExhaustedLogLevel());
+        setOption(policy, RedeliveryOption.retryAttemptedLogLevel, definition.getRetryAttemptedLogLevel());
+        setOption(policy, RedeliveryOption.retryAttemptedLogInterval, definition.getRetryAttemptedLogInterval());
+        setOption(policy, RedeliveryOption.logRetryAttempted, definition.getLogRetryAttempted());
+        setOption(policy, RedeliveryOption.logStackTrace, definition.getLogStackTrace());
+        setOption(policy, RedeliveryOption.logRetryStackTrace, definition.getLogRetryStackTrace());
+        setOption(policy, RedeliveryOption.logHandled, definition.getLogHandled());
+        setOption(policy, RedeliveryOption.logNewException, definition.getLogNewException());
+        setOption(policy, RedeliveryOption.logContinued, definition.getLogContinued());
+        setOption(policy, RedeliveryOption.logExhausted, definition.getLogExhausted());
+        setOption(policy, RedeliveryOption.logExhaustedMessageHistory, definition.getLogExhaustedMessageHistory());
+        setOption(policy, RedeliveryOption.logExhaustedMessageBody, definition.getLogExhaustedMessageBody());
+        setOption(policy, RedeliveryOption.disableRedelivery, definition.getDisableRedelivery());
+        setOption(policy, RedeliveryOption.delayPattern, definition.getDelayPattern());
+        setOption(policy, RedeliveryOption.allowRedeliveryWhileStopping, definition.getAllowRedeliveryWhileStopping());
+        setOption(policy, RedeliveryOption.exchangeFormatterRef, definition.getExchangeFormatterRef());
         return policy;
     }
 
-    private static void setoption(Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value) {
+    private static void setOption(Map<RedeliveryOption, String> policy, RedeliveryOption option, Object value) {
         if (value != null) {
             policy.put(option, value.toString());
         }
@@ -265,8 +263,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         }
     }
 
+    /**
+     * Note: Not for end users - this method is used internally by camel-blueprint
+     */
     public static RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
-
         RedeliveryPolicy answer;
         if (parentPolicy != null) {
             answer = parentPolicy.copy();
