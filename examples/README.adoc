@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 112 (0 deprecated)
+Number of Examples: 113 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -42,6 +42,8 @@ Number of Examples: 112 (0 deprecated)
 | link:camel-example-java8/readme.adoc[Java8] (camel-example-java8) | Beginner | An example for showing Camel DSL for Java 8
 
 | link:camel-example-main/readme.adoc[Main] (camel-example-main) | Beginner | An example for showing standalone Camel
+
+| link:camel-example-main-tiny/readme.adoc[Main Tiny] (camel-example-main-tiny) | Beginner | An example for showing standalone Camel with as few JARs on classpath as possible
 
 | link:camel-example-pojo-messaging/README.md[POJO Routing] (camel-example-pojo-messaging) | Beginner | An example showing how to produce and consume messages from Camel endpoints using annotated POJOs
     
