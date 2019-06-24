@@ -18,7 +18,7 @@ We can use Spring for IoC and the Camel http://camel.apache.org/mock.html[Mock] 
 |<<SpringTesting-CamelSpringTestSupport,CamelSpringTestSupport>> a|
 * JUnit 3.x (deprecated)
 * JUnit 4.x
-* TestNG - *Camel 2.8*
+* TestNG
 
 a|
 Provided by:
@@ -60,8 +60,8 @@ a|
 * TestNG - None
 
 |<<SpringTesting-CamelEnhancedSpringTest,Camel Enhanced Spring Test>> a|
-* JUnit 4.x - *Camel 2.10*
-* TestNG - *Camel 2.10*
+* JUnit 4.x
+* TestNG
 
 a|
 Either:
@@ -338,7 +338,7 @@ The test author is responsible for injecting the Camel contexts into the test an
 CamelContexts do not automatically start. a|CamelContexts do not automatically start.
 
 |org.apache.camel.test.spring.UseOverridePropertiesWithPropertiesComponent a|Method a|
-*Camel 2.16*:Indicates that the annotated method returns a `java.util.Properties` for use in the test, and that those properties override any existing properties configured on the `PropertiesComponent`. a|
+Indicates that the annotated method returns a `java.util.Properties` for use in the test, and that those properties override any existing properties configured on the `PropertiesComponent`. a|
 a|Override properties
 |=======================================================================
 
