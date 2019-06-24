@@ -16,24 +16,21 @@
  */
 package org.apache.camel.dataformat.any23;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.apache.any23.Any23;
-import org.apache.any23.extractor.ExtractionException;
-import org.apache.any23.http.HTTPClient;
+import org.apache.any23.configuration.DefaultConfiguration;
+import org.apache.any23.configuration.ModifiableConfiguration;
 import org.apache.any23.source.DocumentSource;
-import org.apache.any23.source.HTTPDocumentSource;
 import org.apache.any23.source.StringDocumentSource;
+import org.apache.any23.writer.JSONLDWriter;
+import org.apache.any23.writer.NQuadsWriter;
 import org.apache.any23.writer.NTriplesWriter;
+import org.apache.any23.writer.RDFXMLWriter;
 import org.apache.any23.writer.TripleHandler;
-import org.apache.any23.writer.TripleHandlerException;
+import org.apache.any23.writer.TurtleWriter;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -54,100 +51,133 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
    */
   private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
-  private Any23Parameters parameters ;
+  private Any23 any23;
+  private Any23OutputFormat format;
+  private ModifiableConfiguration conf;
+  private String[] extractorsList;
 
-  /**
-   * String or Node to return
-   */
-  private Class<?> dataObjectType;
-
-  /**
-   * What is the default output format ?
-   */
-  private String method;
+  private String configurations;
+  private String extractors;
+  private String outputFormat;
+  private String documentIRI;
 
   @Override
   public String getDataFormatName() {
     return "any23";
   }
-  
-  
-  /*protected final void setDefaultParameters () {
-     parameters = new Any23Parameters ();
-  
-  }*/
-  
-  /*public Any23DataFormat (){
-    this.setDefaultParameters();
-  }*/
 
   /**
    * Marshal data. Generate RDF.
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-   /*final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
-   System.out.print ("payload");
-   System.out.print (payload);
-   
-    Any23 runner = new Any23();*/
-    anytordf( exchange,  object,  outputStream);
-           //  return n3;
-   // throw new CamelException("Under construction");
+    final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
+    DocumentSource source = new StringDocumentSource(payload, documentIRI);
+    TripleHandler handler;
+    switch (format) {
+      case NTRIPLES:
+        handler = new NTriplesWriter(outputStream);
+        break;
+      case TURTLE:
+        handler = new TurtleWriter(outputStream);
+        break;
+      case NQUADS:
+        handler = new NQuadsWriter(outputStream);
+        break;
+      case RDFXML:
+        handler = new RDFXMLWriter(outputStream);
+        break;
+      case JSONLD:
+        handler = new JSONLDWriter(outputStream);
+        break;
+      case MODEL:
+        handler = new NTriplesWriter(outputStream);
+        break;
+      default:
+        handler = new NTriplesWriter(outputStream);
+    }
+    any23.extract(source, handler);
   }
 
   /**
    * Unmarshal the data
    */
   public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-          Any23 runner = new Any23();
-          runner.setHTTPUserAgent("test-user-agent");
-          HTTPClient httpClient = runner.getHTTPClient();
-          DocumentSource source = new HTTPDocumentSource(
-                  httpClient,
-                  "http://dbpedia.org/page/Ecuador");
-        //  System.out.print("#######");
-        //  System.out.print(source.getContentType());
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          TripleHandler handler = new NTriplesWriter(out);
-           
-              runner.extract(source, handler);
-        
-              
-             handler.close();
-            
-          
-             String n3 = out.toString("UTF-8");
-            
-           //  System.out.print (n3);
-             return n3;
-     //throw new CamelException("Under construction");
-  }
-  
-  private void anytordf (final Exchange exchange, Object object, OutputStream outputStream) throws IOException, ExtractionException, TypeConversionException, NoTypeConversionAvailableException, TripleHandlerException{
-    final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
-    System.out.println ("PAYLOAD");
-    System.out.println (payload);
-    DocumentSource source = new StringDocumentSource(payload, "http://host.com/service");
-    Any23 runner = new Any23();
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    this.parameters = new Any23Parameters (out);
-    runner.extract(source, this.parameters.getTripleHandlerOutput());
-    this.parameters.getTripleHandlerOutput().close();
-   // out.toString("UTF-8").get
-   // out.toString("UTF-8");
-   System.out.println("SALIDA");
-    System.out.println(out.toString("UTF-8"));
-    outputStream.write(out.toByteArray());
-    
+    //TODO
+    return null;
   }
 
   @Override
   protected void doStart() throws Exception {
-    // noop
+    conf = DefaultConfiguration.copy();
+    String[] newConfigs = configurations.split(";");
+    for (String con : newConfigs) {
+      String[] vals = con.split("=");
+      conf.setProperty(vals[0], vals[0]);
+    }
+    extractorsList = extractors.split(";");
+    any23 = new Any23(conf, extractors);
+    format = Any23OutputFormat.valueOf(outputFormat);
   }
 
   @Override
   protected void doStop() throws Exception {
     // noop
   }
+
+  public Any23 getAny23() {
+    return any23;
+  }
+
+  public void setAny23(Any23 any23) {
+    this.any23 = any23;
+  }
+
+  public Any23OutputFormat getFormat() {
+    return format;
+  }
+
+  public void setFormat(Any23OutputFormat format) {
+    this.format = format;
+  }
+
+  public ModifiableConfiguration getConf() {
+    return conf;
+  }
+
+  public void setConf(ModifiableConfiguration conf) {
+    this.conf = conf;
+  }
+
+  public String[] getExtractorsList() {
+    return extractorsList;
+  }
+
+  public void setExtractorsList(String[] extractorsList) {
+    this.extractorsList = extractorsList;
+  }
+
+  public String getConfigurations() {
+    return configurations;
+  }
+
+  public void setConfigurations(String configurations) {
+    this.configurations = configurations;
+  }
+
+  public String getExtractors() {
+    return extractors;
+  }
+
+  public void setExtractors(String extractors) {
+    this.extractors = extractors;
+  }
+
+  public String getOutputFormat() {
+    return outputFormat;
+  }
+
+  public void setOutputFormat(String outputFormat) {
+    this.outputFormat = outputFormat;
+  }
+
 }
