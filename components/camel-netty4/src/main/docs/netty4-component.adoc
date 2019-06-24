@@ -406,7 +406,7 @@ RouteBuilder builder = new RouteBuilder() {
 Using the JSSE Configuration Utility
 
 As of Camel 2.9, the Netty component supports SSL/TLS configuration
-through the link:camel-configuration-utilities.html[Camel JSSE
+through the xref:camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

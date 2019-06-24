@@ -86,7 +86,7 @@ exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
 in the <<jetty-component,Jetty>> component. No matter how the credentials
 are collected, they need to be placed in the In message or the
-`SecurityContextHolder` so the Camel link:spring-security.html[Spring
+`SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
 
 [source,java]

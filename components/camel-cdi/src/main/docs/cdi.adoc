@@ -158,8 +158,8 @@ class CustomCamelContext extends DefaultCamelContext {
 }
 ----
 
-link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_method[Producer]
-and link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#disposer_method[disposer]
+http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_method[Producer]
+and http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#disposer_method[disposer]
 methods can also be used as well to customize the Camel context bean, e.g.:
 
 [source,java]
@@ -180,7 +180,7 @@ class CamelContextFactory {
 }
 ----
 
-Similarly, link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_field[producer
+Similarly, http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#producer_field[producer
 fields] can be used, e.g.:
 
 [source,java]
@@ -330,7 +330,7 @@ PropertiesComponent propertiesComponent() {
 ----
 
 If you want to
-use link:http://deltaspike.apache.org/documentation/configuration.html[DeltaSpike
+use http://deltaspike.apache.org/documentation/configuration.html[DeltaSpike
 configuration mechanism] you can declare the
 following `PropertiesComponent` bean:
 
@@ -381,9 +381,9 @@ Note that CDI injection is supported within the type converters.
 
 ==== Camel annotations
 
-As part of the Camel link:http://camel.apache.org/bean-integration.html[bean
+As part of the Camel http://camel.apache.org/bean-integration.html[bean
 integration], Camel comes with a set
-of link:http://camel.apache.org/bean-integration.html#BeanIntegration-Annotations[annotations] that
+of http://camel.apache.org/bean-integration.html#BeanIntegration-Annotations[annotations] that
 are seamlessly supported by Camel CDI. So you can use any of these
 annotations in your CDI beans, e.g.:
 
@@ -566,11 +566,11 @@ PlatformTransactionManager createTransactionManager(TransactionManager transacti
 *Available as of Camel 2.17*
 
 Camel provides a set
-of link:http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
+of http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
 events] that can be subscribed to for listening to Camel context,
 service, route and exchange events. Camel CDI seamlessly translates
 these Camel events into CDI events that can be observed using
-CDI link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+CDI http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
 methods], e.g.:
 
 [source,java]
@@ -596,7 +596,7 @@ void onRouteStarted(@Observes @Named("foo") RouteStartedEvent event) {
 When multiple Camel contexts exist in the CDI container, the Camel
 context bean qualifiers, like `@ContextName`, can be used to refine the
 observer method resolution to a particular Camel context as specified
-in link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
+in http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
 resolution], e.g.:
 
 [source,java]
@@ -633,7 +633,7 @@ detected in the deployment, and that per Camel context.
 *Available as of Camel 2.17*
 
 The CDI event endpoint bridges
-the link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
+the http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
 events] with the Camel routes so that CDI events can be seamlessly
 observed / consumed (resp. produced / fired) from Camel consumers (resp.
 by Camel producers).
@@ -740,17 +740,17 @@ void observeCdiEvents(@Observes @ContextName("foo") List<String> event) {
 ----
 
 Note that the CDI event Camel endpoint dynamically adds
-an link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
+an http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
 method] for each unique combination of _event type_ and _event
 qualifiers_ and solely relies on the container
-typesafe link:http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
+typesafe http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
 resolution], which leads to an implementation as efficient as possible.
 
 Besides, as the impedance between the _typesafe_ nature of CDI and
 the _dynamic_ nature of
-the link:http://camel.apache.org/component.html[Camel component] model is
+the http://camel.apache.org/component.html[Camel component] model is
 quite high, it is not possible to create an instance of the CDI event
-Camel endpoint via link:http://camel.apache.org/uris.html[URIs]. Indeed, the
+Camel endpoint via http://camel.apache.org/uris.html[URIs]. Indeed, the
 URI format for the CDI event component is:
 
 [source,text]
@@ -1067,7 +1067,7 @@ for (CamelContext context : contexts)
 
 === Maven Archetype
 
-Among the available link:camel-maven-archetypes.html[Camel Maven
+Among the available xref:camel-maven-archetypes.adoc[Camel Maven
 archetypes], you can use the provided `camel-archetype-cdi` to generate
 a Camel CDI Maven project, e.g.:
 

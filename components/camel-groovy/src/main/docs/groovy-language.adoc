@@ -6,7 +6,7 @@
 Camel supports http://groovy.codehaus.org/[Groovy] among other
 Scripting Languages to allow an
 Expression or Predicate to be
-used in the DSL or link:xml-configuration.html[Xml
+used in the DSL or xref:xml-configuration.adoc[Xml
 Configuration].
 
 To use a Groovy expression use the following Java code
@@ -17,7 +17,7 @@ To use a Groovy expression use the following Java code
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
-Predicate in a link:message-filter.html[Message
+Predicate in a xref:message-filter.adoc[Message
 Filter] or as an Expression for a
 Recipient List
 
