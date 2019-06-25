@@ -61,10 +61,6 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
 
     @Test
     public void shouldListenToMessagesOverSSL() throws Exception {
-        // cannot test on java 1.9
-        if (isJava19()) {
-            return;
-        }
 
         // We're expecting 25 messages with Maps
         MockEndpoint mock = getMockEndpoint("mock:output");

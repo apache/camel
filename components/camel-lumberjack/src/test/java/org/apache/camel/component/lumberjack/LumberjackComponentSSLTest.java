@@ -48,6 +48,7 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with SSL
