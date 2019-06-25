@@ -88,14 +88,7 @@ The other one is `pollEnrich`
 
 `enrich` uses a Producer to obtain the additional data. It is usually used for Request Reply messaging, for instance to invoke an external web service.
 
-[WARNING]
-.Camel 2.15 or older - Data from current Exchange not used
-====
-`pollEnrich` or `enrich` does *not* access any data from the current Exchange which means when polling it cannot use any of the existing headers you may have set on the Exchange. For example you cannot set a filename in the `Exchange.FILE_NAME` header and use `pollEnrich` to consume only that file. For that you *must* set the filename in the endpoint URI.
-
-Instead of using enrich you can use Recipient List and have dynamic endpoints and define an `AggregationStrategy` on the Recipient List which then would work as a enrich would do.
-
-From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
+Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange.
 ====
 
 A little enrich example using Java:
@@ -139,26 +132,6 @@ Using this template the original exchange can be of any pattern. The resource ex
 
 ==== Enrich example using XML
 
-The same example in the Spring DSL (Camel 2.15 or older)
-
-[source,xml]
-----
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <enrich uri="direct:resource" strategyRef="aggregationStrategy"/>
-    <to uri="direct:result"/>
-  </route>
-  <route>
-    <from uri="direct:resource"/>
-    ...
-  </route>
-</camelContext>
-
-<bean id="aggregationStrategy" class="..." />
-----
-
-The same example in the Spring DSL (Camel 2.16 or newer)
 [source,xml]
 ----
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -188,17 +161,7 @@ from("direct:start")
 ----
 
 In the route above the message sent to the direct:result endpoint will contain the output from the direct:resource as we do not use any custom aggregation.
-And for Spring DSL (Camel 2.15 or older) just omit the strategyRef attribute:
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <enrich uri="direct:resource"/>
-  <to uri="direct:result"/>
-</route>
-----
 
-And for Spring DSL (Camel 2.16 or newer) just omit the strategyRef attribute:
 [source,xml]
 ----
 <route>
@@ -213,7 +176,7 @@ And for Spring DSL (Camel 2.16 or newer) just omit the strategyRef attribute:
 === Using dynamic uris
 *Available as of Camel 2.16*
 
-From Camel 2.16 onwards `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
+Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:
 [source,java]
 ----
 from("direct:start")

@@ -19,21 +19,13 @@ Camel provides the following Idempotent Consumer implementations:
 * MemoryIdempotentRepository
 * link:file2.html[FileIdempotentRepository]
 * link:hazelcast-component.html[HazelcastIdempotentRepository]
-(*Available as of Camel 2.8*)
-* <<sql-component,JdbcMessageIdRepository>> (*Available as of
-Camel 2.7*)
+* <<sql-component,JdbcMessageIdRepository>>
 * <<jpa-component,JpaMessageIdRepository>>
-* <<infinispan-component,InfinispanIdempotentRepository>> (*Available as of
-Camel 2.13.0)*
-* <<jcache-component,JCacheIdempotentRepository>>* (*Available as of Camel
-2.17.0)**
-* link:spring.html[SpringCacheIdempotentRepository] *(*Available as of
-Camel 2.17.1)**** 
-**
-* <<ehcache-component,EhcacheIdempotentRepository>>** *(*Available as of
-Camel 2.18.0)****
-* <<kafka-component,KafkaIdempotentRepository>> (*Available as of Camel
-2.19.0)*
+* <<infinispan-component,InfinispanIdempotentRepository>>
+* <<jcache-component,JCacheIdempotentRepository>>
+* link:spring.html[SpringCacheIdempotentRepository]
+* <<ehcache-component,EhcacheIdempotentRepository>>
+* <<kafka-component,KafkaIdempotentRepository>>
 
 === Options
 
