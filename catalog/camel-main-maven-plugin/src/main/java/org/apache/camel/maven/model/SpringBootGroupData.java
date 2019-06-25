@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.model;
 
+import java.util.Objects;
+
 public final class SpringBootGroupData {
 
     private String name;
@@ -50,5 +52,22 @@ public final class SpringBootGroupData {
 
     public void setSourceType(String sourceType) {
         this.sourceType = sourceType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SpringBootGroupData that = (SpringBootGroupData) o;
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

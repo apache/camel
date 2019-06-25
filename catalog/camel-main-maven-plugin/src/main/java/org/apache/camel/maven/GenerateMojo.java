@@ -162,7 +162,11 @@ public class GenerateMojo extends AbstractMainMojo {
             if (springBootEnabled) {
                 getLog().debug("Spring Boot option: " + key);
                 propertyData.add(new SpringBootPropertyData(key, springBootJavaType(javaType), description, componentJavaType, defaultValue, deprecated));
-                groupData.add(new SpringBootGroupData("camel.component." + componentName, componentDescription, componentJavaType));
+                // avoid duplicate groups (it has equal/hashCode contract on name only)
+                SpringBootGroupData group = new SpringBootGroupData("camel.component." + componentName, componentDescription, componentJavaType);
+                if (!groupData.contains(group)) {
+                    groupData.add(group);
+                }
             }
 
             // check if we can do automatic autowire to complex singleton objects from classes in the classpath
