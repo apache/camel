@@ -519,6 +519,22 @@ public final class IOHelper {
     }
 
     /**
+     * Lookup the OS environment variable in a safe manner by
+     * using upper case keys and underscore instead of dash.
+     */
+    public static String lookupEnvironmentVariable(String key) {
+        // lookup OS env with upper case key
+        String upperKey = key.toUpperCase();
+        String value = System.getenv(upperKey);
+        // some OS do not support dashes in keys, so replace with underscore
+        if (value == null) {
+            String noDashKey = upperKey.replace('-', '_');
+            value = System.getenv(noDashKey);
+        }
+        return value;
+    }
+
+    /**
      * Encoding-aware input stream.
      */
     public static class EncodingInputStream extends InputStream {

@@ -25,6 +25,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
+
 /**
  * A parser to parse a string which contains property placeholders.
  */
@@ -347,22 +349,6 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             return parseProperty(key, value, properties);
         }
-    }
-
-    /**
-     * Lookup the OS environment variable in a safe manner by
-     * using upper case keys and underscore instead of dash.
-     */
-    private static String lookupEnvironmentVariable(String key) {
-        // lookup OS env with upper case key
-        String upperKey = key.toUpperCase();
-        String value = System.getenv(upperKey);
-        // some OS do not support dashes in keys, so replace with underscore
-        if (value == null) {
-            String noDashKey = upperKey.replace('-', '_');
-            value = System.getenv(noDashKey);
-        }
-        return value;
     }
 
     /**
