@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
+import static org.apache.camel.util.StringHelper.dashToCamelCase;
 import static org.apache.camel.util.StringHelper.matches;
 
 /**
@@ -855,9 +857,44 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
+    protected Properties loadEnvironmentVariablesAsProperties(String[] prefixes) {
+        Properties answer = new OrderedProperties();
+        if (prefixes == null || prefixes.length == 0) {
+            return answer;
+        }
+
+        for (String prefix : prefixes) {
+            final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
+            final String pk2 = pk.replace('-', '_');
+            System.getenv().forEach((k, v) -> {
+                k = k.toUpperCase(Locale.US);
+                if (k.startsWith(pk) || k.startsWith(pk2)) {
+                    String key = k.toLowerCase(Locale.US).replace('_', '.');
+                    answer.put(key, v);
+                }
+            });
+        }
+
+        return answer;
+    }
+
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : prop.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, prop.getProperty(key));
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
+        if (!propENV.isEmpty()) {
+            prop.putAll(propENV);
+            LOG.debug("Properties from OS environment variables:");
+            for (String key : propENV.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propENV.getProperty(key));
+            }
+        }
 
         Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
 
@@ -890,6 +927,20 @@ public abstract class MainSupport extends ServiceSupport {
     protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : prop.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, prop.getProperty(key));
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
+        if (!propENV.isEmpty()) {
+            prop.putAll(propENV);
+            LOG.debug("Properties from OS environment variables:");
+            for (String key : propENV.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propENV.getProperty(key));
+            }
+        }
 
         Map<String, Object> properties = new LinkedHashMap<>();
 
@@ -932,13 +983,21 @@ public abstract class MainSupport extends ServiceSupport {
             // ignore as this file is optional
         }
 
-        // load properties from properties component
+        // load properties from properties component (override existing)
         Properties propPC = camelContext.getPropertiesComponent().loadProperties();
-        if (propPC != null) {
-            prop.putAll(propPC);
-            LOG.debug("Properties from Camel properties component:");
-            for (String key : propPC.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propPC.getProperty(key));
+        prop.putAll(propPC);
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : propPC.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, propPC.getProperty(key));
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.", "camel.dataformat.", "camel.language."});
+        if (!propENV.isEmpty()) {
+            prop.putAll(propENV);
+            LOG.debug("Properties from OS environment variables:");
+            for (String key : propENV.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propENV.getProperty(key));
             }
         }
 
