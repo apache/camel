@@ -22,7 +22,6 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.Injector;
 import org.junit.Test;
