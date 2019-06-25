@@ -810,17 +810,23 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
-                properties.put(option, value);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    properties.put(option, value);
+                }
             } else if (key.startsWith("camel.hystrix.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
-                hystrixProperties.put(option, value);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    hystrixProperties.put(option, value);
+                }
             } else if (key.startsWith("camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
-                restProperties.put(option, value);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    restProperties.put(option, value);
+                }
             }
         }
         if (!properties.isEmpty()) {
@@ -862,9 +868,11 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                values.put(option, value);
-                properties.put(component, values);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                    values.put(option, value);
+                    properties.put(component, values);
+                }
             }
         }
 
@@ -890,7 +898,9 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
-                properties.put(option, value);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    properties.put(option, value);
+                }
             }
         }
 
@@ -947,9 +957,11 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                values.put(option, value);
-                properties.put(component, values);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                    values.put(option, value);
+                    properties.put(component, values);
+                }
             }
             dot = key.indexOf(".", 17);
             if (key.startsWith("camel.dataformat.") && dot > 0) {
@@ -959,9 +971,11 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
-                values.put(option, value);
-                properties.put(dataformat, values);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
+                    values.put(option, value);
+                    properties.put(dataformat, values);
+                }
             }
             dot = key.indexOf(".", 15);
             if (key.startsWith("camel.language.") && dot > 0) {
@@ -971,9 +985,11 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
-                values.put(option, value);
-                properties.put(language, values);
+                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                    Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
+                    values.put(option, value);
+                    properties.put(language, values);
+                }
             }
         }
 
