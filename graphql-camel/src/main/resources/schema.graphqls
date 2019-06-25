@@ -1,0 +1,15 @@
+type Query {
+    userById(id: ID): User
+}
+
+type User {
+    id: ID
+    name: String
+    detail: Detail
+}
+
+type Detail {
+    id: ID
+    firstName: String
+    lastName: String
+}
