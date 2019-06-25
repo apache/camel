@@ -44,7 +44,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-engine</artifactId>
             <exclusions>
-                <!-- we dont need XML or LRUCache -->
+                <!-- we dont need XML, LRUCache, and json util -->
                 <exclusion>
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-jaxp</artifactId>
