@@ -264,6 +264,8 @@ The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been rem
 
 The `MessageHistoryFactory` interface has some options to filter and copy the message and a slight change in its API.
 
+Remove 'TypeConverterAware' as you shoudld instead use `Exchange` as parameter to the type converter method.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
