@@ -34,6 +34,8 @@ import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
+
 /**
  * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
  * After granting the read lock it is released, we just want to make sure that when we start
@@ -133,8 +135,9 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         }
 
         // store read-lock state
-        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), lock);
-        exchange.setProperty(asReadLockKey(file, Exchange.FILE_LOCK_RANDOM_ACCESS_FILE), randomAccessFile);
+        exchange.setProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), lock);
+        exchange.setProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_RANDOM_ACCESS_FILE), randomAccessFile);
+        exchange.setProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), channel);
 
         // we grabbed the lock
         return true;
@@ -146,16 +149,18 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         // must call super
         super.doReleaseExclusiveReadLock(operations, file, exchange);
 
-        FileLock lock = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
-        RandomAccessFile rac = exchange.getProperty(asReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+        FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
+        RandomAccessFile rac = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+        Channel channel = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
 
         String target = file.getFileName();
         if (lock != null) {
-            Channel channel = lock.acquiredBy();
-            try {
-                lock.release();
+            channel = lock.acquiredBy() != null ? lock.acquiredBy() : channel;
+            try (FileLock fileLock = lock) {
+                // use try-with-resource to auto-close lock
+                fileLock.release();
             } finally {
-                // close channel as well
+                // close channel and rac as well
                 IOHelper.close(channel, "while releasing exclusive read lock for file: " + target, LOG);
                 IOHelper.close(rac, "while releasing exclusive read lock for file: " + target, LOG);
             }
@@ -190,14 +195,6 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
-    }
-
-    private static String asReadLockKey(GenericFile file, String key) {
-        // use the copy from absolute path as that was the original path of the file when the lock was acquired
-        // for example if the file consumer uses preMove then the file is moved and therefore has another name
-        // that would no longer match
-        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
-        return path + "-" + key;
     }
 
 }

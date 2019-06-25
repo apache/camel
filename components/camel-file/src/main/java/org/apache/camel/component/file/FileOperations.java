@@ -17,12 +17,14 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -43,6 +45,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
 
 /**
  * File operations for {@link java.io.File}.
@@ -300,7 +304,7 @@ public class FileOperations implements GenericFileOperations<File> {
                     }
                 } else if (source != null && source.exists()) {
                     // no there is no local work file so use file to file copy if the source exists
-                    writeFileByFile(source, file);
+                    writeFileByFile(source, file, exchange);
                     // try to keep last modified timestamp if configured to do so
                     keepLastModified(exchange, file);
                     // set permissions if the chmod option was set
@@ -375,12 +379,24 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     private boolean writeFileByLocalWorkPath(File source, File file) throws IOException {
-        LOG.trace("Using local work file being renamed from: {} to: {}", source, file);
+        LOG.trace("writeFileByFile using local work file being renamed from: {} to: {}", source, file);
         return FileUtil.renameFile(source, file, endpoint.isCopyAndDeleteOnRenameFail());
     }
 
-    private void writeFileByFile(File source, File target) throws IOException {
-        Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    private void writeFileByFile(File source, File target, Exchange exchange) throws IOException {
+        // in case we are using file locks as read-locks then we need to use file channels for copying to support this
+        String path = source.getAbsolutePath();
+        FileChannel channel = exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        if (channel != null) {
+            try (FileChannel out = new FileOutputStream(target).getChannel()) {
+                LOG.trace("writeFileByFile using FileChannel: {} -> {}", source, target);
+                channel.transferTo(0, channel.size(), out);
+            }
+        } else {
+            // use regular file copy
+            LOG.trace("writeFileByFile using Files.copy: {} -> {}", source, target);
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     private void writeFileByStream(InputStream in, File target) throws IOException {
