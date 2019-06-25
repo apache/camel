@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Service;
 
 /**
  * Represents a
@@ -29,9 +30,7 @@ import org.apache.camel.Message;
  * such as Java Serialization or using JAXB2 to encode/decode objects using XML
  * or using SOAP encoding.
  */
-public interface DataFormat {
-
-    // TODO: DataFormats should extends Service like the others
+public interface DataFormat extends Service {
 
     /**
      * Marshals the object to the given Stream.

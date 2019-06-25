@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Converter;
@@ -37,12 +36,12 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
@@ -251,7 +250,7 @@ public class TransformerRouteTest extends ContextTestSupport {
     public static class MyJsonDataFormatDefinition extends DataFormatDefinition {
 
         public MyJsonDataFormatDefinition() {
-            super(new DataFormat() {
+            super(new DefaultDataFormat() {
                 @Override
                 public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
                     assertEquals(graph.toString(), XOrderResponse.class, graph.getClass());

@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultDataFormat;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -168,7 +169,7 @@ public class DefaultCamelContextResolverTest {
         }
     }
 
-    public static class SampleDataFormat implements DataFormat {
+    public static class SampleDataFormat extends DefaultDataFormat {
 
         private boolean fallback;
 

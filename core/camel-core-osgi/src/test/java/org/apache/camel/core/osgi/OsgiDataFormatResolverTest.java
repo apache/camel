@@ -24,11 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
-
 
     @Test
     public void testOsgiResolverFindDataFormatFallbackTest() throws Exception {
@@ -58,7 +58,7 @@ public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
         assertFalse("We should NOT find the fallback dataformat", ((SampleDataFormat) dataformat).isFallback());
     }
 
-    private static class SampleDataFormat implements DataFormat {
+    private static class SampleDataFormat extends DefaultDataFormat {
 
         private boolean fallback;
 

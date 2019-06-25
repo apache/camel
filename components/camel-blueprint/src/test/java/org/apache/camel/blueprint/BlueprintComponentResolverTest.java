@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
@@ -57,7 +58,7 @@ public class BlueprintComponentResolverTest extends TestSupport {
         assertFalse("We should NOT find the fallback component", ((SampleComponent) component).isFallback());
     }
 
-    private static class SampleComponent implements Component {
+    private static class SampleComponent extends ServiceSupport implements Component {
 
         private boolean fallback;
 
@@ -96,6 +97,16 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
         public void setFallback(boolean fallback) {
             this.fallback = fallback;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
         }
     }
 
