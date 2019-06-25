@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -40,14 +39,10 @@ public class LumberjackComponentSSLTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ssl", createServerSSLContextParameters());
-        return registry;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
+
+        context.getRegistry().bind("ssl", createServerSSLContextParameters());
+
         return new RouteBuilder() {
             public void configure() {
                 // Lumberjack configured with SSL
