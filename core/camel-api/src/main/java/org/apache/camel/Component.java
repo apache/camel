@@ -27,7 +27,7 @@ import org.apache.camel.component.extension.ComponentExtension;
  * A <a href="http://camel.apache.org/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
  */
-public interface Component extends CamelContextAware {
+public interface Component extends CamelContextAware, Service {
 
     /**
      * Attempt to resolve an endpoint for the given URI if the component is

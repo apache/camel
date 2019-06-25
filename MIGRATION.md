@@ -264,7 +264,9 @@ The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been rem
 
 The `MessageHistoryFactory` interface has some options to filter and copy the message and a slight change in its API.
 
-Remove 'TypeConverterAware' as you shoudld instead use `Exchange` as parameter to the type converter method.
+Removed `TypeConverterAware` as you shoudld instead use `Exchange` as parameter to the type converter method.
+
+The `Component` and `DataFormat` interfaces now extend `Service` as components and data formats should also have service contract to manage their lifecycle. The default base classes already implements these interfaces.
 
 #### camel-test
 

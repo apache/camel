@@ -48,9 +48,9 @@ import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dataformat("mime-multipart")
-public class MimeMultipartDataFormat implements DataFormat {
+public class MimeMultipartDataFormat extends DefaultDataFormat {
     private static final Logger LOG = LoggerFactory.getLogger(MimeMultipartDataFormat.class);
     private static final String MIME_VERSION = "MIME-Version";
     private static final String CONTENT_TYPE = "Content-Type";
