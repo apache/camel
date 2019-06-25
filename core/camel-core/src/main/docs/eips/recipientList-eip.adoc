@@ -214,8 +214,9 @@ And in XML it is again an attribute on the recipient list tag.
 === Knowing which endpoint when using custom AggregationStrategy
 *Available as of Camel 2.12*
 
-When using a custom `AggregationStrategy` then the `aggregate` method is always invoked in sequential order (also if parallel processing is enabled) of the endpoints the Recipient List is using.
-However from Camel 2.12 onwards this is easier to know as the `newExchange` Exchange now has a property stored (key is `Exchange.RECIPIENT_LIST_ENDPOINT` with the uri of the Endpoint.
+When using a custom `AggregationStrategy` then the `aggregate` method is always invoked in sequential order
+(also if parallel processing is enabled) of the endpoints the Recipient List is using.
+However, Exchange has a property stored (key is `Exchange.RECIPIENT_LIST_ENDPOINT` with the uri of the Endpoint.
 So you know which endpoint you are aggregating from. The code block shows how to access this property in your Aggregator.
 
 [source,java]
@@ -348,9 +349,8 @@ See details at the Multicast EIP
 
 The recipient list will by default use the current Exchange Pattern. Though one can imagine use-cases where one wants to send
 a message to a recipient using a different exchange pattern. For example you may have a route that initiates as an `InOnly` route,
-but want to use `InOut` exchange pattern with a recipient list. To do this in earlier Camel releases, you would need to change
-the exchange pattern before the recipient list, or use `onPrepare` option to alter the pattern.
-From Camel 2.15 onwards, you can configure the exchange pattern directly in the recipient endpoints.
+but want to use `InOut` exchange pattern with a recipient list. You can configure the exchange pattern directly in the
+recipient endpoints.
 
 For example in the route below we pick up new files (which will be started as `InOnly`) and then route to a recipient list.
 As we want to use `InOut` with the ActiveMQ (JMS) endpoint we can now specify this using the `exchangePattern=InOut` option.

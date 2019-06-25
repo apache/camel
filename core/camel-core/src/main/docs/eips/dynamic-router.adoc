@@ -9,7 +9,7 @@ on all possible destinations while maintaining its efficiency.
 
 image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
 
-In *Camel 2.5* we introduced a `dynamicRouter` in the DSL which is like
+The `dynamicRouter` in the DSL is similar to
 a dynamic Routing Slip which evaluates the slip
 _on-the-fly_.
 
@@ -32,7 +32,7 @@ endpoints.
 Otherwise Camel will thrown an exception stating the endpoint uri is not
 valid.
 
-|`cacheSize` |`1000` |*Camel 2.13.1/2.12.4:* Allows to configure the cache size for the
+|`cacheSize` |`1000` |Allows to configure the cache size for the
 `ProducerCache` which caches producers for reuse in the routing slip.
 Will by default use the default cache size which is 1000. Setting the
 value to -1 allows to turn off the cache all together.
@@ -41,7 +41,7 @@ value to -1 allows to turn off the cache all together.
 [[DynamicRouter-DynamicRouterinCamel2.5onwards]]
 === Dynamic Router in Camel 2.5 onwards
 
-From Camel 2.5 the Dynamic Router will set a
+The Dynamic Router will set a
 property (Exchange.SLIP_ENDPOINT) on the Exchange
 which contains the current endpoint as it advanced though the slip. This
 allows you to know how far we have processed in the slip. (It's a slip
@@ -138,12 +138,6 @@ guaranteed to be preserved during routing, where as properties on the
 Exchange are. Although there was a bug in the method
 call expression, see the warning below.
 
-WARNING:*Using beans to store state*
-Mind that in Camel 2.9.2 or older, when using a <<bean-component,Bean>> the
-state is not propagated, so you will have to use a
-Processor instead. This is fixed in Camel 2.9.3
-onwards.
-
 [[DynamicRouter-SpringXML]]
 === Spring XML
 
@@ -173,8 +167,7 @@ The same example in Spring XML would be:
 [[DynamicRouter-DynamicRouterannotation]]
 === @DynamicRouter annotation
 
-You can also use the `@DynamicRouter` annotation, for example the Camel
-2.4 example below could be written as follows. The `route` method would
+You can also use the `@DynamicRouter` annotation. The `route` method would
 then be invoked repeatedly as the message is processed dynamically. The
 idea is to return the next endpoint uri where to go. Return `null` to
 indicate the end. You can return multiple endpoints if you like, just as

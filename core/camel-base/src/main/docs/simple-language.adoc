@@ -247,8 +247,7 @@ log sensitive data from the message itself.
 === OGNL expression support
 
 INFO:Camel's OGNL support is for invoking methods only. You cannot access
-fields. From *Camel 2.11.1* onwards we added special support for accessing the
-length field of Java arrays.
+fields. Camel support accessing the length field of Java arrays.
 
 
 The <<simple-language,Simple>> and <<simple-language,Bean>> language now
@@ -359,8 +358,7 @@ And you can call the size method on the list with
 simple("${body.address.lines.size}")
 ------------------------------------
 
-From *Camel 2.11.1* onwards we added support for the length field for
-Java arrays as well, eg:
+Camel supports the length field for Java arrays as well, eg:
 
 [source,java]
 ---------------------------------------------------
@@ -473,9 +471,8 @@ function, otherwise parsed as literal.
 |\ |To escape a value, eg \$, to indicate a $ sign.
 Special: Use \n for new line, \t for tab, and \r for carriage return.
 *Notice:* Escaping is *not* supported using the
-<<file-language,File Language>>. *Notice:* From Camel 2.11
-onwards the escape character is no longer support, but replaced with the
-following three special escaping.
+<<file-language,File Language>>. *Notice:* The escape character is not supported, use the
+following three special escaping instead.
 
 |\n |To use newline character.
 
@@ -771,7 +768,7 @@ from("direct:order")
     .to("mock:reply");
 ----
 
-And from Camel 2.3 onwards you can also convert the body to a given
+You can also convert the body to a given
 type, for example to ensure that it is a String you can do:
 
 [source,xml]
@@ -786,8 +783,7 @@ There are a few types which have a shorthand notation, so we can use
 `byte[], String, Integer, Long`. All other types must use their FQN
 name, e.g. `org.w3c.dom.Document`.
 
-It is also possible to lookup a value from a header `Map` in *Camel 2.3*
-onwards:
+It is also possible to lookup a value from a header `Map`:
 
 [source,xml]
 ----
@@ -801,7 +797,7 @@ a `java.util.Map` and we then lookup with the key `gold` and return the
 value. If the header is not convertible to Map an exception is thrown. If the
 header with name `type` does not exist `null` is returned.
 
-From Camel 2.9 onwards you can nest functions, such as shown below:
+You can nest functions, such as shown below:
 
 [source,xml]
 ----
@@ -820,7 +816,7 @@ the message which enum it matches.
 
 === Using new lines or tabs in XML DSLs
 
-From Camel 2.9.3 onwards it is easier to specify new lines or tabs in
+It is easier to specify new lines or tabs in
 XML DSLs as you can escape the value now
 
 [source,xml]
@@ -848,7 +844,7 @@ whitespace characters.
 
 You can now provide a result type to the <<simple-language,Simple>>
 expression, which means the result of the evaluation will be converted
-to the desired type. This is most useable to define types such as
+to the desired type. This is most usable to define types such as
 booleans, integers, etc.
 
 For example to set a header as a boolean type you can do:
