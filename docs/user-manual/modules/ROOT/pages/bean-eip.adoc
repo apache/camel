@@ -34,10 +34,10 @@ Camel also supports invoking <<bean-component,Bean>> as an Endpoint. In the
 route below:
 
 What happens is that when the exchange is routed to the `myBean` Camel
-will use the xref:bean-binding.adoc[Bean Binding] to invoke the bean. +
+will use the link:bean-binding.html[Bean Binding] to invoke the bean. +
  The source for the bean is just a plain POJO:
 
-Camel will use xref:bean-binding.adoc[Bean Binding] to invoke the
+Camel will use link:bean-binding.html[Bean Binding] to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
@@ -77,13 +77,13 @@ from("direct:start").bean(ExampleBean.class);
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
-constructed from the xref:message.adoc[Message] are all defined by the
-xref:bean-binding.adoc[Bean Binding] mechanism which is used throughout
-all of the various xref:bean-integration.adoc[Bean Integration]
+constructed from the link:message.html[Message] are all defined by the
+link:bean-binding.html[Bean Binding] mechanism which is used throughout
+all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
 === See also
 
 * <<class-component,Class>> component
-* xref:bean-binding.adoc[Bean Binding]
-* xref:bean-integration.adoc[Bean Integration]
+* link:bean-binding.html[Bean Binding]
+* link:bean-integration.html[Bean Integration]

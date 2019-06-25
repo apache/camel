@@ -1,7 +1,7 @@
 [[process-eip]]
 == Process EIP
 
-The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+The http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor] interface is used to implement consumers of message exchanges or to implement a link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
 
 === Options
 
@@ -31,7 +31,7 @@ public class MyProcessor implements Processor {
 
 You can then easily use this inside a route by declaring the bean in
 Spring, say via the XML (or registering it in JNDI if that is your
-https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry])
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry])
 
 [source,xml]
 --------------------------------------------------------
@@ -57,7 +57,7 @@ Processor myProcessor = new MyProcessor();
 from("activemq:myQueue").process(myProcessor);
 ----
 
-If you need to lookup the processor in the https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry]
+If you need to lookup the processor in the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry]
 then you should use the *processRef* DSL:
 
 [source,java]
@@ -91,15 +91,15 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/P
 which supports the full <<Endpoint-Endpoints,Endpoint>> semantics given a
 Processor instance.
 
-So you just need to create a https://github.com/apache/camel/tree/master/components[Component] class by
+So you just need to create a link:https://github.com/apache/camel/tree/master/components[Component] class by
 deriving from
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
-xref:writing-components.adoc[Writing Components]
+link:writing-components.html[Writing Components]
 
 === See Also
 
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/enrich-eip.adoc[Content Enricher-Enrich EIP]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/pollEnrich-eip.adoc[Content Enricher-Poll Enrich EIP]
-* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/content-filter.adoc[Content Filter]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/enrich-eip.adoc[Content Enricher-Enrich EIP]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/pollEnrich-eip.adoc[Content Enricher-Poll Enrich EIP]
+* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/content-filter.adoc[Content Filter]
