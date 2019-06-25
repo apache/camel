@@ -701,6 +701,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     Injector getInjector();
 
     /**
+     * Sets the injector to use
+     */
+    void setInjector(Injector injector);
+
+    /**
      * Returns the lifecycle strategies used to handle lifecycle notifications
      *
      * @return the lifecycle strategies

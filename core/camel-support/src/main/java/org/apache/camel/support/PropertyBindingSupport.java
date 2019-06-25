@@ -489,10 +489,13 @@ public final class PropertyBindingSupport {
         if (reference && value instanceof String) {
             if (value.toString().startsWith("#class:")) {
                 // its a new class to be created
-                String className = value.toString().substring(6);
+                String className = value.toString().substring(7);
                 Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
                 if (type != null) {
                     value = context.getInjector().newInstance(type);
+                    if (value == null) {
+                        throw new IllegalArgumentException("Cannot create instance of class: " + className);
+                    }
                 }
             } else if (value.toString().startsWith("#type:")) {
                 // its reference by type, so lookup the actual value and use it if there is only one instance in the registry

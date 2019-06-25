@@ -22,7 +22,9 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.spi.Injector;
 import org.junit.Test;
 
 /**
@@ -219,6 +221,49 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("bar.myAge", e.getPropertyName());
             assertSame(foo, e.getTarget());
+        }
+    }
+
+    @Test
+    public void testDoesNotExistClass() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        try {
+            PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.DoesNotExist");
+            fail("Should throw exception");
+        } catch (PropertyBindingException e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+    }
+
+    @Test
+    public void testNullInjectorClass() throws Exception {
+        Foo foo = new Foo();
+
+        context.setInjector(new Injector() {
+            @Override
+            public <T> T newInstance(Class<T> type) {
+                return null;
+            }
+
+            @Override
+            public <T> T newInstance(Class<T> type, boolean postProcessBean) {
+                return null;
+            }
+
+            @Override
+            public boolean supportsAutoWiring() {
+                return false;
+            }
+        });
+
+        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        try {
+            PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
+            fail("Should throw exception");
+        } catch (PropertyBindingException e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
         }
     }
 
