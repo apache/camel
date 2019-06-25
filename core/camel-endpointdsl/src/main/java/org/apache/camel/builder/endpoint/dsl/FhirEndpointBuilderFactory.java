@@ -354,6 +354,48 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use the custom client.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointConsumerBuilder client(Object client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointConsumerBuilder client(String client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointConsumerBuilder clientFactory(
+                Object clientFactory) {
+            setProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointConsumerBuilder clientFactory(
+                String clientFactory) {
+            setProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * The option is a <code>boolean</code> type.
          * @group advanced
@@ -834,6 +876,48 @@ public interface FhirEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use the custom client.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointProducerBuilder client(Object client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointProducerBuilder client(String client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointProducerBuilder clientFactory(
+                Object clientFactory) {
+            setProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointProducerBuilder clientFactory(
+                String clientFactory) {
+            setProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * The option is a <code>boolean</code> type.
          * @group advanced
@@ -1274,6 +1358,46 @@ public interface FhirEndpointBuilderFactory {
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             setProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use the custom client.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointBuilder client(Object client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointBuilder client(String client) {
+            setProperty("client", client);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option is a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
+            setProperty("clientFactory", clientFactory);
+            return this;
+        }
+        /**
+         * To use the custom client factory.
+         * The option will be converted to a
+         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * @group advanced
+         */
+        default AdvancedFhirEndpointBuilder clientFactory(String clientFactory) {
+            setProperty("clientFactory", clientFactory);
             return this;
         }
         /**
