@@ -28,7 +28,7 @@ See the Spring DSL samples for Delayer.
 [CAUTION]
 .Using Delayer in Java DSL
 ====
-See this ticket: https://issues.apache.org/jira/browse/CAMEL-2654[https://issues.apache.org/jira/browse/CAMEL-2654]
+See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://issues.apache.org/jira/browse/CAMEL-2654]
 ====
 
 === Samples

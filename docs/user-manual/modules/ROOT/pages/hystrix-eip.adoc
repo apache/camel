@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.18*
 
-The Hystrix EIP provides integration with Netflix https://github.com/Netflix/Hystrix[Hystrix] to be used as circuit breaker in the Camel routes. Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
+The Hystrix EIP provides integration with Netflix link:https://github.com/Netflix/Hystrix[Hystrix] to be used as circuit breaker in the Camel routes. Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
 
 Maven users will need to add the following dependency to their pom.xml to use this EIP:
 
@@ -95,8 +95,8 @@ And in XML DSL:
 </camelContext>
 ----
 
-See https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/onFallback-eip.adoc[onFallback]
+See link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/onFallback-eip.adoc[onFallback]
 
 === Other examples
 
-You can find an example with the source code: https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].
+You can find an example with the source code: link:https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].

@@ -4,12 +4,12 @@ Rollback might be needed if there is a transaction or transactional pieces in yo
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional
-Client] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
+Client] from the link:enterprise-integration-patterns.html[EIP patterns]
 using spring transactions.
 
 image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like link:https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -115,7 +115,7 @@ from("activemq:queue:foo").policy(notsupported).to("activemq:queue:bar");
 
 ==== OSGi Blueprint
 
-If you are using https://github.com/apache/camel/blob/master/docs/user-manual/en/using-osgi-blueprint-with-camel.adoc[OSGi
+If you are using link:https://github.com/apache/camel/blob/master/docs/user-manual/en/using-osgi-blueprint-with-camel.adoc[OSGi
 Blueprint] then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
@@ -159,12 +159,12 @@ configure a transaction policy bean, so we do not have any
 `PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
 *standard* Spring beans only, eg. there are no Camel specific
 configuration at
-all.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
+all.link:https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
 we are ready to define our Camel routes. We have two routes: 1 for
 success conditions, and 1 for a forced rollback condition. +
 This is after all based on a unit test. Notice that we mark each route
 as transacted using the *transacted*
-tag.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]That
+tag.link:https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]That
 is all that is needed to configure a Camel route as being transacted.
 Just remember to use the *transacted* DSL. The rest is standard Spring
 XML to setup the transaction manager.
@@ -173,24 +173,24 @@ XML to setup the transaction manager.
 
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
-its based on a https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[TransactionMinimalConfigurationTest.java] the destination is a mock endpoint.
+its based on a link:https://github.com/apache/camel/blob/master/components/camel-jms/src/test/java/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.java[TransactionMinimalConfigurationTest.java] the destination is a mock endpoint.
 
 First we configure the standard Spring XML to declare a JMS connection
 factory, a JMS transaction manager and our ActiveMQ component that we
 use in our
-routing.https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]And
+routing.link:https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]And
 then we configure our routes. Notice that all we have to do is mark the
 route as transacted using the *transacted*
-tag.https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]
+tag.link:https://github.com/apache/camel/blob/master/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml[TransactionMinimalConfigurationTest.xml]
 
 Transaction error handler
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
-xref:transactionerrorhandler.adoc[TransactionErrorHandler] as
-https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]. It supports basically the same
-feature set as the xref:defaulterrorhandler.adoc[DefaultErrorHandler],
-so you can for instance use xref:exception-clause.adoc[Exception Clause]
+link:transactionerrorhandler.html[TransactionErrorHandler] as
+link:https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]. It supports basically the same
+feature set as the link:defaulterrorhandler.html[DefaultErrorHandler],
+so you can for instance use link:exception-clause.html[Exception Clause]
 as well.
 
 === Integration Testing with Spring
@@ -231,10 +231,10 @@ propagation behaviors for that where you configure it as follows:
 * The second route use `PROPAGATION_REQUIRES_NEW`
 
 This is configured in the Spring XML
-file.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml[MixedTransactionPropagationTest.xml]Then
+file.link:https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml[MixedTransactionPropagationTest.xml]Then
 in the routes you use transacted DSL to indicate which of these two
 propagations it
-uses.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.java[MixedTransactionPropagationTest.java]Notice
+uses.link:https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.java[MixedTransactionPropagationTest.java]Notice
 how we have configured the `onException` in the 2nd route to indicate in
 case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
@@ -242,10 +242,10 @@ Camel to only do it for the current transaction and not globally.
 
 ==== See Also
 
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]
-* https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/oncompletion.adoc[On Completion]
+* link:error-handling-in-camel.html[Error handling in Camel]
+* link:transactionerrorhandler.html[TransactionErrorHandler]
+* link:https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]
+* link:https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS]
+* link:https://github.com/apache/camel/blob/master/docs/user-manual/en/oncompletion.adoc[On Completion]
 
-xref:using-this-pattern.adoc[Using This Pattern]
+link:using-this-pattern.html[Using This Pattern]

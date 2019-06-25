@@ -2,7 +2,7 @@
 == When EIP
 
 The When EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
-Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
+Based Router] from the link:enterprise-integration-patterns.html[EIP
 patterns]
 
 image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
@@ -17,7 +17,7 @@ The When EIP has no options.
 
 The following example shows how to route a request from an input
 *direct:a* endpoint to either *direct:b*, *direct:c* or *direct:d* depending on
-the evaluation of various xref:predicate.adoc[Predicate] expressions
+the evaluation of various link:predicate.html[Predicate] expressions
 
 [source,java]
 ----
