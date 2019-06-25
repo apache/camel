@@ -52,7 +52,6 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
@@ -399,11 +398,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
 
-        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
-        if (typeConverter instanceof TypeConverterAware) {
-            TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
-            typeConverterAware.setTypeConverter(this);
-        }
         if (typeConverter instanceof CamelContextAware) {
             CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
             if (camelContext != null) {
@@ -419,11 +413,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
 
-        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
-        if (typeConverter instanceof TypeConverterAware) {
-            TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
-            typeConverterAware.setTypeConverter(this);
-        }
         if (typeConverter instanceof CamelContextAware) {
             CamelContextAware camelContextAware = (CamelContextAware) typeConverter;
             if (camelContext != null) {

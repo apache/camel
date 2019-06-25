@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
@@ -60,14 +59,6 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
         Object instance = injector.newInstance();
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
-        }
-        // inject parent type converter
-        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
-        if (instance instanceof TypeConverterAware) {
-            if (registry instanceof TypeConverter) {
-                TypeConverter parentTypeConverter = (TypeConverter) registry;
-                ((TypeConverterAware) instance).setTypeConverter(parentTypeConverter);
-            }
         }
         return useExchange
             ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T) ObjectHelper
