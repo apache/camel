@@ -63,7 +63,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
-        <!-- we use these 3 camel components in this example -->
+        <!-- we use these 2 camel components in this example -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-bean</artifactId>
@@ -74,6 +74,7 @@
         </dependency>
 
         <!-- we dont need XML DSL or JAXB -->
+        <!-- currently you disable these by setting them to test scope -->
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
