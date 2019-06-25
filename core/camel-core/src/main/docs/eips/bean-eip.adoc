@@ -1,7 +1,7 @@
 [[bean-eip]]
 == Bean EIP
 
-The *bean:* EIP binds beans to Camel message exchanges.
+The Bean EIP binds beans to Camel message exchanges.
 
 === URI Format
 

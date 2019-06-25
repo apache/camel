@@ -32,8 +32,8 @@ The Hystrix EIP supports 2 options which are listed below:
 === Camel's Error Handler and Hystrix EIP
 
 By default the Hystrix EIP handles errors by itself. This means if the circuit breaker is open and
-the message fails, then Camel's error handler is not reacting also. However from *Camel 2.23* onwards
-you can enable Camels error handler with Hystrix by enabling the `inheritErrorHandler` option, as shown:
+the message fails, then Camel's error handler is not reacting also.
+However, you can enable Camels error handler with Hystrix by enabling the `inheritErrorHandler` option, as shown:
 
 [source,java]
 ----

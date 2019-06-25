@@ -117,20 +117,19 @@ exchanges are completed.
 * completionSize - Is a number indicating that after X aggregated
 exchanges it's complete.
 * completionPredicate - Runs a link:predicate.html[Predicate] when a new
-exchange is aggregated to determine if we are complete or not. Staring
-in *Camel 2.15*, the configured aggregationStrategy can implement the
+exchange is aggregated to determine if we are complete or not.
+The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
-completionPredicate is configured. From *Camel 2.16*, the configured
-aggregationStrategy can
+completionPredicate is configured. The configured aggregationStrategy can
 implement `PreCompletionAwareAggregationStrategy` and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
 link:batch-consumer.html[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
-* forceCompletionOnStop - *Camel 2.9* Indicates to complete all current
+* forceCompletionOnStop - Indicates to complete all current
 aggregated exchanges when the context is stopped
-* Using a `AggregateController` - *Camel 2.16* which allows to use an
+* Using a `AggregateController` - which allows to use an
 external source to complete groups or all groups. This can be done using
 Java or JMX API.
 
@@ -304,7 +303,7 @@ completion of all groups after processing the current message.
 If you want to aggregate some value from the messages `<V>` into a `List<V>`
 then we have added a
 `org.apache.camel.processor.aggregate.AbstractListAggregationStrategy`
-abstract class in *Camel 2.11* that makes this easier. The completed
+abstract class that makes this easier. The completed
 Exchange that is sent out of the aggregator will contain the `List<V>` in
 the message body.
 
@@ -413,8 +412,8 @@ List<Exchange> grouped = exchange.getIn().getBody(List.class);
 
 To use the `AggregationStrategy` you had to implement the
 `org.apache.camel.AggregationStrategy` interface,
-which means your logic would be tied to the Camel API. From *Camel 2.12*
-onwards you can use a POJO for the logic and let Camel adapt to your
+which means your logic would be tied to the Camel API.
+You can use a POJO for the logic and let Camel adapt to your
 POJO. To use a POJO a convention must be followed:
 
 * there must be a public method to use
