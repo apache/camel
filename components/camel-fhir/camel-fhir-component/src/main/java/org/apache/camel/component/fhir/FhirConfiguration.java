@@ -36,8 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 @UriParams
 public class FhirConfiguration {
 
-    @UriPath
-    @Metadata(enums = "capabilities, create, delete, history, load-page, meta, patch, read, search, transaction, update, validate", required = true)
+    @UriPath(enums = "capabilities,create,delete,history,load-page,meta,patch,read,search,transaction,update,validate")
+    @Metadata(required = true)
     private FhirApiName apiName;
     @UriPath
     @Metadata(required = true)
@@ -46,7 +46,7 @@ public class FhirConfiguration {
     @UriParam(description = "The FHIR server base URL")
     private String serverUrl;
 
-    @UriParam(description = "The FHIR Version to use", enums = "DSTU2, DSTU2_HL7ORG, DSTU2_1, DSTU3, R4", defaultValue = "DSTU3", javaType = "java.lang.String")
+    @UriParam(description = "The FHIR Version to use", defaultValue = "DSTU3", javaType = "java.lang.String")
     private FhirVersionEnum fhirVersion = FhirVersionEnum.DSTU3;
 
     @UriParam(description = "Pretty print all request")
@@ -70,7 +70,7 @@ public class FhirConfiguration {
     @UriParam(description = "Compresses outgoing (POST/PUT) contents to the GZIP format", label = "advanced")
     private boolean compress;
 
-    @UriParam(description = "Request that the server modify the response using the <code>_summary</code> param", enums = "TRUE, FALSE, TEXT, DATA, COUNT",
+    @UriParam(description = "Request that the server modify the response using the <code>_summary</code> param",
             label = "advanced", javaType = "java.lang.String")
     private SummaryEnum summary;
 
@@ -84,7 +84,7 @@ public class FhirConfiguration {
     @UriParam(description = "Force conformance check", label = "advanced")
     private boolean forceConformanceCheck;
 
-    @UriParam(description = "When should Camel validate the FHIR Server's conformance statement", enums = "NEVER, ONCE",
+    @UriParam(description = "When should Camel validate the FHIR Server's conformance statement",
             defaultValue = "ONCE", label = "advanced", javaType = "java.lang.String")
     private ServerValidationModeEnum validationMode;
 
@@ -110,10 +110,10 @@ public class FhirConfiguration {
     @UriParam(label = "proxy", description = "The proxy password")
     private String proxyPassword;
 
-    @Metadata(label = "advanced", description = "To use the custom client")
+    @UriParam(label = "advanced", description = "To use the custom client")
     private IGenericClient client;
 
-    @Metadata(label = "advanced", description = "To use the custom client factory")
+    @UriParam(label = "advanced", description = "To use the custom client factory")
     private IRestfulClientFactory clientFactory;
 
     public String getServerUrl() {
