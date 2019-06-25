@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
@@ -96,7 +96,9 @@ public class CreateOperationTest extends ZooKeeperTestSupport {
     public void createNodeWithSpecificAccess() throws Exception {
         CreateOperation create = new CreateOperation(connection, "/four");
         create.setData(testPayload.getBytes());
-        List<ACL> perms = Collections.singletonList(new ACL(Perms.CREATE, Ids.ANYONE_ID_UNSAFE));
+        List<ACL> perms = new ArrayList<>();
+        perms.add(new ACL(Perms.CREATE, Ids.ANYONE_ID_UNSAFE));
+        perms.add(new ACL(Perms.READ, Ids.ANYONE_ID_UNSAFE));
         create.setPermissions(perms);
 
         OperationResult<String> result = create.get();
