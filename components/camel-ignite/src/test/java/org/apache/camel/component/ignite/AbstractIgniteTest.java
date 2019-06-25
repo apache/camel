@@ -27,15 +27,34 @@ import org.apache.ignite.events.EventType;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.TcpDiscoveryIpFinder;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 public abstract class AbstractIgniteTest extends CamelTestSupport {
-    
+
     /** Ip finder for TCP discovery. */
-    private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) { {
+    private static final TcpDiscoveryIpFinder LOCAL_IP_FINDER = new TcpDiscoveryVmIpFinder(false) {
+        {
             setAddresses(Collections.singleton("127.0.0.1:47500..47509"));
-        } };
-    
+        }
+    };
+
+    /**
+     * A unique identifier for the ignite resource (cache, queue, set...) being
+     * tested.
+     */
+    protected String resourceUid;
+
     private Ignite ignite;
+
+    @Rule
+    public TestRule watcher = new TestWatcher() {
+        protected void starting(Description description) {
+            resourceUid = description.getMethodName() + UUID.randomUUID().toString();
+        }
+    };
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

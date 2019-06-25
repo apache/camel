@@ -28,12 +28,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheEntryEventSerializableFilter;
 import org.apache.ignite.cache.query.ScanQuery;
@@ -46,6 +46,26 @@ import static com.google.common.truth.Truth.assert_;
 public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @BindToRegistry("query1")
+    private ScanQuery<Integer, Person> scanQuery1 = new ScanQuery<>(new IgniteBiPredicate<Integer, Person>() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean apply(Integer key, Person person) {
+            return person.getId() > 50;
+        }
+    });
+
+    @BindToRegistry("remoteFilter1")
+    private CacheEntryEventSerializableFilter<Integer, Person> remoteFilter = new CacheEntryEventSerializableFilter<Integer, IgniteCacheContinuousQueryTest.Person>() {
+        private static final long serialVersionUID = 5624973479995548199L;
+
+        @Override
+        public boolean evaluate(CacheEntryEvent<? extends Integer, ? extends Person> event) throws CacheEntryListenerException {
+            return event.getValue().getId() > 150;
+        }
+    };
 
     @Override
     protected String getScheme() {
@@ -151,7 +171,8 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
 
                 from("ignite-cache:testcontinuous1?query=#query1&fireExistingQueryResults=true").routeId("continuousQuery.fireExistingEntries").noAutoStartup().to("mock:test2");
 
-                from("ignite-cache:testcontinuous1?query=#query1&remoteFilter=#remoteFilter1&fireExistingQueryResults=true").routeId("remoteFilter").noAutoStartup().to("mock:test3");
+                from("ignite-cache:testcontinuous1?query=#query1&remoteFilter=#remoteFilter1&fireExistingQueryResults=true").routeId("remoteFilter").noAutoStartup()
+                    .to("mock:test3");
 
                 from("ignite-cache:testcontinuous1?pageSize=10&oneExchangePerUpdate=false").routeId("groupedUpdate").noAutoStartup().to("mock:test4");
 
@@ -194,34 +215,6 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
         }
 
         resetMocks();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry answer = super.createRegistry();
-
-        ScanQuery<Integer, Person> scanQuery1 = new ScanQuery<>(new IgniteBiPredicate<Integer, Person>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean apply(Integer key, Person person) {
-                return person.getId() > 50;
-            }
-        });
-
-        CacheEntryEventSerializableFilter<Integer, Person> remoteFilter = new CacheEntryEventSerializableFilter<Integer, IgniteCacheContinuousQueryTest.Person>() {
-            private static final long serialVersionUID = 5624973479995548199L;
-
-            @Override
-            public boolean evaluate(CacheEntryEvent<? extends Integer, ? extends Person> event) throws CacheEntryListenerException {
-                return event.getValue().getId() > 150;
-            }
-        };
-
-        answer.bind("query1", scanQuery1);
-        answer.bind("remoteFilter1", remoteFilter);
-
-        return answer;
     }
 
     public static class Person implements Serializable {
@@ -283,7 +276,7 @@ public class IgniteCacheContinuousQueryTest extends AbstractIgniteTest implement
                 return true;
             }
 
-            Person other = (Person) obj;
+            Person other = (Person)obj;
             return Objects.equals(this.id, other.id) && Objects.equals(this.name, other.name) && Objects.equals(this.surname, other.surname);
         }
 
