@@ -84,13 +84,11 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
         template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName("error").build());
 
-
-
         MockEndpoint replies = getMockEndpoint("mock:grpc-replies");
         replies.expectedMessageCount(messageGroupCount);
         replies.assertIsSatisfied();
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         for (int i = messageGroupCount + 1; i <= 2 * messageGroupCount; i++) {
             template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
