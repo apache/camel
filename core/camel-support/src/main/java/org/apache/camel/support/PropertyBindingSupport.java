@@ -464,15 +464,16 @@ public final class PropertyBindingSupport {
      * @param ignoreCase    whether to ignore case for property keys
      */
     public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        try {
-            if (target != null && name != null) {
-                boolean bound = setProperty(camelContext, target, name, value, true, ignoreCase, true, true, true, true, true, true);
-                if (!bound) {
-                    throw new PropertyBindingException(target, name);
-                }
+        boolean bound;
+        if (target != null && name != null) {
+            try {
+                bound = setProperty(camelContext, target, name, value, true, ignoreCase, true, true, true, true, true, true);
+            } catch (Exception e) {
+                throw new PropertyBindingException(target, name, e);
             }
-        } catch (Exception e) {
-            throw new PropertyBindingException(target, name, e);
+            if (!bound) {
+                throw new PropertyBindingException(target, name);
+            }
         }
     }
 
