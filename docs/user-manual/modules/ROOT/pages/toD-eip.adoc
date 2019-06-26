@@ -3,7 +3,7 @@
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed <<Endpoint-Endpoints,Endpoint>> using one or
-more link:expression.html[Expression] that are concat together. By
+more xref:expression.adoc[Expression] that are concat together. By
 default the <<simple-language,Simple>> language is used to compute
 the endpoint.
 

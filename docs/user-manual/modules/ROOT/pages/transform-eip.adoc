@@ -3,7 +3,7 @@
 
 See below for details
 
-* link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
+* https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message Translator]
 
 === Options
 
