@@ -59,7 +59,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -69,7 +69,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
@@ -1015,7 +1015,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -1025,7 +1025,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
@@ -1548,7 +1548,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -1558,7 +1558,7 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * xref:registry.adocRegistry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
