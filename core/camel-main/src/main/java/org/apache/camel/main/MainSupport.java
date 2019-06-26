@@ -789,6 +789,14 @@ public abstract class MainSupport extends ServiceSupport {
         Object failFast = propENV.remove("camel.main.autoconfigurationfailfast");
         if (failFast != null) {
             PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
+        } else {
+            failFast = prop.remove("camel.main.autoConfigurationFailFast");
+            if (failFast == null) {
+                failFast = prop.remove("camel.main.auto-configuration-fail-fast");
+            }
+            if (failFast != null) {
+                PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
+            }
         }
     }
 
@@ -843,7 +851,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
-        Map<String, Object> properties = new LinkedHashMap<>();
+        Map<String, Object> contextProperties = new LinkedHashMap<>();
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
         for (String key : prop.stringPropertyNames()) {
@@ -852,7 +860,7 @@ public abstract class MainSupport extends ServiceSupport {
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 validateOptionAndValue(key, option, value);
-                properties.put(optionKey(option), value);
+                contextProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.hystrix.")) {
                 // grab the value
                 String value = prop.getProperty(key);
@@ -867,9 +875,9 @@ public abstract class MainSupport extends ServiceSupport {
                 restProperties.put(optionKey(option), value);
             }
         }
-        if (!properties.isEmpty()) {
-            LOG.info("Auto configuring CamelContext from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, camelContext, properties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+        if (!contextProperties.isEmpty()) {
+            LOG.info("Auto configuring CamelContext from loaded properties: {}", contextProperties.size());
+            setPropertiesOnTarget(camelContext, camelContext, contextProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
         if (!hystrixProperties.isEmpty()) {
             LOG.info("Auto configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
@@ -892,7 +900,26 @@ public abstract class MainSupport extends ServiceSupport {
             setPropertiesOnTarget(camelContext, rest, restProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
 
-        // TODO: Log which options was not set
+        // log which options was not set
+        if (!contextProperties.isEmpty()) {
+            contextProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto configured: camel.context.{}={} on object: {}", k, v, camelContext);
+            });
+        }
+        if (!hystrixProperties.isEmpty()) {
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
+            hystrixProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto configured: camel.hystrix.{}={} on object: {}", k, v, hystrix);
+            });
+        }
+        if (!restProperties.isEmpty()) {
+            ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+            RestConfiguration rest = model.getRestConfiguration();
+            restProperties.forEach((k, v) -> {
+                LOG.warn("Property not auto configured: camel.rest.{}={} on object: {}", k, v, rest);
+            });
+        }
     }
 
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
