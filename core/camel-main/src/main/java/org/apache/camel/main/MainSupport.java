@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -823,23 +824,20 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    properties.put(optionKey(option), value);
-                }
+                validateOptionAndValue(key, option, value);
+                properties.put(optionKey(option), value);
             } else if (key.startsWith("camel.hystrix.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    hystrixProperties.put(optionKey(option), value);
-                }
+                validateOptionAndValue(key, option, value);
+                hystrixProperties.put(optionKey(option), value);
             } else if (key.startsWith("camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    restProperties.put(optionKey(option), value);
-                }
+                validateOptionAndValue(key, option, value);
+                restProperties.put(optionKey(option), value);
             }
         }
         if (!properties.isEmpty()) {
@@ -868,27 +866,6 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected Properties loadEnvironmentVariablesAsProperties(String[] prefixes) {
-        Properties answer = new OrderedProperties();
-        if (prefixes == null || prefixes.length == 0) {
-            return answer;
-        }
-
-        for (String prefix : prefixes) {
-            final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
-            final String pk2 = pk.replace('-', '_');
-            System.getenv().forEach((k, v) -> {
-                k = k.toUpperCase(Locale.US);
-                if (k.startsWith(pk) || k.startsWith(pk2)) {
-                    String key = k.toLowerCase(Locale.US).replace('_', '.');
-                    answer.put(key, v);
-                }
-            });
-        }
-
-        return answer;
-    }
-
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
@@ -910,17 +887,15 @@ public abstract class MainSupport extends ServiceSupport {
         Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
 
         for (String key : prop.stringPropertyNames()) {
-            int dot = key.indexOf(".", 26);
-            if (key.startsWith("camel.component.properties.") && dot > 0) {
+            if (key.startsWith("camel.component.properties.")) {
                 Component component = camelContext.getPropertiesComponent();
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(dot + 1);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                    values.put(optionKey(option), value);
-                    properties.put(component, values);
-                }
+                int dot = key.indexOf(".", 26);
+                String option = dot == -1 ? "" : key.substring(dot + 1);
+                String value = prop.getProperty(key, "");
+                validateOptionAndValue(key, option, value);
+                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                values.put(optionKey(option), value);
+                properties.put(component, values);
             }
         }
 
@@ -960,9 +935,8 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    properties.put(optionKey(option), value);
-                }
+                validateOptionAndValue(key, option, value);
+                properties.put(optionKey(option), value);
             }
         }
 
@@ -1015,52 +989,60 @@ public abstract class MainSupport extends ServiceSupport {
         Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
 
         for (String key : prop.stringPropertyNames()) {
-            int dot = key.indexOf(".", 16);
-            if (key.startsWith("camel.component.") && dot > 0) {
-                // grab component name
-                String name = key.substring(16, dot);
+            if (key.startsWith("camel.component.")) {
+                // grab name
+                int dot = key.indexOf(".", 16);
+                String name = dot == -1 ? key.substring(16) : key.substring(16, dot);
                 // skip properties as its already configured earlier
                 if ("properties".equals(name)) {
                     continue;
                 }
                 Component component = camelContext.getComponent(name);
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(dot + 1);
-                if (component != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                    // we ignore case for property keys (so we should store them in canonical style
-                    values.put(optionKey(option), value);
-                    properties.put(component, values);
+                if (component == null) {
+                    throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find component with name " + name
+                            + ". Make sure you have the component on the classpath");
                 }
+                String option = dot == -1 ? "" : key.substring(dot + 1);
+                String value = prop.getProperty(key, "");
+                validateOptionAndValue(key, option, value);
+                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                // we ignore case for property keys (so we should store them in canonical style
+                values.put(optionKey(option), value);
+                properties.put(component, values);
             }
-            dot = key.indexOf(".", 17);
-            if (key.startsWith("camel.dataformat.") && dot > 0) {
-                // grab component name
-                String name = key.substring(17, dot);
+            if (key.startsWith("camel.dataformat.")) {
+                // grab name
+                int dot = key.indexOf(".", 17);
+                String name = dot == -1 ? key.substring(17) : key.substring(17, dot);
                 DataFormat dataformat = camelContext.resolveDataFormat(name);
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(dot + 1);
-                if (dataformat != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
-                    values.put(optionKey(option), value);
-                    properties.put(dataformat, values);
+                if (dataformat == null) {
+                    throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find dataformat with name " + name
+                            + ". Make sure you have the dataformat on the classpath");
                 }
+                String option = dot == -1 ? "" : key.substring(dot + 1);
+                String value = prop.getProperty(key, "");
+                validateOptionAndValue(key, option, value);
+                Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
+                values.put(optionKey(option), value);
+                properties.put(dataformat, values);
             }
-            dot = key.indexOf(".", 15);
-            if (key.startsWith("camel.language.") && dot > 0) {
-                // grab component name
-                String name = key.substring(15, dot);
-                Language language = camelContext.resolveLanguage(name);
-                // grab the value
-                String value = prop.getProperty(key);
-                String option = key.substring(dot + 1);
-                if (language != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
-                    values.put(optionKey(option), value);
-                    properties.put(language, values);
+            if (key.startsWith("camel.language.")) {
+                // grab name
+                int dot = key.indexOf(".", 15);
+                String name = dot == -1 ? key.substring(15) : key.substring(15, dot);
+                Language language;
+                try {
+                    language = camelContext.resolveLanguage(name);
+                } catch (NoSuchLanguageException e) {
+                    throw new IllegalArgumentException("Error configuring property: " + key + " because cannot find language with name " + name
+                            + ". Make sure you have the language on the classpath");
                 }
+                String option = dot == -1 ? "" : key.substring(dot + 1);
+                String value = prop.getProperty(key, "");
+                validateOptionAndValue(key, option, value);
+                Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
+                values.put(optionKey(option), value);
+                properties.put(language, values);
             }
         }
 
@@ -1074,8 +1056,7 @@ public abstract class MainSupport extends ServiceSupport {
             setPropertiesOnTarget(camelContext, obj, values, true, true);
         }
 
-        // TODO: Log if any options was not configured (and check if they are on classpath)
-
+        // TODO: log if any options was not configured
     }
 
     protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
@@ -1088,6 +1069,36 @@ public abstract class MainSupport extends ServiceSupport {
                 });
             }
         });
+    }
+
+    protected static Properties loadEnvironmentVariablesAsProperties(String[] prefixes) {
+        Properties answer = new OrderedProperties();
+        if (prefixes == null || prefixes.length == 0) {
+            return answer;
+        }
+
+        for (String prefix : prefixes) {
+            final String pk = prefix.toUpperCase(Locale.US).replaceAll("[^\\w]", "-");
+            final String pk2 = pk.replace('-', '_');
+            System.getenv().forEach((k, v) -> {
+                k = k.toUpperCase(Locale.US);
+                if (k.startsWith(pk) || k.startsWith(pk2)) {
+                    String key = k.toLowerCase(Locale.US).replace('_', '.');
+                    answer.put(key, v);
+                }
+            });
+        }
+
+        return answer;
+    }
+
+    protected void validateOptionAndValue(String key, String option, String value) {
+        if (ObjectHelper.isEmpty(option)) {
+            throw new IllegalArgumentException("Error configuring property: " + key + " because option is empty");
+        }
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException("Error configuring property: " + key + " because value is empty");
+        }
     }
 
     private static String optionKey(String key) {

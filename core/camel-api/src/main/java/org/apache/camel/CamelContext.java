@@ -724,8 +724,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param language name of the language
      * @return the resolved language
+     * @throws NoSuchLanguageException is thrown if language could not be resolved
      */
-    Language resolveLanguage(String language);
+    Language resolveLanguage(String language) throws NoSuchLanguageException;
 
     /**
      * Parses the given text and resolve any property placeholders - using {{key}}.
