@@ -2,7 +2,7 @@
 == Aggregate EIP
 
 The
-http://www.enterpriseintegrationpatterns.com/Aggregator.adoc[Aggregator]
+http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows
 you to combine a number of messages together into a single message.
 
