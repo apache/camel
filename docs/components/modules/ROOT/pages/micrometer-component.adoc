@@ -12,7 +12,7 @@ endif::[]
 
 ### Micrometer Component
 
-The **micrometer:** component allows to collect various metrics directly
+The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types
 are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-distributionSummary[summary],
 and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides

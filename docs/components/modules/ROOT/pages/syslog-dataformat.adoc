@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.6*
 
-The *syslog* dataformat is used for working with
+The Syslog dataformat is used for working with
 http://www.ietf.org/rfc/rfc3164.txt[RFC3164] and RFC5424 messages.
 
 This component supports the following:
@@ -13,11 +13,11 @@ This component supports the following:
 SyslogMessage model objects.
 * Type Converter from/to SyslogMessage and
 String
-* Integration with the xref:mina2-component.adoc[Mina2 Component] component.
-* Integration with the xref:netty4-component.adoc[Netty4 Component] component.
-* *Camel 2.14:* Encoder and decoder for
+* Integration with the <<mina2-component,camel-mina>> component.
+* Integration with the <<netty-component,camel-netty>> component.
+* Encoder and decoder for
 the xref:netty4-component.adoc[Netty4 Component] component.
-* *Camel 2.14:* Support for RFC5424 also.
+* Support for RFC5424 also.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

@@ -247,8 +247,7 @@ An example of using Public Key authentication is provided in
 Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
-certificate based authentication. The dependency versions shown are as
-of Camel 2.11, you may need to use later versions depending what version
+certificate based authentication. You may need to use later versions depending what version
 of Camel you are using.
 
 [source,xml]

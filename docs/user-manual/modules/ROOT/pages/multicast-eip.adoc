@@ -71,7 +71,7 @@ handle this in the `AggregationStrategy`.
 
 But sometimes you just want Camel to stop and let the exception be
 propagated back, and let the Camel error handler handle it. You can do
-this in Camel 2.1 by specifying that it should stop in case of an
+this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:
 

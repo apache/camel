@@ -21,7 +21,7 @@ will first try to use the Apache Santuario provider; if it does not find
 the Santuario provider, it will use the JDK provider. Further, the
 implementation is DOM based.
 
-Since Camel 2.15.0 we also provide support for *XAdES-BES/EPES* for the
+We also provide support for *XAdES-BES/EPES* for the
 signer endpoint; see subsection "XAdES-BES/EPES for the Signer
 Endpoint".
 
@@ -50,8 +50,7 @@ http://www.w3.org/TR/xmldsig-core1/#def-SignatureEnveloping[enveloping]
 XML signature case, the XML Signature contains the signed content. All
 other cases are called
 http://www.w3.org/TR/xmldsig-core1/#def-SignatureDetached[detached] XML
-signatures. A certain form of detached XML signature is supported since
-**2.14.0**.
+signatures.
 
 In the *enveloped XML signature* case, the supported generated XML
 signature has the following structure (Variables are surrounded by `[]`).
@@ -108,7 +107,7 @@ signature has the structure:
 </Signature>
 ----
 
-As of 2.14.0 *detached XML signatures* with the following structure
+*Detached XML signatures* with the following structure
 are supported (see also sub-chapter XML Signatures as Siblings of Signed
 Elements):
 
@@ -161,7 +160,7 @@ body of the in-message which can be either a XML document or a plain
 text. The enveloped, enveloping, or detached (as of 12.14)  XML
 signature(s) will be set to the body of the out-message.
 * With the verifier endpoint, you can validate an enveloped or
-enveloping XML signature or even several detached (as of 2.14.0) XML
+enveloping XML signature or even several detached XML
 signatures contained in the body of the in-message; if the validation is
 successful, then the original content is extracted from the XML
 signature and set to the body of the out-message.
@@ -475,8 +474,6 @@ or the structure:
 ----
 
 ### Detached XML Signatures as Siblings of the Signed Elements
-
-**Since 2.14.0**
 
 You can create detached signatures where the signature is a sibling of
 the signed element. The following example contains two detached

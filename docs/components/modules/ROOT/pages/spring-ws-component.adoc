@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.6*
 
-The *spring-ws:* component allows you to integrate with
+The Spring WS component allows you to integrate with
 http://static.springsource.org/spring-ws/sites/1.5/[Spring Web
 Services]. It offers both _client_-side support, for accessing web
 services, and _server_-side support for creating your own contract-first
@@ -26,10 +26,8 @@ for this component:
 ====
 *Dependencies*
 
-As of Camel 2.8 this component ships with Spring-WS 2.0.x which (like
-the rest of Camel) requires Spring 3.0.x.
-Earlier Camel versions shipped Spring-WS 1.5.9 which is compatible with
-Spring 2.5.x and 3.0.x. In order to run earlier versions of
+This component ships with Spring-WS 2.0.x which (like
+the rest of Camel) requires Spring 3.0.x. In order to run earlier versions of
 `camel-spring-ws` on Spring 2.5.x you need to add the `spring-webmvc`
 module from Spring 2.5.x. In order to run Spring-WS 1.5.9 on Spring
 3.0.x you need to exclude the OXM module from Spring 3.0.x as this
@@ -198,7 +196,7 @@ part of the endpoint URI
 |`CamelSpringWebserviceSoapAction` |String |Header to specify the SOAP action of the message, overrides `soapAction`
 option if present
 
-|CamelSpringWebserviceSoapHeader |Source |*Camel 2.11.1:* Use this header to specify/access the SOAP headers of
+|CamelSpringWebserviceSoapHeader |Source |Use this header to specify/access the SOAP headers of
 the message.
 
 |`CamelSpringWebserviceAddressingAction` |URI |Use this header to specify the WS-Addressing action of the message,
@@ -291,7 +289,7 @@ test].
 ### The header and attachment propagation
 
 Spring WS Camel supports propagation of the headers and attachments into
-Spring-WS WebServiceMessage response since version *2.10.3*. The
+Spring-WS WebServiceMessage response. The
 endpoint will use so called "hook" the MessageFilter (default
 implementation is provided by BasicMessageFilter) to propagate the
 exchange headers and attachments into WebServiceMessage response. Now

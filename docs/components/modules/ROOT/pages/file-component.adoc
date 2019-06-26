@@ -332,7 +332,7 @@ unique ID.
 written. This header is set by Camel and its purpose is providing
 end-users with the name of the file that was written.
 
-|`CamelOverruleFileName` |*Camel 2.11:* Is used for overruling `CamelFileName` header and use the
+|`CamelOverruleFileName` |Is used for overruling `CamelFileName` header and use the
 value instead (but only once, as the producer will remove this header
 after writing the file). The value can be only be a String. Notice that
 if the option `fileName` has been configured, then this is still being
@@ -368,8 +368,7 @@ relative filename. For absolute files this is the absolute path.
 
 |`CamelFileLength` |A `long` value containing the file size.
 
-|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file. In
-*Camel 2.10.3 and older* the type is `Date`.
+|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file.
 |===
 
 === Batch Consumer
@@ -567,8 +566,8 @@ from("file:bar?doneFileName=done");
 
 Will only consume files from the bar folder, if a done _file_ exists in
 the same directory as the target files. Camel will automatically delete
-the _done file_ when it's done consuming the files. From Camel *2.9.3*
-onwards Camel will not automatically delete the _done file_ if
+the _done file_ when it's done consuming the files.
+Camel does not delete automatically the _done file_ if
 `noop=true` is configured.
 
 However it is more common to have one _done file_ per target file. This
@@ -829,7 +828,7 @@ from("file://inbox?idempotent=true").to("...");
 ----
 
 Camel uses the absolute file name as the idempotent key, to detect
-duplicate files. From *Camel 2.11* onwards you can customize this key by
+duplicate files. You can customize this key by
 using an expression in the idempotentKey option. For example to use both
 the name and the file size as the key
 
@@ -972,8 +971,7 @@ The file paths is matched with the following rules:
 * `*` matches zero or more characters
 * `**` matches zero or more directories in a path
 
-TIP: *New options from Camel 2.10 onwards*
-There are now `antInclude` and `antExclude` options to make it easy to
+The `antInclude` and `antExclude` options make it easy to
 specify ANT style include/exclude without having to define the filter.
 See the URI options above for more information.
 
@@ -1112,7 +1110,7 @@ this as:
 * In the `begin()` method we can test whether the special _ready_ file
 exists. The begin method returns a `boolean` to indicate if we can
 consume the file or not.
-* In the `abort()` method (Camel 2.10) special logic can be executed in
+* In the `abort()` method special logic can be executed in
 case the `begin` operation returned `false`, for example to cleanup
 resources etc.
 * in the `commit()` method we can move the actual file and also delete
@@ -1123,8 +1121,8 @@ the _ready_ file.
 The `filter` option allows you to implement a custom filter in Java code
 by implementing the `org.apache.camel.component.file.GenericFileFilter`
 interface. This interface has an `accept` method that returns a boolean.
-Return `true` to include the file, and `false` to skip the file. From
-Camel 2.10 onwards, there is a `isDirectory` method on `GenericFile`
+Return `true` to include the file, and `false` to skip the file.
+There is a `isDirectory` method on `GenericFile`
 whether the file is a directory. This allows you to filter unwanted
 directories, to avoid traversing down unwanted directories.
 

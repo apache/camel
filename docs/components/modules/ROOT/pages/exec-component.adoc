@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.3*
 
-The `exec` component can be used to execute system commands.
+The Exec component can be used to execute system commands.
 
 ### Dependencies
 
@@ -18,8 +18,7 @@ Maven users need to add the following dependency to their `pom.xml`
 </dependency>
 -------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
-(2.3.0 or higher).
+where `${camel-version`} must be replaced by the actual version of Camel.
 
 ### URI format
 
@@ -130,7 +129,7 @@ The supported headers are defined in
 are used literally - no quoting is applied. Overrides any existing
 `args` in the URI.
 
-|`ExecBinding.EXEC_COMMAND_ARGS` |`String`| `in` |*Camel 2.5:* The arguments of the executable as a Single string where
+|`ExecBinding.EXEC_COMMAND_ARGS` |`String`| `in` |The arguments of the executable as a Single string where
 each argument is whitespace separated (see `args` in URI option). The
 arguments are used literally, no quoting is applied. Overrides any
 existing `args` in the URI.

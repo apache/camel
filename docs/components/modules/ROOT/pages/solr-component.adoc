@@ -22,8 +22,6 @@ for this component:
 
 ### URI format
 
-*NOTE:* solrs and solrCloud are new added since *Camel 2.14*.
-
 [source,java]
 --------------------------------------
 solr://host[:port]/solr?[options]
@@ -142,16 +140,16 @@ http://lucene.apache.org/solr/api/org/apache/solr/client/solrj/impl/StreamingUpd
 
 |INSERT/INSERT_STREAMING |File |adds an index using the given File (using ContentStreamUpdateRequest)
 
-|INSERT/INSERT_STREAMING |SolrInputDocument |*Camel 2.9.2* updates index based on the given SolrInputDocument
+|INSERT/INSERT_STREAMING |SolrInputDocument |updates index based on the given SolrInputDocument
 
-|INSERT/INSERT_STREAMING |String XML |*Camel 2.9.2* updates index based on the given XML (must follow
+|INSERT/INSERT_STREAMING |String XML |updates index based on the given XML (must follow
 SolrInputDocument format)
 
 |ADD_BEAN |bean instance |adds an index based on values in an
 http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
 bean]
 
-|ADD_BEANS |collection<bean> |*Camel 2.15* adds index based on a collection of
+|ADD_BEANS |collection<bean> |adds index based on a collection of
 http://wiki.apache.org/solr/Solrj#Directly_adding_POJOs_to_Solr[annotated
 bean]
 

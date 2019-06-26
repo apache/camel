@@ -171,7 +171,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
@@ -198,7 +197,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
@@ -231,7 +229,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
@@ -257,7 +254,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:update" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>update</constant>
     </setHeader>
@@ -282,7 +278,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:delete" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>delete</constant>
     </setHeader>
@@ -308,7 +303,6 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:query" />
-        <!-- If using version 2.8 and above set headerName to "CamelHazelcastOperationType" -->
     <setHeader headerName="hazelcast.operation.type">
         <constant>query</constant>
     </setHeader>

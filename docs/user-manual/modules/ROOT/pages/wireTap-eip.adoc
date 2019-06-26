@@ -104,16 +104,14 @@ over how the link:exchange.html[Exchange] is populated as you can set
 properties, headers, etc. An link:expression.html[Expression] can only
 be used to set the *`IN`* body.
 
-From *Camel 2.3*: the link:expression.html[Expression] or
+The link:expression.html[Expression] or
 link:processor.html[Processor] is pre-populated with a copy of the
 original link:exchange.html[Exchange], which allows you to access the
 original message when you prepare a new link:exchange.html[Exchange] to
 be sent. You can use the *`copy`* option (enabled by default) to
-indicate whether you want this. If you set *`copy=false`*, then it works
-as in *Camel 2.2* or older where the link:exchange.html[Exchange] will
-be empty.
+indicate whether you want this.
 
-Below is the processor variation. This example is from *Camel 2.3*,
+Below is the processor variation,
 where we disable *`copy`* by passing in *`false`* to create a new, empty
 link:exchange.html[Exchange]
 
@@ -163,8 +161,8 @@ part of the queue name:
 If you send a new message using link:wire-tap.html[Wire Tap], then you
 could only set the message body using an
 link:expression.html[Expression] from the DSL. If you also need to set
-headers, you would have to use a link:processor.html[Processor]. From
-*Camel 2.8*: it's possible to set headers as well using the DSL.
+headers, you would have to use a link:processor.html[Processor].
+It's possible to set headers as well using the DSL.
 
 The following example sends a new message which has
 

@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.3*
 
-The *http4:* component provides HTTP based endpoints
+The HTTP4 component provides HTTP based endpoints
 for calling external HTTP resources (as a client to call external
 servers using HTTP).
 
@@ -397,10 +397,6 @@ from("direct:start")
 
 ### How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
 
-*Using the http PATCH method*
-
-The http PATCH method is supported starting with Camel 2.11.3 / 2.12.1.
-
 The HTTP4 component provides a way to set the HTTP request method by
 setting the message header. Here is an example:
 
@@ -438,10 +434,6 @@ And the equivalent Spring sample:
 ### Using client timeout - SO_TIMEOUT
 
 See the
-https://svn.apache.org/repos/asf/camel/trunk/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
-unit test.
-
-*Since Camel 2.13.0*: See the updated
 https://github.com/apache/camel/blob/master/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
@@ -486,7 +478,7 @@ Camel will first set the settings from Java System or CamelContext
 Properties and then the endpoint proxy options if provided. +
  So you can override the system properties with the endpoint options.
 
-Notice in *Camel 2.8* there is also a `http.proxyScheme` property you
+There is also a `http.proxyScheme` property you
 can set to explicit configure the scheme to use.
 
 ### Configuring charset
@@ -572,8 +564,8 @@ behavior.
 [[HTTP4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
 
-As of Camel 2.8, the HTTP4 component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+The HTTP4 component supports SSL/TLS configuration
+through the link:camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

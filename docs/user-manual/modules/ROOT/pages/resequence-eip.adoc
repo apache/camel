@@ -115,7 +115,7 @@ Notice this is *only* possible in the `batch` mode of the Resequencer.
 === Ignore invalid exchanges
 *Available as of Camel 2.9*
 
-The Resequencer EIP will from Camel 2.9 onwards throw a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer - ie. the expression cannot be evaluated, such as a missing header.
+The Resequencer EIP throws a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer - ie. the expression cannot be evaluated, such as a missing header.
 You can use the option `ignoreInvalidExchanges` to ignore these exceptions which means the Resequencer will then skip the invalid Exchange.
 
 [source,java]

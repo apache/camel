@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.1*
 
-The *log:* component logs message exchanges to the underlying logging
+The Log component logs message exchanges to the underlying logging
 mechanism.
 
 Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
@@ -28,7 +28,7 @@ can append query options to the URI in the following format,
 ====
 *Using Logger instance from the Registry*
 
-As of *Camel 2.12.4/2.13.1*, if there's single instance
+If there's single instance
 of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
 longer used to create logger instance. The registered instance is used
 instead. Also it is possible to reference particular `Logger` instance
@@ -323,7 +323,7 @@ that Camel Context*. If you need different ExchangeFormatters for
 different endpoints, just instantiate the LogComponent as many times as
 needed, and use the relevant bean name as the endpoint prefix.
 
-From *Camel 2.11.2/2.12* onwards when using a custom log formatter, you
+When using a custom log formatter, you
 can specify parameters in the log uri, which gets configured on the
 custom log formatter. Though when you do that you should define the
 "logFormatter" as prototype scoped so its not shared if you have

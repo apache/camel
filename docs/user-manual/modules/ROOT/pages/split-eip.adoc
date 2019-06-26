@@ -36,8 +36,8 @@ The following properties are set on each Exchange that are split:
 |=======================================================================
 | Property | Type | Description
 | `CamelSplitIndex` | `int` | A split counter that increases for each Exchange being split. The counter starts from 0.
-| `CamelSplitSize` | `int` | The total number of Exchanges that was splitted. This header is not applied for stream based splitting. From *Camel 2.9* onwards this header is also set in stream based splitting, but only on the completed Exchange.
-| `CamelSplitComplete` | `boolean` | *Camel 2.4*: Whether or not this Exchange is the last.
+| `CamelSplitSize` | `int` | The total number of Exchanges that was splitted. This header is not applied for stream based splitting. This header is also set in stream based splitting, but only on the completed Exchange.
+| `CamelSplitComplete` | `boolean` |Whether or not this Exchange is the last.
 |=======================================================================
 
 
@@ -131,7 +131,7 @@ In the sample below we split the body using a `@` as separator. You can of cours
 
 The Splitter will by default return the original input message.
 
-You can override this by suppling your own strategy as an `AggregationStrategy`.
+You can override this by supplying your own strategy as an `AggregationStrategy`.
 There is a sample on this page (Split aggregate request/reply sample).
 Notice its the same strategy as the Aggregate EIP supports.
 This Splitter can be viewed as having a build in light weight Aggregate EIP.
@@ -154,9 +154,10 @@ from("activemq:my.queue")
 [NOTE]
 .Splitting big XML payloads
 ====
-The XPath engine in Java and saxon will load the entire XML content into memory. And thus they are not well suited for very big XML payloads.
-Instead you can use a custom Expression which will iterate the XML payload in a streamed fashion. From Camel 2.9 onwards you can use the Tokenizer language
-which supports this when you supply the start and end tokens. From Camel 2.14, you can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
+The XPath engine in Java and saxon will load the entire XML content into memory. And thus they are not well suited for very big
+XML payloads. Instead you can use a custom Expression which will iterate the XML payload in a streamed fashion.
+You can use the Tokenizer language which supports this when you supply the start and end tokens.
+You can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
 ====
 
 You can split streams by enabling the streaming mode using the streaming builder method.
@@ -616,8 +617,12 @@ See details at Multicast EIP
 === Sharing unit of work
 *Available as of Camel 2.8*
 
-The Splitter will by default not share unit of work between the parent exchange and each splitted exchange. This means each sub exchange has its own individual unit of work.
-For example you may have an use case, where you want to split a big message. And you want to regard that process as an atomic isolated operation that either is a success or failure. In case of a failure you want that big message to be moved into a dead letter queue. To support this use case, you would have to share the unit of work on the Splitter.
+The Splitter will by default not share unit of work between the parent exchange and each split exchange.
+This means each sub exchange has its own individual unit of work.
+For example you may have an use case, where you want to split a big message.
+And you want to regard that process as an atomic isolated operation that either is a success or failure.
+In case of a failure you want that big message to be moved into a dead letter queue.
+To support this use case, you would have to share the unit of work on the Splitter.
 
 Here is an example in Java DSL
 [source,java]
@@ -642,7 +647,15 @@ from("direct:line")
     .to("mock:line");
 ----
 
-Now in this example what would happen is that in case there is a problem processing each sub message, the error handler will kick in (yes error handling still applies for the sub messages). *But* what doesn't happen is that if a sub message fails all redelivery attempts (its exhausted), then its *not* moved into that dead letter queue. The reason is that we have shared the unit of work, so the sub message will report the error on the shared unit of work. When the Splitter is done, it checks the state of the shared unit of work and checks if any errors occurred. And if an error occurred it will set the exception on the Exchange and mark it for rollback. The error handler will yet again kick in, as the Exchange has been marked as rollback and it had an exception as well. No redelivery attempts is performed (as it was marked for rollback) and the Exchange will be moved into the dead letter queue.
+Now in this example what would happen is that in case there is a problem processing each sub message,
+the error handler will kick in (yes error handling still applies for the sub messages).
+*But* what doesn't happen is that if a sub message fails all redelivery attempts (its exhausted),
+then its *not* moved into that dead letter queue. The reason is that we have shared the unit of work,
+so the sub message will report the error on the shared unit of work. When the Splitter is done,
+it checks the state of the shared unit of work and checks if any errors occurred.
+And if an error occurred it will set the exception on the Exchange and mark it for rollback.
+The error handler will yet again kick in, as the Exchange has been marked as rollback and it had an exception as well.
+No redelivery attempts is performed (as it was marked for rollback) and the Exchange will be moved into the dead letter queue.
 
 Using this from XML DSL is just as easy as you just have to set the `shareUnitOfWork` attribute to true:
 

@@ -21,8 +21,6 @@ Camel:
 * JUnit 4
 
  a|
-*Available as of Camel 2.17*
-
 The Camel CDI test module (`camel-test-cdi`) provides a JUnit runner
 that bootstraps a test environment using CDI so that you don't have to
 be familiar with any CDI testing frameworks and can concentrate on the

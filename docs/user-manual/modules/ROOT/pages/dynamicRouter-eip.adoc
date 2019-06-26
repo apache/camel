@@ -5,7 +5,9 @@ The link:http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
 
 image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
 
-In *Camel 2.5* we introduced a dynamicRouter in the DSL which is like a dynamic Routing Slip which evaluates the slip _on-the-fly_.
+The `dynamicRouter` in the DSL is similar to
+a dynamic Routing Slip which evaluates the slip
+_on-the-fly_.
 
 [IMPORTANT]
 .Avoid endless looping
@@ -112,12 +114,6 @@ public String slip(String body, @Properties Map<String, Object> properties) {
 
 You could also store state as message headers, but they are not guaranteed to be preserved during routing, where as properties on the Exchange are. Although there was a bug in the method call expression, see the warning below.
 
-[WARNING]
-.Using beans to store state
-====
-Mind that in Camel 2.9.2 or older, when using a Bean the state is not propagated, so you will have to use a Processor instead. This is fixed in Camel 2.9.3 onwards.
-====
-
 ==== Spring XML
 The same example in Spring XML would be:
 
@@ -143,7 +139,7 @@ The same example in Spring XML would be:
 ----
 
 === @DynamicRouter annotation
-You can also use the `@DynamicRouter` annotation, for example the Camel 2.4 example below could be written as follows. The `route` method would then be invoked repeatedly as the message is processed dynamically.
+You can also use the `@DynamicRouter` annotation. The `route` method would then be invoked repeatedly as the message is processed dynamically.
 The idea is to return the next endpoint uri where to go. Return `null` to indicate the end. You can return multiple endpoints if you like, just as the Routing Slip, where each endpoint is separated by a delimiter.
 
 [source,java]

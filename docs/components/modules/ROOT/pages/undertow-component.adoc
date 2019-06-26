@@ -3,15 +3,15 @@
 
 *Available as of Camel version 2.16*
 
-The *undertow* component provides HTTP and WebSocket based endpoints for consuming
+The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
 
 That is, the Undertow component behaves as a simple Web server.
 Undertow can also be used as a http client which mean you can also use
 it with Camel as a producer.
 
-TIP: Since Camel version 2.21, the *undertow* component also supports WebSocket
-connections and can thus serve as a drop-in replacement for Camel websocket
+Since the component also supports WebSocket
+connections, it can serve as a drop-in replacement for Camel websocket
 component or atmosphere-websocket component.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -155,10 +155,8 @@ The component supports 11 options, which are listed below.
 === Message Headers
 
 Camel uses the same message headers as the <<http-component,HTTP>>
-component.
- From Camel 2.2, it also uses
-`Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
-the chuched encoding on the camel-undertow consumer.
+component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+the chunked encoding on the camel-undertow consumer.
 
 Camel also populates *all* request.parameter and request.headers. For
 example, given a client request with the URL,

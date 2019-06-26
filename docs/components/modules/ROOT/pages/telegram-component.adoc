@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.18*
 
-The *Telegram* component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].
+The Telegram component provides access to the https://core.telegram.org/bots/api[Telegram Bot API].
 It allows a Camel-based application to send and receive messages by acting as a Bot, participating in
 direct conversations with normal users, private and public groups or channels.
 

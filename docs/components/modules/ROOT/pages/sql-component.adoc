@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.4*
 
-The *sql:* component allows you to work with databases using JDBC
+The SQL component allows you to work with databases using JDBC
 queries. The difference between this component and <<jdbc-component,JDBC>>
 component is that in case of SQL the query is a property of the endpoint
 and it uses message payload as parameters passed to the query.
@@ -34,10 +34,6 @@ pattern. See further below.
 
 === URI format
 
-WARNING: From Camel 2.11 onwards this component can create both consumer (e.g.
-`from()`) and producer endpoints (e.g. `to()`).
-In previous versions, it could only act as a producer.
-
 TIP: This component can be used as a
 http://camel.apache.org/transactional-client.html[Transactional Client].
 
@@ -48,7 +44,7 @@ The SQL component uses the following endpoint URI notation:
 sql:select * from table where id=# order by name[?options]
 ----
 
-From Camel 2.11 onwards you can use named parameters by using
+You can use named parameters by using
 :`#name_of_the_parameter` style as shown:
 
 [source,text]
@@ -64,7 +60,7 @@ given precedence:
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-From *Camel 2.14* onward you can use Simple expressions as parameters as
+You can use Simple expressions as parameters as
 shown:
 
 [source,text]
@@ -77,7 +73,7 @@ SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
 used to specify options for the endpoint. The `?` symbol replacement can
 be configured on endpoint basis.
 
-From *Camel 2.17* onwards you can externalize your SQL queries to files
+You can externalize your SQL queries to files
 in the classpath or file system as shown:
 
 [source,text]
@@ -252,7 +248,7 @@ message body changes slightly – instead of an iterator of parameters,
 the component expects an iterator that contains the parameter iterators;
 the size of the outer iterator determines the batch size.
 
-From Camel 2.16 onwards you can use the option useMessageBodyForSql that
+You can use the option useMessageBodyForSql that
 allows to use the message body as the SQL statement, and then the SQL
 parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
@@ -282,7 +278,7 @@ from("jms:order.inbox")
 
 === Using StreamList
 
-From*Camel 2.18* onwards the producer supports outputType=StreamList
+The producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
 process the data in a streaming fashion which for example can be used by
 the Splitter EIP to process each row one at a time,
@@ -317,14 +313,14 @@ outputType=StreamList.
 `Integer` object. This header is not provided when using
 outputType=StreamList.
 
-|`CamelSqlQuery` |*Camel 2.8:* Query to execute. This query takes precedence over the
+|`CamelSqlQuery` |Query to execute. This query takes precedence over the
 query specified in the endpoint URI. Note that query parameters in the
 header _are_ represented by a `?` instead of a `pass:[#]` symbol
 |===
 
 When performing `insert` operations, the SQL Component stores the rows
 with the generated keys and number of these rown in the following
-message headers (*Available as of Camel 2.12.4, 2.13.1*):
+message headers:
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -439,7 +435,7 @@ bean methods as in this example.
 
 *Available as of Camel 2.17*
 
-From Camel 2.17 onwards the SQL producer allows to use SQL queries with
+The SQL producer allows to use SQL queries with
 IN statements where the IN values is dynamic computed. For example from
 the message body or a header etc.
 
@@ -503,20 +499,22 @@ from("direct:query")
 
 === Using the JDBC based idempotent repository
 
-*Available as of Camel 2.7*: In this section we will use the JDBC based
+*Available as of Camel 2.7*
+
+In this section we will use the JDBC based
 idempotent repository.
 
 [TIP]
 ====
 *Abstract class*
 
-From Camel 2.9 onwards there is an abstract class
+There is an abstract class
 `org.apache.camel.processor.idempotent.jdbc.AbstractJdbcMessageIdRepository`
 you can extend to build custom JDBC idempotent repository.
 ====
 
 First we have to create the database table which will be used by the
-idempotent repository. For *Camel 2.7*, we use the following schema:
+idempotent repository. We use the following schema:
 
 [source,sql]
 ----
@@ -525,7 +523,7 @@ messageId VARCHAR(100) )
 ----
  
 
-In *Camel 2.8*, we added the createdAt column:
+We added the createdAt column:
 
 [source,sql]
 ----
@@ -542,7 +540,7 @@ Because the syntax for this constraint differs from database to database, we do 
 
 ==== Customize the JdbcMessageIdRepository
 
-Starting with *Camel 2.9.1* you have a few options to tune the
+You have a few options to tune the
 `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` for
 your needs:
 
@@ -580,15 +578,6 @@ the second one is the message id (`String`).
 === Using the JDBC based aggregation repository
 
 *Available as of Camel 2.6*
-
-[NOTE]
-====
-*Using JdbcAggregationRepository in Camel 2.6*
-
-In Camel 2.6, the JdbcAggregationRepository is provided in the
-`camel-jdbc-aggregator` component. From Camel 2.7 onwards, the
-`JdbcAggregationRepository` is provided in the `camel-sql` component.
-====
 
 `JdbcAggregationRepository` is an `AggregationRepository` which on the
 fly persists the aggregated messages. This ensures that you will not
@@ -752,7 +741,7 @@ Here is the declaration for Oracle:
 
 ==== Optimistic locking
 
-From *Camel 2.12* onwards you can turn on `optimisticLocking` and use
+You can turn on `optimisticLocking` and use
 this JDBC based aggregation repository in a clustered environment where
 multiple Camel applications shared the same database for the aggregation
 repository. If there is a race condition there JDBC driver will throw a

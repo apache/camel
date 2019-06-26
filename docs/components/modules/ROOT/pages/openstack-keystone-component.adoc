@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.19*
 
-The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+The Openstack Keystone component allows messages to be sent to an OpenStack identity services.
 
 *The openstack-keystone component supports only Identity API v3!*
 

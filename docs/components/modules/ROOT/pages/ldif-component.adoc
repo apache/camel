@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The *ldif* component allows you to do updates on an LDAP server
+The LDIF component allows you to do updates on an LDAP server
 from a LDIF body content.
 
 This component uses a basic URL syntax to access the server. It uses
