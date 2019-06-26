@@ -57,6 +57,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -803,6 +804,17 @@ public abstract class MainSupport extends ServiceSupport {
 
         // now configure context/hystrix/rest with additional properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
+
+        // load properties from ENV (override existing)
+        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
+        if (!propENV.isEmpty()) {
+            prop.putAll(propENV);
+            LOG.debug("Properties from OS environment variables:");
+            for (String key : propENV.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propENV.getProperty(key));
+            }
+        }
+
         Map<String, Object> properties = new LinkedHashMap<>();
         Map<String, Object> hystrixProperties = new LinkedHashMap<>();
         Map<String, Object> restProperties = new LinkedHashMap<>();
@@ -812,21 +824,21 @@ public abstract class MainSupport extends ServiceSupport {
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    properties.put(option, value);
+                    properties.put(optionKey(option), value);
                 }
             } else if (key.startsWith("camel.hystrix.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(14);
                 if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    hystrixProperties.put(option, value);
+                    hystrixProperties.put(optionKey(option), value);
                 }
             } else if (key.startsWith("camel.rest.")) {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
                 if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    restProperties.put(option, value);
+                    restProperties.put(optionKey(option), value);
                 }
             }
         }
@@ -906,7 +918,7 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = key.substring(dot + 1);
                 if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                    values.put(option, value);
+                    values.put(optionKey(option), value);
                     properties.put(component, values);
                 }
             }
@@ -949,7 +961,7 @@ public abstract class MainSupport extends ServiceSupport {
                 String value = prop.getProperty(key);
                 String option = key.substring(11);
                 if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
-                    properties.put(option, value);
+                    properties.put(optionKey(option), value);
                 }
             }
         }
@@ -1017,7 +1029,8 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = key.substring(dot + 1);
                 if (component != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                    values.put(option, value);
+                    // we ignore case for property keys (so we should store them in canonical style
+                    values.put(optionKey(option), value);
                     properties.put(component, values);
                 }
             }
@@ -1031,7 +1044,7 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = key.substring(dot + 1);
                 if (dataformat != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
-                    values.put(option, value);
+                    values.put(optionKey(option), value);
                     properties.put(dataformat, values);
                 }
             }
@@ -1045,13 +1058,11 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = key.substring(dot + 1);
                 if (language != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
-                    values.put(option, value);
+                    values.put(optionKey(option), value);
                     properties.put(language, values);
                 }
             }
         }
-
-        // TODO: filter out duplicte properties due to ignore-case
 
         if (!properties.isEmpty()) {
             long total = properties.values().stream().mapToLong(Map::size).sum();
@@ -1077,6 +1088,13 @@ public abstract class MainSupport extends ServiceSupport {
                 });
             }
         });
+    }
+
+    private static String optionKey(String key) {
+        // as we ignore case for property names we should use keys in same case and without dashes
+        key = StringHelper.replaceAll(key, "-", "");
+        key = key.toLowerCase(Locale.US);
+        return key;
     }
 
     public void addRouteBuilder(RouteBuilder routeBuilder) {
