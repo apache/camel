@@ -68,6 +68,32 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue("Should bind all properties", prop.isEmpty());
+    }
+
+    @Test
+    public void testPropertiesIgnoreCase() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.AGE", "33");
+        prop.put("BAR.{{committer}}", "true");
+        prop.put("bar.gOLd-Customer", "true");
+        prop.put("bAr.work.ID", "123");
+        prop.put("bar.WORk.naME", "{{companyName}}");
+
+        PropertyBindingSupport.bindProperties(context, foo, prop, true);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue("Should bind all properties", prop.isEmpty());
     }
 
     @Test
@@ -84,6 +110,31 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("my.other.prefix.something", "test");
 
         PropertyBindingSupport.bindProperties(context, foo, prop, "my.prefix.");
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+        assertTrue(prop.containsKey("my.other.prefix.something"));
+        assertEquals(1, prop.size());
+    }
+
+    @Test
+    public void testBindPropertiesWithOptionPrefixIgnoreCase() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("my.prefix.name", "James");
+        prop.put("my.PREFIX.bar.AGE", "33");
+        prop.put("my.prefix.bar.{{committer}}", "true");
+        prop.put("My.prefix.bar.Gold-custoMER", "true");
+        prop.put("mY.prefix.bar.work.ID", "123");
+        prop.put("my.prEFIx.bar.Work.Name", "{{companyName}}");
+        prop.put("my.other.prefix.something", "test");
+
+        PropertyBindingSupport.bindProperties(context, foo, prop, "my.prefix.", true);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());

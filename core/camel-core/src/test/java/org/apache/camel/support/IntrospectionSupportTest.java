@@ -552,7 +552,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
     public void testFindSetterMethodsOrderedByParameterType() throws Exception {
-        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false, false);
+        List<Method> setters = IntrospectionSupport.findSetterMethodsOrderedByParameterType(MyOverloadedBean.class, "bean", false, false, false);
 
         assertNotNull(setters);
         assertEquals(2, setters.size());
