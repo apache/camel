@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.4*
 
-The *ejb:* component binds EJBs to Camel message exchanges.
+The EJB component binds EJBs to Camel message exchanges.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

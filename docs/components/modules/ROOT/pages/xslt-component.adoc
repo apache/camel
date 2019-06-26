@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.3*
 
-The *xslt:* component allows you to process a message using an
+The XSLT component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using
 Templating to generate respopnses for requests.
 
@@ -35,21 +35,7 @@ Documentation] for more detail of the URI syntax.
 |xslt:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
 |=================================================================
 
-For *Camel 2.8* or older, Maven users will need to add the following dependency to their `pom.xml`
-for this component:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-spring</artifactId>
-    <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
-From *Camel 2.9* onwards the <<xslt-component,XSLT>> component is provided
-directly in the camel-core.
+The <<xslt-component,XSLT>> component is provided directly in the camel-core.
 
 === Options
 
@@ -225,19 +211,7 @@ Spring XML].
 
 === Using xsl:include
 
-*Camel 2.2 or older* +
-If you use `xsl:include` in your XSL files in *Camel 2.2 or older*, the default `javax.xml.transform.URIResolver` is used. Files will be resolved relative to the
-JVM starting folder.
-
-For example the following include statement will look up the `staff_template.xsl` file starting from the folder where the application was started.
-
-[source,xml]
-----
-<xsl:include href="staff_template.xsl"/>
-----
-
-*Camel 2.3 or newer*  +
- For Camel 2.3 or newer, Camel provides its own implementation of `URIResolver`. This allows
+Camel provides its own implementation of `URIResolver`. This allows
 Camel to load included files from the classpath.
 
 For example the include file in the following code will be located relative to the starting endpoint.
@@ -264,10 +238,7 @@ You can also refer backwards in the include paths. In the following example, the
 
 === Using xsl:include and default prefix
 
-In *Camel 2.10.3 and older*, `classpath:` is used as the default prefix. +
-If you configure the starting resource to load using `file:` then all subsequent incudes will have to be prefixed with `file:`.
-
-From *Camel 2.10.4*, Camel will use the prefix from the endpoint configuration as the default prefix.
+Camel will use the prefix from the endpoint configuration as the default prefix.
 
 You can explicitly specify `file:` or `classpath:` loading. The two loading types can be mixed in a XSLT script, if necessary.
 
@@ -317,16 +288,11 @@ To provide a dynamic stylesheet at runtime you can define a dynamic URI.
 See xref:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
 to()] for more information.
 
-*Available as of Camel 2.9 (removed in 2.11.4, 2.12.3 and 2.13.0)* +
- Camel provides the `CamelXsltResourceUri` header which you can use to
-define an alternative stylesheet to that configured on the endpoint
-URI. This allows you to provide a dynamic stylesheet at runtime.
-
 === Accessing warnings, errors and fatalErrors from XSLT ErrorListener
 
 *Available as of Camel 2.14*
 
-From *Camel 2.14*, any warning/error or fatalError is stored on
+Any warning/error or fatalError is stored on
 the current Exchange as a property with the
 keys `Exchange.XSLT_ERROR`, `Exchange.XSLT_FATAL_ERROR`,
 or `Exchange.XSLT_WARNING` which allows end users to get hold of any
@@ -355,45 +321,6 @@ xsl:message.
 
 The exception is stored on the Exchange as a warning with the
 key `Exchange.XSLT_WARNING.`
-
-=== Notes on using XSLT and Java Versions
-
-Here are some observations from Sameer, a Camel user, which he kindly
-shared with us:
-
-In case anybody faces issues with the XSLT endpoint please review these
-points.
-
-I was trying to use an xslt endpoint for a simple transformation from
-one xml to another using a simple xsl. The output xml kept appearing
-(after the xslt processor in the route) with outermost xml tag with no
-content within.
-
-No explanations show up in the DEBUG logs. On the TRACE logs however I
-did find some error/warning indicating that the XMLConverter bean could
-no be initialized.
-
-After a few hours of cranking my mind, I had to do the following to get
-it to work (thanks to some posts on the users forum that gave some
-clue):
-
-1. Use the transformerFactory option in the route
-`("xslt:my-transformer.xsl?transformerFactory=tFactory")` with the
-`tFactory` bean having bean defined in the spring context for
-`class="org.apache.xalan.xsltc.trax.TransformerFactoryImpl"`. +
-2. Added the Xalan jar into my maven pom.
-
-My guess is that the default xml parsing mechanism supplied within the
-JDK (I am using 1.6.0_03) does not work right in this context and does
-not throw up any error either. When I switched to Xalan this way it
-works. This is not a Camel issue, but might need a mention on the xslt
-component page.
-
-Another note, jdk 1.6.0_03 ships with JAXB 2.0 while Camel needs 2.1.
-One workaround is to add the 2.1 jar to the `jre/lib/endorsed` directory
-for the jvm or as specified by the container.
-
-Hope this post saves newbie Camel riders some time.
 
 === See Also
 

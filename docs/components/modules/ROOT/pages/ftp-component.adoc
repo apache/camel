@@ -9,7 +9,7 @@ SFTP protocols.
 When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
 further below for details related to consuming files.
 
-Absolute path is *not* supported. *Camel 2.16* will translate absolute path to relative by trimming all
+Absolute path is *not* supported. Camel translates absolute path to relative by trimming all
 leading slashes from `directoryname`. There'll be WARN message printed
 in the logs.
 
@@ -40,13 +40,7 @@ Where *directoryname* represents the underlying directory. The directory
 name is a relative path. Absolute path's is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
-For Camel versions before *Camel 2.16*, the directoryName *must* exist
-already as this component does not support the `autoCreate` option
-(which the file component does). The reason is that its the FTP
-administrator (FTP server) task to properly setup user accounts, and
-home directories with the right file permissions etc.
-
-For *Camel 2.16*, `autoCreate` option is supported. When consumer
+The `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
 performed to create the directory configured for endpoint. The default
 value for `autoCreate` is `true`.
@@ -63,7 +57,6 @@ This component uses two different libraries for the actual FTP work. FTP
 and FTPS uses http://commons.apache.org/net/[Apache Commons Net] while
 SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 
-The FTPS component is only available in Camel 2.2 or newer. +
  FTPS (also known as FTP Secure) is an extension to FTP that adds
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
@@ -409,9 +402,9 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |=======================================================================
 |Header |Description
 
-|`CamelFtpReplyCode` |*Camel 2.11.1:* The FTP client reply code (the type is a integer)
+|`CamelFtpReplyCode` |The FTP client reply code (the type is a integer)
 
-|`CamelFtpReplyString` | *Camel 2.11.1:* The FTP client reply string
+|`CamelFtpReplyString` |The FTP client reply string
 |=======================================================================
 
 === About timeouts
@@ -465,16 +458,9 @@ producing files (eg uploading)
 
 You may want to pick either one depending on your situation and security
 issues. Some Camel end users can only download files if they use
-stepwise, while others can only download if they do not. At least you
-have the choice to pick (from Camel 2.6 onwards).
+stepwise, while others can only download if they do not.
 
-In Camel 2.0 - 2.5 there is only one mode and it is:
-
-* before 2.5 not stepwise
-* 2.5 stepwise
-
-From Camel 2.6 onwards there is now an option `stepwise` you can use to
-control the behavior.
+You can use the `stepwise` option to control the behavior.
 
 Note that stepwise changing of directory will in most cases only work
 when the user is confined to it's home directory and when the home

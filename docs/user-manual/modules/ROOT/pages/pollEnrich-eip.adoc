@@ -22,11 +22,9 @@ You can pass in a timeout value that determines which method to use
 
 The timeout values is in millis.
 
-[IMPORTANT]
-.Camel 2.15 or older - Data from current Exchange not used
 ====
 `pollEnrich` does *not* access any data from the current Exchange which means when polling it cannot use any of the existing headers you may have set on the Exchange. For example you cannot set a filename in the `Exchange.FILE_NAME` header and use `pollEnrich` to consume only that file. For that you *must* set the filename in the endpoint URI.
-From *Camel 2.16* onwards both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
+Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
 ====
 
 === Content enrichment using pollEnrich
@@ -64,17 +62,7 @@ from("direct:start")
   .to("direct:result");
 ----
 
-And in XML DSL (Camel 2.15 or older) you do:
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <pollEnrich uri="file:inbox?fileName=data.txt"/>
-  <to uri="direct:result"/>
-</route>
-----
-
-And in XML DSL (Camel 2.16 or newer) you do:
+And in XML DSL you do:
 [source,xml]
 ----
 <route>
@@ -88,17 +76,7 @@ And in XML DSL (Camel 2.16 or newer) you do:
 
 If there is no file then the message is empty. We can use a timeout to either wait (potentially forever) until a file exists, or use a timeout to wait a certain period.
 
-For example to wait up to 5 seconds you can do (Camel 2.15 or older):
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <pollEnrich uri="file:inbox?fileName=data.txt" timeout="5000"/>
-  <to uri="direct:result"/>
-</route>
-----
-
-For example to wait up to 5 seconds you can do (Camel 2.16 or newer):
+For example to wait up to 5 seconds you can do:
 [source,xml]
 ----
 <route>
@@ -114,7 +92,7 @@ For example to wait up to 5 seconds you can do (Camel 2.16 or newer):
 
 *Available as of Camel 2.16*
 
-From Camel 2.16 onwards `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
+Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
 [source,java]
 ----
 from("direct:start")

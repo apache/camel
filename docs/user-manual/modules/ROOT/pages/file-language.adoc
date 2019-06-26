@@ -3,8 +3,7 @@
 
 *Available as of Camel version 1.1*
 
-INFO:*File language is now merged with Simple language*
-From Camel 2.2 onwards, the file language is now merged with
+The file language is merged with
 <<simple-language,Simple>> language which means you can use all the file
 syntax directly within the simple language.
 
@@ -55,16 +54,16 @@ File component supports all of them.
 |file:name |String |yes |no |yes |no |refers to the file name (is relative to the starting directory, see note
 below)
 
-|file:name.ext |String |yes |no |yes |no |*Camel 2.3:* refers to the file extension only
+|file:name.ext |String |yes |no |yes |no |refers to the file extension only
 
-|file:name.ext.single |String |yes |no |yes |no |*Camel 2.14.4/2.15.3:* refers to the file extension. If the file
+|file:name.ext.single |String |yes |no |yes |no |refers to the file extension. If the file
 extension has mutiple dots, then this expression strips and only returns
 the last part.
 
 |file:name.noext |String |yes |no |yes |no |refers to the file name with no extension (is relative to the starting
 directory, see note below)
 
-|file:name.noext.single |String |yes |no |yes |no |*Camel 2.14.4/2.15.3:* refers to the file name with no extension (is
+|file:name.noext.single |String |yes |no |yes |no |refers to the file name with no extension (is
 relative to the starting directory, see note below). If the file
 extension has multiple dots, then this expression strips only the last
 part, and keep the others.
@@ -74,7 +73,7 @@ part, and keep the others.
 |file:onlyname.noext |String |yes |no |yes |no |refers to the file name only with no extension and with no leading
 paths.
 
-|file:onlyname.noext.single |String |yes |no |yes |no |*Camel 2.14.4/2.15.3:*refers to the file name only with no extension and
+|file:onlyname.noext.single |String |yes |no |yes |no |refers to the file name only with no extension and
 with no leading paths. If the file extension has multiple dots, then
 this expression strips only the last part, and keep the others.
 
@@ -90,7 +89,7 @@ this expression strips only the last part, and keep the others.
 
 |file:length |Long |yes |no |yes |no |refers to the file length returned as a Long type
 
-|file:size |Long |yes |no |yes |no |*Camel 2.5:* refers to the file length returned as a Long type
+|file:size |Long |yes |no |yes |no |refers to the file length returned as a Long type
 
 |file:modified |Date |yes |no |yes |no |Refers to the file last modified returned as a Date type
 
@@ -254,7 +253,7 @@ Spring XML, where we can route based on file extensions as shown below:
 
 If you use the `fileName` option on the File endpoint
 to set a dynamic filename using the <<file-language,File Language>> then make sure you  +
- use the alternative syntax (available from Camel 2.5 onwards) to avoid
+ use the alternative syntax to avoid
 clashing with Springs `PropertyPlaceholderConfigurer`.
 
 *bundle-context.xml*

@@ -12,7 +12,7 @@ Aditionally of course you may register your own Converters to your data type to 
 (un)marshalling tools provided by camel.
 
 
-From *Camel 2.18* onwards Influxdb requires Java 8.
+Influxdb component requires at least Java 8.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

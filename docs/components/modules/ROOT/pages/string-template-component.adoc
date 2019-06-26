@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.2*
 
-The *string-template:* component allows you to process a message using a
+The String Template component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when
 using Templating to generate responses for
 requests.
@@ -130,7 +130,7 @@ This scenario can be used in production when the resource never changes.
 
 ### StringTemplate Attributes
 
-Since Camel 2.14, you can define the custom context map by setting the
+You can define the custom context map by setting the
 message header "*CamelStringTemplateVariableMap*" just like the below
 code.
 
@@ -160,8 +160,7 @@ from("activemq:My.Queue").
 
 In this sample we want to use a string template to send an order
 confirmation email. The email template is laid out in `StringTemplate`
-as: This example works for *camel 2.11.0*. If your camel version is less
-than 2.11.0, the variables should be started and ended with $.
+as:
 
 [source,java]
 --------------------------------------------

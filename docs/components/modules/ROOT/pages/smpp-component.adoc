@@ -12,7 +12,7 @@ The Camel component currently operates as an
 http://en.wikipedia.org/wiki/ESME[ESME] (External Short Messaging
 Entity) and not as an SMSC itself.
 
-Starting with*Camel 2.9* you are also able to execute ReplaceSm,
+You are also able to execute ReplaceSm,
 QuerySm, SubmitMulti, CancelSm and DataSm.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -156,7 +156,7 @@ If no *username* is provided, then Camel will provide the default value
 `smppclient`. +
  If no *port* number is provided, then Camel will provide the default
 value `2775`. +
- *Camel 2.3:* If the protocol name is "smpps", camel-smpp with try to
+If the protocol name is "smpps", camel-smpp with try to
 use SSLSocket to init a connection to the server.
 
 You can append query options to the URI in the following format,
@@ -385,8 +385,7 @@ specified in chapter 7.1.1. in the smpp specification v3.4.
 |`CamelSmppValidityPeriod` |`String`/`Date` |*only for SubmitSm, SubmitMulti and ReplaceSm* The validity period
 parameter indicates the SMSC expiration time, after which the message
 should be discarded if not delivered to the destination. If it's
-provided as `Date`, it's interpreted as absolute time. *Camel 2.9.1
-onwards:* It can be defined in absolute time format or relative time
+provided as `Date`, it's interpreted as absolute time or relative time
 format if you provide it as `String` as specified in chapter 7.1.1 in
 the smpp specification v3.4.
 
@@ -397,16 +396,11 @@ existing message provided that the source address, destination address
 and service type match the same fields in the new message. The following
 values are defined: `0`, Don't replace and `1`, Replace
 
-|`CamelSmppAlphabet` / `CamelSmppDataCoding` |`Byte` |*Camel 2.5* *For SubmitSm, SubmitMulti and ReplaceSm* (Prior to *Camel
-2.9* use `CamelSmppDataCoding` instead of `CamelSmppAlphabet`.) The data
+|`CamelSmppAlphabet` / `CamelSmppDataCoding` |`Byte` |*For SubmitSm, SubmitMulti and ReplaceSm*  The data
 coding according to the SMPP 3.4 specification, section 5.2.19. Use the
 URI option `alphabet` settings above.
 
-|`CamelSmppOptionalParameters` |`Map<String, String>` |*Deprecated and will be removed in Camel 2.13.0/3.0.0* +
- *Camel 2.10.5 and 2.11.1 onwards and only for SubmitSm, SubmitMulti and
-DataSm* The optional parameters send back by the SMSC.
-
-|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*Camel 2.10.7 and 2.11.2 onwards and only for SubmitSm, SubmitMulti and
+|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*only for SubmitSm, SubmitMulti and
 DataSm* The optional parameter which are send to the SMSC. The value is
 converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.COctetString`, 
 `byte[]` -> `org.jsmpp.bean.OptionalParameter.OctetString`, 
@@ -415,7 +409,7 @@ converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.CO
 `Short` -> `org.jsmpp.bean.OptionalParameter.Short`, 
 `null` -> `org.jsmpp.bean.OptionalParameter.Null`
 
-|CamelSmppEncoding |String |*Camel 2.14.1 and Camel 2.15.0 onwards and**only for SubmitSm,
+|CamelSmppEncoding |String |*only for SubmitSm,
 SubmitMulti and DataSm*.  Specifies the encoding (character set name) of
 the bytes in the message body.  If the message body is a string then
 this is not relevant because Java Strings are always Unicode.  If the
@@ -423,7 +417,7 @@ body is a byte array then this header can be used to indicate that it is
 ISO-8859-1 or some other value.  Default value is specified by the
 endpoint configuration parameter _encoding_
 
-|CamelSmppSplittingPolicy |String |*Camel 2.14.1 and Camel 2.15.0 onwards and**only for SubmitSm,
+|CamelSmppSplittingPolicy |String |*only for SubmitSm,
 SubmitMulti and DataSm*.  Specifies the policy for message splitting for
 this exchange.  Possible values are described in the endpoint
 configuration parameter _splittingPolicy_
@@ -436,23 +430,19 @@ response from the SMSC in the message header
 |=======================================================================
 |Header |Type |Description
 
-|`CamelSmppId` |`List<String>`/`String` |The id to identify the submitted short message(s) for later use. *From
-Camel 2.9.0*: In case of a ReplaceSm, QuerySm, CancelSm and DataSm this
+|`CamelSmppId` |`List<String>`/`String` |The id to identify the submitted short message(s) for later use.
+In case of a ReplaceSm, QuerySm, CancelSm and DataSm this
 header vaule is a `String`. In case of a SubmitSm or SubmitMultiSm this
 header vaule is a `List<String>`.
 
-|`CamelSmppSentMessageCount` |`Integer` |*From Camel 2.9 onwards only for SubmitSm and SubmitMultiSm* The total
+|`CamelSmppSentMessageCount` |`Integer` |*only for SubmitSm and SubmitMultiSm* The total
 number of messages which has been sent.
 
-|`CamelSmppError` |`Map<String, List<Map<String, Object>>>` |*From Camel 2.9 onwards only for SubmitMultiSm* The errors which
+|`CamelSmppError` |`Map<String, List<Map<String, Object>>>` |*only for SubmitMultiSm* The errors which
 occurred by sending the short message(s) the form `Map<String, List<Map<String, Object>>>` (messageID : (destAddr :
 address, error : errorCode)).
 
-|`CamelSmppOptionalParameters` |`Map<String, String>` |*Deprecated and will be removed in Camel 2.13.0/3.0.0* 
-*From Camel 2.11.1 onwards only for DataSm* The optional parameters
-which are returned from the SMSC by sending the message.
-
-|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*From Camel 2.10.7, 2.11.2 onwards only for DataSm* The optional
+|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*only for DataSm* The optional
 parameter which are returned from the SMSC by sending the message. The
 key is the `Short` code for the optional parameter. The value is
 converted in the following way: 
@@ -574,17 +564,13 @@ values defined above.
 address parameters. Use the `sourceAddrTon` URI option values defined
 above.
 
-|`CamelSmppMessageType` |`String` |*Camel 2.6 onwards*: Identifies the type of an incoming message: 
+|`CamelSmppMessageType` |`String` |Identifies the type of an incoming message:
 `AlertNotification`: an SMSC alert notification,
 `DataSm`: an SMSC data short message,
 `DeliveryReceipt`: an SMSC delivery receipt,
 `DeliverSm`: an SMSC deliver short message
 
-|`CamelSmppOptionalParameters` |`Map<String, Object>` |*Deprecated and will be removed in Camel 2.13.0/3.0.0* 
-*Camel 2.10.5 onwards and only for DeliverSm* The optional parameters
-send back by the SMSC.
-
-|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*Camel 2.10.7, 2.11.2 onwards and only for DeliverSm* The optional
+|`CamelSmppOptionalParameter` |`Map<Short, Object>` |*only for DeliverSm* The optional
 parameters send back by the SMSC. The key is the `Short` code for the
 optional parameter. The value is converted in the following way: 
 `org.jsmpp.bean.OptionalParameter.COctetString` -> `String`,
@@ -610,7 +596,7 @@ with a nested exception, org.jsmpp.extra.NegativeResponseException. 
 Call NegativeResponseException.getCommandStatus() to obtain the exact
 SMPP negative response code, the values are explained in the SMPP
 specification 3.4, section 5.1.3. +
- *Camel 2.8 onwards*: When the SMPP consumer receives a `DeliverSm` or
+When the SMPP consumer receives a `DeliverSm` or
 `DataSm` short message and the processing of these messages fails, you
 can also throw a `ProcessRequestException` instead of handle the
 failure. In this case, this exception is forwarded to the underlying

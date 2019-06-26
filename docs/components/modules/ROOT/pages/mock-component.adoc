@@ -52,7 +52,7 @@ NotifyBuilder or
 AdviceWith in your tests instead of adding Mock
 endpoints to routes directly. +
  +
-From Camel 2.10 onwards there are two new options `retainFirst`, and
+There are two new options `retainFirst`, and
 `retainLast` that can be used to limit the number of messages the Mock
 endpoints keep in memory.
 
@@ -380,7 +380,7 @@ in the constructor for the bean:
 
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
-only. From Camel 2.10 onwards you can now use the `mockEndpointsAndSkip`
+only. You can now use the `mockEndpointsAndSkip`
 method using AdviceWith or the
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
 Kit]. The example below will skip sending to the two endpoints
@@ -407,7 +407,7 @@ include::../../../../components/camel-test/src/test/java/org/apache/camel/test/p
 The <<mock-component,Mock>> endpoints will by default keep a copy of every
 Exchange that it received. So if you test with a lot
 of messages, then it will consume memory. +
-From Camel 2.10 onwards we have introduced two options `retainFirst` and
+We have introduced two options `retainFirst` and
 `retainLast` that can be used to specify to only keep N'th of the first
 and/or last Exchanges.
 

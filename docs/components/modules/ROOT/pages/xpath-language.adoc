@@ -76,7 +76,7 @@ namespace is `http://camel.apache.org/schema/spring`.
 
 |http://camel.apache.org/xml/out/[http://camel.apache.org/xml/out/] |out |Message |the exchange.out message
 
-|http://camel.apache.org/xml/function/[http://camel.apache.org/xml/function/] |functions |Object |*Camel 2.5:* Additional functions
+|http://camel.apache.org/xml/function/[http://camel.apache.org/xml/function/] |functions |Object |Additional functions
 
 |http://camel.apache.org/xml/variables/environment-variables[http://camel.apache.org/xml/variables/environment-variables] |env |Object |OS environment variables
 
@@ -124,10 +124,10 @@ exchange:
 
 |out:header |the header name |Object |Will return the *out* message header.
 
-|function:properties |key for property |String |*Camel 2.5:* To lookup a property using the
+|function:properties |key for property |String |To lookup a property using the
 <<properties-component,Properties>> component (property placeholders).
 
-|function:simple |simple expression |Object |*Camel 2.5:* To evaluate a <<simple-language,Simple>> expression.
+|function:simple |simple expression |Object |To evaluate a <<simple-language,Simple>> expression.
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported
@@ -135,8 +135,6 @@ when the return type is a `NodeSet`, such as when using with a
 Splitter EIP.
 
 Here's an example showing some of these functions in use.
-
-And the new functions introduced in Camel 2.5:
 
 === Using XML configuration
 

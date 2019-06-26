@@ -3,7 +3,7 @@
 
 *Available as of Camel version 1.1*
 
-The *vm:* component provides asynchronous
+The VM component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
 messages on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
@@ -30,24 +30,7 @@ camel-core.jar)
 You can append query options to the URI in the following format:
 `?option=value&option=value&...`
 
-An exactly identical <<vm-component,VM>> endpoint URI *must* be used for
-both the producer and the consumer endpoint. Otherwise, Camel will
-create a second <<vm-component,VM>> endpoint despite that the `queueName`
-portion of the URI is identical. For example:
-
-[source,java]
-----
-from("direct:foo").to("vm:bar?concurrentConsumers=5");
-
-from("vm:bar?concurrentConsumers=5").to("file://output");
-----
-
-Notice that we have to use the full URI, including options in both the
-producer and consumer.
-
-In Camel 2.4 this has been fixed so that only the queue name must match.
-Using the queue name `bar`, we could rewrite the previous exmple as
-follows:
+It is sufficient to list all the options for a consumer endpoint only.
 
 [source,java]
 ----

@@ -153,15 +153,6 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-Note on options of MongoDB component 
-
-writeConcern *Remove in camel 2.19.* See Mongo client options <<MongoDB-ConfigurationofdatabaseinSpringXML>>. Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method.
-
-readPreference *Remove in camel 2.19.* See Mongo client options <<MongoDB-ConfigurationofdatabaseinSpringXML>>. Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The link com.mongodb.ReadPreferencevalueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest primary or secondary etc.
-
-
-
-
 [[MongoDB-ConfigurationofdatabaseinSpringXML]]
 === Configuration of database in Spring XML
 

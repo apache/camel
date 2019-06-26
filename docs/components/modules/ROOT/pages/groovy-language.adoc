@@ -134,7 +134,7 @@ following attributes all set at `ENGINE_SCOPE`:
 |response |`org.apache.camel.Message` |*Deprecated*: The OUT message. The OUT message if null by default. Use
 IN message instead.
 
-|properties |`org.apache.camel.builder.script.PropertiesFunction` |*Camel 2.9:* Function with a `resolve` method to make it easier to use
+|properties |`org.apache.camel.builder.script.PropertiesFunction` |Function with a `resolve` method to make it easier to use
 Camels <<properties-component,Properties>> component from scripts. See
 further below for example.
 |=======================================================================
@@ -165,8 +165,7 @@ placeholder, which key is provided in a header named "foo".
 .setHeader("myHeader").groovy(""context.resolvePropertyPlaceholders( + '{{' + request.headers.get(&#39;foo&#39;) + '}}' + ")")
 ------------------------------------------------------------------------------------------------------------------------------
 
-From Camel 2.9 onwards you can now use the properties function and the
-same example is simpler:
+You can use the properties function and the same example is simpler:
 
 [source,java]
 ---------------------------------------------------------------------------------------

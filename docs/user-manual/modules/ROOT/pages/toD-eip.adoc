@@ -143,8 +143,6 @@ of being reused in case a message is routed with the same `userName` header. The
 will not solve the _endless dynamic endoints_ problem. Instead you should use static endpoints with `to` and
 provide the dynamic parts in Camel message headers (if possible).
 
-The example above can resolve via static endpoints, or from Camel 2.22 onwards via optimised components (see further below)
-
 ==== Using static endpoints
 
 In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
@@ -158,13 +156,13 @@ from("direct:login")
   .toD("http:myloginserver:8080");
 ----
 
-If you are using Camel 2.22 onwards then you can use its optimised components for `toD` that can _solve_ this out of the box,
+However, you can use its optimised components for `toD` that can _solve_ this out of the box,
 as documented next.
 
 === Using optimised components
 
 But a better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
-This is now possible with *Camel 2.22* onwards, where the following components has been optimised for `toD`:
+This is with the following components, which have been optimised for `toD`:
 
 - camel-http
 - camel-http4

@@ -31,7 +31,7 @@ The log DSL is much lighter and meant for logging human logs such as Starting to
 
 === Samples
 
-In *Camel 2.2* you can use the log DSL which allows you to use <<simple-language,Simple>> language to construct a dynamic message which gets logged.
+You can use the log DSL which allows you to use <<simple-language,Simple>> language to construct a dynamic message which gets logged.
 
 For example you can do
 
@@ -63,7 +63,7 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-Since *Camel 2.12.4/2.13.1* the logger instance may be used as well:
+The logger instance may be used as well:
 [source,java]
 ----
 from("direct:start")
@@ -115,7 +115,7 @@ Since Camel *2.12.4/2.13.1* it is possible to reference logger instance. For exa
 
 ==== Using Logger instance from the Registry
 
-As of *Camel 2.12.4/2.13.1*, if no logger name or logger instance is passed to log DSL,
+If no logger name or logger instance is passed to log DSL,
  there is a Registry lookup performed to find single instance of org.slf4j.Logger.
  If such an instance is found, it is used instead of creating a new logger instance.
  If more instances are found, the behavior defaults to creating a new instance of logger.
@@ -125,7 +125,7 @@ As of *Camel 2.12.4/2.13.1*, if no logger name or logger instance is passed to l
 
 By default the log name is the route id. If you want to use a different log name, you would need to configure the logName option. However if you have many logs and you want all of them to use the same log name, then you would need to set that logName option on all of them.
 
-With Camel 2.17 onwards you can configure a global log name that is used instead of the route id, eg
+You can configure a global log name that is used instead of the route id, eg
 [source,java]
 ----
 camelContext.getProperties().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
@@ -156,7 +156,6 @@ You can specify a marker name in the DSL
 ----
 
 === Using log DSL in OSGi
-*Improvement as of Camel 2.12.4/2.13.1*
 
 When using log DSL inside OSGi (e.g., in Karaf), the underlying logging mechanisms are provided by PAX logging. It searches for a bundle which invokes org.slf4j.LoggerFactory.getLogger() method and associates the bundle with the logger instance. Passing only logger name to log DSL results in associating camel-core bundle with the logger instance created.
 

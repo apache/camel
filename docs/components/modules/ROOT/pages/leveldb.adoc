@@ -36,7 +36,7 @@ file is created.
 |`levelDBFile` |LevelDBFile |Use an existing configured
 `org.apache.camel.component.leveldb.LevelDBFile` instance.
 
-|`sync` |boolean |*Camel 2.12:* Whether or not the LevelDBFile should sync on write or
+|`sync` |boolean |Whether or not the LevelDBFile should sync on write or
 not. Default is false. By sync on write ensures that its always waiting
 for all writes to be spooled to disk and thus will not loose updates.
 See http://leveldb.googlecode.com/svn/trunk/doc/index.html[LevelDB docs]
@@ -145,7 +145,7 @@ the download page for the latest versions).
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-leveldb</artifactId>
-  <version>2.10.0</version>
+  <version>x.y.z</version>
 </dependency>
 ----------------------------------------
 

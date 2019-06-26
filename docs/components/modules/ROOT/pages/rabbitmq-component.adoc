@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.12*
 
-The *rabbitmq:* component allows you produce and consume messages from
+The RabbitMQ component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
 client, this component offers a pure RabbitMQ approach over the generic
 http://camel.apache.org/amqp.html[AMQP] component.
@@ -302,7 +302,7 @@ And then refer to the connection factory in the endpoint uri as shown below:
 </camelContext>
 ----
 
-From Camel 2.21 onwards the `ConnectionFactory` is auto-detected by default, so you can just do
+The `ConnectionFactory` is auto-detected by default, so you can just do
 
 [source,xml]
 ----
@@ -332,7 +332,7 @@ that will be used when producing a message
 
 |`rabbitmq.REDELIVERY_TAG` |Whether the message is a redelivered
 
-|`rabbitmq.REQUEUE` |*Camel 2.14.2:* This is used by the consumer to control rejection of the
+|`rabbitmq.REQUEUE` |This is used by the consumer to control rejection of the
 message. When the consumer is complete processing the exchange, and if
 the exchange failed, then the consumer is going to reject the message
 from the RabbitMQ broker. The value of this header controls this
@@ -352,7 +352,7 @@ camel exchange then they will be set on the RabbitMQ message.
 
 |`rabbitmq.EXCHANGE_NAME` |The exchange the message was received from
 
-|`rabbitmq.EXCHANGE_OVERRIDE_NAME` | *Camel 2.21:* Used for force sending the message to this exchange instead of the endpoint configured name on the producer
+|`rabbitmq.EXCHANGE_OVERRIDE_NAME` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
 
 |`rabbitmq.CONTENT_TYPE` |The contentType to set on the RabbitMQ message
 
@@ -435,53 +435,5 @@ For example declaring a method in spring
 public Map<String, Object> bindArgsBuilder() {
     return Collections.singletonMap("foo", "bar");
 }
-----
-
-==== Issue when routing between exchanges (in Camel 2.20.x or older)
-
-If you for example want to route messages from one Rabbit exchange to another as shown
-in the example below with foo -> bar:
-
-[source,java]
-----
-from("rabbitmq:foo")
-  .to("rabbitmq:bar")
-----
-
-Then beware that Camel will route the message to itself, eg foo -> foo. So why is that?
-This is because the consumer that receives the message (eg from) provides the message header
-`rabbitmq.EXCHANGE_NAME` with the name of the exchange, eg `foo`. And when the Camel producer
-is sending the message to `bar` then the header `rabbitmq.EXCHANGE_NAME` will override this
-and instead send the message to `foo`.
-
-To avoid this you need to either:
-
-- Remove the header:
-
-[source,java]
-----
-from("rabbitmq:foo")
-  .removeHeader("rabbitmq.EXCHANGE_NAME")
-  .to("rabbitmq:bar")
-----
-
-- Or turn on `bridgeEndpoint` mode on the producer:
-
-[source,java]
-----
-from("rabbitmq:foo")
-  .to("rabbitmq:bar?bridgeEndpoint=true")
-----
-
-From Camel 2.21 onwards this has been improved so you can easily route between exchanges.
-The header `rabbitmq.EXCHANGE_NAME` is not longer used by the producer to override the destination exchange.
-Instead a new header `rabbitmq.EXCHANGE_OVERRIDE_NAME` can be used to send to a different exchange.
-For example to send to cheese exchange you can do
-
-[source,java]
-----
-from("rabbitmq:foo")
-  .setHeader("rabbitmq.EXCHANGE_OVERRIDE_NAME", constant("cheese"))
-  .to("rabbitmq:bar")
 ----
 

@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.5*
 
-The *sip* component in Camel is a communication component, based on the
+The SIP component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).
 
 Session Initiation Protocol (SIP) is an IETF-defined signaling protocol,

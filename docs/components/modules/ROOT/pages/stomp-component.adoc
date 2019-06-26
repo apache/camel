@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.12*
 
-The *stomp:* component is used for communicating with
+The Stomp component is used for communicating with
 http://stomp.github.io/[Stomp] compliant message brokers, like
 http://activemq.apache.org[Apache ActiveMQ] or
 http://activemq.apache.org/apollo/[ActiveMQ Apollo]
