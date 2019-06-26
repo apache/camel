@@ -1015,7 +1015,7 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                if (component != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
                     values.put(option, value);
                     properties.put(component, values);
@@ -1029,7 +1029,7 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                if (dataformat != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
                     values.put(option, value);
                     properties.put(dataformat, values);
@@ -1043,13 +1043,15 @@ public abstract class MainSupport extends ServiceSupport {
                 // grab the value
                 String value = prop.getProperty(key);
                 String option = key.substring(dot + 1);
-                if (ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
+                if (language != null && ObjectHelper.isNotEmpty(value) && ObjectHelper.isNotEmpty(option)) {
                     Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
                     values.put(option, value);
                     properties.put(language, values);
                 }
             }
         }
+
+        // TODO: filter out duplicte properties due to ignore-case
 
         if (!properties.isEmpty()) {
             long total = properties.values().stream().mapToLong(Map::size).sum();
@@ -1060,6 +1062,9 @@ public abstract class MainSupport extends ServiceSupport {
             Map<String, Object> values = properties.get(obj);
             setPropertiesOnTarget(camelContext, obj, values, true, true);
         }
+
+        // TODO: Log if any options was not configured (and check if they are on classpath)
+
     }
 
     protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
