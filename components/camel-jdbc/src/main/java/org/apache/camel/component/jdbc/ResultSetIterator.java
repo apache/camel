@@ -207,7 +207,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
         @Override
         public Object getValue(ResultSet resultSet) throws SQLException {
-            return resultSet.getString(columnNumber);
+            return resultSet.getBlob(columnNumber);
         }
 
         public Object getBytes(ResultSet resultSet) throws SQLException {
