@@ -42,6 +42,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
@@ -244,7 +245,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     protected ExecutorService createExecutor() {
         if (getCamelContext() != null) {
-            return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "RabbitMQConsumer", getThreadPoolSize());
+            return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, URISupport.sanitizeUri(getEndpointUri()), getThreadPoolSize());
         } else {
             return Executors.newFixedThreadPool(getThreadPoolSize());
         }
