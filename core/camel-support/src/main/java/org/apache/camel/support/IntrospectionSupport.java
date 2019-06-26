@@ -365,30 +365,64 @@ public final class IntrospectionSupport {
         }
     }
 
-    public static Object getProperty(Object target, String property) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object getProperty(Object target, String propertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(property, "property");
+        ObjectHelper.notNull(propertyName, "property");
 
-        property = property.substring(0, 1).toUpperCase(Locale.ENGLISH) + property.substring(1);
+        propertyName = propertyName.substring(0, 1).toUpperCase(Locale.ENGLISH) + propertyName.substring(1);
 
         Class<?> clazz = target.getClass();
-        Method method = getPropertyGetter(clazz, property);
+        Method method = getPropertyGetter(clazz, propertyName);
         return method.invoke(target);
     }
 
-    public static Object getOrElseProperty(Object target, String property, Object defaultValue) {
+    public static Object getOrElseProperty(Object target, String propertyName, Object defaultValue) {
+        return getOrElseProperty(target, propertyName, defaultValue, false);
+    }
+
+    public static Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase) {
         try {
-            return getProperty(target, property);
+            if (ignoreCase) {
+                Class<?> clazz = target.getClass();
+                Method method = getPropertyGetter(clazz, propertyName, true);
+                if (method != null) {
+                    return method.invoke(target);
+                } else {
+                    // not found so return default value
+                    return defaultValue;
+                }
+            } else {
+                return getProperty(target, propertyName);
+            }
         } catch (Exception e) {
             return defaultValue;
         }
     }
 
     public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
-        if (isPropertyIsGetter(type, propertyName)) {
-            return type.getMethod("is" + StringHelper.capitalize(propertyName, true));
+        return getPropertyGetter(type, propertyName, false);
+    }
+
+    public static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException {
+        if (ignoreCase) {
+            Method[] methods = type.getDeclaredMethods();
+            for (Method m : methods) {
+                if (isGetter(m)) {
+                    if (m.getName().startsWith("is") && m.getName().substring(2).equalsIgnoreCase(propertyName)) {
+                        return m;
+                    } else if (m.getName().startsWith("get") && m.getName().substring(3).equalsIgnoreCase(propertyName)) {
+                        return m;
+                    }
+                }
+            }
+            // not found
+            return null;
         } else {
-            return type.getMethod("get" + StringHelper.capitalize(propertyName, true));
+            if (isPropertyIsGetter(type, propertyName)) {
+                return type.getMethod("is" + StringHelper.capitalize(propertyName, true));
+            } else {
+                return type.getMethod("get" + StringHelper.capitalize(propertyName, true));
+            }
         }
     }
 
@@ -539,7 +573,7 @@ public final class IntrospectionSupport {
      */
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
                                       boolean allowBuilderPattern) throws Exception {
-        return setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, false);
+        return setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, false, false);
     }
 
     /**
@@ -555,7 +589,7 @@ public final class IntrospectionSupport {
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern, boolean allowPrivateSetter) throws Exception {
+                                      boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception {
 
         // does the property name include a lookup key, then we need to set the property as a map or list
         if (name.contains("[") && name.endsWith("]")) {
@@ -563,10 +597,10 @@ public final class IntrospectionSupport {
             String lookupKey = name.substring(pos + 1, name.length() - 1);
             String key = name.substring(0, pos);
 
-            Object obj = IntrospectionSupport.getOrElseProperty(target, key, null);
+            Object obj = IntrospectionSupport.getOrElseProperty(target, key, null, ignoreCase);
             if (obj == null) {
                 // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
-                Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key);
+                Method getter = IntrospectionSupport.getPropertyGetter(target.getClass(), key, ignoreCase);
                 if (getter != null) {
                     // what type does it have
                     Class<?> returnType = getter.getReturnType();
@@ -616,10 +650,10 @@ public final class IntrospectionSupport {
 
         // we need to lookup the value from the registry
         if (context != null && refName != null && value == null) {
-            setters = findSetterMethodsOrderedByParameterType(clazz, name, allowBuilderPattern, allowPrivateSetter);
+            setters = findSetterMethodsOrderedByParameterType(clazz, name, allowBuilderPattern, allowPrivateSetter, ignoreCase);
         } else {
             // find candidates of setter methods as there can be overloaded setters
-            setters = findSetterMethods(clazz, name, value, allowBuilderPattern, allowPrivateSetter);
+            setters = findSetterMethods(clazz, name, value, allowBuilderPattern, allowPrivateSetter, ignoreCase);
         }
         if (setters.isEmpty()) {
             return false;
@@ -740,22 +774,22 @@ public final class IntrospectionSupport {
 
     public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false);
+        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false, false);
     }
 
     public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(context, typeConverter, target, name, value, null, true, false);
+        return setProperty(context, typeConverter, target, name, value, null, true, false, false);
     }
     
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(null, typeConverter, target, name, value, null, true, false);
+        return setProperty(null, typeConverter, target, name, value, null, true, false, false);
     }
 
     @Deprecated
     public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
-        return setProperty(null, null, target, name, value, null, allowBuilderPattern, false);
+        return setProperty(null, null, target, name, value, null, allowBuilderPattern, false, false);
     }
 
     @Deprecated
@@ -764,7 +798,8 @@ public final class IntrospectionSupport {
         return setProperty(target, name, value, true);
     }
 
-    public static Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter) {
+    public static Set<Method> findSetterMethods(Class<?> clazz, String name,
+                                                boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         Set<Method> candidates = new LinkedHashSet<>();
 
         // Build the method name
@@ -778,7 +813,16 @@ public final class IntrospectionSupport {
             Method objectSetMethod = null;
             Method[] methods = allowPrivateSetter ? clazz.getDeclaredMethods() : clazz.getMethods();
             for (Method method : methods) {
-                boolean validName = method.getName().equals(setName) || allowBuilderPattern && method.getName().equals(builderName) || allowBuilderPattern && method.getName().equals(builderName2);
+                boolean validName;
+                if (ignoreCase) {
+                    validName = method.getName().equalsIgnoreCase(setName)
+                            || allowBuilderPattern && method.getName().equalsIgnoreCase(builderName)
+                            || allowBuilderPattern && method.getName().equalsIgnoreCase(builderName2);
+                } else {
+                    validName = method.getName().equals(setName)
+                            || allowBuilderPattern && method.getName().equals(builderName)
+                            || allowBuilderPattern && method.getName().equals(builderName2);
+                }
                 if (validName) {
                     if (isSetter(method, allowBuilderPattern)) {
                         Class<?>[] params = method.getParameterTypes();
@@ -798,8 +842,9 @@ public final class IntrospectionSupport {
         return candidates;
     }
 
-    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value, boolean allowBuilderPattern, boolean allowPrivateSetter) {
-        Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern, allowPrivateSetter);
+    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value,
+                                         boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
+        Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern, allowPrivateSetter, ignoreCase);
 
         if (candidates.isEmpty()) {
             return candidates;
@@ -824,10 +869,11 @@ public final class IntrospectionSupport {
         }
     }
 
-    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName, boolean allowBuilderPattern, boolean allowPrivateSetter) {
+    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName,
+                                                                boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         List<Method> answer = new LinkedList<>();
         List<Method> primitives = new LinkedList<>();
-        Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern, allowPrivateSetter);
+        Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern, allowPrivateSetter, ignoreCase);
         for (Method setter : setters) {
             Class<?> parameterType = setter.getParameterTypes()[0];
             if (PRIMITIVE_CLASSES.contains(parameterType)) {

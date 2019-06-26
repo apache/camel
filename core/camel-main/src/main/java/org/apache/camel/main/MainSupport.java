@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
-import static org.apache.camel.util.StringHelper.dashToCamelCase;
 import static org.apache.camel.util.StringHelper.matches;
 
 /**
@@ -833,7 +832,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring CamelContext from loaded properties: {}", properties.size());
-            setCamelProperties(camelContext, camelContext, properties, true);
+            setPropertiesOnTarget(camelContext, camelContext, properties, true, true);
         }
         if (!hystrixProperties.isEmpty()) {
             LOG.info("Auto configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
@@ -843,7 +842,7 @@ public abstract class MainSupport extends ServiceSupport {
                 hystrix = new HystrixConfigurationDefinition();
                 model.setHystrixConfiguration(hystrix);
             }
-            setCamelProperties(camelContext, hystrix, hystrixProperties, true);
+            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, true, true);
         }
         if (!restProperties.isEmpty()) {
             LOG.info("Auto configuring Rest DSL from loaded properties: {}", restProperties.size());
@@ -853,7 +852,7 @@ public abstract class MainSupport extends ServiceSupport {
                 rest = new RestConfiguration();
                 model.setRestConfiguration(rest);
             }
-            setCamelProperties(camelContext, rest, restProperties, true);
+            setPropertiesOnTarget(camelContext, rest, restProperties, true, true);
         }
     }
 
@@ -920,7 +919,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         for (Object obj : properties.keySet()) {
             Map<String, Object> values = properties.get(obj);
-            setCamelProperties(camelContext, obj, values, true);
+            setPropertiesOnTarget(camelContext, obj, values, true, true);
         }
     }
 
@@ -957,7 +956,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring main from loaded properties: {}", properties.size());
-            setCamelProperties(camelContext, config, properties, true);
+            setPropertiesOnTarget(camelContext, config, properties, true, true);
         }
     }
 
@@ -1059,7 +1058,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         for (Object obj : properties.keySet()) {
             Map<String, Object> values = properties.get(obj);
-            setCamelProperties(camelContext, obj, values, true);
+            setPropertiesOnTarget(camelContext, obj, values, true, true);
         }
     }
 
@@ -1095,7 +1094,7 @@ public abstract class MainSupport extends ServiceSupport {
         setRouteBuilderClasses(existing);
     }
 
-    private static boolean setCamelProperties(CamelContext context, Object target, Map<String, Object> properties, boolean failIfNotSet) throws Exception {
+    private static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties, boolean failIfNotSet, boolean ignoreCase) throws Exception {
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -1111,10 +1110,10 @@ public abstract class MainSupport extends ServiceSupport {
 
             LOG.debug("Setting property {} on {} with value {}", name, target, stringValue);
             if (failIfNotSet) {
-                PropertyBindingSupport.bindMandatoryProperty(context, target, name, stringValue);
+                PropertyBindingSupport.bindMandatoryProperty(context, target, name, stringValue, ignoreCase);
                 rc = true;
             } else {
-                boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue);
+                boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue, ignoreCase);
                 if (hit) {
                     it.remove();
                     rc = true;
