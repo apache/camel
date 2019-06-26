@@ -711,6 +711,14 @@ public final class IntrospectionSupport {
                         return true;
                     } else {
                         // We need to convert it
+                        // special for boolean values with string values as we only want to accept "true" or "false"
+                        if (parameterType == Boolean.class || parameterType == boolean.class && ref instanceof String) {
+                            String val = (String) ref;
+                            if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
+                                throw new IllegalArgumentException("Cannot convert the String value: " + ref + " to type: " + parameterType
+                                        + " as the value is not true or false");
+                            }
+                        }
                         Object convertedValue = typeConverter != null ? typeConverter.mandatoryConvertTo(parameterType, ref) : ref;
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);

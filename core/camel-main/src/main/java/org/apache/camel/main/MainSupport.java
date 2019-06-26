@@ -1195,12 +1195,21 @@ public abstract class MainSupport extends ServiceSupport {
             LOG.debug("Setting property {} on {} with value {}", name, target, stringValue);
             if (failIfNotSet) {
                 PropertyBindingSupport.bindMandatoryProperty(context, target, name, stringValue, ignoreCase);
+                it.remove();
                 rc = true;
             } else {
-                boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue, ignoreCase);
-                if (hit) {
-                    it.remove();
-                    rc = true;
+                try {
+                    boolean hit = PropertyBindingSupport.bindProperty(context, target, name, stringValue, ignoreCase);
+                    if (hit) {
+                        it.remove();
+                        rc = true;
+                    }
+                } catch (Exception e) {
+                    if (failIfNotSet) {
+                        throw e;
+                    } else {
+                        LOG.debug(e.getMessage() + ". This exception is ignored.", e);
+                    }
                 }
             }
         }
