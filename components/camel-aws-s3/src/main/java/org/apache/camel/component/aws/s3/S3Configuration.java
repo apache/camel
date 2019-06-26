@@ -143,7 +143,7 @@ public class S3Configuration implements Cloneable {
 
     /**
      * Reference to a `com.amazonaws.services.s3.AmazonS3` in the
-     * link:registry.html[Registry].
+     * xref:registry.adoc[Registry].
      */
     public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;

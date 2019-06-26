@@ -29,7 +29,7 @@ advanced scheduling.
 
 TIP:*Specify time in human friendly format*
 You can specify the time in
-link:how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
+xref:how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
 friendly syntax].
 
 
