@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -733,6 +734,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         // need to eager allow to auto configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
+            autoConfigurationFailFast(camelContext);
             autoConfigurationPropertiesComponent(camelContext);
             autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties);
         }
@@ -762,6 +764,31 @@ public abstract class MainSupport extends ServiceSupport {
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
+        }
+    }
+
+    protected void autoConfigurationFailFast(CamelContext camelContext) throws Exception {
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+        LOG.debug("Properties from Camel properties component:");
+        for (String key : prop.stringPropertyNames()) {
+            LOG.debug("    {}={}", key, prop.getProperty(key));
+        }
+
+        // load properties from ENV (override existing)
+        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
+        if (!propENV.isEmpty()) {
+            prop.putAll(propENV);
+            LOG.debug("Properties from OS environment variables:");
+            for (String key : propENV.stringPropertyNames()) {
+                LOG.debug("    {}={}", key, propENV.getProperty(key));
+            }
+        }
+
+        // special for fail-fast as we need to know this early before we set all the other options
+        Object failFast = propENV.remove("camel.main.autoconfigurationfailfast");
+        if (failFast != null) {
+            PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
         }
     }
 
@@ -864,72 +891,56 @@ public abstract class MainSupport extends ServiceSupport {
             }
             setPropertiesOnTarget(camelContext, rest, restProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
+
+        // TODO: Log which options was not set
     }
 
     protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
-        LOG.debug("Properties from Camel properties component:");
-        for (String key : prop.stringPropertyNames()) {
-            LOG.debug("    {}={}", key, prop.getProperty(key));
-        }
 
         // load properties from ENV (override existing)
         Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
         if (!propENV.isEmpty()) {
             prop.putAll(propENV);
-            LOG.debug("Properties from OS environment variables:");
-            for (String key : propENV.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propENV.getProperty(key));
-            }
         }
 
-        Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
+        Map<String, Object> properties = new LinkedHashMap<>();
 
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.component.properties.")) {
-                Component component = camelContext.getPropertiesComponent();
                 int dot = key.indexOf(".", 26);
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
-                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
-                values.put(optionKey(option), value);
-                properties.put(component, values);
+                properties.put(optionKey(option), value);
             }
         }
 
         if (!properties.isEmpty()) {
-            long total = properties.values().stream().mapToLong(Map::size).sum();
-            LOG.info("Auto configuring properties component from loaded properties: {}", total);
+            LOG.info("Auto configuring properties component from loaded properties: {}", properties.size());
+            setPropertiesOnTarget(camelContext, camelContext.getPropertiesComponent(), properties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
 
-        for (Object obj : properties.keySet()) {
-            Map<String, Object> values = properties.get(obj);
-            setPropertiesOnTarget(camelContext, obj, values, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+        // log which options was not set
+        if (!properties.isEmpty()) {
+            properties.forEach((k, v) -> {
+                LOG.warn("Property not auto configured: camel.component.properties.{}={} on object: {}", k, v, camelContext.getPropertiesComponent());
+            });
         }
     }
 
     protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
-        LOG.debug("Properties from Camel properties component:");
-        for (String key : prop.stringPropertyNames()) {
-            LOG.debug("    {}={}", key, prop.getProperty(key));
-        }
 
         // load properties from ENV (override existing)
         Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
         if (!propENV.isEmpty()) {
             prop.putAll(propENV);
-            LOG.debug("Properties from OS environment variables:");
-            for (String key : propENV.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propENV.getProperty(key));
-            }
         }
 
         Map<String, Object> properties = new LinkedHashMap<>();
-
 
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.main.")) {
@@ -941,15 +952,16 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
-        // special for fail-fast as we need to know this early before we set all the other options
-        Object failFast = properties.remove("autoconfigurationfailfast");
-        if (failFast != null) {
-            PropertyBindingSupport.bindMandatoryProperty(camelContext, config, "autoConfigurationFailFast", failFast, true);
-        }
-
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring main from loaded properties: {}", properties.size());
             setPropertiesOnTarget(camelContext, config, properties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+        }
+
+        // log which options was not set
+        if (!properties.isEmpty()) {
+            properties.forEach((k, v) -> {
+                LOG.warn("Property not auto configured: camel.main.{}={} on object: {}", k, v, config);
+            });
         }
     }
 
@@ -978,22 +990,14 @@ public abstract class MainSupport extends ServiceSupport {
         // load properties from properties component (override existing)
         Properties propPC = camelContext.getPropertiesComponent().loadProperties();
         prop.putAll(propPC);
-        LOG.debug("Properties from Camel properties component:");
-        for (String key : propPC.stringPropertyNames()) {
-            LOG.debug("    {}={}", key, propPC.getProperty(key));
-        }
 
         // load properties from ENV (override existing)
         Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.", "camel.dataformat.", "camel.language."});
         if (!propENV.isEmpty()) {
             prop.putAll(propENV);
-            LOG.debug("Properties from OS environment variables:");
-            for (String key : propENV.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propENV.getProperty(key));
-            }
         }
 
-        Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
+        Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
 
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.component.")) {
@@ -1012,10 +1016,11 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
-                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                PropertyOptionKey pok = new PropertyOptionKey(key, component);
+                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
                 // we ignore case for property keys (so we should store them in canonical style
                 values.put(optionKey(option), value);
-                properties.put(component, values);
+                properties.put(pok, values);
             }
             if (key.startsWith("camel.dataformat.")) {
                 // grab name
@@ -1029,9 +1034,10 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
-                Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
+                PropertyOptionKey pok = new PropertyOptionKey(key, dataformat);
+                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
                 values.put(optionKey(option), value);
-                properties.put(dataformat, values);
+                properties.put(pok, values);
             }
             if (key.startsWith("camel.language.")) {
                 // grab name
@@ -1047,9 +1053,10 @@ public abstract class MainSupport extends ServiceSupport {
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
                 validateOptionAndValue(key, option, value);
-                Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
+                PropertyOptionKey pok = new PropertyOptionKey(key, language);
+                Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
                 values.put(optionKey(option), value);
-                properties.put(language, values);
+                properties.put(pok, values);
             }
         }
 
@@ -1058,12 +1065,21 @@ public abstract class MainSupport extends ServiceSupport {
             LOG.info("Auto configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
         }
 
-        for (Object obj : properties.keySet()) {
-            Map<String, Object> values = properties.get(obj);
-            setPropertiesOnTarget(camelContext, obj, values, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+        // TODO: Better error if setting some property fails
+        for (PropertyOptionKey pok : properties.keySet()) {
+            Map<String, Object> values = properties.get(pok);
+            setPropertiesOnTarget(camelContext, pok.getInstance(), values, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
 
-        // TODO: Log which options was not set
+        // log which options was not set
+        if (!properties.isEmpty()) {
+            for (PropertyOptionKey pok : properties.keySet()) {
+                Map<String, Object> values = properties.get(pok);
+                values.forEach((k, v) -> {
+                    LOG.warn("Property not auto configured: {}={} on object: {}", pok.getKey(), v, pok.getInstance());
+                });
+            }
+        }
     }
 
     protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
@@ -1163,6 +1179,43 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         return rc;
+    }
+
+    private static class PropertyOptionKey {
+
+        private final String key;
+        private final Object instance;
+
+        private PropertyOptionKey(String key, Object instance) {
+            this.key = key;
+            this.instance = instance;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public Object getInstance() {
+            return instance;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            PropertyOptionKey that = (PropertyOptionKey) o;
+            return key.equals(that.key) &&
+                    instance.equals(that.instance);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, instance);
+        }
     }
 
     public abstract class Option {
