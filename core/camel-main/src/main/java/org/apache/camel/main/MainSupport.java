@@ -842,7 +842,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring CamelContext from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, camelContext, properties, true, true);
+            setPropertiesOnTarget(camelContext, camelContext, properties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
         if (!hystrixProperties.isEmpty()) {
             LOG.info("Auto configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
@@ -852,7 +852,7 @@ public abstract class MainSupport extends ServiceSupport {
                 hystrix = new HystrixConfigurationDefinition();
                 model.setHystrixConfiguration(hystrix);
             }
-            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, true, true);
+            setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
         if (!restProperties.isEmpty()) {
             LOG.info("Auto configuring Rest DSL from loaded properties: {}", restProperties.size());
@@ -862,7 +862,7 @@ public abstract class MainSupport extends ServiceSupport {
                 rest = new RestConfiguration();
                 model.setRestConfiguration(rest);
             }
-            setPropertiesOnTarget(camelContext, rest, restProperties, true, true);
+            setPropertiesOnTarget(camelContext, rest, restProperties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
     }
 
@@ -906,7 +906,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         for (Object obj : properties.keySet()) {
             Map<String, Object> values = properties.get(obj);
-            setPropertiesOnTarget(camelContext, obj, values, true, true);
+            setPropertiesOnTarget(camelContext, obj, values, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
     }
 
@@ -930,6 +930,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         Map<String, Object> properties = new LinkedHashMap<>();
 
+
         for (String key : prop.stringPropertyNames()) {
             if (key.startsWith("camel.main.")) {
                 // grab the value
@@ -940,9 +941,15 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
+        // special for fail-fast as we need to know this early before we set all the other options
+        Object failFast = properties.remove("autoconfigurationfailfast");
+        if (failFast != null) {
+            PropertyBindingSupport.bindMandatoryProperty(camelContext, config, "autoConfigurationFailFast", failFast, true);
+        }
+
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring main from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, config, properties, true, true);
+            setPropertiesOnTarget(camelContext, config, properties, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
     }
 
@@ -1053,10 +1060,10 @@ public abstract class MainSupport extends ServiceSupport {
 
         for (Object obj : properties.keySet()) {
             Map<String, Object> values = properties.get(obj);
-            setPropertiesOnTarget(camelContext, obj, values, true, true);
+            setPropertiesOnTarget(camelContext, obj, values, mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
 
-        // TODO: log if any options was not configured
+        // TODO: Log which options was not set
     }
 
     protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {

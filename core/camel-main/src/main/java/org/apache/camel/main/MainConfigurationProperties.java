@@ -22,6 +22,7 @@ package org.apache.camel.main;
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
 
     private boolean autoConfigurationEnabled = true;
+    private boolean autoConfigurationFailFast = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
@@ -78,6 +79,20 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
+
+    public boolean isAutoConfigurationFailFast() {
+        return autoConfigurationFailFast;
+    }
+
+    /**
+     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * such as a invalid property name, etc.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
+        this.autoConfigurationFailFast = autoConfigurationFailFast;
     }
 
     public boolean isAutowireComponentProperties() {
@@ -169,6 +184,17 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+        return this;
+    }
+
+    /**
+     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * such as a invalid property name, etc.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
+        this.autoConfigurationFailFast = autoConfigurationFailFast;
         return this;
     }
 

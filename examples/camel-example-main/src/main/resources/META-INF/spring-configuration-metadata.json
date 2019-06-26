@@ -161,6 +161,13 @@
 			"defaultValue":"true"
 		},
 		{
+			"name":"camel.main.auto-configuration-fail-fast",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
 			"name":"camel.main.auto-startup",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
