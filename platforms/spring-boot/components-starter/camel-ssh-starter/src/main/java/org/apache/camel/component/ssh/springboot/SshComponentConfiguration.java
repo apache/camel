@@ -278,7 +278,7 @@ public class SshComponentConfiguration
          * authentication. KeyPairProvider.loadKey(...) will be passed this
          * value. Defaults to ssh-rsa.
          */
-        private String keyType = "ssh-rsa";
+        private String keyType;
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
