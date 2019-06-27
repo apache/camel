@@ -145,4 +145,23 @@ public class ObjectConverterTest extends Assert {
         assertEquals((Float) Float.NaN, ObjectConverter.toFloat(Float.NaN));
     }
 
+    @Test
+    public void testToBoolean() throws Exception {
+        assertTrue(ObjectConverter.toBoolean("true"));
+        assertTrue(ObjectConverter.toBoolean("TRUE"));
+        assertFalse(ObjectConverter.toBoolean("false"));
+        assertFalse(ObjectConverter.toBoolean("FALSE"));
+        assertNull(ObjectConverter.toBoolean("1"));
+        assertNull(ObjectConverter.toBoolean(""));
+        assertNull(ObjectConverter.toBoolean("yes"));
+
+        assertTrue(ObjectConverter.toBool("true"));
+        assertTrue(ObjectConverter.toBool("TRUE"));
+        assertFalse(ObjectConverter.toBool("false"));
+        assertFalse(ObjectConverter.toBool("FALSE"));
+        assertFalse(ObjectConverter.toBool("1"));
+        assertFalse(ObjectConverter.toBool(""));
+        assertFalse(ObjectConverter.toBool("yes"));
+    }
+
 }
