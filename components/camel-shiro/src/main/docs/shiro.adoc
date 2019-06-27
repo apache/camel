@@ -293,7 +293,7 @@ as shown below:
 --------------------------------------------------------------------------------------
 
 When you use the username and password headers, then the
-ShiroSecurityPolicy in the Camel route will automatic transform those
+ShiroSecurityPolicy in the Camel route will automatically transform those
 into a single header with key
 ShiroSecurityConstants.SHIRO_SECURITY_TOKEN with the token. Then token
 is either a `ShiroSecurityToken` instance, or a base64 representation as
