@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
@@ -27,8 +30,6 @@ import org.apache.camel.support.ObjectHelper;
  * A default implementation of {@link Injector} which just uses reflection to
  * instantiate new objects using their zero argument constructor,
  * and then performing bean post processing using {@link CamelBeanPostProcessor}.
- * <p/>
- * For more complex implementations try the Spring or Guice implementations.
  */
 public class DefaultInjector implements Injector  {
 
@@ -42,6 +43,22 @@ public class DefaultInjector implements Injector  {
     @Override
     public <T> T newInstance(Class<T> type) {
         return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, String factoryMethod) {
+        T answer = null;
+        try {
+            // lookup factory method
+            Method fm = type.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+                Object obj = fm.invoke(null);
+                answer = type.cast(obj);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+        }
+        return answer;
     }
 
     @Override

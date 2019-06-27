@@ -69,6 +69,11 @@ public class AbstractCamelContextFactoryBeanTest {
             }
 
             @Override
+            public <T> T newInstance(Class<T> type, String factoryMethod) {
+                return null;
+            }
+
+            @Override
             public <T> T newInstance(Class<T> type, boolean postProcessBean) {
                 return ObjectHelper.newInstance(type);
             }

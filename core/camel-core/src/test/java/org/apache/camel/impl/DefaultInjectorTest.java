@@ -40,6 +40,18 @@ public class DefaultInjectorTest extends Assert {
         assertEquals("WorldWorld", reply);
     }
 
+    @Test
+    public void testDefaultInjectorFactory() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        // use the injector (will use the default)
+        MyOtherBean bean = context.getInjector().newInstance(MyOtherBean.class, "getInstance");
+
+        Object reply = bean.doSomething("World");
+        assertEquals("WorldWorld", reply);
+    }
+
     public static class MyBean {
 
         @Produce("language:simple:${body}${body}")
@@ -47,6 +59,19 @@ public class DefaultInjectorTest extends Assert {
 
         public Object doSomething(String body) {
             return template.requestBody(body);
+        }
+    }
+
+    public static class MyOtherBean {
+
+        private static MyOtherBean me = new MyOtherBean();
+
+        public static MyOtherBean getInstance() {
+            return me;
+        }
+
+        public Object doSomething(String body) {
+            return body + body;
         }
     }
 

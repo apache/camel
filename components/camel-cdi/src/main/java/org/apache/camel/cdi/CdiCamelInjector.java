@@ -16,8 +16,11 @@
  */
 package org.apache.camel.cdi;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
@@ -36,6 +39,22 @@ final class CdiCamelInjector implements Injector {
     @Override
     public <T> T newInstance(Class<T> type) {
         return newInstance(type, true);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> type, String factoryMethod) {
+        T answer = null;
+        try {
+            // lookup factory method
+            Method fm = type.getMethod(factoryMethod);
+            if (Modifier.isStatic(fm.getModifiers()) && Modifier.isPublic(fm.getModifiers()) && fm.getReturnType() == type) {
+                Object obj = fm.invoke(null);
+                answer = type.cast(obj);
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error invoking factory method: " + factoryMethod + " on class: " + type, e);
+        }
+        return answer;
     }
 
     @Override
