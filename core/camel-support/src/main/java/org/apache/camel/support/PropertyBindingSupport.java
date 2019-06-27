@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
@@ -549,33 +550,37 @@ public final class PropertyBindingSupport {
                 // its a new class to be created
                 String className = value.toString().substring(7);
                 Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                if (type != null) {
-                    value = context.getInjector().newInstance(type);
-                    if (value == null) {
-                        throw new IllegalArgumentException("Cannot create instance of class: " + className);
-                    }
+                value = context.getInjector().newInstance(type);
+                if (value == null) {
+                    throw new IllegalArgumentException("Cannot create instance of class: " + className);
                 }
             } else if (value.toString().startsWith("#type:")) {
                 // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
                 String typeName = value.toString().substring(6);
                 Class<?> type = context.getClassResolver().resolveMandatoryClass(typeName);
-                if (type != null) {
-                    Set<?> types = context.getRegistry().findByType(type);
-                    if (types.size() == 1) {
-                        value = types.iterator().next();
-                    }
+                Set<?> types = context.getRegistry().findByType(type);
+                if (types.size() == 1) {
+                    value = types.iterator().next();
+                } else if (types.size() > 1) {
+                    throw new IllegalArgumentException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
+                } else {
+                    throw new IllegalArgumentException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
                 }
             } else if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
                 Method method = findBestSetterMethod(target.getClass(), name, fluentBuilder, allowPrivateSetter, ignoreCase);
                 if (method != null) {
                     Class<?> parameterType = method.getParameterTypes()[0];
-                    if (parameterType != null) {
-                        Set<?> types = context.getRegistry().findByType(parameterType);
-                        if (types.size() == 1) {
-                            value = types.iterator().next();
-                        }
+                    Set<?> types = context.getRegistry().findByType(parameterType);
+                    if (types.size() == 1) {
+                        value = types.iterator().next();
+                    } else if (types.size() > 1) {
+                        throw new IllegalArgumentException("Cannot select single type: " + parameterType + " as there are " + types.size() + " beans in the registry with this type");
+                    } else {
+                        throw new IllegalArgumentException("Cannot select single type: " + parameterType + " as there are no beans in the registry with this type");
                     }
+                } else {
+                    throw new IllegalArgumentException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
                 }
             } else if (value.toString().startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
@@ -587,7 +592,7 @@ public final class PropertyBindingSupport {
         boolean hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
         if (!hit && mandatory) {
             // there is no setter with this given name, so lets report this as a problem
-            throw new IllegalArgumentException("Cannot find setter method: " + name + " on bean: " + target + " when binding property: " + ognlPath);
+            throw new IllegalArgumentException("Cannot find setter method: " + name + " on bean: " + target + " of type: " + target.getClass().getName() + " when binding property: " + ognlPath);
         }
         return hit;
     }
