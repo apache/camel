@@ -43,12 +43,6 @@ public class SpelTest extends LanguageTestSupport {
     }
     
     @Test
-    public void testGetOutFalseKeepsNullOutMessage() throws Exception {
-        assertExpression("exchange.hasOut()", false);
-        assertFalse(exchange.hasOut());
-    }
-
-    @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("#{response.body}", null);
         assertTrue(exchange.hasOut());

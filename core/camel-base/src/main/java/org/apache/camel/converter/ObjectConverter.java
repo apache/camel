@@ -259,7 +259,7 @@ public final class ObjectConverter {
 
     @Converter
     public static Boolean toBoolean(String value) {
-        return Boolean.parseBoolean(value);
+        return org.apache.camel.util.ObjectHelper.toBoolean(value);
     }
 
 }
