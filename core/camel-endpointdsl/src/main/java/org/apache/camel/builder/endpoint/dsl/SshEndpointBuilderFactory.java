@@ -525,7 +525,9 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to ssh-rsa.
+         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
+         * first available KeyPair that is loaded. Prior to this, a KeyType of
+         * 'ssh-rsa' was enforced by default.
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
@@ -892,7 +894,9 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to ssh-rsa.
+         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
+         * first available KeyPair that is loaded. Prior to this, a KeyType of
+         * 'ssh-rsa' was enforced by default.
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
@@ -1141,7 +1145,9 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to ssh-rsa.
+         * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
+         * first available KeyPair that is loaded. Prior to this, a KeyType of
+         * 'ssh-rsa' was enforced by default.
          * The option is a <code>java.lang.String</code> type.
          * @group security
          */
