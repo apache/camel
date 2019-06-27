@@ -115,7 +115,7 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *certResource* (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
 | *keyPairProvider* (security) | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
-| *keyType* (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. | ssh-rsa | String
+| *keyType* (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String
 | *password* (security) | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
 | *username* (security) | Sets the username to use in logging into the remote SSH server. |  | String
 |===
@@ -210,7 +210,7 @@ and which options are set.
 set, and if so, use it to locate the referenced Public Key certificate
 and use that for authentication.
 2.  If `certResource` is not set, it will look to see if a
-`keyPairProvider` has been set, and if so, it will use that to for
+`keyPairProvider` has been set, and if so, it will use that for
 certificate based authentication.
 3.  If neither `certResource` nor `keyPairProvider` are set, it will use
 the `username` and `password` options for authentication. Even though the `username` 

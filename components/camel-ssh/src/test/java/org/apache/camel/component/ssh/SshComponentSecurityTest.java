@@ -52,6 +52,19 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testECFile() throws Exception {
+        final String msg = "test";
+
+        MockEndpoint mock = getMockEndpoint("mock:ecFile");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(msg);
+
+        template.sendBody("direct:ssh-ecFile", msg);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -77,6 +90,10 @@ public class SshComponentSecurityTest extends SshComponentTestSupport {
                 from("direct:ssh-rsaFile")
                         .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/hostkey.pem")
                         .to("mock:rsaFile");
+
+                from("direct:ssh-ecFile")
+                    .to("ssh://smx@localhost:" + port + "?certResource=file:src/test/resources/ec.pem")
+                    .to("mock:ecFile");
             }
         };
     }
