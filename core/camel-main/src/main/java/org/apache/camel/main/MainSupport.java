@@ -776,18 +776,30 @@ public abstract class MainSupport extends ServiceSupport {
             LOG.debug("    {}={}", key, prop.getProperty(key));
         }
 
+        // special for environment-variable-enbaled as we need to know this early before we set all the other options
+        Object envEnabled = prop.remove("camel.main.autoConfigurationEnvironmentVariablesEnabled");
+        if (envEnabled == null) {
+            envEnabled = prop.remove("camel.main.auto-configuration-environment-variables-enabled");
+            if (envEnabled != null) {
+                PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationEnvironmentVariablesEnabled", envEnabled, true);
+            }
+        }
+
         // load properties from ENV (override existing)
-        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
-        if (!propENV.isEmpty()) {
-            prop.putAll(propENV);
-            LOG.debug("Properties from OS environment variables:");
-            for (String key : propENV.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propENV.getProperty(key));
+        Properties propENV = null;
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
             }
         }
 
         // special for fail-fast as we need to know this early before we set all the other options
-        Object failFast = propENV.remove("camel.main.autoconfigurationfailfast");
+        Object failFast = propENV != null ? propENV.remove("camel.main.autoconfigurationfailfast") : null;
         if (failFast != null) {
             PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
         } else {
@@ -843,12 +855,14 @@ public abstract class MainSupport extends ServiceSupport {
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
 
         // load properties from ENV (override existing)
-        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
-        if (!propENV.isEmpty()) {
-            prop.putAll(propENV);
-            LOG.debug("Properties from OS environment variables:");
-            for (String key : propENV.stringPropertyNames()) {
-                LOG.debug("    {}={}", key, propENV.getProperty(key));
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+                LOG.debug("Properties from OS environment variables:");
+                for (String key : propENV.stringPropertyNames()) {
+                    LOG.debug("    {}={}", key, propENV.getProperty(key));
+                }
             }
         }
 
@@ -931,9 +945,11 @@ public abstract class MainSupport extends ServiceSupport {
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
 
         // load properties from ENV (override existing)
-        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
-        if (!propENV.isEmpty()) {
-            prop.putAll(propENV);
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.properties."});
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+            }
         }
 
         Map<String, Object> properties = new LinkedHashMap<>();
@@ -966,9 +982,11 @@ public abstract class MainSupport extends ServiceSupport {
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
 
         // load properties from ENV (override existing)
-        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
-        if (!propENV.isEmpty()) {
-            prop.putAll(propENV);
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.main."});
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+            }
         }
 
         Map<String, Object> properties = new LinkedHashMap<>();
@@ -1024,9 +1042,11 @@ public abstract class MainSupport extends ServiceSupport {
         prop.putAll(propPC);
 
         // load properties from ENV (override existing)
-        Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.", "camel.dataformat.", "camel.language."});
-        if (!propENV.isEmpty()) {
-            prop.putAll(propENV);
+        if (mainConfigurationProperties.isAutoConfigurationEnvironmentVariablesEnabled()) {
+            Properties propENV = loadEnvironmentVariablesAsProperties(new String[]{"camel.component.", "camel.dataformat.", "camel.language."});
+            if (!propENV.isEmpty()) {
+                prop.putAll(propENV);
+            }
         }
 
         Map<PropertyOptionKey, Map<String, Object>> properties = new LinkedHashMap<>();
