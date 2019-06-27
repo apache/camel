@@ -130,7 +130,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         boolean expectReload = expectBlueprintContainerReloadOnConfigAdminUpdate();
 
         // must register override properties early in OSGi containers
-        Properties extra = useOverridePropertiesWithPropertiesComponent();
+        extra = useOverridePropertiesWithPropertiesComponent();
         if (extra != null) {
             answer.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
         }
