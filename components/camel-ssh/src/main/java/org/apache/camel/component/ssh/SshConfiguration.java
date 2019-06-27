@@ -202,8 +202,9 @@ public class SshConfiguration implements Cloneable {
 
     /**
      * Sets the key type to pass to the KeyPairProvider as part of authentication.
-     * KeyPairProvider.loadKey(...) will be passed this value. Defaults to
-     * "ssh-rsa".
+     * KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0,
+     * by default Camel will select the first available KeyPair that is loaded. Prior to
+     * this, a KeyType of 'ssh-rsa' was enforced by default.
      *
      * @param keyType
      *            String defining the type of KeyPair to use for authentication.
