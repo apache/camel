@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.IntrospectionSupport.findSetterMethods;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -44,7 +44,9 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  *     <li>reference by bean id - Values can refer to other beans in the registry by prefixing with with # or #bean: eg #myBean or #bean:myBean</li>
  *     <li>reference by type - Values can refer to singleton beans by their type in the registry by prefixing with #type: syntax, eg #type:com.foo.MyClassType</li>
  *     <li>autowire by type - Values can refer to singleton beans by auto wiring by setting the value to #autowired</li>
- *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType</li>
+ *     <li>reference new class - Values can refer to creating new beans by their class name by prefixing with #class, eg #class:com.foo.MyClassType.
+ *                               The class is created using a default no-arg constructor, however if you need to create the instance via a factory method
+ *                               then you specify the method as shown: #class:com.foo.MyClassType#myFactoryMethod</li>.
  *     <li>ignore case - Whether to ignore case for property keys<li>
  * </ul>
  * <p/>
@@ -549,10 +551,19 @@ public final class PropertyBindingSupport {
             if (value.toString().startsWith("#class:")) {
                 // its a new class to be created
                 String className = value.toString().substring(7);
+                String factoryMethod = null;
+                if (className.indexOf('#') != -1) {
+                    factoryMethod = StringHelper.after(className, "#");
+                    className = StringHelper.before(className, "#");
+                }
                 Class<?> type = context.getClassResolver().resolveMandatoryClass(className);
-                value = context.getInjector().newInstance(type);
+                if (factoryMethod != null) {
+                    value = context.getInjector().newInstance(type, factoryMethod);
+                } else {
+                    value = context.getInjector().newInstance(type);
+                }
                 if (value == null) {
-                    throw new IllegalArgumentException("Cannot create instance of class: " + className);
+                    throw new IllegalStateException("Cannot create instance of class: " + className);
                 }
             } else if (value.toString().startsWith("#type:")) {
                 // its reference by type, so lookup the actual value and use it if there is only one instance in the registry
@@ -562,9 +573,9 @@ public final class PropertyBindingSupport {
                 if (types.size() == 1) {
                     value = types.iterator().next();
                 } else if (types.size() > 1) {
-                    throw new IllegalArgumentException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
+                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are " + types.size() + " beans in the registry with this type");
                 } else {
-                    throw new IllegalArgumentException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
+                    throw new IllegalStateException("Cannot select single type: " + typeName + " as there are no beans in the registry with this type");
                 }
             } else if (value.toString().equals("#autowired")) {
                 // we should get the type from the setter
@@ -575,12 +586,12 @@ public final class PropertyBindingSupport {
                     if (types.size() == 1) {
                         value = types.iterator().next();
                     } else if (types.size() > 1) {
-                        throw new IllegalArgumentException("Cannot select single type: " + parameterType + " as there are " + types.size() + " beans in the registry with this type");
+                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are " + types.size() + " beans in the registry with this type");
                     } else {
-                        throw new IllegalArgumentException("Cannot select single type: " + parameterType + " as there are no beans in the registry with this type");
+                        throw new IllegalStateException("Cannot select single type: " + parameterType + " as there are no beans in the registry with this type");
                     }
                 } else {
-                    throw new IllegalArgumentException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
+                    throw new IllegalStateException("Cannot find setter method with name: " + name + " on class: " + target.getClass().getName() + " to use for autowiring");
                 }
             } else if (value.toString().startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport

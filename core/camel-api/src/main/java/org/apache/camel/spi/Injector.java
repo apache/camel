@@ -33,6 +33,16 @@ public interface Injector {
     <T> T newInstance(Class<T> type);
 
     /**
+     * Instantiates a new instance of the given type by using the factory method
+     * (this will not perform bean post processing)
+     *
+     * @param type the type of object to create
+     * @param factoryMethod to create the new instance via factory method which must be public static and return the type
+     * @return a newly created instance
+     */
+    <T> T newInstance(Class<T> type, String factoryMethod);
+
+    /**
      * Instantiates a new instance of the given type; possibly injecting values
      * into the object in the process (bean post processing if enabled)
      *
