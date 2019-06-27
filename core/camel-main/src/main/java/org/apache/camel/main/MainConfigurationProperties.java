@@ -22,6 +22,7 @@ package org.apache.camel.main;
 public class MainConfigurationProperties extends DefaultConfigurationProperties<MainConfigurationProperties> {
 
     private boolean autoConfigurationEnabled = true;
+    private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationFailFast = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
@@ -79,6 +80,21 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
+
+    public boolean isAutoConfigurationEnvironmentVariablesEnabled() {
+        return autoConfigurationEnvironmentVariablesEnabled;
+    }
+
+    /**
+     * Whether auto configuration should include OS environment variables as well. When enabled this
+     * allows to overrule any configuration using an OS environment variable. For example to set
+     * a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
+        this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
     }
 
     public boolean isAutoConfigurationFailFast() {
@@ -184,6 +200,18 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
+        return this;
+    }
+
+    /**
+     * Whether auto configuration should include OS environment variables as well. When enabled this
+     * allows to overrule any configuration using an OS environment variable. For example to set
+     * a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
+        this.autoConfigurationEnvironmentVariablesEnabled = autoConfigurationEnvironmentVariablesEnabled;
         return this;
     }
 

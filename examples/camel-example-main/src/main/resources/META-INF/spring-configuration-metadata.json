@@ -161,6 +161,13 @@
 			"defaultValue":"true"
 		},
 		{
+			"name":"camel.main.auto-configuration-environment-variables-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
 			"name":"camel.main.auto-configuration-fail-fast",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
