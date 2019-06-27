@@ -37,7 +37,7 @@ public class PaddyRouteTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        sendFile(getFtpUrl() + "/?password=admin", "Hello World", "incoming/hello.txt");
+        sendFile(getFtpUrl(), "Hello World", "incoming/hello.txt");
 
         assertMockEndpointsSatisfied();
     }
