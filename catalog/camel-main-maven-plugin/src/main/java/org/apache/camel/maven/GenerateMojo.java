@@ -36,6 +36,7 @@ import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootGroupData;
 import org.apache.camel.maven.model.SpringBootPropertyData;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -49,7 +50,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Extendable;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 import static org.apache.camel.maven.GenerateHelper.sanitizeDescription;
@@ -507,37 +512,61 @@ public class GenerateMojo extends AbstractMainMojo {
         }
     }
 
-    private String extractJavaDocFromMethod(JavaClassSource clazz, Method method) {
-        if (clazz == null) {
+    private String extractJavaDocFromMethod(Object input, Method method) {
+        if (input == null) {
             return null;
         }
-        MethodSource ms = clazz.getMethod(method.getName(), method.getParameterTypes()[0]);
+
+        String answer = "";
+
+        // input can be both a class or interface so we need to split this up into several pieces
+        MethodHolderSource mhs = (MethodHolderSource) input;
+        JavaType jt = (JavaType) input;
+        Extendable ext = null;
+        if (input instanceof Extendable) {
+            ext = (Extendable) input;
+        }
+        Importer importer = null;
+        if (input instanceof Importer) {
+            importer = (Importer) input;
+        }
+        MethodSource ms = mhs.getMethod(method.getName(), method.getParameterTypes()[0]);
         if (ms != null) {
-            return ms.getJavaDoc().getText();
+            answer = ms.getJavaDoc().getText();
         }
 
-        // maybe its from the super class
-        String st = clazz.getSuperType();
-        if (st != null && !"java.lang.Object".equals(st) && !"Object".equals(st)) {
-            st = clazz.resolveType(st);
+        String st = null;
+        if (answer.isEmpty()) {
+            // special for activemq-artemis
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(jt.getQualifiedName())) {
+                st = "org.apache.activemq.artemis.api.core.client.ServerLocator";
+            } else {
+                // maybe its from the super class
+                st = ext != null ? ext.getSuperType() : null;
+            }
+        }
+
+        if (answer.isEmpty() && st != null && !"java.lang.Object".equals(st) && !"Object".equals(st)) {
+            st = importer != null ? importer.resolveType(st) : st;
             // find this file cia classloader
             String path = st.replace('.', '/') + ".java";
             InputStream is = sourcesClassLoader.getResourceAsStream(path);
             if (is != null) {
-                String text = null;
+                String text;
                 try {
                     text = IOHelper.loadText(is);
                     IOHelper.close(is);
-                    clazz = (JavaClassSource) Roaster.parse(text);
-                    getLog().debug("Loaded source code: " + clazz);
-                    return extractJavaDocFromMethod(clazz, method);
+                    input = Roaster.parse(text);
+                    getLog().debug("Loaded source code: " + input);
+                    answer = extractJavaDocFromMethod(input, method);
                 } catch (IOException e) {
                     // ignore
                     getLog().warn("Cannot load Java source: " + path + " from classpath due " + e.getMessage());
                 }
             }
         }
-        return null;
+
+        return answer;
     }
 
 }

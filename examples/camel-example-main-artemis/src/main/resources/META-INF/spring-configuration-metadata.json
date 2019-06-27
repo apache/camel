@@ -1123,25 +1123,25 @@
 			"name":"camel.component.jms.connection-factory.auto-group",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setAutoGroup"
+			"description":"Sets whether producers created through this factory will automaticallyassign a group ID to the messages they sent. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setAutoGroup"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.block-on-acknowledge",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnAcknowledge"
+			"description":"Sets whether consumers created through this factory will block whilesending message acknowledgments or do it asynchronously. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnAcknowledge"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.block-on-durable-send",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnDurableSend"
+			"description":"Sets whether producers created through this factory will block while sending durable messages or do it asynchronously. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnDurableSend"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.block-on-non-durable-send",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnNonDurableSend"
+			"description":"Sets whether producers created through this factory will block while sending non-durable messages or do it asynchronously. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setBlockOnNonDurableSend"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.cache-destinations",
@@ -1153,25 +1153,25 @@
 			"name":"camel.component.jms.connection-factory.cache-large-messages-client",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCacheLargeMessagesClient"
+			"description":"Sets whether large messages received by consumers created through this factory will be cached in temporary files or not. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCacheLargeMessagesClient"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.call-failover-timeout",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCallFailoverTimeout"
+			"description":"Sets the blocking call failover timeout.When the client is awaiting failover, this is over and above the normal call timeout.Value must be greater or equals to -1, -1 means forever. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCallFailoverTimeout"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.call-timeout",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCallTimeout"
+			"description":"Sets the blocking call timeout.Value must be greater or equals to 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCallTimeout"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.client-failure-check-period",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setClientFailureCheckPeriod"
+			"description":"Sets the period (in milliseconds) used to check if a client has failed to receive pings fromthe server.Value must be -1 (to disable) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setClientFailureCheckPeriod"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.client-id",
@@ -1183,37 +1183,37 @@
 			"name":"camel.component.jms.connection-factory.compress-large-message",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCompressLargeMessage"
+			"description":"Sets whether to compress or not large messages. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setCompressLargeMessage"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.confirmation-window-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConfirmationWindowSize"
+			"description":"Sets the size for the confirmation window buffer of clients using this factory.Value must be -1 (to disable the window) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConfirmationWindowSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.connection-load-balancing-policy-class-name",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConnectionLoadBalancingPolicyClassName"
+			"description":"Sets the class name of the connection load balancing policy.Value must be the name of a class implementing . Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConnectionLoadBalancingPolicyClassName"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.connection-ttl",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConnectionTTL"
+			"description":"Sets this factory's connections time-to-live.Value must be -1 (to disable) or greater or equals to 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConnectionTTL"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.consumer-max-rate",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConsumerMaxRate"
+			"description":"Sets the maximum rate of message consumption for consumers created through this factory.Value must -1 (to disable) or a positive integer corresponding to the maximum desired message consumption rate specified in units of messages per second. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConsumerMaxRate"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.consumer-window-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConsumerWindowSize"
+			"description":"Sets the window size for flow control of the consumers created through this factory.Value must be -1 (to disable flow control), 0 (to not buffer any messages) or greater than 0(to set the maximum size of the buffer). Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setConsumerWindowSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.deserialization-black-list",
@@ -1249,13 +1249,13 @@
 			"name":"camel.component.jms.connection-factory.failover-on-initial-connection",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setFailoverOnInitialConnection"
+			"description":"Sets the value for FailoverOnInitialReconnection. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setFailoverOnInitialConnection"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.group-id",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setGroupID"
+			"description":"Sets the group ID that will be set on each message sent through this factory. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setGroupID"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.ignore-jta",
@@ -1273,25 +1273,25 @@
 			"name":"camel.component.jms.connection-factory.initial-connect-attempts",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setInitialConnectAttempts"
+			"description":"Sets the maximum number of attempts to establish an initial connection.Value must be -1 (to retry infinitely), 0 (to never retry connection) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setInitialConnectAttempts"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.initial-message-packet-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setInitialMessagePacketSize"
+			"description":"Sets the initial size of messages created through this factory.Value must be greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setInitialMessagePacketSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.max-retry-interval",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setMaxRetryInterval"
+			"description":"Sets the maximum retry interval.Value must be greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setMaxRetryInterval"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.min-large-message-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setMinLargeMessageSize"
+			"description":"Sets the large message size threshold.Value must be greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setMinLargeMessageSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.outgoing-interceptor-list",
@@ -1303,19 +1303,19 @@
 			"name":"camel.component.jms.connection-factory.pre-acknowledge",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setPreAcknowledge"
+			"description":"Sets to true to pre-acknowledge consumed messages on theserver before they are sent to consumers, else set to falseto let clients acknowledge the message they consume. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setPreAcknowledge"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.producer-max-rate",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setProducerMaxRate"
+			"description":"Sets the maximum rate of message production for producers created through this factory.Value must -1 (to disable) or a positive integer corresponding to the maximum desired message production rate specified in units of messages per second. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setProducerMaxRate"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.producer-window-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setProducerWindowSize"
+			"description":"Returns the window size for flow control of the producers created through this factory.Value must be -1 (to disable flow control) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setProducerWindowSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.protocol-manager-factory-str",
@@ -1327,31 +1327,31 @@
 			"name":"camel.component.jms.connection-factory.reconnect-attempts",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setReconnectAttempts"
+			"description":"Sets the maximum number of attempts to retry connection in case of failure.Value must be -1 (to retry infinitely), 0 (to never retry connection) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setReconnectAttempts"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.retry-interval",
 			"type":"java.lang.Long",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setRetryInterval"
+			"description":"Sets the time to retry connections created by this factory after failure.Value must be greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setRetryInterval"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.retry-interval-multiplier",
 			"type":"double",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setRetryIntervalMultiplier"
+			"description":"Sets the multiplier to apply to successive retry intervals.Value must be positive. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setRetryIntervalMultiplier"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.scheduled-thread-pool-max-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setScheduledThreadPoolMaxSize"
+			"description":"Sets the maximum size of the scheduled thread pool.This setting is relevant only if this factory does not use global pools.Value must be greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setScheduledThreadPoolMaxSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.thread-pool-max-size",
 			"type":"java.lang.Integer",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setThreadPoolMaxSize"
+			"description":"Sets the maximum size of the thread pool.This setting is relevant only if this factory does not use global pools.Value must be -1 (for unlimited thread pool) or greater than 0. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setThreadPoolMaxSize"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.transaction-batch-size",
@@ -1363,7 +1363,7 @@
 			"name":"camel.component.jms.connection-factory.use-global-pools",
 			"type":"java.lang.Boolean",
 			"sourceType":"org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory",
-			"description":"Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setUseGlobalPools"
+			"description":"Sets whether this factory will use global thread pools (shared among all the factories in the same JVM)or its own pools. Auto discovered option from class: org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory to set the option via setter: setUseGlobalPools"
 		},
 		{
 			"name":"camel.component.jms.connection-factory.use-topology-for-load-balancing",
