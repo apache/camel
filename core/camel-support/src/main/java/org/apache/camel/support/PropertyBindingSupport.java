@@ -401,8 +401,9 @@ public final class PropertyBindingSupport {
      * @param name          name of property
      * @param value         value of property
      * @return              true if property was bound, false otherwise
+     * @throws PropertyBindingException is thrown if error binding property
      */
-    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) {
+    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value) throws PropertyBindingException {
         return bindProperty(camelContext, target, name, value, false);
     }
 
@@ -415,14 +416,15 @@ public final class PropertyBindingSupport {
      * @param value         value of property
      * @param ignoreCase    whether to ignore case for property keys
      * @return              true if property was bound, false otherwise
+     * @throws PropertyBindingException is thrown if error binding property
      */
-    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+    public static boolean bindProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException {
         try {
             if (target != null && name != null) {
                 return setProperty(camelContext, target, name, value, false, ignoreCase, true, true, true, true, true, true);
             }
         } catch (Exception e) {
-            throw new PropertyBindingException(target, name, e);
+            throw new PropertyBindingException(target, name, value, e);
         }
 
         return false;
@@ -436,7 +438,7 @@ public final class PropertyBindingSupport {
                 return setProperty(camelContext, target, name, value, false, ignoreCase, nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder);
             }
         } catch (Exception e) {
-            throw new PropertyBindingException(target, name, e);
+            throw new PropertyBindingException(target, name, value, e);
         }
 
         return false;
@@ -449,8 +451,9 @@ public final class PropertyBindingSupport {
      * @param target        the target object
      * @param name          name of property
      * @param value         value of property
+     * @throws PropertyBindingException is thrown if error binding property, or the property was not bound
      */
-    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) {
+    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value) throws PropertyBindingException {
         bindMandatoryProperty(camelContext, target, name, value, false);
     }
 
@@ -462,17 +465,18 @@ public final class PropertyBindingSupport {
      * @param name          name of property
      * @param value         value of property
      * @param ignoreCase    whether to ignore case for property keys
+     * @throws PropertyBindingException is thrown if error binding property, or the property was not bound
      */
-    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException{
         boolean bound;
         if (target != null && name != null) {
             try {
                 bound = setProperty(camelContext, target, name, value, true, ignoreCase, true, true, true, true, true, true);
             } catch (Exception e) {
-                throw new PropertyBindingException(target, name, e);
+                throw new PropertyBindingException(target, name, value, e);
             }
             if (!bound) {
-                throw new PropertyBindingException(target, name);
+                throw new PropertyBindingException(target, name, value);
             }
         }
     }
