@@ -62,7 +62,7 @@ public final class PropertyBindingSupport {
         private boolean placeholder = true;
         private boolean fluentBuilder = true;
         private boolean allowPrivateSetter = true;
-        private boolean ignoreCase = false;
+        private boolean ignoreCase;
         private String optionPrefix;
 
         /**

@@ -1217,7 +1217,7 @@ public abstract class MainSupport extends ServiceSupport {
         return rc;
     }
 
-    private static class PropertyOptionKey {
+    private static final class PropertyOptionKey {
 
         private final String key;
         private final Object instance;
@@ -1244,8 +1244,7 @@ public abstract class MainSupport extends ServiceSupport {
                 return false;
             }
             PropertyOptionKey that = (PropertyOptionKey) o;
-            return key.equals(that.key) &&
-                    instance.equals(that.instance);
+            return key.equals(that.key) && instance.equals(that.instance);
         }
 
         @Override
