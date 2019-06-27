@@ -151,7 +151,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.ssh.configuration.fail-on-unknown-host* | Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set. | false | Boolean
 | *camel.component.ssh.configuration.host* | Sets the hostname of the remote SSH server. |  | String
 | *camel.component.ssh.configuration.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
-| *camel.component.ssh.configuration.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to "ssh-rsa". | ssh-rsa | String
+| *camel.component.ssh.configuration.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default. |  | String
 | *camel.component.ssh.configuration.known-hosts-resource* | Sets the resource path for a known_hosts file |  | String
 | *camel.component.ssh.configuration.password* | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
 | *camel.component.ssh.configuration.poll-command* | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from("ssh://...") You may need to end your command with a newline, and that must be URL encoded %0A |  | String
