@@ -24,6 +24,7 @@ import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,12 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SshHelper {
-    
+
     protected static final Logger LOG = LoggerFactory.getLogger(SshHelper.class);
-    
+
     private SshHelper() {
     }
-    
+
     public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client) throws Exception {
         SshConfiguration configuration = endpoint.getConfiguration();
 
@@ -73,11 +74,11 @@ public final class SshHelper {
 
         ClientChannel channel = null;
         ClientSession session = null;
-        
+
         try {
             AuthFuture authResult;
             session = connectFuture.getSession();
-    
+
             KeyPairProvider keyPairProvider;
             final String certResource = configuration.getCertResource();
             if (certResource != null) {
@@ -90,7 +91,17 @@ public final class SshHelper {
             // either provide a keypair or password identity first
             if (keyPairProvider != null) {
                 LOG.debug("Attempting to authenticate username '{}' using a key identity", userName);
-                KeyPair pair = keyPairProvider.loadKey(configuration.getKeyType());
+                KeyPair pair = null;
+                // If we have no configured key type then just use the first keypair
+                if (configuration.getKeyType() == null) {
+                    Iterator<KeyPair> iterator = keyPairProvider.loadKeys().iterator();
+                    if (iterator.hasNext()) {
+                        pair = iterator.next();
+                    }
+                } else {
+                    pair = keyPairProvider.loadKey(configuration.getKeyType());
+                }
+
                 session.addPublicKeyIdentity(pair);
             } else {
                 String password = configuration.getPassword();
@@ -108,15 +119,15 @@ public final class SshHelper {
             authResult = session.auth();
 
             authResult.await(configuration.getTimeout());
-    
+
             if (!authResult.isDone() || authResult.isFailure()) {
                 LOG.debug("Failed to authenticate");
                 throw new RuntimeCamelException("Failed to authenticate username " + configuration.getUsername());
             }
-            
+
             InputStream in = null;
             PipedOutputStream reply = new PipedOutputStream();
-        
+
             // for now only two channel types are supported
             // shell option is added for specific purpose for now
             // may need further maintainance for further use cases
@@ -131,10 +142,10 @@ public final class SshHelper {
             }
 
             channel.setIn(in);
-    
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             channel.setOut(out);
-    
+
             ByteArrayOutputStream err = new ByteArrayOutputStream();
             channel.setErr(err);
             OpenFuture openFuture = channel.open();
@@ -163,12 +174,12 @@ public final class SshHelper {
             if (channel != null) {
                 channel.close(true);
             }
-            // need to make sure the session is closed 
+            // need to make sure the session is closed
             if (session != null) {
                 session.close(false);
             }
         }
-        
+
     }
 
     private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
