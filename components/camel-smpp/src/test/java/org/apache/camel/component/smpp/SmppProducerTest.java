@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
  * @version 
  */
 public class SmppProducerTest {
-    
+
     private SmppProducer producer;
     private SmppConfiguration configuration;
     private SmppEndpoint endpoint;
@@ -47,9 +47,10 @@ public class SmppProducerTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setPassword("password");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
-        
+
         producer = new SmppProducer(endpoint, configuration) {
             SMPPSession createSMPPSession() {
                 return session;
@@ -72,9 +73,9 @@ public class SmppProducerTest {
         when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameters))
             .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
-    
+
         producer.doStart();
-    
+
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
@@ -89,7 +90,7 @@ public class SmppProducerTest {
 
         producer.doStop();
     }
-    
+
     @Test
     public void doStopShouldCloseTheSMPPSession() throws Exception {
         when(endpoint.getConnectionString())
@@ -98,11 +99,11 @@ public class SmppProducerTest {
 
         producer.doStart();
         producer.doStop();
-        
+
         verify(session).removeSessionStateListener(isA(SessionStateListener.class));
         verify(session).unbindAndClose();
     }
-    
+
     @Test
     public void processInOnlyShouldExecuteTheCommand() throws Exception {
         SmppBinding binding = mock(SmppBinding.class);
@@ -110,13 +111,13 @@ public class SmppProducerTest {
         SmppCommand command = mock(SmppCommand.class);
         when(endpoint.getBinding()).thenReturn(binding);
         when(binding.createSmppCommand(session, exchange)).thenReturn(command);
-        
+
         producer.doStart();
         producer.process(exchange);
-        
+
         verify(command).execute(exchange);
     }
-    
+
     @Test
     public void getterShouldReturnTheSetValues() {
         assertSame(endpoint, producer.getEndpoint());

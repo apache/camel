@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * @version 
  */
 public class SmppConsumerTest {
-    
+
     private SmppConsumer consumer;
     private SmppEndpoint endpoint;
     private SmppConfiguration configuration;
@@ -50,16 +50,17 @@ public class SmppConsumerTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setPassword("password");
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         session = mock(SMPPSession.class);
-        
+
         // the construction of SmppConsumer will trigger the getCamelContext call
         consumer = new SmppConsumer(
-                endpoint, 
+                endpoint,
                 configuration,
                 processor) {
-            
+
             SMPPSession createSMPPSession() {
                 return session;
             }
@@ -79,9 +80,9 @@ public class SmppConsumerTest {
             "");
         when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
             .thenReturn("1");
-        
+
         consumer.doStart();
-        
+
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
@@ -93,20 +94,20 @@ public class SmppConsumerTest {
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
         when(endpoint.getConnectionString())
             .thenReturn("smpp://smppclient@localhost:2775");
-        
+
         consumer.doStop();
     }
-    
+
     @Test
     public void doStopShouldCloseTheSMPPSession() throws Exception {
         doStartShouldStartANewSmppSession();
         reset(endpoint, processor, session);
-        
+
         when(endpoint.getConnectionString())
             .thenReturn("smpp://smppclient@localhost:2775");
-        
+
         consumer.doStop();
-        
+
         verify(session).removeSessionStateListener(isA(SessionStateListener.class));
         verify(session).unbindAndClose();
     }

@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
  * @version 
  */
 public class SmppConfigurationTest {
-    
+
     private SmppConfiguration configuration;
 
     @Before
@@ -55,7 +55,7 @@ public class SmppConfigurationTest {
         assertEquals("", configuration.getAddressRange());
         assertEquals(new Integer(5000), configuration.getEnquireLinkTimer());
         assertEquals("localhost", configuration.getHost());
-        assertEquals("password", configuration.getPassword());
+        assertEquals(null, configuration.getPassword());
         assertEquals(new Integer(2775), configuration.getPort());
         assertEquals(0x01, configuration.getPriorityFlag());
         assertEquals(0x00, configuration.getProtocolId());
@@ -80,11 +80,11 @@ public class SmppConfigurationTest {
         assertEquals(null, configuration.getHttpProxyPassword());
         assertEquals(null, configuration.getSessionStateListener());
     }
-    
+
     @Test
     public void getterShouldReturnTheSetValues() {
         setNoneDefaultValues(configuration);
-        
+
         assertEquals("1919", configuration.getDestAddr());
         assertEquals(0x08, configuration.getDestAddrNpi());
         assertEquals(0x02, configuration.getDestAddrTon());
@@ -120,7 +120,7 @@ public class SmppConfigurationTest {
     @Test
     public void getterShouldReturnTheConfigureValuesFromURI() throws URISyntaxException {
         configuration.configureFromURI(new URI("smpp://client@127.0.0.1:2776"));
-        
+
         assertEquals("127.0.0.1", configuration.getHost());
         assertEquals(new Integer(2776), configuration.getPort());
         assertEquals("client", configuration.getSystemId());
@@ -143,7 +143,7 @@ public class SmppConfigurationTest {
     public void cloneShouldReturnAnEqualInstance() {
         setNoneDefaultValues(configuration);
         SmppConfiguration config = configuration.copy();
-        
+
         assertEquals(config.getDestAddr(), configuration.getDestAddr());
         assertEquals(config.getDestAddrNpi(), configuration.getDestAddrNpi());
         assertEquals(config.getDestAddrTon(), configuration.getDestAddrTon());
@@ -175,14 +175,14 @@ public class SmppConfigurationTest {
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
     }
-    
+
     @Test
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
                 + "usingSSL=false, "
                 + "enquireLinkTimer=5000, "
                 + "host=localhost, "
-                + "password=password, "
+                + "password=null, "
                 + "port=2775, "
                 + "systemId=smppclient, "
                 + "systemType=cp, "

@@ -49,7 +49,7 @@ public class SmppConfiguration implements Cloneable {
     @UriParam(label = "security", defaultValue = "smppclient", secret = true)
     private String systemId = "smppclient";
     @UriParam(label = "security", secret = true)
-    private String password = "password";
+    private String password;
     @UriParam(label = "common", defaultValue = "cp")
     private String systemType = "cp";
     @UriParam(label = "codec")
@@ -117,7 +117,7 @@ public class SmppConfiguration implements Cloneable {
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
-     * 
+     *
      * @param uri the full URI of the endpoint
      */
     public void configureFromURI(URI uri) {
@@ -188,7 +188,7 @@ public class SmppConfiguration implements Cloneable {
     public String getPassword() {
         return password;
     }
-    
+
     public byte getDataCoding() {
         return dataCoding;
     }
@@ -207,7 +207,7 @@ public class SmppConfiguration implements Cloneable {
     public void setDataCoding(byte dataCoding) {
         this.dataCoding = dataCoding;
     }
-    
+
     public byte getAlphabet() {
         return alphabet;
     }
@@ -477,7 +477,7 @@ public class SmppConfiguration implements Cloneable {
     public void setDestAddr(String destAddr) {
         this.destAddr = destAddr;
     }
-    
+
     public byte getTypeOfNumber() {
         return typeOfNumber;
     }
@@ -533,7 +533,7 @@ public class SmppConfiguration implements Cloneable {
     public void setUsingSSL(boolean usingSSL) {
         this.usingSSL = usingSSL;
     }
-    
+
     public long getInitialReconnectDelay() {
         return initialReconnectDelay;
     }
@@ -677,30 +677,30 @@ public class SmppConfiguration implements Cloneable {
 
     @Override
     public String toString() {
-        return "SmppConfiguration[usingSSL=" + usingSSL 
+        return "SmppConfiguration[usingSSL=" + usingSSL
             + ", enquireLinkTimer=" + enquireLinkTimer
-            + ", host=" + host 
-            + ", password=" + password 
-            + ", port=" + port 
-            + ", systemId=" + systemId 
+            + ", host=" + host
+            + ", password=" + password
+            + ", port=" + port
+            + ", systemId=" + systemId
             + ", systemType=" + systemType
             + ", dataCoding=" + dataCoding
             + ", alphabet=" + alphabet
             + ", encoding=" + encoding
             + ", transactionTimer=" + transactionTimer
             + ", registeredDelivery=" + registeredDelivery
-            + ", serviceType=" + serviceType 
-            + ", sourceAddrTon=" + sourceAddrTon 
+            + ", serviceType=" + serviceType
+            + ", sourceAddrTon=" + sourceAddrTon
             + ", destAddrTon=" + destAddrTon
-            + ", sourceAddrNpi=" + sourceAddrNpi 
-            + ", destAddrNpi=" + destAddrNpi 
+            + ", sourceAddrNpi=" + sourceAddrNpi
+            + ", destAddrNpi=" + destAddrNpi
             + ", addressRange=" + addressRange
             + ", protocolId=" + protocolId
-            + ", priorityFlag=" + priorityFlag 
-            + ", replaceIfPresentFlag=" + replaceIfPresentFlag 
-            + ", sourceAddr=" + sourceAddr 
-            + ", destAddr=" + destAddr 
-            + ", typeOfNumber=" + typeOfNumber 
+            + ", priorityFlag=" + priorityFlag
+            + ", replaceIfPresentFlag=" + replaceIfPresentFlag
+            + ", sourceAddr=" + sourceAddr
+            + ", destAddr=" + destAddr
+            + ", typeOfNumber=" + typeOfNumber
             + ", numberingPlanIndicator=" + numberingPlanIndicator
             + ", initialReconnectDelay=" + initialReconnectDelay
             + ", reconnectDelay=" + reconnectDelay
