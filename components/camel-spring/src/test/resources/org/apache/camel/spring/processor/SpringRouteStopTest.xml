@@ -48,7 +48,7 @@
             <from uri="direct:foo"/>
             <to uri="mock:foo"/>
             <!-- you can also set the Exchange#ROUTE_STOP property on Exchange to true -->
-            <setProperty propertyName="CamelRouteStop">
+            <setProperty name="CamelRouteStop">
                 <constant>true</constant>
             </setProperty>
             <to uri="mock:result"/>

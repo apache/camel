@@ -39,7 +39,7 @@
 
         <route>
             <from uri="seda:header"/>
-            <setHeader headerName="visited">
+            <setHeader name="visited">
                 <constant>true</constant>
             </setHeader>
             <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">

@@ -25,7 +25,7 @@
     <camelContext id="first" xmlns="http://camel.apache.org/schema/spring">
         <route id="first-route">
             <from uri="direct:inbound"/>
-            <setHeader headerName="context">
+            <setHeader name="context">
                 <constant>first</constant>
             </setHeader>
             <to uri="mock:outbound"/>

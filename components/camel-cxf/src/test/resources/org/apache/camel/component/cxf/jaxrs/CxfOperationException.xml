@@ -57,7 +57,7 @@
     <route>
        <from uri="cxfrs://bean://rsServer"/>
        <!-- We can remove this configure as the CXFRS producer is using the HttpAPI by default -->
-       <setHeader headerName="CamelCxfRsUsingHttpAPI">
+       <setHeader name="CamelCxfRsUsingHttpAPI">
          <constant>True</constant>        
        </setHeader>
        <to uri="cxfrs://bean://rsClient"/>

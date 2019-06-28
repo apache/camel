@@ -27,7 +27,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>      
-      <setHeader headerName="foo">
+      <setHeader name="foo">
         <constant>bar</constant>
       </setHeader>
       <to uri="mock:mid"/>

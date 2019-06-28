@@ -31,7 +31,7 @@
     <route>
       <from uri="direct:transactedHeader" />
       <transacted />
-      <setHeader headerName="myHeader">
+      <setHeader name="myHeader">
         <constant>{{mydsl}}</constant>
       </setHeader>
       <to uri="mock:transactedHeader" />

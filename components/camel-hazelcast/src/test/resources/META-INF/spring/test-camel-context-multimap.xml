@@ -27,7 +27,7 @@
 
 		<route>
 			<from uri="direct:put" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -35,7 +35,7 @@
 
 		<route>
 			<from uri="direct:removevalue" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>removevalue</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -43,7 +43,7 @@
 
 		<route>
 			<from uri="direct:get" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -52,7 +52,7 @@
 
 		<route>
 			<from uri="direct:delete" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -60,7 +60,7 @@
 		
 		<route>
 			<from uri="direct:valueCount" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>valueCount</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -68,7 +68,7 @@
 		
 		<route>
 			<from uri="direct:containsKey" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>containsKey</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />
@@ -77,7 +77,7 @@
 		
 		<route>
 			<from uri="direct:containsValue" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>containsValue</constant>
 			</setHeader>
 			<to uri="hazelcast-multimap:bar" />

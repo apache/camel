@@ -28,7 +28,7 @@
     <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file://target/renameissue?initialDelay=0&amp;delay=10&amp;noop=false"/>
-            <setProperty propertyName="PartitionID">
+            <setProperty name="PartitionID">
                 <xpath>//persons/person[1]/@name</xpath>
             </setProperty>
             <convertBodyTo type="String"/>

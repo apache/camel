@@ -27,7 +27,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>      
-      <setProperty propertyName="foo">
+      <setProperty name="foo">
         <constant>bar</constant>
       </setProperty>
       <to uri="mock:mid"/>

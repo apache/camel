@@ -47,16 +47,16 @@
         <route>
             <from uri="direct:input" />
             <!-- using HttpClientAPI -->
-            <setHeader headerName="CamelHttpMethod">
+            <setHeader name="CamelHttpMethod">
                 <constant>GET</constant>
             </setHeader>
-            <setHeader headerName="Content-Type">
+            <setHeader name="Content-Type">
                 <constant>text/plain</constant>
             </setHeader>
-            <setHeader headerName="CamelHttpPath">
+            <setHeader name="CamelHttpPath">
                 <simple>/greeting/hello/${body}</simple>
             </setHeader>
-            <setHeader headerName="CamelHttpMethod">
+            <setHeader name="CamelHttpMethod">
                 <constant>GET</constant>
             </setHeader>
             <inOut uri="cxfrs:bean:rsClient" />

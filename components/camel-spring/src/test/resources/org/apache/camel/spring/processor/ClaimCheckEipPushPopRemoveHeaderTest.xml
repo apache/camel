@@ -27,7 +27,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <setHeader headerName="bar">
+      <setHeader name="bar">
         <constant>Moes</constant>
       </setHeader>
       <to uri="mock:a"/>
@@ -35,10 +35,10 @@
       <transform>
         <constant>Bye World</constant>
       </transform>
-      <setHeader headerName="foo">
+      <setHeader name="foo">
         <constant>456</constant>
       </setHeader>
-      <setHeader headerName="bar">
+      <setHeader name="bar">
         <constant>Jacks</constant>
       </setHeader>
       <to uri="mock:b"/>

@@ -122,16 +122,16 @@ The following route defined in Spring XML send a message to tangle
   <setMessage>
   	<constant>Hello world!</constant>
   </setMessage>
-  <setHeader headerName="CamelIOTASeed">
+  <setHeader name="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAValue">
+  <setHeader name="CamelIOTAValue">
   	<constant>1</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAToAddress">
+  <setHeader name="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAToAddress">
+  <setHeader name="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
   
@@ -148,10 +148,10 @@ The following route defined in Spring XML create a new address
 ---------------------------------------------------------------------------------------------------------------------------
 <route>
   <from uri="direct:start" />
-  <setHeader headerName="CamelIOTASeed">
+  <setHeader name="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAAddressIndex">
+  <setHeader name="CamelIOTAAddressIndex">
   	<constant>1</constant>
   </setHeader>
   
@@ -168,13 +168,13 @@ The following route defined in Spring XML retrieve transfers data
 ---------------------------------------------------------------------------------------------------------------------------
 <route>
   <from uri="direct:start" />
-  <setHeader headerName="CamelIOTASeed">
+  <setHeader name="CamelIOTASeed">
   	<constant>MYSEEDHERE</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAAddressStartIndex">
+  <setHeader name="CamelIOTAAddressStartIndex">
   	<constant>1</constant>
   </setHeader>
-  <setHeader headerName="CamelIOTAAddressEndIndex">
+  <setHeader name="CamelIOTAAddressEndIndex">
   	<constant>10</constant>
   </setHeader>
   

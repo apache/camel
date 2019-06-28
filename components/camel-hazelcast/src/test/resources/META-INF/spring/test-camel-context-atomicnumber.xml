@@ -27,7 +27,7 @@
 
 		<route>
 			<from uri="direct:set" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>setvalue</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -35,7 +35,7 @@
 
 		<route>
 			<from uri="direct:get" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -43,7 +43,7 @@
 
 		<route>
 			<from uri="direct:increment" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>increment</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -51,7 +51,7 @@
 
 		<route>
 			<from uri="direct:decrement" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>decrement</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -59,7 +59,7 @@
 		
 		<route>
 			<from uri="direct:compareAndSet" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>compareAndSet</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -67,7 +67,7 @@
 
 		<route>
 			<from uri="direct:getAndAdd" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>getAndAdd</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />
@@ -75,7 +75,7 @@
 		
 		<route>
 			<from uri="direct:destroy" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>destroy</constant>
 			</setHeader>
 			<to uri="hazelcast-atomicvalue:foo" />

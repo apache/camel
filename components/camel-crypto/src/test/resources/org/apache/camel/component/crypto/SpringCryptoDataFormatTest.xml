@@ -119,7 +119,7 @@
     <route>
       <from uri="direct:key-in-header-encrypt" />
       <marshal><custom ref="nokey" /></marshal>
-      <setHeader headerName="CamelCryptoKey">
+      <setHeader name="CamelCryptoKey">
         <constant />
       </setHeader>
       <to uri="mock:encrypted" />
@@ -128,7 +128,7 @@
     <route>
       <from uri="direct:key-in-header-decrypt" />
       <unmarshal><custom ref="nokey" /></unmarshal>
-      <setHeader headerName="CamelCryptoKey">
+      <setHeader name="CamelCryptoKey">
         <constant />
       </setHeader>
       <to uri="mock:unencrypted" />

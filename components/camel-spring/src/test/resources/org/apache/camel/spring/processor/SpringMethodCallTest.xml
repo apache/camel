@@ -29,7 +29,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <setHeader headerName="foo">
+            <setHeader name="foo">
                 <method beanType="org.apache.camel.spring.processor.MyCoolBean"/>
             </setHeader>
             <to uri="mock:result"/>
@@ -37,7 +37,7 @@
 
         <route>
             <from uri="direct:ref"/>
-            <setHeader headerName="foo">
+            <setHeader name="foo">
                 <method ref="coolBean"/>
             </setHeader>
             <to uri="mock:ref"/>

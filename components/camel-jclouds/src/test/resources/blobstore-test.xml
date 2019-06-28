@@ -26,10 +26,10 @@
 
         <route>
             <from uri="direct:start"/>
-            <setHeader headerName="CamelJcloudsBlobName">
+            <setHeader name="CamelJcloudsBlobName">
                 <constant>testName</constant>
             </setHeader>
-            <setHeader headerName="CamelJcloudsContainerName">
+            <setHeader name="CamelJcloudsContainerName">
                 <constant>foo</constant>
             </setHeader>
             <to uri="jclouds:blobstore:transient"/>

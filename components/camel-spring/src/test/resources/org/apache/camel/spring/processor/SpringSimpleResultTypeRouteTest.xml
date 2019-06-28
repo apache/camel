@@ -28,12 +28,12 @@
     <!-- START SNIPPET: e1 -->
     <route>
       <from uri="direct:foo"/>
-      <setHeader headerName="cool">
+      <setHeader name="cool">
         <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
         <simple resultType="java.lang.Boolean">true</simple>
       </setHeader>
       <!-- here we have no result type, so the type would be java.lang.String -->
-      <setHeader headerName="fail">
+      <setHeader name="fail">
         <simple>true</simple>
       </setHeader>
       <to uri="mock:foo"/>
@@ -42,10 +42,10 @@
 
     <route>
       <from uri="direct:bar"/>
-      <setHeader headerName="cool">
+      <setHeader name="cool">
         <simple resultType="java.lang.Boolean">true</simple>
       </setHeader>
-      <setHeader headerName="fail">
+      <setHeader name="fail">
         <simple>true</simple>
       </setHeader>
       <to uri="mock:bar"/>

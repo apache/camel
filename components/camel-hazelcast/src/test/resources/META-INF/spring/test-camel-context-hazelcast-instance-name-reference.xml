@@ -37,7 +37,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="testHazelcastInstanceBeanRefPut">
             <from uri="direct:testHazelcastInstanceBeanRefPut"/>
-            <setHeader headerName="CamelHazelcastOperationType">
+            <setHeader name="CamelHazelcastOperationType">
                 <constant>put</constant>
             </setHeader>
             <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>
@@ -45,7 +45,7 @@
 
         <route id="testHazelcastInstanceBeanRefGet">
             <from uri="direct:testHazelcastInstanceBeanRefGet" />
-            <setHeader headerName="CamelHazelcastOperationType">
+            <setHeader name="CamelHazelcastOperationType">
                 <constant>get</constant>
             </setHeader>
             <to uri="hazelcast-map:testmap?hazelcastInstanceName=HZ.INSTANCE"/>

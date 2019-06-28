@@ -29,7 +29,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- we can refer to constant fields from Exchange like we do in Java DSL -->
-            <setHeader headerName="Exchange.FILE_NAME">
+            <setHeader name="Exchange.FILE_NAME">
                 <constant>foo.txt</constant>
             </setHeader>
             <to uri="mock:result"/>

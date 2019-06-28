@@ -344,7 +344,7 @@ The same example in XML DSL would be:
 ----
 <route>
   <from uri="direct:start"/>
-  <setHeader headerName="numberOfBooks">
+  <setHeader name="numberOfBooks">
     <jsonpath headerName="books" resultType="int">$..store.book.length()</jsonpath>
   </transform>
   <to uri="mock:result"/>

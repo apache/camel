@@ -30,7 +30,7 @@
 
     <route>
       <from uri="direct:start"/>
-      <setHeader headerName="someHeader">
+      <setHeader name="someHeader">
         <simple>${in.body} World!</simple>
       </setHeader>
       <to uri="mock:result"/>
