@@ -455,6 +455,7 @@
         <lettuce-version>5.1.0.RELEASE</lettuce-version>
         <log4j-version>1.2.17</log4j-version>
         <log4j2-version>2.11.2</log4j2-version>
+        <logback-version>1.2.3</logback-version>
         <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
         <lucene3-version>3.6.0</lucene3-version>
         <lucene-bundle-version>7.6.0_1</lucene-bundle-version>

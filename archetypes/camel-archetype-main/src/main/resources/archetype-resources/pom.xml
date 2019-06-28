@@ -47,32 +47,41 @@
 
   <dependencies>
 
+    <!-- lets use the minimal camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-engine</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-main</artifactId>
     </dependency>
 
-    <!-- we use these components -->
+    <!-- where we need to pick which components we use (also core components) -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-bean</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-log</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-timer</artifactId>
+    </dependency>
 
     <!-- logging -->
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.2.3</version>
+      <version>${logback-version}</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
+      <version>${logback-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -112,7 +121,7 @@
         <version>${camel-version}</version>
         <configuration>
           <logClasspath>true</logClasspath>
-          <mainClass>${package}.MainApp</mainClass>
+          <mainClass>${package}.MyApplication</mainClass>
         </configuration>
       </plugin>
 
