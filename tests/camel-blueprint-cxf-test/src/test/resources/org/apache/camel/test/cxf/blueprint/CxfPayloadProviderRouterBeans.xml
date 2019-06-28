@@ -63,10 +63,10 @@
   <camel:camelContext id="camel">
     <camel:route>
       <camel:from uri="cxf:bean:routerEndpoint?synchronous=true" />
-      <camel:setHeader headerName="operationNamespace">
+      <camel:setHeader name="operationNamespace">
         <camel:constant>http://camel.apache.org/cxf/jaxws/dispatch</camel:constant>
       </camel:setHeader>
-      <camel:setHeader headerName="operationName">
+      <camel:setHeader name="operationName">
         <camel:constant>Invoke</camel:constant>
       </camel:setHeader>
       <camel:to uri="cxf:bean:serviceEndpoint?synchronous=true" />

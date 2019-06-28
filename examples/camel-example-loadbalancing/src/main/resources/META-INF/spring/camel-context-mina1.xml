@@ -31,7 +31,7 @@
 
     <route id="mina1">
       <from uri="mina2:tcp://localhost:9991"/>
-      <setHeader headerName="minaServer">
+      <setHeader name="minaServer">
         <constant>localhost:9991</constant>
       </setHeader>
       <bean ref="service" method="updateReport"/>

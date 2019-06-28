@@ -260,7 +260,7 @@ The last example shows how to use the `filter` option where we only want to get 
   <transform>
     <constant>Bye World</constant>
   </transform>
-  <setHeader headerName="foo">
+  <setHeader name="foo">
     <constant>456</constant>
   </setHeader>
   <removeHeader headerName="bar"/>

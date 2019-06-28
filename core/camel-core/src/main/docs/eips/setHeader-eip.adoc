@@ -38,7 +38,7 @@ And the same example using XML:
 <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:a"/>
-        <setHeader headerName="myHeader">
+        <setHeader name="myHeader">
             <constant>test</constant>
         </setHeader>
         <to uri="direct:b"/>

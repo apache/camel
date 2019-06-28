@@ -308,7 +308,7 @@ And in XML DSL you set the mode attribute to BeforeConsumer:
 [source,java]
 ------------------------------------------
       <onCompletion mode="BeforeConsumer">
-        <setHeader headerName="createdBy">
+        <setHeader name="createdBy">
           <constant>Someone</constant>
         </setHeader>
       </onCompletion>

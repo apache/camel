@@ -785,7 +785,7 @@ take care. For example:
 
 [source,xml]
 ----
-<setHeader headerName="Exchange.FILE_NAME">
+<setHeader name="Exchange.FILE_NAME">
   <simple>{{file.rootdir}}/${in.header.CamelFileName}</simple>
 </setHeader>
 ----
@@ -795,7 +795,7 @@ to indicate using the <<simple-language,Simple>> language in Camel.
 
 [source,xml]
 ----
-<setHeader headerName="Exchange.FILE_NAME">
+<setHeader name="Exchange.FILE_NAME">
   <simple>{{file.rootdir}}/$simple{in.header.CamelFileName}</simple>
 </setHeader>
 ----

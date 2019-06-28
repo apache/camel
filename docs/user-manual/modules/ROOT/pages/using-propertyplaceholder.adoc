@@ -428,7 +428,7 @@ Example using property placeholders in the attributes of `<camelContext>`:
     <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
     <route>
         <from uri="direct:start"/>
-        <setHeader headerName="{{foo.header}}">
+        <setHeader name="{{foo.header}}">
             <simple>${in.body} World!</simple>
         </setHeader>
         <to uri="mock:result"/>
@@ -939,7 +939,7 @@ Example:
 
 [source,xml]
 ----
-<setHeader headerName="Exchange.FILE_NAME">
+<setHeader name="Exchange.FILE_NAME">
     <simple>{{file.rootdir}}/${in.header.CamelFileName}</simple>
 </setHeader>
 ----
@@ -951,7 +951,7 @@ language in Camel.
 
 [source,xml]
 ----
-<setHeader headerName="Exchange.FILE_NAME">
+<setHeader name="Exchange.FILE_NAME">
     <simple>{{file.rootdir}}/$simple{in.header.CamelFileName}</simple>
 </setHeader>
 ----

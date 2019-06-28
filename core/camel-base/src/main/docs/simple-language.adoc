@@ -801,7 +801,7 @@ You can nest functions, such as shown below:
 
 [source,xml]
 ----
-<setHeader headerName="myHeader">
+<setHeader name="myHeader">
   <simple>${properties:${header.someKey}}</simple>
 </setHeader>
 ----
@@ -858,7 +858,7 @@ And in XML DSL
 
 [source,xml]
 ----
-<setHeader headerName="cool">
+<setHeader name="cool">
   <!-- use resultType to indicate that the type should be a java.lang.Boolean -->
   <simple resultType="java.lang.Boolean">true</simple>
 </setHeader>

@@ -264,7 +264,7 @@ or equivalently:
 ----
 <route>
   <from uri="direct:delete-znode" />
-  <setHeader headerName="CamelZookeeperOperation">
+  <setHeader name="CamelZookeeperOperation">
      <constant>DELETE</constant>
   </setHeader>
   <to uri="zookeeper://localhost:39913/somepath/somenode" />

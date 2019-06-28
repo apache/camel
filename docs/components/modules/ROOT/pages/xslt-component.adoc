@@ -172,7 +172,7 @@ To make the parameters useable, you will need to declare them.
 
 [source,xml]
 ----
-<setHeader headerName="myParam"><constant>42</constant></setHeader>
+<setHeader name="myParam"><constant>42</constant></setHeader>
 <to uri="xslt:MyTransform.xsl"/>
 ----
 

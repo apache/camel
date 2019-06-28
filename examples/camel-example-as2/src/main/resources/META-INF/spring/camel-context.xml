@@ -69,25 +69,25 @@ UNT+23+00000000000117'
 UNZ+1+00000000000778'
               </constant>
           </transform>
-           <setHeader headerName="CamelAS2.ediMessageContentType">
+           <setHeader name="CamelAS2.ediMessageContentType">
              <simple resultType="org.apache.http.entity.ContentType">application/edifact;charset=US-ASCII</simple>
            </setHeader>
-	       <setHeader headerName="CamelAS2.ediMessageTransferEncoding">
+	       <setHeader name="CamelAS2.ediMessageTransferEncoding">
 	         <constant>7bit</constant>
 	       </setHeader>
-		   <setHeader headerName="CamelAS2.requestUri">
+		   <setHeader name="CamelAS2.requestUri">
 			 <constant>/</constant>
 		   </setHeader>
-		   <setHeader headerName="CamelAS2.from">
+		   <setHeader name="CamelAS2.from">
 			 <constant>mrAS@example.org</constant>
 		   </setHeader>
-		   <setHeader headerName="CamelAS2.as2From">
+		   <setHeader name="CamelAS2.as2From">
 			 <constant>878051556</constant>
 		   </setHeader>
-		   <setHeader headerName="CamelAS2.as2To">
+		   <setHeader name="CamelAS2.as2To">
 			 <constant>878051556</constant>
 		   </setHeader>
-	       <setHeader headerName="CamelAS2.dispositionNotificationTo">
+	       <setHeader name="CamelAS2.dispositionNotificationTo">
 	         <constant>mrAS@example.org</constant>
 	       </setHeader>
            <to uri="bean:provision-exchange-message-crypto"/>
@@ -104,10 +104,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="plain-message-route">
           <from uri="direct:plainMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">PLAIN</simple>
           </setHeader>
           <to
@@ -115,10 +115,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="signed-message-route">
           <from uri="direct:signedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Signed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">SIGNED</simple>
           </setHeader>
           <to
@@ -126,10 +126,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="enveloped-message-route">
           <from uri="direct:envelopedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Enveloped AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">ENCRYPTED</simple>
           </setHeader>
           <to
@@ -137,10 +137,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="enveloped-signed-message-route">
           <from uri="direct:envelopedSignedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Enveloped and Signed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">SIGNED_ENCRYPTED</simple>
           </setHeader>
           <to
@@ -148,10 +148,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="compressed-plain-message-route">
           <from uri="direct:compressedPlainMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Compressed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">PLAIN_COMPRESSED</simple>
           </setHeader>
           <to
@@ -159,10 +159,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="compressed-signed-message-route">
           <from uri="direct:compressedSignedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Compressed and Signed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">SIGNED_COMPRESSED</simple>
           </setHeader>
           <to
@@ -170,10 +170,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="enveloped-compressed-message-route">
           <from uri="direct:envelopedCompressedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Enveloped and Compressed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">ENCRYPTED_COMPRESSED</simple>
           </setHeader>
           <to
@@ -181,10 +181,10 @@ UNZ+1+00000000000778'
         </route>
         <route id="enveloped-compressed-signed-message-route">
           <from uri="direct:envelopedCompressedSignedMessage"/>
-          <setHeader headerName="CamelAS2.subject">
+          <setHeader name="CamelAS2.subject">
               <constant>Enveloped, Compressed and Signed AS2 Message Example</constant>
           </setHeader>
-          <setHeader headerName="CamelAS2.as2MessageStructure">
+          <setHeader name="CamelAS2.as2MessageStructure">
               <simple resultType="org.apache.camel.component.as2.api.AS2MessageStructure">ENCRYPTED_COMPRESSED_SIGNED</simple>
           </setHeader>
           <to
