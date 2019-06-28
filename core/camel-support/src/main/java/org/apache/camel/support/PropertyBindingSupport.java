@@ -470,7 +470,7 @@ public final class PropertyBindingSupport {
      * @param ignoreCase    whether to ignore case for property keys
      * @throws PropertyBindingException is thrown if error binding property, or the property was not bound
      */
-    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException{
+    public static void bindMandatoryProperty(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) throws PropertyBindingException {
         boolean bound;
         if (target != null && name != null) {
             try {

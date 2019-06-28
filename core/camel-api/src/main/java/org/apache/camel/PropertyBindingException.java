@@ -24,27 +24,42 @@ public class PropertyBindingException extends RuntimeCamelException {
     private final Object target;
     private final String propertyName;
     private final Object value;
-    private String optionPrefix;
-    private String optionKey;
+    private final String optionPrefix;
+    private final String optionKey;
 
     public PropertyBindingException(Object target, String propertyName, Object value) {
         this.target = target;
         this.propertyName = propertyName;
         this.value = value;
+        this.optionPrefix = null;
+        this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, String propertyName, Object value, Exception e) {
+    public PropertyBindingException(Object target, String propertyName, Object value, Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = propertyName;
         this.value = value;
+        this.optionPrefix = null;
+        this.optionKey = null;
     }
 
-    public PropertyBindingException(Object target, Exception e) {
+    public PropertyBindingException(Object target, Throwable e) {
         initCause(e);
         this.target = target;
         this.propertyName = null;
         this.value = null;
+        this.optionPrefix = null;
+        this.optionKey = null;
+    }
+
+    public PropertyBindingException(Object target, String propertyName, Object value, String optionPrefix, String optionKey, Throwable e) {
+        initCause(e);
+        this.target = target;
+        this.propertyName = propertyName;
+        this.value = value;
+        this.optionPrefix = optionPrefix;
+        this.optionKey = optionKey;
     }
 
     @Override
@@ -78,15 +93,8 @@ public class PropertyBindingException extends RuntimeCamelException {
         return optionPrefix;
     }
 
-    public void setOptionPrefix(String optionPrefix) {
-        this.optionPrefix = optionPrefix;
-    }
-
     public String getOptionKey() {
         return optionKey;
     }
 
-    public void setOptionKey(String optionKey) {
-        this.optionKey = optionKey;
-    }
 }
