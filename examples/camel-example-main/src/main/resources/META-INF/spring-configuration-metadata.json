@@ -157,7 +157,7 @@
 			"name":"camel.main.auto-configuration-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
-			"description":"Whether auto configuration of components\/dataformats\/languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF\/services\/org\/apache\/camel\/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled.",
+			"description":"Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF\/services\/org\/apache\/camel\/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled.",
 			"defaultValue":"true"
 		},
 		{
@@ -172,6 +172,13 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled.",
+			"defaultValue":"true"
+		},
+		{
+			"name":"camel.main.auto-configuration-log-summary",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether auto configuration should log a summary with the configured properties. This option is default enabled.",
 			"defaultValue":"true"
 		},
 		{

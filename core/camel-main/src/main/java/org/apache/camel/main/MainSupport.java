@@ -721,7 +721,7 @@ public abstract class MainSupport extends ServiceSupport {
             if (overrideProperties != null) {
                 pc.setOverrideProperties(overrideProperties);
             }
-            LOG.info("Using optional properties from classpath:application.properties");
+            LOG.info("Using properties from classpath:application.properties");
         }
 
         if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
@@ -733,6 +733,7 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
+        // gathers the properties (key=value) that was auto-configured
         final Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
 
         // need to eager allow to auto-configure properties component
@@ -758,7 +759,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         // log summary of configurations
-        if (!autoConfiguredProperties.isEmpty()) {
+        if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
             autoConfiguredProperties.forEach((k, v) -> {
                 boolean sensitive = k.toLowerCase(Locale.US).contains("password") || k.contains("secret") || k.contains("passphrase") || k.contains("token");
@@ -1087,7 +1088,7 @@ public abstract class MainSupport extends ServiceSupport {
                 }
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot);
+                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
                 validateOptionAndValue(key, option, value);
                 PropertyOptionKey pok = new PropertyOptionKey(key, component, prefix);
                 Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
@@ -1106,7 +1107,7 @@ public abstract class MainSupport extends ServiceSupport {
                 }
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot);
+                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
                 validateOptionAndValue(key, option, value);
                 PropertyOptionKey pok = new PropertyOptionKey(key, dataformat, prefix);
                 Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
@@ -1126,7 +1127,7 @@ public abstract class MainSupport extends ServiceSupport {
                 }
                 String option = dot == -1 ? "" : key.substring(dot + 1);
                 String value = prop.getProperty(key, "");
-                String prefix = dot == -1 ? "" : key.substring(0, dot);
+                String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
                 validateOptionAndValue(key, option, value);
                 PropertyOptionKey pok = new PropertyOptionKey(key, language, prefix);
                 Map<String, Object> values = properties.getOrDefault(pok, new LinkedHashMap<>());
@@ -1142,7 +1143,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         for (PropertyOptionKey pok : properties.keySet()) {
             Map<String, Object> values = properties.get(pok);
-            String optionKey = pok.getKey().substring(pok.getOptionPrefix().length() + 1);
+            String optionKey = pok.getKey().substring(pok.getOptionPrefix().length());
             setPropertiesOnTarget(camelContext, pok.getInstance(), values, optionKey, pok.getOptionPrefix(),
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
