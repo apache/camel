@@ -405,7 +405,9 @@ public final class IntrospectionSupport {
 
     public static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException {
         if (ignoreCase) {
-            Method[] methods = type.getDeclaredMethods();
+            List<Method> methods = new ArrayList<>();
+            methods.addAll(Arrays.asList(type.getDeclaredMethods()));
+            methods.addAll(Arrays.asList(type.getMethods()));
             for (Method m : methods) {
                 if (isGetter(m)) {
                     if (m.getName().startsWith("is") && m.getName().substring(2).equalsIgnoreCase(propertyName)) {
