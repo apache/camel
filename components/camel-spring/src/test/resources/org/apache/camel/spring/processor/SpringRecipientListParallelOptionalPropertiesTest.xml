@@ -40,7 +40,7 @@
 
     <route>
       <from uri="direct:a"/>
-      <setHeader name="foo" prop:headerName="theRealHeader">
+      <setHeader name="foo" prop:name="theRealHeader">
         <constant>1000</constant>
       </setHeader>
       <delay>
