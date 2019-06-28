@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file://target/foo?initialDelay=0&amp;delay=10"/>
-            <setHeader headerName="foo">
+            <setHeader name="foo">
                 <simple>"${file:name}" abc</simple>
             </setHeader>
             <to uri="mock:result"/>

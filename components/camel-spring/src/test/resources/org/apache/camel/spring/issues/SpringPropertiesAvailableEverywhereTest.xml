@@ -37,7 +37,7 @@
 
         <route>
             <from uri="direct:header-start"/>
-            <setHeader headerName="foo">
+            <setHeader name="foo">
                 <simple>{{foo}}</simple>
             </setHeader>
             <choice>

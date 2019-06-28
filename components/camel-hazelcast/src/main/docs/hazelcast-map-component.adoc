@@ -171,7 +171,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -197,13 +197,13 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:put" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
-    <setHeader headerName="HazelcastConstants.TTL_VALUE">
+    <setHeader name="HazelcastConstants.TTL_VALUE">
         <simple resultType="java.lang.Long">1</simple>
     </setHeader>
-    <setHeader headerName="HazelcastConstants.TTL_UNIT">
+    <setHeader name="HazelcastConstants.TTL_UNIT">
         <simple resultType="java.util.concurrent.TimeUnit">TimeUnit.MINUTES</simple>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -229,7 +229,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -254,7 +254,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:update" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>update</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -278,7 +278,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:delete" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>delete</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />
@@ -303,7 +303,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:query" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>query</constant>
     </setHeader>
     <to uri="hazelcast-map:foo" />

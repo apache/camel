@@ -27,7 +27,7 @@
 
 		<route>
 			<from uri="direct:add" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>add</constant>
 			</setHeader>
 			<to uri="hazelcast-ringbuffer:foo" />
@@ -35,7 +35,7 @@
 
 		<route>
 			<from uri="direct:readonceHead" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>readonceHead</constant>
 			</setHeader>
 			<to uri="hazelcast-ringbuffer:foo" />
@@ -43,7 +43,7 @@
 
 		<route>
 			<from uri="direct:readonceTail" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>readonceTail</constant>
 			</setHeader>
 			<to uri="hazelcast-ringbuffer:foo" />
@@ -51,7 +51,7 @@
 
 		<route>
 			<from uri="direct:capacity" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>capacity</constant>
 			</setHeader>
 			<to uri="hazelcast-ringbuffer:foo" />
@@ -59,7 +59,7 @@
 		
 		<route>
 			<from uri="direct:remainingCapacity" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>remainingCapacity</constant>
 			</setHeader>
 			<to uri="hazelcast-ringbuffer:foo" />

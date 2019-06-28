@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="seda:a"/>
-      <setHeader headerName="oldBodyValue">
+      <setHeader name="oldBodyValue">
         <simple>${body}</simple>
       </setHeader>
       <to uri="mock:b"/>     

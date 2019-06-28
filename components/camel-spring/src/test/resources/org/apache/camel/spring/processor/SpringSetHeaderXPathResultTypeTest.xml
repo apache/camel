@@ -28,11 +28,11 @@
     <route>
       <from uri="direct:start"/>
       <!-- is there a hello tag in the body -->
-      <setHeader headerName="foo">
+      <setHeader name="foo">
         <xpath resultType="java.lang.Boolean">/hello</xpath>
       </setHeader>
       <!-- is there a bye tag in the body -->
-      <setHeader headerName="bar">
+      <setHeader name="bar">
         <!-- use Boolean shorthand to test we use Camel class resolver, and not JAXB -->
         <xpath resultType="Boolean">/bye</xpath>
       </setHeader>

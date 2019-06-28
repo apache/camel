@@ -135,7 +135,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:set" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>setvalue</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -162,7 +162,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:get" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -189,7 +189,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:increment" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>increment</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -216,7 +216,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:decrement" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>decrement</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />
@@ -243,7 +243,7 @@ Spring DSL:
 -----------------------------------------------------------------------------------------------
 <route>
     <from uri="direct:destroy" />
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>destroy</constant>
     </setHeader>
     <to uri="hazelcast-atomicvalue:foo" />

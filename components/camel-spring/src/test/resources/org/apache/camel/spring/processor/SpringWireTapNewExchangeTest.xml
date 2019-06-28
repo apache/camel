@@ -33,8 +33,8 @@
             <wireTap uri="direct:tap">
                 <!-- create the new tap message body and headers -->
                 <body><constant>Bye World</constant></body>
-                <setHeader headerName="id"><constant>123</constant></setHeader>
-                <setHeader headerName="date"><simple>${date:now:yyyyMMdd}</simple></setHeader>
+                <setHeader name="id"><constant>123</constant></setHeader>
+                <setHeader name="date"><simple>${date:now:yyyyMMdd}</simple></setHeader>
             </wireTap>
             <!-- here we continue routing the original message -->
             <to uri="mock:result"/>

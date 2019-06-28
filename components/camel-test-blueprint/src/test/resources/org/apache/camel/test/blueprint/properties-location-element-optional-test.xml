@@ -41,13 +41,13 @@
 
     <route>
       <from uri="direct:start"/>
-      <setHeader headerName="property-1">
+      <setHeader name="property-1">
         <constant>{{property-key-1}}</constant>
       </setHeader>
-      <setHeader headerName="property-2">
+      <setHeader name="property-2">
         <constant>{{property-key-2}}</constant>
       </setHeader>
-      <setHeader headerName="cm">
+      <setHeader name="cm">
         <constant>{{cm-key}}</constant>
       </setHeader>
       <to uri="mock:result"/>

@@ -230,7 +230,7 @@ datastore._
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader headerName="GoraOperation">
+<setHeader name="GoraOperation">
  <constant>CreateSchema</constant>
 </setHeader>
 <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
@@ -240,7 +240,7 @@ datastore._
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader headerName="GoraOperation">
+<setHeader name="GoraOperation">
  <constant>SchemaExists</constant>
 </setHeader>
  <to uri="gora:foobar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
@@ -250,10 +250,10 @@ datastore._
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader headerName="GoraOperation">
+<setHeader name="GoraOperation">
  <constant>put</constant>
 </setHeader>
-<setHeader headerName="GoraKey">
+<setHeader name="GoraKey">
  <constant>22222</constant>
 </setHeader>
 <to uri="gora:foo?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
@@ -263,10 +263,10 @@ datastore._
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader headerName="GoraOperation">
+<setHeader name="GoraOperation">
  <constant>GET</constant>
 </setHeader>
-<setHeader headerName="GoraKey">
+<setHeader name="GoraKey">
  <constant>10101</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>
@@ -276,10 +276,10 @@ datastore._
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<setHeader headerName="GoraOperation">
+<setHeader name="GoraOperation">
  <constant>DELETE</constant>
 </setHeader>
-<setHeader headerName="GoraKey">
+<setHeader name="GoraKey">
  <constant>22222</constant>
 </setHeader>
 <to uri="gora:bar?keyClass=java.lang.Long&amp;valueClass=org.apache.camel.component.gora.generated.Pageview&amp;dataStoreClass=org.apache.gora.hbase.store.HBaseStore"/>

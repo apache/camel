@@ -27,13 +27,13 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>      
-      <setProperty propertyName="foo">
+      <setProperty name="foo">
         <constant>bar</constant>
       </setProperty>
-      <setProperty propertyName="fee">
+      <setProperty name="fee">
         <constant>bar1</constant>
       </setProperty>
-      <setProperty propertyName="fiu">
+      <setProperty name="fiu">
         <constant>bar2</constant>
       </setProperty>
       <to uri="mock:mid"/>

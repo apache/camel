@@ -32,7 +32,7 @@
       <transform>
         <constant>Bye World</constant>
       </transform>
-      <setHeader headerName="foo">
+      <setHeader name="foo">
         <constant>456</constant>
       </setHeader>
       <removeHeader headerName="bar"/>

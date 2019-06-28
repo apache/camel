@@ -27,7 +27,7 @@
 
 		<route>
 			<from uri="direct:put" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
@@ -35,7 +35,7 @@
 
 		<route>
 			<from uri="direct:get" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
@@ -44,7 +44,7 @@
 
 		<route>
 			<from uri="direct:delete" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
@@ -52,7 +52,7 @@
 		
 		<route>
 			<from uri="direct:clear" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>clear</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
@@ -60,7 +60,7 @@
 		
 		<route>
 			<from uri="direct:containsKey" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>containsKey</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
@@ -69,7 +69,7 @@
 
 		<route>
 			<from uri="direct:containsValue" />
-			<setHeader headerName="CamelHazelcastOperationType">
+			<setHeader name="CamelHazelcastOperationType">
 				<constant>containsValue</constant>
 			</setHeader>
 			<to uri="hazelcast-replicatedmap:bar" />
