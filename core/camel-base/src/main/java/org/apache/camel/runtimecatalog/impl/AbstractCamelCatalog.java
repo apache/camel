@@ -1090,7 +1090,7 @@ public abstract class AbstractCamelCatalog {
         Class<?> clazz = null;
         try {
             clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
-            instance = clazz.newInstance();
+            instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             // ignore
         }

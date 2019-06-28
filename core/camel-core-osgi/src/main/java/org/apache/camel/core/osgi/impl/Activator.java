@@ -250,7 +250,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
                             Class<?> clazz = bundle.loadClass(pkg);
                             BundleTypeConverterLoader bundleTypeConverterLoader =
                                 new BundleTypeConverterLoader(bundle, url3 != null);
-                            bundleTypeConverterLoader.setTypeConverterLoader((TypeConverterLoader)clazz.newInstance());
+                            bundleTypeConverterLoader.setTypeConverterLoader((TypeConverterLoader)clazz.getDeclaredConstructor().newInstance());
                             resolvers.add(bundleTypeConverterLoader);
                             BundleTypeConverterLoader fallBackBundleTypeConverterLoader =
                                 new BundleTypeConverterLoader(bundle, url3 != null);

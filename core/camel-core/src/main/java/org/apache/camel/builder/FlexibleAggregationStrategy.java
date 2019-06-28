@@ -265,7 +265,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
         try {
             if (oldValue == null || oldExchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, Boolean.class) == null) {
                 try {
-                    collection = collectionType.newInstance();
+                    collection = collectionType.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     LOG.warn("Could not instantiate collection of type {}. Aborting aggregation.", collectionType);
                     throw CamelExecutionException.wrapCamelExecutionException(oldExchange, e);

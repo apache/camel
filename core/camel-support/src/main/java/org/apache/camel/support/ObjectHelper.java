@@ -210,8 +210,8 @@ public final class ObjectHelper {
      */
     public static <T> T newInstance(Class<T> type) {
         try {
-            return type.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return type.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }
@@ -222,11 +222,9 @@ public final class ObjectHelper {
      */
     public static <T> T newInstance(Class<?> actualType, Class<T> expectedType) {
         try {
-            Object value = actualType.newInstance();
+            Object value = actualType.getDeclaredConstructor().newInstance();
             return org.apache.camel.util.ObjectHelper.cast(expectedType, value);
-        } catch (InstantiationException e) {
-            throw new RuntimeCamelException(e);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
     }

@@ -56,7 +56,7 @@ public abstract class LRUCacheFactory {
                 }
                 String clazzName = props.getProperty("class");
                 Class<?> clazz = classLoader.loadClass(clazzName);
-                Object factory = clazz.newInstance();
+                Object factory = clazz.getDeclaredConstructor().newInstance();
                 return (LRUCacheFactory) factory;
             }
         } catch (Throwable t) {

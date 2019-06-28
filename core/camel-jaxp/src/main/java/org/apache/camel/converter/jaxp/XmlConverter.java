@@ -913,7 +913,7 @@ public class XmlConverter {
         try {
             Class<?> smClass = ObjectHelper.loadClass("org.apache.xerces.util.SecurityManager");
             if (smClass != null) {
-                Object sm = smClass.newInstance();
+                Object sm = smClass.getDeclaredConstructor().newInstance();
                 // Here we just use the default setting of the SeurityManager
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }

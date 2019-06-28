@@ -94,10 +94,9 @@ public class DefaultFactoryFinder implements FactoryFinder {
         return findClass(key, propertyPrefix);
     }
 
-    private Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
-        InstantiationException, IOException, ClassNotFoundException {
+    private Object newInstance(String key, String propertyPrefix) throws Exception {
         Class<?> clazz = findClass(key, propertyPrefix);
-        return clazz.newInstance();
+        return clazz.getDeclaredConstructor().newInstance();
     }
 
     private <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException,

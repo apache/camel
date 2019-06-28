@@ -300,7 +300,7 @@ public class XPathTest extends ContextTestSupport {
 
         // we may not have Xalan on the classpath
         try {
-            instance = Class.forName("org.apache.xalan.extensions.XPathFunctionResolverImpl").newInstance();
+            instance = Class.forName("org.apache.xalan.extensions.XPathFunctionResolverImpl").getDeclaredConstructor().newInstance();
         } catch (Throwable e) {
             
             log.debug("Could not find Xalan on the classpath so ignoring this test case: " + e);
