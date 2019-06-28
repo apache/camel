@@ -24,6 +24,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationEnabled = true;
     private boolean autoConfigurationEnvironmentVariablesEnabled = true;
     private boolean autoConfigurationFailFast = true;
+    private boolean autoConfigurationLogSummary = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
@@ -59,7 +60,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * Whether auto configuration of components, dataformats, languages is enabled or not.
      * When enabled the configuration parameters are loaded from the properties component
      * and optionally from the classpath file META-INF/services/org/apache/camel/autowire.properties.
      * You can prefix the parameters in the properties file with:
@@ -109,6 +110,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
         this.autoConfigurationFailFast = autoConfigurationFailFast;
+    }
+
+    public boolean isAutoConfigurationLogSummary() {
+        return autoConfigurationLogSummary;
+    }
+
+    /**
+     * Whether auto configuration should log a summary with the configured properties.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationLogSummary(boolean autoConfigurationLogSummary) {
+        this.autoConfigurationLogSummary = autoConfigurationLogSummary;
     }
 
     public boolean isAutowireComponentProperties() {
@@ -223,6 +237,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
         this.autoConfigurationFailFast = autoConfigurationFailFast;
+        return this;
+    }
+
+    /**
+     * Whether auto configuration should log a summary with the configured properties.
+     * <p/>
+     * This option is default enabled.
+     */
+    public MainConfigurationProperties withAutoConfigurationLogSummary(boolean autoConfigurationLogSummary) {
+        this.autoConfigurationLogSummary = autoConfigurationLogSummary;
         return this;
     }
 
