@@ -1003,7 +1003,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             LOG.info("Auto configuring main from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, config, properties, null,"camel.main.",
+            setPropertiesOnTarget(camelContext, config, properties, null, "camel.main.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true);
         }
 
@@ -1242,10 +1242,8 @@ public abstract class MainSupport extends ServiceSupport {
                 }
             } catch (PropertyBindingException e) {
                 if (failIfNotSet) {
-                    // enrich the error with better details
-                    e.setOptionPrefix(optionPrefix);
-                    e.setOptionKey(optionKey);
-                    throw e;
+                    // enrich the error with more precise details with option prefix and key
+                    throw new PropertyBindingException(e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, optionKey, e.getCause());
                 } else {
                     LOG.debug("Error setting property (" + key + ") with name: " + name + ") on bean: " + target
                             + " with value: " + stringValue + ". This exception is ignored as failIfNotSet=false.", e);
