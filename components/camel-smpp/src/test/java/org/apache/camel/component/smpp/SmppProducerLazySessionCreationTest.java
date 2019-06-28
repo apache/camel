@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
  */
 public class SmppProducerLazySessionCreationTest {
-    
+
     private SmppProducer producer;
     private SmppConfiguration configuration;
     private SmppEndpoint endpoint;
@@ -49,9 +49,10 @@ public class SmppProducerLazySessionCreationTest {
         configuration.setLazySessionCreation(true);
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
+        configuration.setPassword("password");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
-        
+
         producer = new SmppProducer(endpoint, configuration) {
             SMPPSession createSMPPSession() {
                 return session;
@@ -96,10 +97,10 @@ public class SmppProducerLazySessionCreationTest {
         when(in.getHeader("CamelSmppSystemId", String.class)).thenReturn(null);
         when(in.getHeader("CamelSmppPassword", String.class)).thenReturn(null);
         command.execute(exchange);
-        
+
         producer.doStart();
         producer.process(exchange);
-        
+
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
@@ -131,10 +132,10 @@ public class SmppProducerLazySessionCreationTest {
         when(in.getHeader("CamelSmppSystemId", String.class)).thenReturn("smppclient2");
         when(in.getHeader("CamelSmppPassword", String.class)).thenReturn("password2");
         command.execute(exchange);
-        
+
         producer.doStart();
         producer.process(exchange);
-        
+
         verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
     }
 }
