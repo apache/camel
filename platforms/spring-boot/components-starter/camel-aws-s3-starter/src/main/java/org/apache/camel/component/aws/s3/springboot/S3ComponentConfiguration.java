@@ -140,8 +140,7 @@ public class S3ComponentConfiguration
          */
         private String secretKey;
         /**
-         * Reference to a `com.amazonaws.services.s3.AmazonS3` in the
-         * xref:registry.adoc[Registry].
+         * Reference to a `com.amazonaws.services.s3.AmazonS3` in the registry.
          */
         private AmazonS3 amazonS3Client;
         /**
