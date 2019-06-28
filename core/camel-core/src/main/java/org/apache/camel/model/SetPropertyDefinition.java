@@ -34,29 +34,29 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
-    private String propertyName;
+    private String name;
     
     public SetPropertyDefinition() {
     }
 
-    public SetPropertyDefinition(String propertyName, ExpressionDefinition expression) {
+    public SetPropertyDefinition(String name, ExpressionDefinition expression) {
         super(expression);
-        setPropertyName(propertyName);
+        setName(name);
     }
 
-    public SetPropertyDefinition(String propertyName, Expression expression) {
+    public SetPropertyDefinition(String name, Expression expression) {
         super(expression);
-        setPropertyName(propertyName);        
+        setName(name);
     }
 
-    public SetPropertyDefinition(String propertyName, String value) {
+    public SetPropertyDefinition(String name, String value) {
         super(ExpressionBuilder.constantExpression(value));
-        setPropertyName(propertyName);        
+        setName(name);
     }   
     
     @Override
     public String toString() {
-        return "SetProperty[" + getPropertyName() + ", " + getExpression() + "]";
+        return "SetProperty[" + getName() + ", " + getExpression() + "]";
     }
     
     @Override
@@ -66,7 +66,7 @@ public class SetPropertyDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "setProperty[" + getPropertyName() + "]";
+        return "setProperty[" + getName() + "]";
     }
 
     /**
@@ -84,12 +84,12 @@ public class SetPropertyDefinition extends ExpressionNode {
      * The <tt>simple</tt> language can be used to define a dynamic evaluated exchange property name to be used.
      * Otherwise a constant name will be used.
      */
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPropertyName() {
-        return propertyName;
+    public String getName() {
+        return name;
     }
     
 }

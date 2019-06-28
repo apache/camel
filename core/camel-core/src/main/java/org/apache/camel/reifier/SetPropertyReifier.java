@@ -33,9 +33,9 @@ class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(definition.getPropertyName(), "propertyName", this);
+        ObjectHelper.notNull(definition.getName(), "propertyName", this);
         Expression expr = definition.getExpression().createExpression(routeContext);
-        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getPropertyName(), routeContext.getCamelContext());
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(definition.getName(), routeContext.getCamelContext());
         return new SetPropertyProcessor(nameExpr, expr);
     }
 }
