@@ -58,8 +58,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -68,8 +67,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
@@ -1014,8 +1012,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -1024,8 +1021,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
@@ -1547,8 +1543,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
          */
@@ -1557,8 +1552,7 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * xref:registry.adocRegistry.
+         * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
          * @group common
