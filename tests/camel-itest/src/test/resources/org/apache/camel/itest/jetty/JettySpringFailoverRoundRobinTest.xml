@@ -56,14 +56,14 @@
         <route>
             <from uri="ref:bad"/>
             <to uri="mock:bad"/>
-            <setHeader headerName="CamelHttpResponseCode"><constant>500</constant></setHeader>
+            <setHeader name="CamelHttpResponseCode"><constant>500</constant></setHeader>
             <setBody><constant>Something bad happened</constant></setBody>
         </route>
 
         <route>
             <from uri="ref:bad2"/>
             <to uri="mock:bad2"/>
-            <setHeader headerName="CamelHttpResponseCode"><constant>404</constant></setHeader>
+            <setHeader name="CamelHttpResponseCode"><constant>404</constant></setHeader>
             <setBody><constant>Not found</constant></setBody>
         </route>
 

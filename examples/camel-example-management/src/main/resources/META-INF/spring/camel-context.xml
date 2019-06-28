@@ -50,7 +50,7 @@
           <constant>10</constant>
         </throttle>
         <!-- store the stock symbol as a header -->
-        <setHeader headerName="symbol">
+        <setHeader name="symbol">
           <xpath>/stock/symbol/text()</xpath>
         </setHeader>
         <!-- send the message to a dynamic to, with the stock symbol as the name of the queue -->

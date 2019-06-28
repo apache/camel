@@ -59,7 +59,7 @@
           INSERT INTO CAMEL_TEST(MSG, STATUS) VALUES(:?insertMsg, 'NEW')
         </constant>
       </setBody>
-      <setHeader headerName="CamelRetrieveGeneratedKeys">
+      <setHeader name="CamelRetrieveGeneratedKeys">
         <constant>true</constant>
       </setHeader>
       <to uri="jdbc:dataSource?useHeadersAsParameters=true"/>
@@ -84,7 +84,7 @@
     </route>
     <route id="query-update-route-part2">
       <from uri="direct:updateDone"/>
-      <setHeader headerName="camelTestId">
+      <setHeader name="camelTestId">
         <simple>${body['ID']}</simple>
       </setHeader>
       <setBody>

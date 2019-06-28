@@ -320,7 +320,7 @@ And the equivalent Spring sample:
 <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
   <route>
     <from uri="direct:start"/>
-    <setHeader headerName="CamelHttpMethod">
+    <setHeader name="CamelHttpMethod">
         <constant>POST</constant>
     </setHeader>
     <to uri="ahc:http://www.google.com"/>

@@ -189,24 +189,24 @@ from("direct:commit")
 ------------------------------------------
 <route>
     <from uri="direct:insert"/>
-    <setHeader headerName="SolrOperation">
+    <setHeader name="SolrOperation">
         <constant>INSERT</constant>
     </setHeader>
-    <setHeader headerName="SolrField.id">
+    <setHeader name="SolrField.id">
         <simple>${body}</simple>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
 <route>
     <from uri="direct:delete"/>
-    <setHeader headerName="SolrOperation">
+    <setHeader name="SolrOperation">
         <constant>DELETE_BY_ID</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>
 </route>
 <route>
     <from uri="direct:commit"/>
-    <setHeader headerName="SolrOperation">
+    <setHeader name="SolrOperation">
         <constant>COMMIT</constant>
     </setHeader>
     <to uri="solr://localhost:8983/solr"/>

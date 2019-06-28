@@ -88,8 +88,8 @@ pattern or a set of header names to be filtered out.
     </property>
 </bean>
 ...
-<setHeader headerName="allowedHeaderName"><constant>some metadata</constant></setHeader>
-<setHeader headerName="unwantedHeaderName"><constant>some private data</constant></setHeader>
+<setHeader name="allowedHeaderName"><constant>some metadata</constant></setHeader>
+<setHeader name="unwantedHeaderName"><constant>some private data</constant></setHeader>
 <to id="publish" uri="activemq:queue:destinationName?headerFilterStrategy=#myFilter"/>
 <log message="${header.unwantedHeaderName}"/>
 ----

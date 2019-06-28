@@ -67,7 +67,7 @@
           <to uri="bean:userService?method=getUser(${header.id})"/>
           <filter>
             <simple>${body} == null</simple>
-            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+            <setHeader name="Exchange.HTTP_RESPONSE_CODE">
               <constant>404</constant>
             </setHeader>
           </filter>

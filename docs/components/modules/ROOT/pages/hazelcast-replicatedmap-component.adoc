@@ -141,7 +141,7 @@ Spring DSL:
 <route>
     <from uri="direct:put" />
     <log message="put.."/>
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>put</constant>
     </setHeader>
     <to uri="hazelcast-replicatedmap:foo" />
@@ -167,7 +167,7 @@ Spring DSL:
 <route>
     <from uri="direct:get" />
     <log message="get.."/>
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>get</constant>
     </setHeader>
     <to uri="hazelcast-replicatedmap:foo" />
@@ -193,7 +193,7 @@ Spring DSL:
 <route>
     <from uri="direct:delete" />
     <log message="delete.."/>
-    <setHeader headerName="hazelcast.operation.type">
+    <setHeader name="hazelcast.operation.type">
         <constant>delete</constant>
     </setHeader>
     <to uri="hazelcast-replicatedmap:foo" />
