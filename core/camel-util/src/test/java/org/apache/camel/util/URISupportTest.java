@@ -240,6 +240,12 @@ public class URISupportTest {
     }
 
     @Test
+    public void testSanitizeAccessToken() throws Exception {
+        String out1 = URISupport.sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
+        assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);
+    }
+
+    @Test
     public void testSanitizeUriWithUserInfo() {
         String uri = "jt400://GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
         String expected = "jt400://GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
