@@ -5,8 +5,8 @@ Camel supports a pluggable interface called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Predicate.html[Predicate]
 which can be used to integrate a dynamic predicate into
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] such as when using the <<filter-eip,Message Filter>>
-or <<contentBasedRouter-eip,Content Based Router>>.
+Patterns] such as when using the xref:filter-eip.adoc[Message Filter]
+or xref:contentBasedRouter-eip.adoc[Content Based Router].
 
 A Predicate is being evaluated to a boolean value so the result is
 either `true` or `false`. This makes xref:predicate.adoc[Predicate] so

@@ -195,7 +195,7 @@ that should be either completed successfully (all of them) or not-executed/compe
 of endpoints at the same time?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|<<loop-eip,Loop>> |How can I repeat processing a message in a loop?
+|xref:loop-eip.adoc[Loop] |How can I repeat processing a message in a loop?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageTransformation]]
@@ -222,12 +222,12 @@ content?
 semantically equivalent, but arrive in a different format?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|<<sort-eip,Sort>> |How can I sort the body of a message?
+|xref:sort-eip.adoc[Sort] |How can I sort the body of a message?
 
 |  |Script |How do I execute a script which may not change the message?
 
 |image:http://cwiki.apache.org/confluence/download/attachments/49204/clear.png[image]
-|<<validate-eip,Validate>> |How can I validate a message?
+|xref:validate-eip.adoc[Validate] |How can I validate a message?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessagingEndpoints]]
@@ -288,7 +288,7 @@ and via non-messaging techniques?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 |image:http://www.eaipatterns.com/img/ControlBusIcon.gif[image]
-|<<controlbus-component,ControlBus>> |How can we effectively administer a
+|xref:controlbus-component.adoc[ControlBus] |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
 wide geographic area?
 
