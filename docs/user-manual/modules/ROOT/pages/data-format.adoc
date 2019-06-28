@@ -3,74 +3,74 @@
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-<<messageTranslator-eip,Message Translator>>.
+xref:messageTranslator-eip.adoc[Message Translator].
 
 The following data formats are currently supported:
 
 * Standard JVM object marshalling
-** <<serialization-dataformat,Serialization>>
-** <<string-dataformat,String>>
+** xref:serialization-dataformat.adoc[Serialization]
+** xref:string-dataformat.adoc[String]
 
 * Object marshalling
-** <<avro-dataformat,Avro>>
-** <<boon-dataformat,Boon>>
-** <<hessian-dataformat,Hessian>>
+** xref:avro-dataformat.adoc[Avro]
+** xref:boon-dataformat.adoc[Boon]
+** xref:hessian-dataformat.adoc[Hessian]
 ** xref:json.adoc[JSON]
-** <<protobuf-dataformat,Protobuf>>
-** <<yaml-snakeyaml-dataformat,YAML>>
+** xref:protobuf-dataformat.adoc[Protobuf]
+** xref:yaml-snakeyaml-dataformat.adoc[YAML]
 
 * Object/XML marshalling
-** <<castor-dataformat,Castor>>
-** <<jaxb-dataformat,JAXB>>
-** <<xmlBeans-dataformat,XmlBeans>>
-** <<xstream-dataformat,XStream>>
-** <<jibx-dataformat,JiBX>>
-** <<jacksonxml-dataformat,Jackson XML>>
+** xref:castor-dataformat.adoc[Castor]
+** xref:jaxb-dataformat.adoc[JAXB]
+** xref:xmlBeans-dataformat.adoc[XmlBeans]
+** xref:xstream-dataformat.adoc[XStream]
+** xref:jibx-dataformat.adoc[JiBX]
+** xref:jacksonxml-dataformat.adoc[Jackson XML]
 
 * Object/XML/Webservice marshalling
-** <<soap-dataformat,SOAP>>
+** xref:soap-dataformat.adoc[SOAP]
 
 * Direct JSON / XML marshalling
-** <<xmljson-dataformat,XmlJson>>
+** xref:xmljson-dataformat.adoc[XmlJson]
 
 * Flat data structure marshalling
-** <<beanio-dataformat,BeanIO>>
-** <<bindy-dataformat,Bindy>>
-** <<csv-dataformat,CSV>>
-** <<edi-dataformat,EDI>>
-** <<flatpack-dataformat,Flatpack DataFormat>>
-** uniVocity DataFormats <<univocity-csv-dataformat,CSV>> / <<univocity-tsv-dataformat,TSV>> / <<univocity-fixed-dataformat,Fixed Length>>
+** xref:beanio-dataformat.adoc[BeanIO]
+** xref:bindy-dataformat.adoc[Bindy]
+** xref:csv-dataformat.adoc[CSV]
+** xref:edi-dataformat.adoc[EDI]
+** xref:flatpack-dataformat.adoc[Flatpack DataFormat]
+** uniVocity DataFormats xref:univocity-csv-dataformat,CSV>> / <<univocity-tsv-dataformat,TSV>> / <<univocity-fixed-dataformat.adoc[Fixed Length]
 
 * Domain specific marshalling
-** <<hl7-dataformat,HL7 DataFormat>>
+** xref:hl7-dataformat.adoc[HL7 DataFormat]
 
 * Compression
-** <<gzip-dataformat,GZip DataFormat>>
-** <<zip-dataformat,Zip DataFormat>>
-** <<zipfile-dataformat,Zip File DataFormat>>
-** <<lzf-dataformat,LZF Data Format>>
-** <<tar-dataformat,Tar DataFormat>>
+** xref:gzip-dataformat.adoc[GZip DataFormat]
+** xref:zip-dataformat.adoc[Zip DataFormat]
+** xref:zipfile-dataformat.adoc[Zip File DataFormat]
+** xref:lzf-dataformat.adoc[LZF Data Format]
+** xref:tar-dataformat.adoc[Tar DataFormat]
 
 * Security
-** <<crypto-component,Crypto>>
-** <<crypto-component,PGP>>
-** <<secureXML-dataformat,XMLSecurity DataFormat>>
+** xref:crypto-component.adoc[Crypto]
+** xref:crypto-component.adoc[PGP]
+** xref:secureXML-dataformat.adoc[XMLSecurity DataFormat]
 
 * Misc.
-** <<base64-dataformat,Base64>>
-** <<custom-dataformat,Custom DataFormat>> -- to use your own
+** xref:base64-dataformat.adoc[Base64]
+** xref:custom-dataformat.adoc[Custom DataFormat] -- to use your own
 custom implementation
-** <<mime-multipart-dataformat,MIME-Multipart>>
-** <<rss-dataformat,RSS>>
-** <<tidymarkup-dataformat,TidyMarkup>>
-** <<syslog-dataformat,Syslog>>
-** <<ical-dataformat,ICal>>
-** <<barcode-dataformat,Barcode>> -- to read and generate barcodes
+** xref:mime-multipart-dataformat.adoc[MIME-Multipart]
+** xref:rss-dataformat.adoc[RSS]
+** xref:tidymarkup-dataformat.adoc[TidyMarkup]
+** xref:syslog-dataformat.adoc[Syslog]
+** xref:ical-dataformat.adoc[ICal]
+** xref:barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
 (QR-Code, PDF417, ...)
 
 And related is the following:
 
-* <<dataformat-component,DataFormat Component>> for working with
+* xref:dataformat-component.adoc[DataFormat Component] for working with
   Data Formats as if it was a regular xref:component.adoc[Component]
   supporting xref:endpoint.adoc[Endpoints] and xref:uris.adoc[URIs].
 * xref:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
@@ -80,8 +80,8 @@ And related is the following:
 ==== Unmarshalling
 
 If you receive a message from one of the Camel
-xref:component.adoc[Components] such as <<file-component,File>>,
-<<http-component,HTTP>> or <<jms-component,JMS>> you often want to unmarshal
+xref:component.adoc[Components] such as xref:file-component.adoc[File],
+xref:http-component,HTTP>> or <<jms-component.adoc[JMS] you often want to unmarshal
 the payload into some bean so that you can process it using some
 xref:bean-integration.adoc[Bean Integration] or perform
 xref:predicate.adoc[Predicate] evaluation and so forth. To do this use
@@ -129,7 +129,7 @@ xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of
-<<messageTranslator-eip,Message Translator>>:
+xref:messageTranslator-eip.adoc[Message Translator]:
 
 [source,java]
 ----

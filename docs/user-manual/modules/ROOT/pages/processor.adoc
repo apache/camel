@@ -4,7 +4,7 @@
 The
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 interface is used to implement consumers of message exchanges or to
-implement a <<messageTranslator-eip,Message Translator>>.
+implement a xref:messageTranslator-eip.adoc[Message Translator].
 
 [[Processor-Usingaprocessorinaroute]]
 ==== Using a processor in a route
@@ -94,6 +94,6 @@ xref:writing-components.adoc[Writing Components]
 [[Processor-SeeAlso]]
 ==== See Also
 
-* <<messageTranslator-eip,Message Translator>>
-* <<enrich-eip,Content Enricher>>
-* <<ContentFilter-eip,Content Filter>>
+* xref:messageTranslator-eip.adoc[Message Translator]
+* xref:enrich-eip.adoc[Content Enricher]
+* xref:ContentFilter-eip.adoc[Content Filter]

@@ -14,18 +14,18 @@ based on when a message is *being* routed.
 In this case the error occurs *before* a message has been initiated and
 routed. So how can I control the error handling?
 
-The <<ftp-component,FTP>> component have a few options
+The xref:ftp-component.adoc[FTP] component have a few options
 (`maximumReconnectAttempts, reconnectDelay` to control number of retries
 and delay in between.
 
 But you can also plugin your own implementation and determine what to do
 using the `pollStrategy` option which has more documentation
-<<pollingConsumer-eip,Polling Consumer>>.
+xref:pollingConsumer-eip.adoc[Polling Consumer].
 Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 
 [[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-Seealso]]
 ==== See also
 
-* <<ftp-component,FTP>>
-* <<pollingConsumer-eip,Polling Consumer>>
+* xref:ftp-component.adoc[FTP]
+* xref:pollingConsumer-eip.adoc[Polling Consumer]

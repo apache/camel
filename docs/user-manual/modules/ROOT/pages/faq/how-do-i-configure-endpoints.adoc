@@ -11,7 +11,7 @@ You can explicitly configure a Component using Java
 code as shown in this example
 
 Or you can explicitly get hold of an Endpoint and
-configure it using Java code as shown in the <<mock-component,Mock endpoint examples>>.
+configure it using Java code as shown in the xref:mock-component.adoc[Mock endpoint examples].
 
 [source,java]
 ----
@@ -115,7 +115,7 @@ URIs
 ==== Using Endpoint URIs
 
 Another approach is to use the URI syntax. The URI syntax supports the
-query notation. So for example with the <<mail-component,Mail>> component
+query notation. So for example with the xref:mail-component.adoc[Mail] component
 you can configure the password property via the URI
 
 [source]
@@ -311,7 +311,7 @@ can have multiple options in one line, eg this is the same:
 ==== See Also
 
 * xref:../configuring-camel.adoc[How do I add a component?]
-* <<cdi-component,CDI>>
+* xref:cdi-component.adoc[CDI]
 * xref:../spring.adoc[Spring]
 * xref:../uris.adoc[URIs]
 * xref:../using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

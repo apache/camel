@@ -68,31 +68,31 @@ public interface Predicate {
 
 The following languages are supported out of the box
 
-* <<bean-language,Bean Language>> for using Java for expressions
-* <<constant-language,Constant>>
-* the unified <<el-language,EL>> from JSP and JSF
-* <<header-language,Header>>
-* <<jsonpath-language,JSonPath>>
-* <<jxpath-language,JXPath>>
-* <<mvel-component,Mvel>>
-* <<ognl-language,OGNL>>
-* <<ref-language,Ref Language>>
+* xref:bean-language.adoc[Bean Language] for using Java for expressions
+* xref:constant-language.adoc[Constant]
+* the unified xref:el-language.adoc[EL] from JSP and JSF
+* xref:header-language.adoc[Header]
+* xref:jsonpath-language.adoc[JSonPath]
+* xref:jxpath-language.adoc[JXPath]
+* xref:mvel-component.adoc[Mvel]
+* xref:ognl-language.adoc[OGNL]
+* xref:ref-language.adoc[Ref Language]
 * ExchangeProperty
 / Property
 * Scripting Languages such as
 ** BeanShell
 ** JavaScript
-** <<groovy-language,Groovy>>
-** <<python-language,Python>>
-** <<php-language,PHP>>
-** <<ruby-language,Ruby>>
-* <<simple-language,Simple>>
-** <<file-language,File Language>>
-* <<spel-language,Spring Expression Language>>
-* <<sql-component,SQL>>
+** xref:groovy-language.adoc[Groovy]
+** xref:python-language.adoc[Python]
+** xref:php-language.adoc[PHP]
+** xref:ruby-language.adoc[Ruby]
+* xref:simple-language.adoc[Simple]
+** xref:file-language.adoc[File Language]
+* xref:spel-language.adoc[Spring Expression Language]
+* xref:sql-component.adoc[SQL]
 * Tokenizer
-* <<xpath-language,XPath>>
-* <<xquery-component,XQuery>>
+* xref:xpath-language.adoc[XPath]
+* xref:xquery-component.adoc[XQuery]
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
@@ -112,14 +112,14 @@ wish to use.
 
 |Scripting Languages such as
 BeanShell, JavaScript,
-<<groovy-language,Groovy>>, <<groovy-language,PHP>>, <<groovy-language,Python>>
-and <<ruby-language,Ruby>> |http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
+xref:groovy-language,Groovy>>, <<groovy-language,PHP>>, <<groovy-language.adoc[Python]
+and xref:ruby-language.adoc[Ruby] |http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
 
-|<<sql-component,SQL>> |http://camel.apache.org/maven/current/camel-josql/apidocs/org/apache/camel/builder/sql/SqlBuilder.html[org.apache.camel.builder.josql.SqlBuilder]
+|xref:sql-component.adoc[SQL] |http://camel.apache.org/maven/current/camel-josql/apidocs/org/apache/camel/builder/sql/SqlBuilder.html[org.apache.camel.builder.josql.SqlBuilder]
 
-|<<xpath-language,XPath>> |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/xml/XPathBuilder.html[org.apache.camel.builder.xml.XPathBuilder]
+|xref:xpath-language.adoc[XPath] |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/xml/XPathBuilder.html[org.apache.camel.builder.xml.XPathBuilder]
 
-|<<xquery-component,XQuery>> |http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/builder/saxon/XQueryBuilder.html[org.apache.camel.builder.saxon.XQueryBuilder]
+|xref:xquery-component.adoc[XQuery] |http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/builder/saxon/XQueryBuilder.html[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
 [[Expression-SeeAlso]]

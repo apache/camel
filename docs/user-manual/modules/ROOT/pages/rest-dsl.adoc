@@ -8,10 +8,10 @@ REST style with verbs such as get, post, delete etc.
 
 === How it works
 
-The Rest DSL is a facade that builds <<rest-component,Rest>> endpoints as
+The Rest DSL is a facade that builds xref:rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as <<restlet-component,Restlet>>, <<restlet-component,Spark-rest>>, and
+as xref:restlet-component,Restlet>>, <<restlet-component.adoc[Spark-rest], and
 others that has native REST integration.
 
 === Components supporting Rest DSL
@@ -19,20 +19,20 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
-* <<rest-component,came-rest>> *required* contains the base rest component needed by Rest DSL
-* <<netty-http-component,camel-netty-http>> (also
+* xref:rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
+* xref:netty-http-component.adoc[camel-netty-http] (also
 supports Swagger Java)
-* <<netty4-http-component,camel-netty4-http>> (also
+* xref:netty4-http-component.adoc[camel-netty4-http] (also
 supports Swagger Java)
-* <<jetty-component,camel-jetty>> (also
+* xref:jetty-component.adoc[camel-jetty] (also
 supports Swagger Java)
-* <<restlet-component,camel-restlet>> (also
+* xref:restlet-component.adoc[camel-restlet] (also
 supports Swagger Java)
-* <<servlet-component,camel-servlet>> (also
+* xref:servlet-component.adoc[camel-servlet] (also
 supports Swagger Java)
-* <<spark-rest-component,camel-spark-rest>> (also
+* xref:spark-rest-component.adoc[camel-spark-rest] (also
 supports Swagger Java from Camel 2.17 onwards)
-* <<undertow-component,camel-undertow>> (also
+* xref:undertow-component.adoc[camel-undertow] (also
 supports Swagger Java from Camel 2.17 onwards)
 
 === Rest DSL with Java
@@ -181,7 +181,7 @@ only. The example above can be defined as:
 
 The Rest DSL supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
-over <<jms-component,JMS>> where the queue name is dynamic defined
+over xref:jms-component.adoc[JMS] where the queue name is dynamic defined
 
 [source,java]
 ----
@@ -204,7 +204,7 @@ over <<jms-component,JMS>> where the queue name is dynamic defined
 
 See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the <<simple-language,Simple>> language, but it has more power than so.
+the xref:simple-language.adoc[Simple] language, but it has more power than so.
 
 === Embedding Camel routes
 

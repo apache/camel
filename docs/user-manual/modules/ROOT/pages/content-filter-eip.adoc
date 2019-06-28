@@ -4,26 +4,26 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
 Filter] from the
-<<EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns,EIP patterns>>
+xref:EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns.adoc[EIP patterns]
 using one of the following mechanisms in the routing logic to transform
 content from the inbound message.
 
-* <<messageTranslator-eip,Message Translator>>
-* invoking a <<BeanIntegration-BeanIntegration,Java bean>>
-* <<Processor-Processor,Processor>> object
+* xref:messageTranslator-eip.adoc[Message Translator]
+* invoking a xref:BeanIntegration-BeanIntegration.adoc[Java bean]
+* xref:Processor-Processor.adoc[Processor] object
 
 image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
-<<Expression-Expressions,Expression>> in the <<DSL-DSL,DSL>> like
-<<xquery-language,XQuery>>, <<sql-language,SQL>> or one of the supported
-<<ScriptingLanguages-ScriptingLanguages,Scripting Languages>>.
+xref:Expression-Expressions,Expression>> in the <<DSL-DSL.adoc[DSL] like
+xref:xquery-language,XQuery>>, <<sql-language.adoc[SQL] or one of the supported
+xref:ScriptingLanguages-ScriptingLanguages.adoc[Scripting Languages].
 
-=== Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
+=== Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
 
-Here is a simple example using the <<DSL-DSL,DSL>> directly
+Here is a simple example using the xref:DSL-DSL.adoc[DSL] directly
 
-In this example we add our own <<Processor-Processor,Processor>>
+In this example we add our own xref:Processor-Processor.adoc[Processor]
 
 For further examples of this pattern in use you could look at one of the
 JUnit tests
@@ -58,8 +58,8 @@ interested in:
 === Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-<<GettingStarted-GettingStarted,Getting Started>>, you may also find the
-<<Architecture-Architecture,Architecture>> useful particularly the description
-of <<Endpoint-Endpoints,Endpoint>> and <<URIs-URIs,URIs>>. Then you could
-try out some of the <<Examples-Examples,Examples>> first before trying
+xref:GettingStarted-GettingStarted.adoc[Getting Started], you may also find the
+xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
+of xref:Endpoint-Endpoints,Endpoint>> and <<URIs-URIs.adoc[URIs]. Then you could
+try out some of the xref:Examples-Examples.adoc[Examples] first before trying
 this pattern out.

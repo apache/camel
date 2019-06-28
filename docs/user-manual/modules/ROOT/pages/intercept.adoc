@@ -113,7 +113,7 @@ particular route.
 
 So lets start with the logging example. We want to log all the
 *incoming* requests so we use `interceptFrom` to route to the
-<<log-component,Log>> component. As `proceed` is default then the
+xref:log-component.adoc[Log] component. As `proceed` is default then the
 Exchange will continue its route, and thus it will
 continue to `mock:first`.
 
@@ -186,7 +186,7 @@ Intercept endpoint is of course also available using Spring DSL.
 
 We start with the first example from above in Spring DSL:
 
-And the 2nd. Notice how we can leverage the <<simple-language,Simple>>
+And the 2nd. Notice how we can leverage the xref:simple-language.adoc[Simple]
 language for the Predicate:
 
 And the 3rd with the `skip`, notice skip is set with the

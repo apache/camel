@@ -27,7 +27,7 @@ following:
 * Lookup of beans in the xref:registry.adoc[Registry]
 * Additional supported in Spring XML (see below in examples)
 * Using Blueprint `PropertyPlaceholder` with Camel
-<<properties-component,Properties>> component
+xref:properties-component.adoc[Properties] component
 * Using `@PropertyInject` to inject a property in a POJO
 * *Camel 2.14.1* Using default value if a property does not exists
 * *Camel 2.14.1* Include out of the box functions, to lookup property
@@ -363,9 +363,9 @@ template.sendBody("{{cool.start}}", "Hello World");
 
 
 [[UsingPropertyPlaceholder-Examplewithlanguage]]
-==== Example with <<simple-language,Simple>> language
+==== Example with xref:simple-language.adoc[Simple] language
 
-The <<simple-language,Simple>> language now also support using property
+The xref:simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
 
@@ -378,7 +378,7 @@ cheese.quote=Camel rocks
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
-You can also specify the location in the <<simple-language,Simple>>
+You can also specify the location in the xref:simple-language.adoc[Simple]
 language for example:
 
 
@@ -929,10 +929,10 @@ the `${}` notation. And in the Camel routes we use the Camel
 placeholder notation with `{{ }}`.
 
 [[UsingPropertyPlaceholder-ClashingSpringPropertyPlaceholderswithCamelsLanguage]]
-==== Clashing Spring Property Placeholders with Camels <<simple-language,Simple>> Language
+==== Clashing Spring Property Placeholders with Camels xref:simple-language.adoc[Simple] Language
 
 Take notice when using Spring bridging placeholder then the
-spring `${}` syntax clashes with the <<simple-language,Simple>> in
+spring `${}` syntax clashes with the xref:simple-language.adoc[Simple] in
 Camel, and therefore take care.
 
 Example:
@@ -945,7 +945,7 @@ Example:
 ----
 
 clashes with Spring property placeholders, and you should
-use `$simple{}` to indicate using the <<simple-language,Simple>>
+use `$simple{}` to indicate using the xref:simple-language.adoc[Simple]
 language in Camel.
 
 
@@ -1208,4 +1208,4 @@ pc.addFunction(new MyBeerFunction());
 [[UsingPropertyPlaceholder-SeeAlso]]
 ==== See Also
 
-* <<properties-component,Properties>> component
+* xref:properties-component.adoc[Properties] component
