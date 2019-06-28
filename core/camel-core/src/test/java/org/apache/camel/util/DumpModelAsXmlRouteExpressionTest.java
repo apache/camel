@@ -68,7 +68,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<setHeader name=\"foo\""));
+        assertTrue(xml.contains("<setHeader id=\"setHeader1\" name=\"foo\">"));
         assertTrue(xml.contains("<method ref=\"myCoolBean\"/>"));
     }
 
