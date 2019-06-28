@@ -318,7 +318,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
             fail("Should throw exception");
         } catch (PropertyBindingException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
     }
 
