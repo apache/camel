@@ -155,7 +155,7 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
                 // must be a local instance to avoid problems with concurrency
                 // (to be
                 // thread safe)
-                ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
+                ValidatorErrorHandler handler = errorHandler.getClass().getDeclaredConstructor().newInstance();
                 validator.setErrorHandler(handler);
 
                 try {

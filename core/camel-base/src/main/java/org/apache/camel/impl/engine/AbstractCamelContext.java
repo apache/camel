@@ -3350,8 +3350,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 try {
                     Class<?> type = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass("properties");
                     if (type != null) {
-                        log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-                        comp = type.newInstance();
+                        log.debug("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+                        comp = type.getDeclaredConstructor().newInstance();
                         globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
                     }
                 } catch (Exception e) {
