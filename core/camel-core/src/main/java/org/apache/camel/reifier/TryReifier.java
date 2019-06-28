@@ -27,7 +27,7 @@ import org.apache.camel.model.TryDefinition;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class TryReifier extends ProcessorReifier<TryDefinition> {
+public class TryReifier extends ProcessorReifier<TryDefinition> {
 
     TryReifier(ProcessorDefinition<?> definition) {
         super((TryDefinition) definition);

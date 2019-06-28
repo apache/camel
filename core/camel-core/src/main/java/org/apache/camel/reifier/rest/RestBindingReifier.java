@@ -18,7 +18,6 @@ package org.apache.camel.reifier.rest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.CamelContext;

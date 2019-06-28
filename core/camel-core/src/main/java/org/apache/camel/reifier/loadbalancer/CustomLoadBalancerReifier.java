@@ -23,7 +23,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.StringHelper;
 
-class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
+public class CustomLoadBalancerReifier extends LoadBalancerReifier<CustomLoadBalancerDefinition> {
 
     CustomLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((CustomLoadBalancerDefinition) definition);

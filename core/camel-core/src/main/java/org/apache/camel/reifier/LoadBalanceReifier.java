@@ -25,7 +25,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
 import org.apache.camel.spi.RouteContext;
 
-class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
+public class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
     LoadBalanceReifier(ProcessorDefinition<?> definition) {
         super((LoadBalanceDefinition) definition);

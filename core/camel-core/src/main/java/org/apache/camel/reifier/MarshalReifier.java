@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.MarshalProcessor;
 
-class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
+public class MarshalReifier extends ProcessorReifier<MarshalDefinition> {
 
     MarshalReifier(ProcessorDefinition<?> definition) {
         super((MarshalDefinition) definition);

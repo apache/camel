@@ -26,7 +26,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.DelegateSyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 
-class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
+public class ProcessReifier extends ProcessorReifier<ProcessDefinition> {
 
     ProcessReifier(ProcessorDefinition<?> definition) {
         super((ProcessDefinition) definition);

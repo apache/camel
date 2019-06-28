@@ -23,7 +23,7 @@ import org.apache.camel.processor.RemoveHeadersProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefinition> {
+public class RemoveHeadersReifier extends ProcessorReifier<RemoveHeadersDefinition> {
 
     RemoveHeadersReifier(ProcessorDefinition<?> definition) {
         super((RemoveHeadersDefinition) definition);

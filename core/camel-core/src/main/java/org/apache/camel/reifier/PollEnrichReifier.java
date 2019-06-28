@@ -26,7 +26,7 @@ import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.RouteContext;
 
-class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
+public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
     PollEnrichReifier(ProcessorDefinition<?> definition) {
         super((PollEnrichDefinition) definition);

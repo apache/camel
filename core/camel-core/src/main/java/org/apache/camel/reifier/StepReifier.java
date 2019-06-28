@@ -24,7 +24,7 @@ import org.apache.camel.model.StepDefinition;
 import org.apache.camel.processor.StepProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class StepReifier extends ProcessorReifier<StepDefinition> {
+public class StepReifier extends ProcessorReifier<StepDefinition> {
 
     StepReifier(ProcessorDefinition<?> definition) {
         super(StepDefinition.class.cast(definition));

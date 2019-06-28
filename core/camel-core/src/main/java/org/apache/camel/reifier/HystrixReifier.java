@@ -21,7 +21,7 @@ import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 
-class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
+public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
 
     HystrixReifier(ProcessorDefinition<?> definition) {
         super(HystrixDefinition.class.cast(definition));

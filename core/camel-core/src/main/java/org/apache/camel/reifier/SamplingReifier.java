@@ -24,7 +24,7 @@ import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.processor.SamplingThrottler;
 import org.apache.camel.spi.RouteContext;
 
-class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
+public class SamplingReifier extends ProcessorReifier<SamplingDefinition> {
 
     SamplingReifier(ProcessorDefinition<?> definition) {
         super((SamplingDefinition) definition);

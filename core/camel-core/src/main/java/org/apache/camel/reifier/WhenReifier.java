@@ -21,7 +21,7 @@ import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class WhenReifier extends ExpressionReifier<WhenDefinition> {
+public class WhenReifier extends ExpressionReifier<WhenDefinition> {
 
     WhenReifier(ProcessorDefinition<?> definition) {
         super((WhenDefinition) definition);

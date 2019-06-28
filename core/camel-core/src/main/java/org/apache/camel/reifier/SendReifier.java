@@ -23,7 +23,7 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class SendReifier extends ProcessorReifier<SendDefinition<?>> {
+public class SendReifier extends ProcessorReifier<SendDefinition<?>> {
 
     SendReifier(ProcessorDefinition<?> definition) {
         super((SendDefinition) definition);

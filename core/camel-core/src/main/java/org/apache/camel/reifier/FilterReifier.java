@@ -22,7 +22,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class FilterReifier extends ExpressionReifier<FilterDefinition> {
+public class FilterReifier extends ExpressionReifier<FilterDefinition> {
 
     FilterReifier(ProcessorDefinition<?> definition) {
         super(FilterDefinition.class.cast(definition));

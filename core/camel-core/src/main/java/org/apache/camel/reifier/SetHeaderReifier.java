@@ -25,7 +25,7 @@ import org.apache.camel.processor.SetHeaderProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
+public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
 
     SetHeaderReifier(ProcessorDefinition<?> definition) {
         super((SetHeaderDefinition) definition);

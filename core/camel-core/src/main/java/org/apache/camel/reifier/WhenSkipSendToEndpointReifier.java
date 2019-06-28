@@ -23,7 +23,7 @@ import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
+public class WhenSkipSendToEndpointReifier extends ExpressionReifier<WhenSkipSendToEndpointDefinition> {
 
     WhenSkipSendToEndpointReifier(ProcessorDefinition<?> definition) {
         super((WhenSkipSendToEndpointDefinition) definition);

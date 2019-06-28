@@ -22,7 +22,7 @@ import org.apache.camel.model.SetExchangePatternDefinition;
 import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatternDefinition> {
+public class SetExchangePatternReifier extends ProcessorReifier<SetExchangePatternDefinition> {
 
     SetExchangePatternReifier(ProcessorDefinition<?> definition) {
         super((SetExchangePatternDefinition) definition);

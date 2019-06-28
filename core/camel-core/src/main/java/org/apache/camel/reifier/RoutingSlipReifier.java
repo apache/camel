@@ -21,16 +21,14 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
-
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
 
 import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
-class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
+public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
 
     RoutingSlipReifier(ProcessorDefinition<?> definition) {
         super((RoutingSlipDefinition) definition);

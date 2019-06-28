@@ -33,7 +33,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 
-class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
+public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
 
     MulticastReifier(ProcessorDefinition<?> definition) {
         super((MulticastDefinition) definition);

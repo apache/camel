@@ -25,7 +25,7 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Transformer;
 
-class EndpointTransformeReifier extends TransformerReifier<EndpointTransformerDefinition> {
+public class EndpointTransformeReifier extends TransformerReifier<EndpointTransformerDefinition> {
 
     EndpointTransformeReifier(TransformerDefinition definition) {
         super((EndpointTransformerDefinition) definition);

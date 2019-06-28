@@ -25,7 +25,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
+public class PolicyReifier extends ProcessorReifier<PolicyDefinition> {
 
     PolicyReifier(ProcessorDefinition<?> definition) {
         super((PolicyDefinition) definition);

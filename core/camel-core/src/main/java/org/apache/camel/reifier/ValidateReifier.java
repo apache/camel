@@ -22,7 +22,7 @@ import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
-class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
+public class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
 
     ValidateReifier(ProcessorDefinition<?> definition) {
         super((ValidateDefinition) definition);

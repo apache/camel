@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
-class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
+public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> {
 
     OnExceptionReifier(ProcessorDefinition<?> definition) {
         super((OnExceptionDefinition) definition);

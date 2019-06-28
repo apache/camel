@@ -26,7 +26,7 @@ import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.RouteContext;
 
-class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinition<?>> {
+public class DynamicRouterReifier extends ExpressionReifier<DynamicRouterDefinition<?>> {
 
     DynamicRouterReifier(ProcessorDefinition<?> definition) {
         super(DynamicRouterDefinition.class.cast(definition));

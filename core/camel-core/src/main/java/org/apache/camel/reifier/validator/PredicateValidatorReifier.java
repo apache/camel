@@ -24,7 +24,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
-class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
+public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
 
     PredicateValidatorReifier(ValidatorDefinition definition) {
         super((PredicateValidatorDefinition) definition);

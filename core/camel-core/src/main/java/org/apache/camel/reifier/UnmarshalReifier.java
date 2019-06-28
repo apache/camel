@@ -24,7 +24,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.processor.UnmarshalProcessor;
 
-class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
+public class UnmarshalReifier extends ProcessorReifier<UnmarshalDefinition> {
 
     UnmarshalReifier(ProcessorDefinition<?> definition) {
         super((UnmarshalDefinition) definition);

@@ -28,7 +28,7 @@ import org.apache.camel.processor.loadbalancer.WeightedRandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
-class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
+public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
     WeightedLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((WeightedLoadBalancerDefinition) definition);
