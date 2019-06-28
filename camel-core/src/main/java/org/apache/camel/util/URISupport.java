@@ -42,7 +42,7 @@ public final class URISupport {
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
     private static final Pattern SECRETS = Pattern.compile(
-            "([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW[({].*[)}]|[^&]*)",
+            "([?&][^=]*(?:passphrase|password|secretKey|accessToken|clientSecret)[^=]*)=(RAW[({].*[)}]|[^&]*)",
             Pattern.CASE_INSENSITIVE);
 
     // Match the user password in the URI as second capture group
