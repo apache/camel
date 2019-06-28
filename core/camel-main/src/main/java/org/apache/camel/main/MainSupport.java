@@ -760,7 +760,14 @@ public abstract class MainSupport extends ServiceSupport {
         // log summary of configurations
         if (!autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
-            autoConfiguredProperties.forEach((k, v) -> LOG.info("\t{}={}", k, v));
+            autoConfiguredProperties.forEach((k, v) -> {
+                boolean sensitive = k.toLowerCase(Locale.US).contains("password") || k.contains("secret") || k.contains("passphrase") || k.contains("token");
+                if (sensitive) {
+                    LOG.info("\t{}=xxxxxx", k);
+                } else {
+                    LOG.info("\t{}={}", k, v);
+                }
+            });
         }
 
         // try to load the route builders
