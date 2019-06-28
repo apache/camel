@@ -107,6 +107,21 @@ We have also renamed `camel-jetty9` to `camel-jetty`.
 
 The properties component will now use OS environment variables as perferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
 
+### <setHeader> and <setProperty> in XML DSL
+
+We have renamed the attribute `headerName` and `propertyName` in the XML DSL for the `<setHeader>` and `<setProperty`> EIPs, to be just `name`.
+
+So migrate 
+
+    <setHeader headerName="foo"><simple>Hello ${body}</simple></setHeader>
+
+To
+
+    <setHeader name="foo"><simple>Hello ${body}</simple></setHeader>
+
+And the same for `<setProperty>`.
+
+
 ### javax.script
 
 The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
