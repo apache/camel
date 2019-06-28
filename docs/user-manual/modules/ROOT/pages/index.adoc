@@ -1,9 +1,9 @@
 = Summary
 
-* <<#overview,Overview>>
-* <<#documentation,Documentation>>
-* <<#community,Community>>
-* <<#developers,Developers>>
+* xref:#overview.adoc[Overview]
+* xref:#documentation.adoc[Documentation]
+* xref:#community.adoc[Community]
+* xref:#developers.adoc[Developers]
 
 == Overview
 
@@ -16,18 +16,18 @@
 
 == Documentation
 
-* <<#user-guide,User Guide>>
+* xref:#user-guide.adoc[User Guide]
 * Manual
 * xref:books.adoc[Books]
 * Tutorials
-* <<#examples,Examples>>
+* xref:#examples.adoc[Examples]
 * Cookbook
-* <<#architecture,Architecture>>
+* xref:#architecture.adoc[Architecture]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-* <<#dsl,DSL>>
-* <<#components,Components>>
-* <<#data-formats,Data Formats>>
-* <<#languages,Languages>>
+* xref:#dsl.adoc[DSL]
+* xref:#components.adoc[Components]
+* xref:#data-formats.adoc[Data Formats]
+* xref:#languages.adoc[Languages]
 * xref:security.adoc[Security]
 * xref:security-advisories.adoc[Security Advisories]
 
@@ -37,7 +37,7 @@
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:camel-jar-dependencies.adoc[Camel JAR Dependencies]
 * xref:camel-boot.adoc[Camel Boot]
-* <<cdi-component,Working with Camel and CDI>>
+* xref:cdi-component.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
 * xref:guice.adoc[Working with Camel and Guice]
 * xref:karaf.adoc[Working with Camel and Karaf]

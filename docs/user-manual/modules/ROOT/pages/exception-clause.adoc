@@ -24,8 +24,8 @@ from("seda:inputB")
 
 Here if the processing of *`seda:inputA`* or *`seda:inputB`* cause
 a *`ValidationException`* to be thrown (such as due to the XSD
-validation of the <<validator-components,Validation>> component or the
-Relax NG Compact syntax validation of the <<jing-component,Jing>>
+validation of the xref:validator-components.adoc[Validation] component or the
+Relax NG Compact syntax validation of the xref:jing-component.adoc[Jing]
 component), then the message will be sent to the
 *`activemq:validationFailed`* queue.
 
@@ -160,11 +160,11 @@ select the *`onException(IOException.class)`* clause.
 ==== Configuring RedeliveryPolicy (redeliver options)
 
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
-requires to use the <<deadLetterChannel-eip,Dead Letter Channel>>
+requires to use the xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
 as the xref:error-handler.adoc[Error Handler]. Dead Letter Channel
 supports attempting to redeliver the message exchange a number of times
 before sending it to a dead letter endpoint. See
-<<deadLetterChannel-eip,Dead Letter Channel>> for further
+xref:deadLetterChannel-eip.adoc[Dead Letter Channel] for further
 information about redeliver and which redeliver options exists.
 
 ===== No redelivery is default for onException
@@ -177,7 +177,7 @@ type basis. By default in the top examples, if an
 *`org.apache.camel.ValidationException`* occurs then the message will
 not be redelivered; however if some other exception occurs, e.g.,
 *`IOException`* or whatever, the route will be retried according to the
-settings from the <<deadLetterChannel-eip,Dead Letter Channel>>.
+settings from the xref:deadLetterChannel-eip.adoc[Dead Letter Channel].
 
 However if you want to customize any methods on the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
@@ -313,7 +313,7 @@ is being routed to our processor *`MyFunctionFailureHandler`*. So you
 can say that the exchange is diverted when a *`MyFunctionalException`*
 is thrown during processing. It's important to distinct this as perfect
 valid. The default redelivery policy from the
-<<deadLetterChannel-eip,Dead Letter Channel>> will not kick in, so
+xref:deadLetterChannel-eip.adoc[Dead Letter Channel] will not kick in, so
 our processor receives the Exchange directly, without any redeliver
 attempted. In our processor we need to determine what to do. Camel
 regards the Exchange as *failure handled*. So our processor is the end
@@ -334,7 +334,7 @@ using a producer template from Exchange.
 
 ===== Continued
 
-See also the section <<ExceptionClause-HandleandContinueExceptions,Handle and continue exceptions>> below.
+See also the section xref:ExceptionClause-HandleandContinueExceptions.adoc[Handle and continue exceptions] below.
 
 Using *`onException`* to handle known exceptions is a very powerful
 feature in Camel. However prior to Camel 1.5 you could not mark the
@@ -407,7 +407,7 @@ In the route above we handled the exception but routed it to a different
 endpoint. What if you need to alter the response and send a fixed
 response back to the original caller (the client). No secret here just
 do as you do in normal Camel routing, use
-<<messageTranslator-eip,transform>> to set the response, as shown in
+xref:messageTranslator-eip.adoc[transform] to set the response, as shown in
 the sample below:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java
@@ -613,15 +613,15 @@ default error handler will kick in.
 
 *Available as of Camel 2.0*
 
-<<deadLetterChannel-eip,Dead Letter Channel>> has support
+xref:deadLetterChannel-eip.adoc[Dead Letter Channel] has support
 for *`onRedelivery`* to allow custom processing of a Message before its
 being redelivered. It can be used to add some customer header or
 whatnot. In Camel 2.0 we have added this feature to
 xref:exception-clause.adoc[Exception Clause] as well, so you can use per
 exception scoped on redelivery. Camel will fallback to use the one
-defined on <<deadLetterChannel-eip,Dead Letter Channel>> if any, if
+defined on xref:deadLetterChannel-eip.adoc[Dead Letter Channel] if any, if
 none exists on the xref:exception-clause.adoc[Exception Clause]. See
-<<deadLetterChannel-eip,Dead Letter Channel>> for more details on
+xref:deadLetterChannel-eip.adoc[Dead Letter Channel] for more details on
 *`onRedelivery`*.
 
 In the code below we want to do some custom code before redelivering any
@@ -654,7 +654,7 @@ class as this code is based on unit testing):
 
 *Available as of Camel 2.17*
 
-<<deadLetterChannel-eip,Dead Letter Channel>> has support
+xref:deadLetterChannel-eip.adoc[Dead Letter Channel] has support
 for *`onExceptionOccurred`* to allow custom processing of a Message just
 after the exception was thrown. It can be used to do some custom logging
 or whatnot. The difference between *`onRedelivery`* processor
@@ -732,7 +732,7 @@ Where the bean *`myRetryHandler`* is computing if we should retry or not:
 The default
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/exceptionpolicy/ExceptionPolicyStrategy.html[ExceptionPolicyStrategy]
 in Camel should be sufficient in nearly all use-cases (see section
-<<ExceptionClause-HowDoesCamelSelectWhichClauseShouldHandleaGivenThrownException,How does Camel select which clause should handle a given thrown Exception>>).
+xref:ExceptionClause-HowDoesCamelSelectWhichClauseShouldHandleaGivenThrownException.adoc[How does Camel select which clause should handle a given thrown Exception]).
 However, if you need to use your own this can be configured as the
 sample below illustrates:
 
@@ -761,5 +761,5 @@ Spring DSL as well. Here are a few examples:
 ==== See also
 
 * The xref:error-handler.adoc[Error Handler] for the general error handling documentation
-* The <<deadLetterChannel-eip,Dead Letter Channel>> for further details
-* The <<transactionalClient-eip,Transactional Client>> for transactional behavior
+* The xref:deadLetterChannel-eip.adoc[Dead Letter Channel] for further details
+* The xref:transactionalClient-eip.adoc[Transactional Client] for transactional behavior

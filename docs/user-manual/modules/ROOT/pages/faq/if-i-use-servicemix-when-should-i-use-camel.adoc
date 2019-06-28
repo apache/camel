@@ -7,7 +7,7 @@ So if you are already using http://servicemix.apache.org/[ServiceMix]
 then you can use Camel implement the
 xref:../enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 inside JBI such as
-<<contentBasedRouter-eip,Content Based Router>>, routing messages
+xref:contentBasedRouter-eip.adoc[Content Based Router], routing messages
 between your existing JBI endpoints.
 
 You can also reuse any of the Camel xref:../component.adoc[Components]

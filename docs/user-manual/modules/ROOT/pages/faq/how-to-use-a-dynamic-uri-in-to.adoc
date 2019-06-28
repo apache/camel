@@ -10,7 +10,7 @@ body, the Camel Context, etc.
 *Dynamic To - out of the box*
 
 From *Camel 2.16* onwards there is a new `<toD>` which is a dynamic to.
-See more details at <<messageEndpoint-eip,Message Endpoint>>.
+See more details at xref:messageEndpoint-eip.adoc[Message Endpoint].
 ====
 
 For example, if you're using a Freemarker producer and the template
@@ -32,10 +32,10 @@ This snippet is not valid code. Read on.
 In this case, you must use an EIP (Enterprise Integration Pattern) that
 is capable of computing a dynamic URI using
 an xref:../expression.adoc[Expression], such as
-the <<recipientList-eip,Recipient List>> EIP pattern.
+the xref:recipientList-eip.adoc[Recipient List] EIP pattern.
 
 For example, rewriting the snippet above to use the
-<<simple-language,Simple>> expression language:
+xref:simple-language.adoc[Simple] expression language:
 
 [TIP]
 ====
@@ -53,7 +53,7 @@ Or you could use any other of Camel xref:../languages.adoc[Languages].
 
 [NOTE]
 ====
-Notice that the <<recipientList-eip,Recipient List>> can send to
+Notice that the xref:recipientList-eip.adoc[Recipient List] can send to
 multiple
 xref:../endpoint.adoc[Endpoints]
 if the expression returns either a `java.util.List`, array,
@@ -61,7 +61,7 @@ if the expression returns either a `java.util.List`, array,
 `String` then you can specify multiple endpoints separated by comma. So
 if you only want to send to *one* endpoint and use a `String` type, then
 beware of the comma. If you need to use a comma, then you can change or
-turn off the separator on the <<recipientList-eip,Recipient List>>.
+turn off the separator on the xref:recipientList-eip.adoc[Recipient List].
 
 For example, to turn it, when using *Camel 2.13* onwards:
 

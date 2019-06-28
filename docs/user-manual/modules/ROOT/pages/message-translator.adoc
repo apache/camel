@@ -16,7 +16,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[ima
 
 You can transform a message using Camel's
 xref:bean-integration.adoc[Bean Integration] to call any method on a
-bean in your <<Registry-Registry,Registry>> such as your
+bean in your xref:Registry-Registry.adoc[Registry] such as your
 xref:spring.adoc[Spring] XML configuration file as follows
 
 [source,java]
@@ -36,7 +36,7 @@ the transformation
 
 or you can use the DSL to explicitly configure the transformation
 
-You can also use <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>
+You can also use xref:SpringXMLExtensions-SpringXMLExtensions.adoc[Spring XML Extensions]
 to do a transformation. Basically any xref:expression.adoc[Expression]
 language can be substituted inside the transform element as shown below
 
@@ -54,7 +54,7 @@ invoke a bean
 
 You can also use xref:templating.adoc[Templating] to consume a message
 from one destination, transform it with something like
-<<velocity-component,Velocity>> or <<velocity-component,XQuery>> and then send
+xref:velocity-component,Velocity>> or <<velocity-component.adoc[XQuery] and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 

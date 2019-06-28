@@ -21,7 +21,7 @@ XStream library.
 *Direct, bi-directional JSON <=> XML conversions*
 
 As of Camel 2.10, Camel supports direct, bi-directional JSON <=> XML
-conversions via the <<xmljson-dataformat,camel-xmljson>> data format, which
+conversions via the xref:xmljson-dataformat.adoc[camel-xmljson] data format, which
 is documented separately.
 
 [[JSON-UsingJSONdataformatwiththeXStreamlibrary]]

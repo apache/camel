@@ -12,19 +12,19 @@ that a consumer can implement to indicate it support batching as well.
 The following components supports xref:batch-consumer.adoc[Batch
 Consumer] by its consumer:
 
-* <<atom-component,Atom>>
+* xref:atom-component.adoc[Atom]
 * File
 * FTP
-* <<hbase-component,hbase>>
-* <<ibatis-component,iBatis>>
-* <<jpa-component,JPA>>
-* <<jclouds-component,JCLOUDS>>
-* <<mail-component,Mail>>
-* <<mybatis-component,MyBatis>>
-* <<snmp-component,SNMP>>
-* <<sql-component,SQL>>
-* <<aws-sqs-component,SQS>>
-* <<aws-s3-component,S3>>
+* xref:hbase-component.adoc[hbase]
+* xref:ibatis-component.adoc[iBatis]
+* xref:jpa-component.adoc[JPA]
+* xref:jclouds-component.adoc[JCLOUDS]
+* xref:mail-component.adoc[Mail]
+* xref:mybatis-component.adoc[MyBatis]
+* xref:snmp-component.adoc[SNMP]
+* xref:sql-component.adoc[SQL]
+* xref:aws-sqs-component.adoc[SQS]
+* xref:aws-s3-component.adoc[S3]
 
 [[BatchConsumer-ConsumerOptions]]
 ==== Consumer Options

@@ -8,7 +8,7 @@ using spring transactions.
 
 image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like <<jms-component,JMS>> support using a
+Transaction Oriented Endpoints like xref:jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -110,7 +110,7 @@ from("activemq:queue:foo").policy(notsupported)
 === OSGi Blueprint
 
 If you are using
-<<UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel,OSGi Blueprint>>
+xref:UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel.adoc[OSGi Blueprint]
 then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
@@ -289,12 +289,12 @@ route as transacted using the *transacted* tag.
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
-<<TransactionErrorHandler-TransactionErrorHandler,TransactionErrorHandler>>
-as <<ErrorHandler-ErrorHandler,Error Handler>>.
+xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
+as xref:ErrorHandler-ErrorHandler.adoc[Error Handler].
 It supports basically the same feature set as the
-<<DefaultErrorHandler-DefaultErrorHandler,DefaultErrorHandler>>,
+xref:DefaultErrorHandler-DefaultErrorHandler.adoc[DefaultErrorHandler],
 so you can for instance use
-<<ExceptionClause-ExceptionClause,Exception Clause>>
+xref:ExceptionClause-ExceptionClause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]
@@ -386,8 +386,8 @@ Camel to only do it for the current transaction and not globally.
 [[TransactionalClient-SeeAlso]]
 === See Also
 
-* <<ErrorhandlinginCamel-ErrorhandlinginCamel,Error handling in Camel>>
-* <<TransactionErrorHandler-TransactionErrorHandler,TransactionErrorHandler>>
-* <<ErrorHandler-ErrorHandler,Error Handler>>
-* <<jms-component,JMS>>
+* xref:ErrorhandlinginCamel-ErrorhandlinginCamel.adoc[Error handling in Camel]
+* xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
+* xref:ErrorHandler-ErrorHandler.adoc[Error Handler]
+* xref:jms-component.adoc[JMS]
 * xref:using-this-pattern.html[Using This Pattern]

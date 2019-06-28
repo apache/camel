@@ -2,12 +2,12 @@
 === How to send the same message to multiple endpoints?
 
 When you need to send the *same* message to multiple endpoints then you
-should use <<multicast-eip,Multicast>>.
+should use xref:multicast-eip.adoc[Multicast].
 
 In the sample below we consume messages from the activemq queue `foo`
 and want to send the *same message* to both `seda:foo` and `seda:bar`.
 Sending the same message requires that we use
-<<multicast-eip,Multicast>>. This is done by adding the `multicast()`
+xref:multicast-eip.adoc[Multicast]. This is done by adding the `multicast()`
 before the to type:
 
 [source,java]
@@ -26,8 +26,8 @@ If you have a route such as:
 from("activemq:queue:foo").to("seda:foo", "seda:bar");
 ----
 
-It is by default a <<pipesandFilters-eip,pipeline>> in Camel (that is
-the opposite to <<multicast-eip,Multicast>>). In the above example
+It is by default a xref:pipesandFilters-eip.adoc[pipeline] in Camel (that is
+the opposite to xref:multicast-eip.adoc[Multicast]). In the above example
 using pipes and filters then the result from seda:foo is sent to
 seda:bar, ie. its not the *same* message sent to multiple destinations,
 but a sent through a chain (the pipes and the filters).
