@@ -486,7 +486,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * Whether auto-configuration of components/dataformats/languages is enabled or not.
      * When enabled the configuration parameters are loaded from the properties component
      * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
      * the parameters in the properties file with:
@@ -498,7 +498,7 @@ public abstract class MainSupport extends ServiceSupport {
      * - camel.language.name.option2=value2
      * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
      * <p/>
-     * The auto configuration also works for any options on components
+     * The auto-configuration also works for any options on components
      * that is a complex type (not standard Java type) and there has been an explicit single
      * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
      * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
@@ -733,15 +733,17 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // need to eager allow to auto configure properties component
+        final Map<String, String> autoConfiguredProperties = new LinkedHashMap<>();
+
+        // need to eager allow to auto-configure properties component
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
-            autoConfigurationFailFast(camelContext);
-            autoConfigurationPropertiesComponent(camelContext);
-            autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties);
+            autoConfigurationFailFast(camelContext, autoConfiguredProperties);
+            autoConfigurationPropertiesComponent(camelContext, autoConfiguredProperties);
+            autoConfigurationMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
         }
 
         // configure from main configuration properties
-        doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties);
+        doConfigureCamelContextFromMainConfiguration(camelContext, mainConfigurationProperties, autoConfiguredProperties);
 
         // try to load configuration classes
         loadConfigurations(camelContext);
@@ -749,10 +751,16 @@ public abstract class MainSupport extends ServiceSupport {
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
         if (mainConfigurationProperties.isAutowireComponentProperties() || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
-            autoConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireComponentPropertiesDeep());
+            autowireConfigurationFromRegistry(camelContext, mainConfigurationProperties.isAutowireComponentPropertiesDeep());
         }
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
-            autoConfigurationFromProperties(camelContext);
+            autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
+        }
+
+        // log summary of configurations
+        if (!autoConfiguredProperties.isEmpty()) {
+            LOG.info("Auto-configuration summary:");
+            autoConfiguredProperties.forEach((k, v) -> LOG.info("\t{}={}", k, v));
         }
 
         // try to load the route builders
@@ -768,7 +776,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected void autoConfigurationFailFast(CamelContext camelContext) throws Exception {
+    protected void autoConfigurationFailFast(CamelContext camelContext, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
         LOG.debug("Properties from Camel properties component:");
@@ -782,6 +790,7 @@ public abstract class MainSupport extends ServiceSupport {
             envEnabled = prop.remove("camel.main.auto-configuration-environment-variables-enabled");
             if (envEnabled != null) {
                 PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationEnvironmentVariablesEnabled", envEnabled, true);
+                autoConfiguredProperties.put("camel.main.auto-configuration-environment-variables-enabled", envEnabled.toString());
             }
         }
 
@@ -809,6 +818,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
             if (failFast != null) {
                 PropertyBindingSupport.bindMandatoryProperty(camelContext, mainConfigurationProperties, "autoConfigurationFailFast", failFast, true);
+                autoConfiguredProperties.put("camel.main.auto-configuration-fail-fast", failFast.toString());
             }
         }
     }
@@ -816,7 +826,8 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * Configures CamelContext from the {@link MainConfigurationProperties} properties.
      */
-    protected void doConfigureCamelContextFromMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+    protected void doConfigureCamelContextFromMainConfiguration(CamelContext camelContext, MainConfigurationProperties config,
+                                                                Map<String, String> autoConfiguredProperties) throws Exception {
         if (config.getFileConfigurations() != null) {
             String[] locs = config.getFileConfigurations().split(",");
             for (String loc : locs) {
@@ -891,12 +902,12 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
         if (!contextProperties.isEmpty()) {
-            LOG.info("Auto configuring CamelContext from loaded properties: {}", contextProperties.size());
+            LOG.debug("Auto-configuring CamelContext from loaded properties: {}", contextProperties.size());
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, null, "camel.context.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!hystrixProperties.isEmpty()) {
-            LOG.info("Auto configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
+            LOG.debug("Auto-configuring Hystrix EIP from loaded properties: {}", hystrixProperties.size());
             ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
             HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
             if (hystrix == null) {
@@ -904,10 +915,10 @@ public abstract class MainSupport extends ServiceSupport {
                 model.setHystrixConfiguration(hystrix);
             }
             setPropertiesOnTarget(camelContext, hystrix, hystrixProperties, null, "camel.hsytrix.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
         if (!restProperties.isEmpty()) {
-            LOG.info("Auto configuring Rest DSL from loaded properties: {}", restProperties.size());
+            LOG.debug("Auto-configuring Rest DSL from loaded properties: {}", restProperties.size());
             ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
             RestConfiguration rest = model.getRestConfiguration();
             if (rest == null) {
@@ -915,32 +926,32 @@ public abstract class MainSupport extends ServiceSupport {
                 model.setRestConfiguration(rest);
             }
             setPropertiesOnTarget(camelContext, rest, restProperties, null, "camel.rest.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
         // log which options was not set
         if (!contextProperties.isEmpty()) {
             contextProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto configured: camel.context.{}={} on object: {}", k, v, camelContext);
+                LOG.warn("Property not auto-configured: camel.context.{}={} on bean: {}", k, v, camelContext);
             });
         }
         if (!hystrixProperties.isEmpty()) {
             ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
             HystrixConfigurationDefinition hystrix = model.getHystrixConfiguration(null);
             hystrixProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto configured: camel.hystrix.{}={} on object: {}", k, v, hystrix);
+                LOG.warn("Property not auto-configured: camel.hystrix.{}={} on bean: {}", k, v, hystrix);
             });
         }
         if (!restProperties.isEmpty()) {
             ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
             RestConfiguration rest = model.getRestConfiguration();
             restProperties.forEach((k, v) -> {
-                LOG.warn("Property not auto configured: camel.rest.{}={} on object: {}", k, v, rest);
+                LOG.warn("Property not auto-configured: camel.rest.{}={} on bean: {}", k, v, rest);
             });
         }
     }
 
-    protected void autoConfigurationPropertiesComponent(CamelContext camelContext) throws Exception {
+    protected void autoConfigurationPropertiesComponent(CamelContext camelContext, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
 
@@ -965,19 +976,21 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         if (!properties.isEmpty()) {
-            LOG.info("Auto configuring properties component from loaded properties: {}", properties.size());
-            setPropertiesOnTarget(camelContext, camelContext.getPropertiesComponent(), properties, null, "camel.component.properties.", mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+            LOG.debug("Auto-configuring properties component from loaded properties: {}", properties.size());
+            setPropertiesOnTarget(camelContext, camelContext.getPropertiesComponent(), properties, null,
+                    "camel.component.properties.", mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    true, autoConfiguredProperties);
         }
 
         // log which options was not set
         if (!properties.isEmpty()) {
             properties.forEach((k, v) -> {
-                LOG.warn("Property not auto configured: camel.component.properties.{}={} on object: {}", k, v, camelContext.getPropertiesComponent());
+                LOG.warn("Property not auto-configured: camel.component.properties.{}={} on object: {}", k, v, camelContext.getPropertiesComponent());
             });
         }
     }
 
-    protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config) throws Exception {
+    protected void autoConfigurationMainConfiguration(CamelContext camelContext, MainConfigurationProperties config, Map<String, String> autoConfiguredProperties) throws Exception {
         // load properties
         Properties prop = camelContext.getPropertiesComponent().loadProperties();
 
@@ -1002,20 +1015,20 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         if (!properties.isEmpty()) {
-            LOG.info("Auto configuring main from loaded properties: {}", properties.size());
+            LOG.debug("Auto-configuring main from loaded properties: {}", properties.size());
             setPropertiesOnTarget(camelContext, config, properties, null, "camel.main.",
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
         // log which options was not set
         if (!properties.isEmpty()) {
             properties.forEach((k, v) -> {
-                LOG.warn("Property not auto configured: camel.main.{}={} on object: {}", k, v, config);
+                LOG.warn("Property not auto-configured: camel.main.{}={} on bean: {}", k, v, config);
             });
         }
     }
 
-    protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {
+    protected void autoConfigurationFromProperties(CamelContext camelContext, Map<String, String> autoConfiguredProperties) throws Exception {
         // load optional META-INF/services/org/apache/camel/autowire.properties
         Properties prop = new OrderedProperties();
         try {
@@ -1023,7 +1036,7 @@ public abstract class MainSupport extends ServiceSupport {
             if (is != null) {
                 prop.load(is);
                 if (!prop.isEmpty()) {
-                    LOG.info("Loaded {} properties from classpath: META-INF/services/org/apache/camel/autowire.properties", prop.size());
+                    LOG.info("Autowired enabled from classpath: META-INF/services/org/apache/camel/autowire.properties with {} properties", prop.size());
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Properties from classpath: META-INF/services/org/apache/camel/autowire.properties:");
                         for (String key : prop.stringPropertyNames()) {
@@ -1117,14 +1130,14 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (!properties.isEmpty()) {
             long total = properties.values().stream().mapToLong(Map::size).sum();
-            LOG.info("Auto configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
+            LOG.debug("Auto-configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
         }
 
         for (PropertyOptionKey pok : properties.keySet()) {
             Map<String, Object> values = properties.get(pok);
             String optionKey = pok.getKey().substring(pok.getOptionPrefix().length() + 1);
             setPropertiesOnTarget(camelContext, pok.getInstance(), values, optionKey, pok.getOptionPrefix(),
-                    mainConfigurationProperties.isAutoConfigurationFailFast(), true);
+                    mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 
         // log which options was not set
@@ -1133,18 +1146,18 @@ public abstract class MainSupport extends ServiceSupport {
                 Map<String, Object> values = properties.get(pok);
                 values.forEach((k, v) -> {
                     String stringValue = v != null ? v.toString() : null;
-                    LOG.warn("Property ({}={}) not auto configured with name: {} on bean: {} with value: {}", pok.getKey(), stringValue, k, pok.getInstance(), stringValue);
+                    LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}", pok.getKey(), stringValue, k, pok.getInstance(), stringValue);
                 });
             }
         }
     }
 
-    protected void autoConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
+    protected void autowireConfigurationFromRegistry(CamelContext camelContext, boolean deepNesting) throws Exception {
         camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onComponentAdd(String name, Component component) {
                 PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, false, deepNesting, (obj, propertyName, type, value) -> {
-                    LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry",
+                    LOG.info("Autowired property: {} on component: {} as exactly one instance of type: {} found in the registry",
                             propertyName, component.getClass().getSimpleName(), type.getName());
                 });
             }
@@ -1209,7 +1222,8 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     private static boolean setPropertiesOnTarget(CamelContext context, Object target, Map<String, Object> properties,
-                                                 String optionKey, String optionPrefix, boolean failIfNotSet, boolean ignoreCase) throws Exception {
+                                                 String optionKey, String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
+                                                 Map<String, String> autoConfiguredProperties) throws Exception {
         ObjectHelper.notNull(context, "context");
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -1224,10 +1238,12 @@ public abstract class MainSupport extends ServiceSupport {
             String stringValue = value != null ? value.toString() : null;
             String key = name;
             if (optionPrefix != null && optionKey != null) {
-                key = optionPrefix + "." + optionKey;
+                key = optionPrefix + optionKey;
+            } else if (optionPrefix != null) {
+                key = optionPrefix + name;
             }
 
-            LOG.debug("Setting property ({}) with name: {} on bean: {} with value: {}", key, name, target, stringValue);
+            LOG.debug("Configuring property: {}={} on bean: {}", key, stringValue, target);
             try {
                 boolean hit;
                 if (failIfNotSet) {
@@ -1239,13 +1255,15 @@ public abstract class MainSupport extends ServiceSupport {
                 if (hit) {
                     it.remove();
                     rc = true;
+                    LOG.debug("Configured property: {}={} on bean: {}", key, stringValue, target);
+                    autoConfiguredProperties.put(key, stringValue);
                 }
             } catch (PropertyBindingException e) {
                 if (failIfNotSet) {
                     // enrich the error with more precise details with option prefix and key
                     throw new PropertyBindingException(e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, optionKey, e.getCause());
                 } else {
-                    LOG.debug("Error setting property (" + key + ") with name: " + name + ") on bean: " + target
+                    LOG.debug("Error configuring property (" + key + ") with name: " + name + ") on bean: " + target
                             + " with value: " + stringValue + ". This exception is ignored as failIfNotSet=false.", e);
                 }
             }
