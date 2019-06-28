@@ -104,10 +104,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-reactive-executor-vertx</artifactId>
-        </dependency>
         
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
