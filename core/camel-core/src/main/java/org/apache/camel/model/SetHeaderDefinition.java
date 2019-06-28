@@ -34,29 +34,29 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderDefinition extends ExpressionNode {
     @XmlAttribute(required = true)
-    private String headerName;
+    private String name;
 
     public SetHeaderDefinition() {
     }
 
-    public SetHeaderDefinition(String headerName, ExpressionDefinition expression) {
+    public SetHeaderDefinition(String name, ExpressionDefinition expression) {
         super(expression);
-        setHeaderName(headerName);
+        setName(name);
     }
 
-    public SetHeaderDefinition(String headerName, Expression expression) {
+    public SetHeaderDefinition(String name, Expression expression) {
         super(expression);
-        setHeaderName(headerName);
+        setName(name);
     }
 
-    public SetHeaderDefinition(String headerName, String value) {
+    public SetHeaderDefinition(String name, String value) {
         super(ExpressionBuilder.constantExpression(value));
-        setHeaderName(headerName);
+        setName(name);
     }
 
     @Override
     public String toString() {
-        return "SetHeader[" + getHeaderName() + ", " + getExpression() + "]";
+        return "SetHeader[" + getName() + ", " + getExpression() + "]";
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SetHeaderDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "setHeader[" + getHeaderName() + "]";
+        return "setHeader[" + getName() + "]";
     }
 
     /**
@@ -84,12 +84,12 @@ public class SetHeaderDefinition extends ExpressionNode {
      * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used.
      * Otherwise a constant name will be used.
      */
-    public void setHeaderName(String headerName) {
-        this.headerName = headerName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getHeaderName() {
-        return headerName;
+    public String getName() {
+        return name;
     }
 
 }

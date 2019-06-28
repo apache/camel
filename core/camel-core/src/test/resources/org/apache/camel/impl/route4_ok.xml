@@ -19,7 +19,7 @@
 -->
 <route id="foo" xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:start"/>
-    <setHeader headerName="failureHeader">
+    <setHeader name="failureHeader">
     	<simple>${headers.error}</simple> <!--  it is an error -->
     </setHeader>
     <to uri="mock:foo"/>

@@ -133,7 +133,7 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("setHeader.xml");
         assertFrom(route, "seda:a");
         SetHeaderDefinition node = assertNthProcessorInstanceOf(SetHeaderDefinition.class, route, 0);
-        assertEquals("oldBodyValue", node.getHeaderName());
+        assertEquals("oldBodyValue", node.getName());
         assertExpression(node.getExpression(), "simple", "body");
         assertChildTo(route, "mock:b", 1);
     }
@@ -143,7 +143,7 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("setHeaderToConstant.xml");
         assertFrom(route, "seda:a");
         SetHeaderDefinition node = assertNthProcessorInstanceOf(SetHeaderDefinition.class, route, 0);
-        assertEquals("theHeader", node.getHeaderName());
+        assertEquals("theHeader", node.getName());
         assertExpression(node.getExpression(), "constant", "a value");
         assertChildTo(route, "mock:b", 1);
     }
