@@ -25,7 +25,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> {
+public class ConvertBodyReifier extends ProcessorReifier<ConvertBodyDefinition> {
 
     ConvertBodyReifier(ProcessorDefinition<?> definition) {
         super(ConvertBodyDefinition.class.cast(definition));

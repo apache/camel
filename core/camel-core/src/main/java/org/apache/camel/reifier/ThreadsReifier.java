@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
-class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
+public class ThreadsReifier extends ProcessorReifier<ThreadsDefinition> {
 
     ThreadsReifier(ProcessorDefinition<?> definition) {
         super((ThreadsDefinition) definition);

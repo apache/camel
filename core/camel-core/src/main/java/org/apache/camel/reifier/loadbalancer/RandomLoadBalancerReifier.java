@@ -22,7 +22,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
-class RandomLoadBalancerReifier extends LoadBalancerReifier<RandomLoadBalancerDefinition> {
+public class RandomLoadBalancerReifier extends LoadBalancerReifier<RandomLoadBalancerDefinition> {
 
     RandomLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((RandomLoadBalancerDefinition) definition);

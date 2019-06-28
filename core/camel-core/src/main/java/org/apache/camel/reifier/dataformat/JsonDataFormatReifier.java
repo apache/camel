@@ -22,7 +22,6 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RouteContext;
 
 public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
 

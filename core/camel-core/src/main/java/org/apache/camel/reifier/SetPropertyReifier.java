@@ -25,7 +25,7 @@ import org.apache.camel.processor.SetPropertyProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
+public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition> {
 
     SetPropertyReifier(ProcessorDefinition<?> definition) {
         super((SetPropertyDefinition) definition);

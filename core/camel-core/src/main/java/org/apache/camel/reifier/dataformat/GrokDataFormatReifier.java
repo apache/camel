@@ -19,7 +19,6 @@ package org.apache.camel.reifier.dataformat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.GrokDataFormat;
-import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
 

@@ -22,7 +22,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 
-class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalancerDefinition> {
+public class TopicLoadBalancerReifier extends LoadBalancerReifier<TopicLoadBalancerDefinition> {
 
     TopicLoadBalancerReifier(LoadBalancerDefinition definition) {
         super((TopicLoadBalancerDefinition) definition);

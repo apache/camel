@@ -23,7 +23,7 @@ import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class TransformReifier extends ExpressionReifier<TransformDefinition> {
+public class TransformReifier extends ExpressionReifier<TransformDefinition> {
 
     TransformReifier(ProcessorDefinition<?> definition) {
         super((TransformDefinition) definition);

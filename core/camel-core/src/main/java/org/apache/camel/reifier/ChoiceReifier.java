@@ -32,7 +32,7 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
+public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
 
     ChoiceReifier(ProcessorDefinition<?> definition) {
         super(ChoiceDefinition.class.cast(definition));

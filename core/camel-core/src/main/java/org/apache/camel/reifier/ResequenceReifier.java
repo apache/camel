@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
-class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
+public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
 
     ResequenceReifier(ProcessorDefinition<?> definition) {
         super((ResequenceDefinition) definition);

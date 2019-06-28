@@ -24,7 +24,7 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionAdapter;
 
-class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
+public class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
 
     InterceptFromReifier(ProcessorDefinition<?> definition) {
         super((InterceptFromDefinition) definition);

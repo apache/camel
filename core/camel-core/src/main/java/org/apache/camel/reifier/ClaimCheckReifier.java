@@ -28,7 +28,7 @@ import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
-class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
+public class ClaimCheckReifier extends ProcessorReifier<ClaimCheckDefinition> {
 
     ClaimCheckReifier(ProcessorDefinition<?> definition) {
         super(ClaimCheckDefinition.class.cast(definition));

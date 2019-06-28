@@ -21,7 +21,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 
-class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
+public class OtherwiseReifier extends ProcessorReifier<OtherwiseDefinition> {
 
     OtherwiseReifier(ProcessorDefinition<?> definition) {
         super(OtherwiseDefinition.class.cast(definition));

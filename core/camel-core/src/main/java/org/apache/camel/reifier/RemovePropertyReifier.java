@@ -23,7 +23,7 @@ import org.apache.camel.processor.RemovePropertyProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
-class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefinition> {
+public class RemovePropertyReifier extends ProcessorReifier<RemovePropertyDefinition> {
 
     RemovePropertyReifier(ProcessorDefinition<?> definition) {
         super((RemovePropertyDefinition) definition);

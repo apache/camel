@@ -22,7 +22,7 @@ import org.apache.camel.model.StopDefinition;
 import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.spi.RouteContext;
 
-class StopReifier extends ProcessorReifier<StopDefinition> {
+public class StopReifier extends ProcessorReifier<StopDefinition> {
 
     StopReifier(ProcessorDefinition<?> definition) {
         super((StopDefinition) definition);

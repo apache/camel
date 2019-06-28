@@ -21,7 +21,7 @@ import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.Validator;
 
-class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition> {
+public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefinition> {
 
     CustomValidatorReifier(ValidatorDefinition definition) {
         super((CustomValidatorDefinition) definition);

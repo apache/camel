@@ -37,7 +37,7 @@ import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
-class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
+public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
 
     AggregateReifier(ProcessorDefinition<?> definition) {
         super(AggregateDefinition.class.cast(definition));

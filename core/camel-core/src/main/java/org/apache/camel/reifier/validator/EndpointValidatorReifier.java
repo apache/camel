@@ -25,7 +25,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Validator;
 
-class EndpointValidatorReifier extends ValidatorReifier<EndpointValidatorDefinition> {
+public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidatorDefinition> {
 
     EndpointValidatorReifier(ValidatorDefinition definition) {
         super((EndpointValidatorDefinition) definition);

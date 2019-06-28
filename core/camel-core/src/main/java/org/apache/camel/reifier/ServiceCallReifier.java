@@ -21,7 +21,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.spi.RouteContext;
 
-class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
+public class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     ServiceCallReifier(ProcessorDefinition<?> definition) {
         super(ServiceCallDefinition.class.cast(definition));
