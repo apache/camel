@@ -42,6 +42,7 @@
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>
         <module>camel-archetype-java8</module>
+        <module>camel-archetype-main</module>
         <module>camel-archetype-spring</module>
         <module>camel-archetype-spring-boot</module>
         <module>camel-archetype-web</module>
@@ -49,6 +50,25 @@
 
     <build>
         <plugins>
+
+            <!-- skip flattern plugin as this breaks all the archetypes -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <updatePomFile>false</updatePomFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- generate and attach Camel archetype catalog -->
             <plugin>
