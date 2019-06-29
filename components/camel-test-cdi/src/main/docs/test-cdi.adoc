@@ -17,7 +17,7 @@ Camel:
 [width="100%",cols="1,1,4",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description
-|<<CDITesting-CamelCDITest,Camel CDI Test>> a|
+|xref:CDITesting-CamelCDITest.adoc[Camel CDI Test] a|
 * JUnit 4
 
  a|
@@ -26,7 +26,7 @@ that bootstraps a test environment using CDI so that you don't have to
 be familiar with any CDI testing frameworks and can concentrate on the
 testing logic of your Camel CDI applications.
 
-|<<CDITesting-Arquillian,Arquillian>> a|
+|xref:CDITesting-Arquillian.adoc[Arquillian] a|
 * JUnit 4
 * TestNG 5
 
@@ -43,7 +43,7 @@ descriptors]. The benefit is that you have a very fine-grained control
 over the application configuration that you want to test. The downside
 is more code and more complex _classpath_ / class loading structure.
 
-|<<CDITesting-PAXExam,PAX Exam>> a|
+|xref:CDITesting-PAXExam.adoc[PAX Exam] a|
 * JUnit 4
 * TestNG 6
 
@@ -278,7 +278,7 @@ Using ShrinkWarp Descriptors, you have a complete control over the
 configuration and kind of Camel CDI applications you want to test. For
 example, to test a Camel CDI application that uses the Camel
 REST DSL configured with the
-<<servlet-component,Servlet component>>, you need to create a Web archive,
+xref:servlet-component.adoc[Servlet component], you need to create a Web archive,
 e.g.:
 
 [source,java]
@@ -629,7 +629,7 @@ Camel context bean provided by the Camel CDI component.
 can _advice_ an existing route before its being tested. It allows to
 add http://camel.apache.org/intercept.html[Intercept] or _weave_ routes
 for testing purpose, for example using
-the <<mock-component,Mock>> component.
+the xref:mock-component.adoc[Mock] component.
 
 It is recommended to only advice routes which are not started already.
 To meet that requirement, you can use the `CamelContextStartingEvent`

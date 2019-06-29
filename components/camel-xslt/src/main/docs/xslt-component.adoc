@@ -35,7 +35,7 @@ Documentation] for more detail of the URI syntax.
 |xslt:http://acme.com/cheese/foo.xsl|Refers to the remote http resource
 |=================================================================
 
-The <<xslt-component,XSLT>> component is provided directly in the camel-core.
+The xref:xslt-component.adoc[XSLT] component is provided directly in the camel-core.
 
 === Options
 

@@ -9,12 +9,12 @@ messages on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and invoking consumers in a separate thread pool.
 
-This component differs from the <<seda-component,Seda>> component in that
+This component differs from the xref:seda-component.adoc[Seda] component in that
 VM supports communication across CamelContext instances - so you can use
 this mechanism to communicate across web applications (provided that
 `camel-core.jar` is on the `system/boot` classpath).
 
-VM is an extension to the <<seda-component,Seda>> component.
+VM is an extension to the xref:seda-component.adoc[Seda] component.
 
 === URI format
 
@@ -141,8 +141,8 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-See the <<seda-component,Seda>> component for options and other important
-usage details as the same rules apply to the <<vm-component,Vm>> component.
+See the xref:seda-component.adoc[Seda] component for options and other important
+usage details as the same rules apply to the xref:vm-component.adoc[Vm] component.
 
 === Samples
 
@@ -164,4 +164,4 @@ from("vm:order.email").bean(MyOrderEmailSender.class);
 
 === See Also
 
-* <<seda-component,Seda>>
+* xref:seda-component.adoc[Seda]

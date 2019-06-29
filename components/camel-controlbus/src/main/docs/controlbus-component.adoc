@@ -22,7 +22,7 @@ by using a Java API from the `CamelContext`, or from the
 here.
 
 The ControlBus component provides easy management of Camel
-applications based on the <<controlbus-component,Control Bus>> EIP
+applications based on the xref:controlbus-component.adoc[Control Bus] EIP
 pattern. 
 For example, by sending a message to an Endpoint
 you can control the lifecycle of routes, or gather performance
@@ -44,7 +44,7 @@ use.
 
 |`route` |To control routes using the `routeId` and `action` parameter.
 
-|`language` |Allows you to specify a <<language-component,Language>> to use for
+|`language` |Allows you to specify a xref:language-component.adoc[Language] to use for
 evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |===
@@ -185,7 +185,7 @@ String xml = template.requestBody("controlbus:route?action=stats", null, String.
 
 === Using Simple language
 
-You can use the <<simple-language,Simple>> language with the control bus,
+You can use the xref:simple-language.adoc[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the
 `"controlbus:language:simple"` endpoint containing the following
 message:
@@ -205,8 +205,8 @@ String status = template.requestBody("controlbus:language:simple", "${camelConte
 
 It's easier to use the `route` command to control lifecycle of
 routes. The `language` command allows you to execute a language script
-that has stronger powers such as <<groovy-language,Groovy>> or to some
-extend the <<simple-language,Simple>> language.
+that has stronger powers such as xref:groovy-language.adoc[Groovy] or to some
+extend the xref:simple-language.adoc[Simple] language.
 
 For example to shutdown Camel itself you can do:
 
@@ -219,4 +219,4 @@ We use `async=true` to stop Camel asynchronously as otherwise we
 would be trying to stop Camel while it was in-flight processing the
 message we sent to the control bus component.
 
-TIP: You can also use other languages such as <<groovy-language,Groovy>>, etc.
+TIP: You can also use other languages such as xref:groovy-language.adoc[Groovy], etc.

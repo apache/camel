@@ -4,27 +4,27 @@
 *Available as of Camel version 1.3*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
-and <<dataset-component,DataSet>> endpoints work great with the
+notoriously difficult. The xref:mock-component,Mock>>, <<mock-component.adoc[Test]
+and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
-The *dataset-test* component extends the <<mock-component,Mock>> component to
+The *dataset-test* component extends the xref:mock-component.adoc[Mock] component to
 support pulling messages from another endpoint on startup to set the
-expected message bodies on the underlying <<mock-component,Mock>> endpoint.
+expected message bodies on the underlying xref:mock-component.adoc[Mock] endpoint.
 That is, you use the test endpoint in a route and messages arriving on
 it will be implicitly compared to some expected messages extracted from
 some other location.
 
 So you can use, for example, an expected set of message bodies as files.
-This will then set up a properly configured <<mock-component,Mock>>
+This will then set up a properly configured xref:mock-component.adoc[Mock]
 endpoint, which is only valid if the received messages match the number
 of expected messages and their message payloads are equal.
 
-The <<test-component,Test>> component is provided
+The xref:test-component.adoc[Test] component is provided
 directly in the camel-core.
 
 === URI format
@@ -142,7 +142,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/compon
 method], your test case will perform the necessary assertions.
 
 To see how you can set other expectations on the test endpoint, see the
-<<mock-component,Mock>> component.
+xref:mock-component.adoc[Mock] component.
 
 === See Also
 

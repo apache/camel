@@ -288,4 +288,4 @@ containers.
 === See Also
 
 * Rest DSL
-* <<servlet-component,SERVLET>>
+* xref:servlet-component.adoc[SERVLET]
