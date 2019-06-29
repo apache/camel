@@ -227,7 +227,7 @@ The component supports 35 options, which are listed below.
 
 === Message Headers
 
-Camel uses the same message headers as the <<http-component,HTTP>>
+Camel uses the same message headers as the xref:http-component.adoc[HTTP]
 component. 
 It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
 header to turn on or turn off the chuched encoding on the camel-jetty
@@ -283,8 +283,8 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-<<simple-language,Simple>> (such as <<el-language,EL>> or
-<<ognl-language,OGNL>>) we could also test for the parameter value and do
+xref:simple-language,Simple>> (such as <<el-language.adoc[EL] or
+xref:ognl-language.adoc[OGNL]) we could also test for the parameter value and do
 routing based on the header value as well.
 
 === Session Support
@@ -626,7 +626,7 @@ comma-separated list of bean IDs.
 === How to return a custom HTTP 500 reply message
 
 You may want to return a custom reply message when something goes wrong,
-instead of the default reply message Camel <<jetty-component,Jetty>>
+instead of the default reply message Camel xref:jetty-component.adoc[Jetty]
 replies with. +
  You could use a custom `HttpBinding` to be in control of the message
 mapping, but often it may be easier to use Camel's

@@ -139,7 +139,7 @@ MongoDB instance.
 ### Sample route
 
 The following route defined in Spring XML executes the operation
-<<mongodb-gridfs-component,*findOne*>> on a collection.
+xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 
 *Get a file from GridFS*
 

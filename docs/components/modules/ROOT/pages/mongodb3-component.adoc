@@ -183,7 +183,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
 === Sample route
 
 The following route defined in Spring XML executes the operation
-<<mongodb3-component,*dbStats*>> on a collection.
+xref:mongodb3-component.adoc[*dbStats*] on a collection.
 
 *Get DB stats for specified collection*
 
@@ -219,7 +219,7 @@ from("direct:findById")
 
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
-<<mongodb3-component,Specifying optional parameters>>.
+xref:mongodb3-component.adoc[Specifying optional parameters].
 
 ===== findOneByQuery
 
@@ -227,7 +227,7 @@ Use this operation to retrieve just one element (the first) from the collection 
 matches a MongoDB query. *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
-`Bson`. It can be a JSON String or a Hashmap. See <<mongodb3-component,#Type conversions>> for more info.
+`Bson`. It can be a JSON String or a Hashmap. See xref:mongodb3-component.adoc[#Type conversions] for more info.
 you can use the Filters class from MongoDB Driver.
 
 Example with no query (returns any object of the collection):
@@ -250,7 +250,7 @@ from("direct:findOneByQuery")
 ------------------------------------------------------------------------------------
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-<<mongodb3-component,Specifying optional parameters>>.
+xref:mongodb3-component.adoc[Specifying optional parameters].
 
 ===== findAll
 
@@ -260,7 +260,7 @@ returned.  *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
 `Bson`. It can be
-a JSON String or a Hashmap. See <<mongodb3-component,#Type conversions>> for
+a JSON String or a Hashmap. See xref:mongodb3-component.adoc[#Type conversions] for
 more info.
 
 Example with no query (returns all object in the collection):
@@ -333,7 +333,7 @@ consideration. |int/Integer
 |=======================================================================
 
 TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-<<mongodb3-component,Specifying optional parameters>>.
+xref:mongodb3-component.adoc[Specifying optional parameters].
 
 ===== count
 
