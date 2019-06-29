@@ -319,4 +319,4 @@ https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 * Configuring Camel
 * Component
 * Endpoint
-* <<protobuf-dataformat,Protocol Buffers Data Format>>
+* xref:protobuf-dataformat.adoc[Protocol Buffers Data Format]

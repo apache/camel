@@ -474,6 +474,6 @@ Spring DSL based configuration of endpoint
 * Endpoint
 * Getting Started
 
-* <<jetty-component,Jetty>>
-* <<http-component,HTTP>>
-* <<http4-component,HTTP4>>
+* xref:jetty-component.adoc[Jetty]
+* xref:http-component.adoc[HTTP]
+* xref:http4-component.adoc[HTTP4]

@@ -15,7 +15,7 @@ endif::[]
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.
 
-Camel also provides a <<jmx-component,JMX>> component that allows you to
+Camel also provides a xref:jmx-component.adoc[JMX] component that allows you to
 subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 

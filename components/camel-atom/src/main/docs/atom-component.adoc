@@ -188,4 +188,4 @@ in any Container or using Spring.
 * Endpoint
 * Getting Started
 
-* <<rss-component,RSS>>
+* xref:rss-component.adoc[RSS]

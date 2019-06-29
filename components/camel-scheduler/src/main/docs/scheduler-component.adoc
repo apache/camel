@@ -5,7 +5,7 @@
 
 The Scheduler component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
- <<timer-component,Timer>> component, but it offers more functionality in
+ xref:timer-component.adoc[Timer] component, but it offers more functionality in
 terms of scheduling. Also this component uses
 JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
 
@@ -192,5 +192,5 @@ exchange.
 
 === See Also
 
-* <<timer-component,Timer>>
-* <<quartz-component,Quartz>>
+* xref:timer-component.adoc[Timer]
+* xref:quartz-component.adoc[Quartz]

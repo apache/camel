@@ -33,7 +33,7 @@ component.
 *Transacted and caching*
 
 See section _Transactions and Cache Levels_ below if you are using
-transactions with <<jms-component,JMS>> as it can impact performance.
+transactions with xref:jms-component.adoc[JMS] as it can impact performance.
 ====
 
 [NOTE]
@@ -690,9 +690,9 @@ the documentation.
 
 #### Using JMS as a Dead Letter Queue storing Exchange
 
-Normally, when using <<jms-component,JMS>> as the transport, it only
+Normally, when using xref:jms-component.adoc[JMS] as the transport, it only
 transfers the body and headers as the payload. If you want to use
-<<jms-component,JMS>> with a xref:dead-letter-channel.adoc[Dead Letter
+xref:jms-component.adoc[JMS] with a xref:dead-letter-channel.adoc[Dead Letter
 Channel], using a JMS queue as the Dead Letter Queue, then normally the
 caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct
@@ -728,7 +728,7 @@ You can use JMS to store the cause error message or to store a custom
 body, which you can initialize yourself. The following example uses the
 Message Translator EIP to do a
 transformation on the failed exchange before it is moved to the
-<<jms-component,JMS>> dead letter queue:
+xref:jms-component.adoc[JMS] dead letter queue:
 
 [source,java]
 --------------------------------------------------------------------------------------------------
@@ -1306,7 +1306,7 @@ reply queues instead.
 ### Synchronizing clocks between senders and receivers
 
 When doing messaging between systems, its desirable that the systems
-have synchronized clocks. For example when sending a <<jms-component,JMS>>
+have synchronized clocks. For example when sending a xref:jms-component.adoc[JMS]
 message, then you can set a time to live value on the message. Then the
 receiver can inspect this value, and determine if the message is already
 expired, and thus drop the message instead of consume and process it.
@@ -1319,18 +1319,18 @@ plugin] to synchronize clocks.
 
 Read first above about synchronized clocks.
 
-When you do request/reply (InOut) over <<jms-component,JMS>> with Camel
+When you do request/reply (InOut) over xref:jms-component.adoc[JMS] with Camel
 then Camel uses a timeout on the sender side, which is default 20
 seconds from the `requestTimeout` option. You can control this by
 setting a higher/lower value. However the time to live value is still
-set on the <<jms-component,JMS>> message being send. So that requires the
+set on the xref:jms-component.adoc[JMS] message being send. So that requires the
 clocks to be synchronized between the systems. If they are not, then you
 may want to disable the time to live value being set. This is now
 possible using the `disableTimeToLive` option from *Camel 2.8* onwards.
 So if you set this option to `disableTimeToLive=true`, then Camel does
-*not* set any time to live value when sending <<jms-component,JMS>>
+*not* set any time to live value when sending xref:jms-component.adoc[JMS]
 messages. *But* the request timeout is still active. So for example if
-you do request/reply over <<jms-component,JMS>> and have disabled time to
+you do request/reply over xref:jms-component.adoc[JMS] and have disabled time to
 live, then Camel will still use a timeout by 20 seconds (the
 `requestTimeout` option). That option can of course also be configured.
 So the two options `requestTimeout` and `disableTimeToLive` gives you
@@ -1373,7 +1373,7 @@ from("direct:someWhere")
   .to("bean:processReply");
 ----------------------------------------------------------------------------------------
 
-When you do fire and forget (InOut) over <<jms-component,JMS>> with Camel
+When you do fire and forget (InOut) over xref:jms-component.adoc[JMS] with Camel
 then Camel by default does *not* set any time to live value on the
 message. You can configure a value by using the `timeToLive` option. For
 example to indicate a 5 sec., you set `timeToLive=5000`. The option
@@ -1478,7 +1478,7 @@ we wait for a return reply:
 
 ### Sending an InOnly message and keeping the JMSReplyTo header
 
-When sending to a <<jms-component,JMS>> destination using *camel-jms* the
+When sending to a xref:jms-component.adoc[JMS] destination using *camel-jms* the
 producer will use the MEP to detect if its _InOnly_ or _InOut_ messaging.
 However there can be times where you want to send an _InOnly_ message but
 keeping the `JMSReplyTo` header. To do so you have to instruct Camel to

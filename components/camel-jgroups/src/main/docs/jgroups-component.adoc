@@ -209,7 +209,7 @@ method. The expression created by this factory method will return given
 delay value only if the Camel context is in the state different than
 `started`. This expression is particularly useful if you would like to
 use JGroups component for keeping singleton (master) route within the
-cluster. <<controlbus-component,Control Bus>> `start` command
+cluster. xref:controlbus-component.adoc[Control Bus] `start` command
 won't initialize the singleton route if the Camel Context hasn't been
 yet started. So you need to delay a startup of the master route, to be
 sure that it has been initialized after the Camel Context startup.
@@ -284,7 +284,7 @@ mockEndpoint.assertIsSatisfied();
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one
 of the slaves will be elected as a new master and started. In this
-particular example we want to keep singleton <<jetty-component,jetty>>
+particular example we want to keep singleton xref:jetty-component.adoc[jetty]
 instance listening for the requests on
 address` http://localhost:8080/orders`.
 

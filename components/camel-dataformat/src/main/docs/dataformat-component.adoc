@@ -100,7 +100,7 @@ The component supports 3 options, which are listed below.
 
 === Samples
 
-For example to use the <<jaxb-dataformat,JAXB>> xref:data-format.adoc[Data
+For example to use the xref:jaxb-dataformat.adoc[JAXB] xref:data-format.adoc[Data
 Format] we can do as follows:
 
 [source,java]

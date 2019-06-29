@@ -352,7 +352,7 @@ For instance, consider that you need to limit the API usage of Salesforce so tha
 other routes. The body of output message contains an instance of
 `org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
 Content Based Router and Content Based Router and 
-<<spel-language,Spring Expression Language (SpEL)>> to choose when to perform queries.
+xref:spel-language.adoc[Spring Expression Language (SpEL)] to choose when to perform queries.
 
 Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
 evaluate as with floating point arithmetic, without it - it would end up making integral division which would result
