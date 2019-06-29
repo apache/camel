@@ -22,3 +22,6 @@ insert into customer values('cust3','willem');
 
 create table tableWithAutoIncr (id int not null GENERATED ALWAYS AS IDENTITY, content varchar(10));
 insert into tableWithAutoIncr (content) values ('value1');
+
+create table tableWithClob (id varchar(15), picture clob(10M));
+insert into tableWithClob values ('id1', cast('\x0123456789ABCDEF' as clob));
