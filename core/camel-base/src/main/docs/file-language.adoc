@@ -4,11 +4,11 @@
 *Available as of Camel version 1.1*
 
 The file language is merged with
-<<simple-language,Simple>> language which means you can use all the file
+xref:simple-language.adoc[Simple] language which means you can use all the file
 syntax directly within the simple language.
 
 The File Expression Language is an extension to the
-<<simple-language,Simple>> language, adding file related capabilities.
+xref:simple-language.adoc[Simple] language, adding file related capabilities.
 These capabilities are related to common use cases working with file
 path and names. The goal is to allow expressions to be used with the
 File and FTP components for setting
@@ -31,18 +31,18 @@ The File language supports 2 options, which are listed below.
 
 === Syntax
 
-This language is an *extension* to the <<simple-language,Simple>> language
-so the <<simple-language,Simple>> syntax applies also. So the table below
+This language is an *extension* to the xref:simple-language.adoc[Simple] language
+so the xref:simple-language.adoc[Simple] syntax applies also. So the table below
 only lists the additional.  +
- As opposed to <<simple-language,Simple>> language
-<<file-language,File Language>> also supports
-<<constant-language,Constant>> expressions so you can enter a fixed
+ As opposed to xref:simple-language.adoc[Simple] language
+xref:file-language.adoc[File Language] also supports
+xref:constant-language.adoc[Constant] expressions so you can enter a fixed
 filename.
 
 All the file tokens use the same expression name as the method on the
 `java.io.File` object, for instance `file:absolute` refers to the
 `java.io.File.getAbsolute()` method. Notice that not all expressions are
-supported by the current Exchange. For instance the <<ftp-component,FTP>>
+supported by the current Exchange. For instance the xref:ftp-component.adoc[FTP]
 component supports some of the options, where as the
 File component supports all of them.
 
@@ -94,9 +94,9 @@ this expression strips only the last part, and keep the others.
 |file:modified |Date |yes |no |yes |no |Refers to the file last modified returned as a Date type
 
 |date:_command:pattern_ |String |yes |yes |yes |yes |for date formatting using the `java.text.SimpleDateFormat` patterns. Is
-an *extension* to the <<simple-language,Simple>> language. Additional
+an *extension* to the xref:simple-language.adoc[Simple] language. Additional
 command is: *file* (consumers only) for the last modified timestamp of
-the file. Notice: all the commands from the <<simple-language,Simple>>
+the file. Notice: all the commands from the xref:simple-language.adoc[Simple]
 language can also be used.
 |===
 
@@ -170,7 +170,7 @@ return as:
 
 === Samples
 
-You can enter a fixed <<constant-language,Constant>> expression such as
+You can enter a fixed xref:constant-language.adoc[Constant] expression such as
 `myfile.txt`:
 
 [source]
@@ -195,7 +195,7 @@ should be a sibling folder then you can append .. as:
 fileName="../backup/${date:now:yyyyMMdd}/${file:name.noext}.bak"
 ----
 
-As this is an extension to the <<simple-language,Simple>> language we have
+As this is an extension to the xref:simple-language.adoc[Simple] language we have
 access to all the goodies from this language also, so in this use case
 we want to use the in.header.type as a parameter in the dynamic
 expression:
@@ -222,14 +222,14 @@ fileName="uniquefile-${bean:myguidgenerator.generateid}.txt"
 ----
 
 And of course all this can be combined in one expression where you can
-use the <<file-language,File Language>>, <<file-language,Simple>>
-and the <<bean-component,Bean>> language in one combined expression. This
+use the xref:file-language,File Language>>, <<file-language.adoc[Simple]
+and the xref:bean-component.adoc[Bean] language in one combined expression. This
 is pretty powerful for those common file path patterns.
 
 === Using Spring PropertyPlaceholderConfigurer together with the File component
 
-In Camel you can use the <<file-language,File Language>> directly
-from the <<simple-language,Simple>> language which makes a
+In Camel you can use the xref:file-language.adoc[File Language] directly
+from the xref:simple-language.adoc[Simple] language which makes a
 Content Based Router easier to do in
 Spring XML, where we can route based on file extensions as shown below:
 
@@ -252,7 +252,7 @@ Spring XML, where we can route based on file extensions as shown below:
 ----
 
 If you use the `fileName` option on the File endpoint
-to set a dynamic filename using the <<file-language,File Language>> then make sure you  +
+to set a dynamic filename using the xref:file-language.adoc[File Language] then make sure you  +
  use the alternative syntax to avoid
 clashing with Springs `PropertyPlaceholderConfigurer`.
 
