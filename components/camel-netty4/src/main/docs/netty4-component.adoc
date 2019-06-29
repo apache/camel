@@ -486,7 +486,7 @@ Getting access to SSLSession and the client certificate
 
 You can get access to the `javax.net.ssl.SSLSession` if you eg need to
 get details about the client certificate. When `ssl=true` then the
-<<netty4-component,Netty4>> component will store the `SSLSession` as a
+xref:netty4-component.adoc[Netty4] component will store the `SSLSession` as a
 header on the Camel Message as shown below:
 
 [source,java]
@@ -798,5 +798,5 @@ under the `camel-example-netty-custom-correlation` directory.
 
 === See Also
 
-* <<netty-http-component,Netty HTTP>>
-* <<mina2-component,MINA>>
+* xref:netty-http-component.adoc[Netty HTTP]
+* xref:mina2-component.adoc[MINA]

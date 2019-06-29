@@ -16,7 +16,7 @@ Recipient List.
 If the message body is stream based, which means the input it receives
 is submitted to Camel as a stream. That means you will only be able to
 read the content of the stream *once*. So often when you use
-<<xpath-language,XPath>> as <<xpath-language,Message Filter>> or
+xref:xpath-language,XPath>> as <<xpath-language.adoc[Message Filter] or
 Content Based Router then you need to
 access the data multiple times, and you should use
 Stream Caching or convert the message body to
@@ -125,9 +125,9 @@ exchange:
 |out:header |the header name |Object |Will return the *out* message header.
 
 |function:properties |key for property |String |To lookup a property using the
-<<properties-component,Properties>> component (property placeholders).
+xref:properties-component.adoc[Properties] component (property placeholders).
 
-|function:simple |simple expression |Object |To evaluate a <<simple-language,Simple>> expression.
+|function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] expression.
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported
@@ -170,10 +170,10 @@ on the mailinglist] about using your own namespaces with xpath
 
 === Setting result type
 
-The <<xpath-language,XPath>> expression will return a result type using
+The xref:xpath-language.adoc[XPath] expression will return a result type using
 native XML objects such as `org.w3c.dom.NodeList`. But many times you
 want a result type to be a String. To do this you have to instruct the
-<<xpath-language,XPath>> which result type to use.
+xref:xpath-language.adoc[XPath] which result type to use.
 
 In Java DSL:
 
@@ -420,7 +420,7 @@ Any of these options can be used to activate this logging:
 `org.apache.camel.builder.xml.XPathBuilder` logger, or some parent
 logger such as `org.apache.camel` or the root logger
 2.  Enable the `logNamespaces` option as indicated in
-<<xpath-language,Auditing Namespaces>>, in which case the logging will
+xref:xpath-language.adoc[Auditing Namespaces], in which case the logging will
 occur on the INFO level
 
 === Auditing namespaces

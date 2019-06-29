@@ -12,15 +12,15 @@ and consumers are invoked in a separate thread from the producer.
 Note that queues are only visible within a _single_
 CamelContext. If you want to communicate across
 `CamelContext` instances (for example, communicating between Web
-applications), see the <<vm-component,VM>> component.
+applications), see the xref:vm-component.adoc[VM] component.
 
 This component does not implement any kind of persistence or recovery,
 if the VM terminates while messages are yet to be processed. If you need
 persistence, reliability or distributed SEDA, try using either
-<<jms-component,JMS>> or <<jms-component,ActiveMQ>>.
+xref:jms-component,JMS>> or <<jms-component.adoc[ActiveMQ].
 
 TIP:*Synchronous*
-The <<direct-component,Direct>> component provides synchronous invocation
+The xref:direct-component.adoc[Direct] component provides synchronous invocation
 of any consumers when a producer sends a message exchange.
 
 === URI format
@@ -175,7 +175,7 @@ ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 
 === Use of Request Reply
 
-The <<seda-component,SEDA>> component supports using
+The xref:seda-component.adoc[SEDA] component supports using
 Request Reply, where the caller will wait for
 the Async route to complete. For instance:
 
@@ -219,7 +219,7 @@ from("seda:stageName").thread(5).process(...)
 
 Can wind up with two `BlockQueues`: one from the SEDA endpoint, and one
 from the workqueue of the thread pool, which may not be what you want.
-Instead, you might wish to configure a <<direct-component,Direct>> endpoint
+Instead, you might wish to configure a xref:direct-component.adoc[Direct] endpoint
 with a thread pool, which can process messages both synchronously and
 asynchronously. For example:
 
@@ -273,7 +273,7 @@ int size = seda.getExchanges().size();
 
 === See Also
 
-* <<vm-component,VM>>
-* <<disruptor-component,Disruptor>>
-* <<direct-component,Direct>>
+* xref:vm-component.adoc[VM]
+* xref:disruptor-component.adoc[Disruptor]
+* xref:direct-component.adoc[Direct]
 * Async

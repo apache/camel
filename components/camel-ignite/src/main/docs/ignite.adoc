@@ -8,13 +8,13 @@ image:apache-ignite.png[]
 
 This component offers seven endpoints to cover much of Ignite's functionality:
 
-* <<ignite-cache-component,Ignite Cache>>.
-* <<ignite-compute-component,Ignite Compute>>.
-* <<ignite-messaging-component,Ignite Messaging>>.
-* <<ignite-events-component,Ignite Events>>.
-* <<ignite-set-component,Ignite Sets>>.
-* <<ignite-queue-component,Ignite Queues>>.
-* <<ignite-idgen-component,Ignite ID Generator>>.
+* xref:ignite-cache-component.adoc[Ignite Cache].
+* xref:ignite-compute-component.adoc[Ignite Compute].
+* xref:ignite-messaging-component.adoc[Ignite Messaging].
+* xref:ignite-events-component.adoc[Ignite Events].
+* xref:ignite-set-component.adoc[Ignite Sets].
+* xref:ignite-queue-component.adoc[Ignite Queues].
+* xref:ignite-idgen-component.adoc[Ignite ID Generator].
 
 To use this component, add the following dependency to your pom.xml:
 
@@ -29,7 +29,7 @@ To use this component, add the following dependency to your pom.xml:
 
 [IMPORTANT,title=Running in OSGi]
 ====
-If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi Support>> section below.
+If running in an OSGi container, please don't miss the xref:Ignite-OsgiSupport.adoc[OSGi Support] section below.
 ====
 
 

@@ -393,7 +393,7 @@ the message body.
 ### Example
 
 See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
-<<jpa-component,JPA>> to store traced messages into a database.
+xref:jpa-component.adoc[JPA] to store traced messages into a database.
 
 ### Using the JPA-Based Idempotent Repository
 

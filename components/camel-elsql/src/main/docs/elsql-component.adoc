@@ -4,7 +4,7 @@
 *Available as of Camel version 2.16*
 
 The ELSQL component is an extension to the existing
-<<sql-component,SQL Component>> that uses
+xref:sql-component.adoc[SQL Component] that uses
 https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -40,7 +40,7 @@ The parameters to the SQL queries are named parameters in the elsql
 mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. from message body if <<simple-language,Simple>>
+1. from message body if xref:simple-language.adoc[Simple]
 expression.
 
 2. from message body if its a `java.util.Map`

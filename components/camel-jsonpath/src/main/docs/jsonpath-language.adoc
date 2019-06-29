@@ -78,7 +78,7 @@ The component supports 7 options, which are listed below.
 === Using XML configuration
 
 If you prefer to configure your routes in your Spring
-XML file then you can use <<jsonpath-language,JSonPath>> expressions as
+XML file then you can use xref:jsonpath-language.adoc[JSonPath] expressions as
 follows
 
 [source,xml]

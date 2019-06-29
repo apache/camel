@@ -158,7 +158,7 @@ The property placeholder is generally in use when doing:
 * lookup of beans in the Registry
 * additional supported in Spring XML (see below in examples)
 * using Blueprint PropertyPlaceholder with Camel
-<<properties-component,Properties>> component
+xref:properties-component.adoc[Properties] component
 * using `@PropertyInject` to inject a property in a POJO
 * Using default value if a property does not exists
 * Include out of the box functions, to lookup property
@@ -364,7 +364,7 @@ inside the Spring as well as the Blueprint XML.
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
-Then you could setup the <<properties-component,Properties>> component as
+Then you could setup the xref:properties-component.adoc[Properties] component as
 follows:
 
 [source,xml]
@@ -463,9 +463,9 @@ ProducerTemplate for example:
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
-=== Example with <<simple-language,Simple>> language
+=== Example with xref:simple-language.adoc[Simple] language
 
-The <<simple-language,Simple>> language now also support using property
+The xref:simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
 [source,java]
@@ -478,7 +478,7 @@ from("direct:start")
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
-You can also specify the location in the <<simple-language,Simple>>
+You can also specify the location in the xref:simple-language.adoc[Simple]
 language for example:
 
 [source,java]
@@ -780,7 +780,7 @@ placeholder notation with `{{` and `}}`.
 === Clashing Spring property placeholders with Camels Simple language
 
 Take notice when using Spring bridging placeholder then the spring `${ }`
-syntax clashes with the <<simple-language,Simple>> in Camel, and therefore
+syntax clashes with the xref:simple-language.adoc[Simple] in Camel, and therefore
 take care. For example:
 
 [source,xml]
@@ -791,7 +791,7 @@ take care. For example:
 ----
 
 clashes with Spring property placeholders, and you should use `$simple{ }`
-to indicate using the <<simple-language,Simple>> language in Camel.
+to indicate using the xref:simple-language.adoc[Simple] language in Camel.
 
 [source,xml]
 ----
@@ -808,7 +808,7 @@ An alternative is to configure the `PropertyPlaceholderConfigurer` with
 *Available as of Camel 2.10*
 
 When Testing with Camel and using the
-<<properties-component,Properties>> component, you may want to be able to
+xref:properties-component.adoc[Properties] component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. +
 Camel test kits, eg `CamelTestSupport` class offers the following methods
@@ -886,7 +886,7 @@ private int timeout;
 
 *Available as of Camel 2.14.1*
 
-The <<properties-component,Properties>> component includes the following
+The xref:properties-component.adoc[Properties] component includes the following
 functions out of the box
 
 * `env` - A function to lookup the property from OS environment variables
@@ -954,7 +954,7 @@ export $FOO_SERVICE_PORT=8888
 
 For example if the FOO service a remote HTTP service, then we can refer
 to the service in the Camel endpoint uri, and use
-the <<http-component,HTTP>> component to make the HTTP call:
+the xref:http-component.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----
@@ -983,7 +983,7 @@ example to call a service on localhost, maybe for unit testing etc
 
 *Available as of Camel 2.14.1*
 
-The <<properties-component,Properties>> component allow to plugin 3rd party
+The xref:properties-component.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the
 placeholders, such as looking up in databases, do custom computations,
@@ -1051,6 +1051,6 @@ pc.addFunction(new MyBeerFunction());
 
 === See Also
 
-* <<properties-component,Properties>> component
+* xref:properties-component.adoc[Properties] component
 * Jasypt for using encrypted values (eg passwords) in
 the properties

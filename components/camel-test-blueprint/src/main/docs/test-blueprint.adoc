@@ -113,7 +113,7 @@ services.put("myService", asService(myService, null));
 ------------------------------------------------------
 
 This allows us to use the service by calling a method on it from a Camel
-<<bean-component,Bean>> component in a route as shown:
+xref:bean-component.adoc[Bean] component in a route as shown:
 
 [source,xml]
 --------------------------------

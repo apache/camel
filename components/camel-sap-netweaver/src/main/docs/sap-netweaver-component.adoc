@@ -231,4 +231,4 @@ Destination airport: SFO
 * Endpoint
 * Getting Started
 
-* <<http-component,HTTP>>
+* xref:http-component.adoc[HTTP]

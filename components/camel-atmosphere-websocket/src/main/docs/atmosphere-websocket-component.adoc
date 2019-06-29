@@ -7,7 +7,7 @@ The Atmosphere-Websocket component provides Websocket
 based endpoints for a servlet communicating with
 external clients over Websocket (as a servlet accepting websocket
 connections from external clients). +
-The component uses the <<servlet-component,SERVLET>> component and uses
+The component uses the xref:servlet-component.adoc[SERVLET] component and uses
 the https://github.com/Atmosphere/atmosphere[Atmosphere] library to
 support the Websocket transport in various Servlet containers (e..g.,
 Jetty, Tomcat, ...).
@@ -215,7 +215,7 @@ And the equivalent Spring sample:
 * Endpoint
 * Getting Started
 
-* <<servlet-component,SERVLET>>
-* <<ahc-ws-component,AHC-WS>>
+* xref:servlet-component.adoc[SERVLET]
+* xref:ahc-ws-component.adoc[AHC-WS]
 *
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
