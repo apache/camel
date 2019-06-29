@@ -56,7 +56,10 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
             int columnNumber = i + 1;
             String columnName = getColumnName(metaData, columnNumber, isJDBC4);
             int columnType = metaData.getColumnType(columnNumber);
-            if (columnType == Types.CLOB || columnType == Types.BLOB) {
+
+            if(columnType == Types.CLOB) {
+                columns[i] = new ClobColumn(columnName, columnNumber);
+            } else if (columnType == Types.BLOB) {
                 columns[i] = new BlobColumn(columnName, columnNumber);
             } else {
                 columns[i] = new DefaultColumn(columnName, columnNumber);
@@ -212,6 +215,26 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
         public Object getBytes(ResultSet resultSet) throws SQLException {
             return resultSet.getBytes(columnNumber);
+        }
+    }
+
+    private static final class ClobColumn implements Column {
+        private final int columnNumber;
+        private final String name;
+
+        private ClobColumn(String name, int columnNumber) {
+            this.name = name;
+            this.columnNumber = columnNumber;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Object getValue(ResultSet resultSet) throws SQLException {
+            return resultSet.getClob(columnNumber);
         }
     }
 }
