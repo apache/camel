@@ -15,7 +15,7 @@ script is dynamic defined as well.
 This component is provided out of the box in `camel-core` and hence no
 additional JARs is needed. You only have to include additional Camel
 components if the language of choice mandates it, such as using
-<<groovy-language,Groovy>> or <<groovy-language,JavaScript>> languages.
+xref:groovy-language,Groovy>> or <<groovy-language.adoc[JavaScript] languages.
 
 === URI format
 
@@ -26,7 +26,7 @@ language://languageName[:script][?options]
 
 You can refer to an external resource for
 the script using same notation as supported by the other
-<<language-component,Language>>s in Camel
+xref:language-component.adoc[Language]s in Camel
 
 [source]
 ----
@@ -132,17 +132,17 @@ script configured on the endpoint.
 
 === Examples
 
-For example you can use the <<simple-language,Simple>> language to
+For example you can use the xref:simple-language.adoc[Simple] language to
 Message Translator a message:
 
 In case you want to convert the message body type you can do this as
 well:
 
-You can also use the <<groovy-language,Groovy>> language, such as this
+You can also use the xref:groovy-language.adoc[Groovy] language, such as this
 example where the input message will by multiplied with 2:
 
 You can also provide the script as a header as shown below. Here we use
-<<xpath-language,XPath>> language to extract the text from the `<foo>`
+xref:xpath-language.adoc[XPath] language to extract the text from the `<foo>`
 tag.
 
 [source,java]
@@ -169,5 +169,5 @@ evaluation. +
 updated script is used:
 
 You can refer to the resource similar to the
-other <<language-component,Language>>s in Camel by prefixing with
+other xref:language-component.adoc[Language]s in Camel by prefixing with
 `"resource:"` as shown below:

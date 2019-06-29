@@ -218,4 +218,4 @@ return firstEntry.getTitle().contains("Camel");
 * Endpoint
 * Getting Started
 
-* <<atom-component,Atom>>
+* xref:atom-component.adoc[Atom]

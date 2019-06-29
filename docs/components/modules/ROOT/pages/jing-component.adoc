@@ -24,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-Note that the <<msv-component,MSV>> component can also support RelaxNG XML
+Note that the xref:msv-component.adoc[MSV] component can also support RelaxNG XML
 syntax.
 
 ### URI format

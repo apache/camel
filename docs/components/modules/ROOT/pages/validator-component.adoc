@@ -8,14 +8,14 @@ using the JAXP Validation API and based on any of the supported XML
 schema languages, which defaults to http://www.w3.org/XML/Schema[XML
 Schema]
 
-Note that the <<jing-component,Jing>> component also supports the following
+Note that the xref:jing-component.adoc[Jing] component also supports the following
 useful schema languages:
 
 * http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 * http://relaxng.org/[RelaxNG XML Syntax]
 
-The <<msv-component,MSV>> component also supports
+The xref:msv-component.adoc[MSV] component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
 === URI format

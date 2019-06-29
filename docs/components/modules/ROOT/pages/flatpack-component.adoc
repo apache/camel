@@ -255,7 +255,7 @@ easy Bean Integration
 
 ### Flatpack DataFormat
 
-The <<flatpack-component,Flatpack>> component ships with the Flatpack data
+The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
 
