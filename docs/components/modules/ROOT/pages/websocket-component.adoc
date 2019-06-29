@@ -186,7 +186,7 @@ message, we need to send the transformed message to the same endpoint
 
 This example is part of an unit test, which you can find
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-websocket/src/test/java/org/apache/camel/component/websocket/WebsocketRouteExampleTest.java[here].
-As a client we use the <<ahc-component,AHC>> library which offers support
+As a client we use the xref:ahc-component.adoc[AHC] library which offers support
 for web socket as well.
 
 Here is another example where webapp resources location have been
@@ -288,8 +288,8 @@ Java DSL based configuration of endpoint
 * Endpoint
 * Getting Started
 
-* <<ahc-component,AHC>>
-* <<jetty-component,Jetty>>
+* xref:ahc-component.adoc[AHC]
+* xref:jetty-component.adoc[Jetty]
 * Twitter Websocket Example
 demonstrates how to poll a constant feed of twitter searches and publish
 results in real time using web socket to a web page.

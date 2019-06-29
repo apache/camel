@@ -84,7 +84,7 @@ authorization is not specified by this component. You can write your own
 processors or components which get authentication information from the
 exchange depending on your needs. For example, you might create a
 processor that gets credentials from an HTTP request header originating
-in the <<jetty-component,Jetty>> component. No matter how the credentials
+in the xref:jetty-component.adoc[Jetty] component. No matter how the credentials
 are collected, they need to be placed in the In message or the
 `SecurityContextHolder` so the Camel xref:spring-security.adoc[Spring
 Security] component can access them:
@@ -143,7 +143,7 @@ implementation of the
 `org.apache.camel.component.spring.security.AuthenticationAdapter` to
 your `<authorizationPolicy>` bean. This can be useful if you are working
 with components that do not use Spring Security but do provide a
-`Subject`. At this time, only the <<cxf-component,CXF>> component populates
+`Subject`. At this time, only the xref:cxf-component.adoc[CXF] component populates
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]

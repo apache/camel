@@ -24,7 +24,7 @@ You can append query options to the URI in the following format,
 `exchange.getIn().getBody()` returns `null`.
 
 TIP:*Advanced Scheduler*
-See also the <<quartz-component,Quartz>> component that supports much more
+See also the xref:quartz-component.adoc[Quartz] component that supports much more
 advanced scheduling.
 
 TIP:*Specify time in human friendly format*
@@ -205,5 +205,5 @@ starting the route. To do that you use the repeatCount option as shown:
 
 === See Also
 
-* <<scheduler-component,Scheduler>>
-* <<quartz-component,Quartz>>
+* xref:scheduler-component.adoc[Scheduler]
+* xref:quartz-component.adoc[Quartz]

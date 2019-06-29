@@ -4,8 +4,8 @@
 *Available as of Camel version 1.3*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
-and <<dataset-component,DataSet>> endpoints work great with the
+notoriously difficult. The xref:mock-component,Mock>>, <<mock-component.adoc[Test]
+and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -18,7 +18,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/compon
 instances] both as a source of messages and as a way to assert that the
 data set is received.
 
-Camel will use the <<log-component,throughput logger>> when sending
+Camel will use the xref:log-component.adoc[throughput logger] when sending
 dataset's.
 
 === URI format

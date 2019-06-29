@@ -6,7 +6,7 @@
 The JDBC component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
 the message body. This component uses the standard JDBC API, unlike the
-<<sql-component,SQL Component>> component, which uses
+xref:sql-component.adoc[SQL Component] component, which uses
 spring-jdbc.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -171,7 +171,7 @@ type.
 *Available as of Camel 2.10*
 
 If you insert data using SQL INSERT, then the RDBMS may support auto
-generated keys. You can instruct the <<jdbc-component,JDBC>> producer to
+generated keys. You can instruct the xref:jdbc-component.adoc[JDBC] producer to
 return the generated keys in headers. +
  To do that set the header `CamelRetrieveGeneratedKeys=true`. Then the
 generated keys will be provided as headers with the keys listed in the
@@ -241,8 +241,8 @@ from("direct:hello")
 === Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
-combine it with a polling scheduler such as the <<timer-component,Timer>>
-or <<quartz-component,Quartz>> etc. In the following example, we retrieve
+combine it with a polling scheduler such as the xref:timer-component.adoc[Timer]
+or xref:quartz-component.adoc[Quartz] etc. In the following example, we retrieve
 data from the database every 60 seconds:
 
 [source,java]

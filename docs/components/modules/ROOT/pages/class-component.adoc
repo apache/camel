@@ -4,7 +4,7 @@
 *Available as of Camel version 2.4*
 
 The Class component binds beans to Camel message exchanges. It works
-in the same way as the <<bean-component,Bean>> component but instead of
+in the same way as the xref:bean-component.adoc[Bean] component but instead of
 looking up beans from a Registry it creates the bean
 based on the class name.
 
@@ -74,7 +74,7 @@ with the following path and query parameters:
 
 === Using
 
-You simply use the *class* component just as the <<bean-component,Bean>>
+You simply use the *class* component just as the xref:bean-component.adoc[Bean]
 component but by specifying the fully qualified classname instead. +
  For example to use the `MyFooBean` you have to do as follows:
 
@@ -117,7 +117,7 @@ Which will lookup a bean from the Registry with the
 id `foo` and invoke the `setCool` method on the created instance of the
 `MyPrefixBean` class.
 
-TIP:See more details at the <<bean-component,Bean>> component as the *class*
+TIP:See more details at the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 
 === See Also
@@ -127,6 +127,6 @@ component works in much the same way.
 * Endpoint
 * Getting Started
 
-* <<bean-component,Bean>>
+* xref:bean-component.adoc[Bean]
 * Bean Binding
 * Bean Integration

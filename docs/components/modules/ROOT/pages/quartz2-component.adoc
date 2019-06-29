@@ -178,7 +178,7 @@ for the next execution.
 
 If you run in OSGi such as Apache ServiceMix, or Apache Karaf, and have
 multiple bundles with Camel routes that start from
-<<quartz2-component,Quartz2>> endpoints, then make sure if you assign an `id` 
+xref:quartz2-component.adoc[Quartz2] endpoints, then make sure if you assign an `id` 
 to the `<camelContext>` that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
@@ -191,7 +191,7 @@ By default Quartz will look for a `quartz.properties` file in the
 deployments this means just drop the quartz.properties in
 `WEB-INF/classes/org/quartz`.
 
-However the Camel <<quartz2-component,Quartz2>> component also allows you
+However the Camel xref:quartz2-component.adoc[Quartz2] component also allows you
 to configure properties:
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
@@ -223,7 +223,7 @@ This option is set to true by default, unless explicitly disabled.
 
 === Starting the Quartz scheduler
 
-The <<quartz2-component,Quartz2>> component offers an option to let the
+The xref:quartz2-component.adoc[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
 
 This is an example:
@@ -238,7 +238,7 @@ This is an example:
 === Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
-Then the <<quartz2-component,Quartz2>> component will *not* pause/remove
+Then the xref:quartz2-component.adoc[Quartz2] component will *not* pause/remove
 triggers when a node is being stopped/shutdown. This allows the trigger
 to keep running on the other nodes in the cluster.
 
@@ -403,7 +403,7 @@ but it does not want to be fired now.
 
 === Using QuartzScheduledPollConsumerScheduler
 
-The <<quartz2-component,Quartz2>> component provides a
+The xref:quartz2-component.adoc[Quartz2] component provides a
 Polling Consumer scheduler which allows to
 use cron based scheduling for xref:polling-consumer.adoc[Polling
 Consumer] such as the File and FTP
@@ -419,8 +419,8 @@ second, then a Camel route can be define simply as:
 ----
 
 Notice we define the `scheduler=quartz2` to instruct Camel to use the
-<<quartz2-component,Quartz2>> based scheduler. Then we use `scheduler.xxx`
-options to configure the scheduler. The <<quartz2-component,Quartz2>>
+xref:quartz2-component.adoc[Quartz2] based scheduler. Then we use `scheduler.xxx`
+options to configure the scheduler. The xref:quartz2-component.adoc[Quartz2]
 scheduler requires the cron option to be set.
 
 The following options is supported:
@@ -430,7 +430,7 @@ The following options is supported:
 |Parameter |Default |Type |Description
 
 |`quartzScheduler` |`null` |`org.quartz.Scheduler` |To use a custom Quartz scheduler. If none configure then the shared
-scheduler from the <<quartz2-component,Quartz2>> component is used.
+scheduler from the xref:quartz2-component.adoc[Quartz2] component is used.
 
 |`cron` |`null` |`String` |*Mandatory*: To define the cron expression for triggering the polls.
 

@@ -135,7 +135,7 @@ following attributes all set at `ENGINE_SCOPE`:
 IN message instead.
 
 |properties |`org.apache.camel.builder.script.PropertiesFunction` |Function with a `resolve` method to make it easier to use
-Camels <<properties-component,Properties>> component from scripts. See
+Camels xref:properties-component.adoc[Properties] component from scripts. See
 further below for example.
 |=======================================================================
 
@@ -154,7 +154,7 @@ header on the Camel message with the key `CamelScriptArguments`. +
 
 *Available as of Camel 2.9*
 
-If you need to use the <<properties-component,Properties>> component from a
+If you need to use the xref:properties-component.adoc[Properties] component from a
 script to lookup property placeholders, then its a bit cumbersome to do
 so. 
 For example to set a header name myHeader with a value from a property

@@ -5,7 +5,7 @@ Apache Camel is designed to work nicely with the
 http://www.springframework.org/[Spring Framework] in a number of ways.
 
 * Camel uses Spring Transactions as the default transaction handling in
-components like <<jms-component,JMS>> and <<jms-component,JPA>>
+components like xref:jms-component,JMS>> and <<jms-component.adoc[JPA]
 * Camel works with Spring 2 XML processing with the
 Xml Configuration
 * Camel Spring XML Schema's is defined at xref:xml-reference.adoc[Xml
@@ -25,8 +25,8 @@ and auto-expose Spring beans as components and endpoints.
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
-Patterns] and Camel's powerful <<mock-component,Mock>> and
-<<test-component,Test>> endpoints
+Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
+xref:test-component.adoc[Test] endpoints
 Camel supports Spring Boot using the `camel-spring-boot` component.
 
 === Using Spring to configure the CamelContext
