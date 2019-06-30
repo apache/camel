@@ -37,8 +37,25 @@ $ mvn camel:run
 When the Camel application starts, you should see the following message being logged to the console, e.g.:
 
 ```
-2016-02-01 20:13:46,922 [cdi.Main.main()] INFO  DefaultCamelContext - Apache Camel 2.17.0 (CamelContext: osgi-example) started in 0.769 seconds
-2016-02-01 20:13:47,008 [ Session Task-1] INFO  consumer-route      - Received message [Sample Message] from [Producer]
+2019-06-30 22:31:28,826 [cdi.Main.main()] INFO  Version                        - WELD-000900: 3.0.5 (Final)
+2019-06-30 22:31:29,152 [cdi.Main.main()] INFO  Bootstrap                      - WELD-000101: Transactional services not available. Injection of @Inject UserTransaction not available. Transactional observers will be invoked synchronously.
+2019-06-30 22:31:29,337 [cdi.Main.main()] INFO  Event                          - WELD-000411: Observer method [BackedAnnotatedMethod] private org.apache.camel.cdi.CdiCamelExtension.processAnnotatedType(@Observes ProcessAnnotatedType<?>) receives events for all annotated types. Consider restricting events using @WithAnnotations or a generic type with bounds.
+2019-06-30 22:31:30,010 [cdi.Main.main()] INFO  CdiCamelExtension              - Camel CDI is starting Camel context [osgi-example]
+2019-06-30 22:31:30,016 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 3.0.0 (CamelContext: osgi-example) is starting
+2019-06-30 22:31:30,016 [cdi.Main.main()] INFO  DefaultCamelContext            - Tracing is enabled on CamelContext: osgi-example
+2019-06-30 22:31:30,017 [cdi.Main.main()] INFO  DefaultManagementStrategy      - JMX is disabled
+2019-06-30 22:31:30,367 [cdi.Main.main()] INFO  DefaultCamelContext            - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
+2019-06-30 22:31:30,434 [cdi.Main.main()] INFO  BrokerService                  - Using Persistence Adapter: MemoryPersistenceAdapter
+2019-06-30 22:31:30,594 [cdi.Main.main()] INFO  BrokerService                  - Apache ActiveMQ 5.15.9 (broker, ID:Babaks-iMac-50846-1561926690454-0:1) is starting
+2019-06-30 22:31:30,599 [cdi.Main.main()] INFO  BrokerService                  - Apache ActiveMQ 5.15.9 (broker, ID:Babaks-iMac-50846-1561926690454-0:1) started
+2019-06-30 22:31:30,599 [cdi.Main.main()] INFO  BrokerService                  - For help or more information please see: http://activemq.apache.org
+2019-06-30 22:31:30,626 [cdi.Main.main()] INFO  TransportConnector             - Connector vm://broker started
+2019-06-30 22:31:30,711 [cdi.Main.main()] INFO  DefaultCamelContext            - Route: consumer-route started and consuming from: sjms://sample.queue
+2019-06-30 22:31:30,713 [cdi.Main.main()] INFO  DefaultCamelContext            - Total 1 routes, of which 1 are started
+2019-06-30 22:31:30,714 [cdi.Main.main()] INFO  DefaultCamelContext            - Apache Camel 3.0.0 (CamelContext: osgi-example) started in 0.701 seconds
+2019-06-30 22:31:30,779 [ Session Task-1] INFO  consumer-route                 - Received message [Sample Message] from [Producer]
+2019-06-30 22:31:30,785 [cdi.Main.main()] INFO  Bootstrap                      - WELD-ENV-002003: Weld SE container 6dd6ff85-2756-49eb-ba0e-50d7feece6b6 initialized
+2019-06-30 22:31:30,792 [cdi.Main.main()] INFO  MainSupport                    - Using properties from classpath:application.properties
 ```
 
 The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
