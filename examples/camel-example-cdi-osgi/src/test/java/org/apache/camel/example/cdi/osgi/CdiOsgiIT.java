@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -83,7 +83,7 @@ public class CdiOsgiIT {
     @Test
     public void testRouteStatus() {
         assertThat("Route status is incorrect!",
-            context.getRouteController().getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
+            context.getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
     }
 
     @Test
