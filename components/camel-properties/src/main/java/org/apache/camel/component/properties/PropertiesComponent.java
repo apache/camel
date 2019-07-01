@@ -101,6 +101,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
+    private transient Properties cachedProperties;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
@@ -184,7 +185,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     public String parseUri(String uri) {
-        return parseUri(uri, locations);
+        // optimise to only load properties once as we use the configured locations
+        if (cachedProperties == null) {
+            cachedProperties = doLoadProperties(locations);
+        }
+        return parseUri(uri, cachedProperties);
     }
 
     public String parseUri(String uri, String... locations) {
@@ -254,7 +259,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     protected String parseUri(String uri, List<PropertiesLocation> paths) {
         Properties prop = doLoadProperties(paths);
+        return parseUri(uri, prop);
+    }
 
+    protected String parseUri(String uri, Properties prop) {
         // enclose tokens if missing
         if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
             uri = prefixToken + uri;
@@ -660,8 +668,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
-        super.doStop();
+        cachedProperties = null;
         ServiceHelper.stopAndShutdownService(sources);
+        super.doStop();
     }
 
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
