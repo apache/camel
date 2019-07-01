@@ -45,6 +45,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
+            <version>${project.version}</version>
             <exclusions>
                 <!-- ActiveMQ is JMS 1.1 spec only -->
                 <exclusion>
@@ -94,11 +95,13 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -172,6 +175,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jdbc</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>

@@ -42,10 +42,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-blueprint</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-olingo4</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

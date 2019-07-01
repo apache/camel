@@ -74,10 +74,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- we use spring web to kick-start the application in web.xml -->
@@ -90,10 +92,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- embed ActiveMQ broker -->

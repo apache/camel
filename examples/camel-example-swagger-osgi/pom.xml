@@ -44,26 +44,31 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- swagger api -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-swagger-java</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- use for json binding -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

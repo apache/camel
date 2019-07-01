@@ -49,16 +49,19 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- used for jetty -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- logging -->

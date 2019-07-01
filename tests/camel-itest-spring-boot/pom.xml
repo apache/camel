@@ -42,6 +42,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Dependency needed to incorporate classes in main jar -->

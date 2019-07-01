@@ -38,7 +38,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -117,7 +117,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.deltaspike.cdictrl</groupId>

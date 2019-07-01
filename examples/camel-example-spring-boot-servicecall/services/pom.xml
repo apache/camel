@@ -74,10 +74,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-undertow-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test -->
@@ -89,6 +91,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
