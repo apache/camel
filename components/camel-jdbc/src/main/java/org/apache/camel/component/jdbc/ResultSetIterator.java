@@ -57,7 +57,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
             String columnName = getColumnName(metaData, columnNumber, isJDBC4);
             int columnType = metaData.getColumnType(columnNumber);
 
-            if(columnType == Types.CLOB) {
+            if (columnType == Types.CLOB) {
                 columns[i] = new ClobColumn(columnName, columnNumber);
             } else if (columnType == Types.BLOB) {
                 columns[i] = new BlobColumn(columnName, columnNumber);
