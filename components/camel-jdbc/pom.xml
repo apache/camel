@@ -34,6 +34,8 @@
     <description>Camel JDBC support</description>
 
     <properties>
+        <firstVersion>1.2.0</firstVersion>
+        <label>database</label>
     </properties>
 
     <dependencies>

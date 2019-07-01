@@ -215,6 +215,7 @@
         <include>org.apache.camel:camel-master</include>
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-micrometer</include>
+        <include>org.apache.camel:camel-microprofile-config</include>
         <include>org.apache.camel:camel-milo</include>
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
