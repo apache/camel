@@ -39,6 +39,8 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -171,6 +173,48 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 return "fromRoute(" + routeId + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Optionally a <tt>from</tt> current route which means that this expression should only be based
+     * on {@link Exchange} which is the current route(s).
+     *
+     * @param routeId id of route or pattern (see the EndpointHelper javadoc)
+     * @return the builder
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     */
+    public NotifyBuilder fromCurrentRoute(final String routeId) {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    String id = rc.getRoute().getId();
+                    return EndpointHelper.matchPattern(id, routeId);
+                } else {
+                    return false;
+                }
+            }
+
+            public boolean matches() {
+                // should be true as we use the onExchange to filter
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "fromCurrentRoute(" + routeId + ")";
             }
         });
         return this;
