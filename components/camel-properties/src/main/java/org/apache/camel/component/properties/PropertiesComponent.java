@@ -27,17 +27,25 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/properties">Properties Component</a> allows you to use property placeholders when defining Endpoint URIs
@@ -45,6 +53,8 @@ import org.apache.camel.util.OrderedProperties;
 @Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
     /**
      *  Never check system properties.
@@ -96,6 +106,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private List<PropertiesLocation> locations = Collections.emptyList();
+    private List<PropertiesSource> sources = new ArrayList<>();
 
     private transient String propertyPrefixResolved;
 
@@ -202,6 +213,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         // use initial properties
         if (initialProperties != null) {
             prop.putAll(initialProperties);
+        }
+
+        // add 3rd party sources
+        if (!sources.isEmpty()) {
+            for (PropertiesSource ps : sources) {
+                Properties p = ps.loadProperties();
+                prop.putAll(p);
+            }
         }
 
         // use locations
@@ -577,9 +596,50 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.cacheMap.clear();
     }
 
+    /**
+     * Adds a custom {@link PropertiesSource}
+     */
+    public void addPropertiesSource(PropertiesSource propertiesSource) {
+        sources.add(propertiesSource);
+        // prepare properties sources which we must do eager
+        for (PropertiesSource ps : sources) {
+            if (ps instanceof CamelContextAware) {
+                ((CamelContextAware) ps).setCamelContext(getCamelContext());
+            }
+        }
+        ServiceHelper.initService(propertiesSource);
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // discover any 3rd party properties sources
+        try {
+            FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel");
+            Class<?> type = factoryFinder.findClass("properties-source-factory");
+            if (type != null) {
+                Object ps = getCamelContext().getInjector().newInstance(type, false);
+                if (ps != null) {
+                    if (ps instanceof PropertiesSource) {
+                        LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
+                        addPropertiesSource((PropertiesSource) ps);
+                    } else {
+                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
+                    }
+                }
+            }
+        } catch (NoFactoryAvailableException e) {
+            // ignore
+        } catch (Exception e) {
+            LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
+        }
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        ServiceHelper.startService(sources);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -602,6 +662,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     protected void doStop() throws Exception {
         cacheMap.clear();
         super.doStop();
+        ServiceHelper.stopAndShutdownService(sources);
     }
 
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
