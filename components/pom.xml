@@ -233,6 +233,7 @@
         <module>camel-mail</module>
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
+        <module>camel-microprofile-config</module>
         <module>camel-milo</module>
         <module>camel-mina2</module>
         <module>camel-mllp</module>
