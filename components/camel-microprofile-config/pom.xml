@@ -31,7 +31,12 @@
     <packaging>jar</packaging>
 
     <name>Camel :: MicroProfile Config</name>
-    <description>Camel Eclipse MicroProfile Config</description>
+    <description>Bridging Eclipse MicroProfile Config with Camel properties</description>
+
+    <properties>
+        <firstVersion>3.0.0</firstVersion>
+        <label>microservice</label>
+    </properties>
 
     <dependencies>
 
