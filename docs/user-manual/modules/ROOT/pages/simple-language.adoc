@@ -8,17 +8,17 @@ created, but has since grown more powerful. It is primarily intended for
 being a really small and simple language for evaluating
 Expressions and Predicates
 without requiring any new dependencies or knowledge of
-xref:xpath-language.adoc[XPath]; so it is ideal for testing in camel-core. The
+<<xpath-language,XPath>>; so it is ideal for testing in camel-core. The
 idea was to cover 95% of the common use cases when you need a little bit
 of expression based script in your Camel routes.
 
 However for much more complex use cases you are generally recommended to
 choose a more expressive and powerful language such as:
 
-* xref:groovy-language.adoc[Groovy]
-* xref:spel-language.adoc[SpEL]
-* xref:mvel-component.adoc[MVEL]
-* xref:ognl-language.adoc[OGNL]
+* <<groovy-language,Groovy>>
+* <<spel-language,SpEL>>
+* <<mvel-component,MVEL>>
+* <<ognl-language,OGNL>>
 
 The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
@@ -188,9 +188,9 @@ Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h
 
 |date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` timezones and patterns.
 
-|bean:_bean expression_ |Object |Invoking a bean expression using the xref:bean-component.adoc[Bean] language.
+|bean:_bean expression_ |Object |Invoking a bean expression using the <<bean-component,Bean>> language.
 Specifying a method name you must use dot as separator. We also support
-the ?method=methodname syntax that is used by the xref:bean-component.adoc[Bean]
+the ?method=methodname syntax that is used by the <<bean-component,Bean>>
 component.
 
 |properties-location:_http://locationskey[locations:key]_ |String |Lookup a property with the given key. The `locations`
@@ -250,7 +250,7 @@ INFO:Camel's OGNL support is for invoking methods only. You cannot access
 fields. Camel support accessing the length field of Java arrays.
 
 
-The xref:simple-language,Simple>> and <<simple-language.adoc[Bean] language now
+The <<simple-language,Simple>> and <<simple-language,Bean>> language now
 supports a Camel OGNL notation for invoking beans in a chain like
 fashion. Suppose the Message IN body contains a POJO which has a `getAddress()`
 method.
@@ -471,7 +471,7 @@ function, otherwise parsed as literal.
 |\ |To escape a value, eg \$, to indicate a $ sign.
 Special: Use \n for new line, \t for tab, and \r for carriage return.
 *Notice:* Escaping is *not* supported using the
-xref:file-language.adoc[File Language]. *Notice:* The escape character is not supported, use the
+<<file-language,File Language>>. *Notice:* The escape character is not supported, use the
 following three special escaping instead.
 
 |\n |To use newline character.
@@ -759,7 +759,7 @@ from("direct:order")
 ----
 
 We can use the `?method=methodname` option that we are familiar with the
-xref:bean-component.adoc[Bean] component itself:
+<<bean-component,Bean>> component itself:
 
 [source,java]
 ----
@@ -811,7 +811,7 @@ You can nest functions, such as shown below:
 Suppose you have an enum for customers
 
 And in a Content Based Router we can use
-the xref:simple-language.adoc[Simple] language to refer to this enum, to check
+the <<simple-language,Simple>> language to refer to this enum, to check
 the message which enum it matches.
 
 === Using new lines or tabs in XML DSLs
@@ -842,7 +842,7 @@ whitespace characters.
 
 === Setting result type
 
-You can now provide a result type to the xref:simple-language.adoc[Simple]
+You can now provide a result type to the <<simple-language,Simple>>
 expression, which means the result of the evaluation will be converted
 to the desired type. This is most usable to define types such as
 booleans, integers, etc.

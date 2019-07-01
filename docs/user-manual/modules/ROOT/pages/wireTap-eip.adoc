@@ -68,7 +68,7 @@ values.
 
 === Sending a Copy (traditional wiretap)
 
-* Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
+* Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
 
 [source,java]
 ----
@@ -95,7 +95,7 @@ values.
 
 === Sending a New xref:exchange.adoc[Exchange]
 
-*Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]*
+*Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>*
 
 Camel supports either a processor or an
 xref:expression.adoc[Expression] to populate the new
