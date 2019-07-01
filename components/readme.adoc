@@ -1072,6 +1072,8 @@ Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
 
 | link:camel-lra/src/main/docs/lra.adoc[Lra] (camel-lra) | 2.21 | Camel saga binding for Long-Running-Action framework
 
+| link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
+
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
 | link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
