@@ -88,8 +88,8 @@
         <avro-bundle-version>1.8.2_1</avro-bundle-version>
         <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
         <awaitility-version>3.1.6</awaitility-version>
-        <aws-java-sdk-bundle-version>1.11.559_1</aws-java-sdk-bundle-version>
-        <aws-java-sdk-version>1.11.559</aws-java-sdk-version>
+        <aws-java-sdk-bundle-version>1.11.573_1</aws-java-sdk-bundle-version>
+        <aws-java-sdk-version>1.11.573</aws-java-sdk-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.2.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
