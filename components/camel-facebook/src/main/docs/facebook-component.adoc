@@ -29,7 +29,7 @@ for this component:
     <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-facebook</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
     </dependency>
 -----------------------------------------------
 

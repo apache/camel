@@ -76,10 +76,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-atomix-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

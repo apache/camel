@@ -34,6 +34,7 @@
     <description>Camel Parent POM</description>
 
     <properties>
+        <camel-version>${project.version}</camel-version>
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs/>
@@ -865,7 +866,7 @@
             </dependency>
 
             <!-- NOTE: auto-generated list of components when building camel catalog -->
-            <!-- camel components: START -->
+            <!-- camel components: START
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-activemq</artifactId>
@@ -2446,10 +2447,10 @@
         <artifactId>camel-zookeeper-master</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!-- camel components: END -->
+       camel components: END -->
 
             <!-- NOTE: auto-generated list of starter components when building camel catalog -->
-            <!-- camel starters: START -->
+            <!-- camel starters: START
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-activemq-starter</artifactId>
@@ -3890,7 +3891,7 @@
         <artifactId>camel-zookeeper-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!-- camel starters: END -->
+      - camel starters: END -->
 
             <!-- camel catalog -->
             <dependency>

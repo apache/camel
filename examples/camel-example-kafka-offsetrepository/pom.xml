@@ -86,24 +86,29 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-stream-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-kafka</artifactId>
+            <version>${project.version}</version>
         </dependency>
          <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

@@ -44,6 +44,7 @@
 
     <build>
         <plugins>
+            <!--
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>bom-generator-maven-plugin</artifactId>
@@ -66,6 +67,7 @@
                     <targetPom>${basedir}/camel-bom/pom.xml</targetPom>
                 </configuration>
             </plugin>
+            -->
         </plugins>
     </build>
 </project>

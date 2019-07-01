@@ -19,7 +19,7 @@ If you use maven2 then here you go:
        <dependency>
            <groupId>org.apache.camel</groupId>
            <artifactId>camel-core</artifactId>
-           <version>${camel-version}</version>
+           <version>${project.version}</version>
            <type>test-jar</type>
            <scope>test</scope>
        </dependency>
@@ -32,7 +32,7 @@ If you use maven2 then here you go:
        <dependency>
            <groupId>org.apache.camel</groupId>
            <artifactId>camel-test-spring</artifactId>
-           <version>${camel-version}</version>
+           <version>${project.version}</version>
            <type>test-jar</type>
            <scope>test</scope>
        </dependency>

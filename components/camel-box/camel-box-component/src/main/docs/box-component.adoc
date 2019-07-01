@@ -25,7 +25,7 @@ for this component:
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-box</artifactId>
-    <version>${camel-version}</version>
+    <version>${project.version}</version>
 </dependency>
 ----
 

@@ -38,7 +38,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bom</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -118,7 +118,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
         <configuration>
           <logClasspath>true</logClasspath>
           <mainClass>${package}.MyApplication</mainClass>
@@ -130,7 +130,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-main-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>${project.version}</version>
         <configuration>
           <logClasspath>false</logClasspath>
         </configuration>

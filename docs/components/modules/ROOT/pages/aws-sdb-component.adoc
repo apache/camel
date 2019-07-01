@@ -251,11 +251,11 @@ Maven users will need to add the following dependency to their pom.xml.
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws-sdb</artifactId>
-    <version>${camel-version}</version>
+    <version>${project.version}</version>
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel.
+where `${project.version}` must be replaced by the actual version of Camel.
 
 ### See Also
 

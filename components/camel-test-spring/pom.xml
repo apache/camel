@@ -45,10 +45,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -59,6 +61,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-management-impl</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

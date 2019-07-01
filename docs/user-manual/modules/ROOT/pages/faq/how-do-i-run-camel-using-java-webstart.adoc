@@ -41,7 +41,7 @@ You need to configure your maven to not output the jar version attribute
           <jarResource>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${camel-version}</version>
+            <version>${project.version}</version>
             <!-- set the outputJarVersion to false appends the version to the jar filename in the href -->
             <outputJarVersion>false</outputJarVersion>
           </jarResource>

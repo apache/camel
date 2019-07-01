@@ -175,7 +175,7 @@ substituting the version number for the latest & greatest release
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-snakeyaml</artifactId>
-  <version>${camel-version}</version>
+  <version>${project.version}</version>
 </dependency>
 ------------------------------------------
 

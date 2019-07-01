@@ -212,11 +212,11 @@ This may be really useful for smarter configuration of the endpoint.
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-aws-ses</artifactId>
-    <version>${camel-version}</version>
+    <version>${project.version}</version>
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel.
+where `${project.version}` must be replaced by the actual version of Camel.
 
 ### See Also
 

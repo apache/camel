@@ -28,7 +28,7 @@
   <description>Parent project for Camel {$name} Component</description>
 
   <properties>
-    <camelVersion>${camel-version}</camelVersion>
+    <camelVersion>${project.version}</camelVersion>
   </properties>
 
   <modules>

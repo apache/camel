@@ -20,7 +20,7 @@ is add the following to your pom.xml
 <dependency>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-spring-javaconfig</artifactId>
-  <version>${camel-version}</version>
+  <version>${project.version}</version>
 </dependency>
 --------------------------------------------------
 
