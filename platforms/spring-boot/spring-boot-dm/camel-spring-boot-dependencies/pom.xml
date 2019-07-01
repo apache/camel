@@ -2070,6 +2070,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-microprofile-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-milo</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3611,12 +3616,12 @@
       <dependency>
         <groupId>org.apache.pulsar</groupId>
         <artifactId>pulsar-client</artifactId>
-        <version>2.3.1</version>
+        <version>2.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pulsar</groupId>
         <artifactId>pulsar-client-admin</artifactId>
-        <version>2.3.1</version>
+        <version>2.3.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
