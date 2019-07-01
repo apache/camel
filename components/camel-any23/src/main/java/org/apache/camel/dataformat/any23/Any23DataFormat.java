@@ -52,14 +52,14 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
   private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
   private Any23 any23;
-  private Any23OutputFormat format;
+  private Any23OutputFormat format = Any23OutputFormat.RDFXML;
   private ModifiableConfiguration conf;
   private String[] extractorsList;
 
   private String configurations;
   private String extractors;
   private String outputFormat;
-  private String documentIRI;
+  private String documentIRI = "http://mock.foo/bar";
 
   @Override
   public String getDataFormatName() {
@@ -109,14 +109,28 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
   @Override
   protected void doStart() throws Exception {
     conf = DefaultConfiguration.copy();
-    String[] newConfigs = configurations.split(";");
-    for (String con : newConfigs) {
-      String[] vals = con.split("=");
-      conf.setProperty(vals[0], vals[0]);
+    if (configurations != null) {
+      String[] newConfigs = configurations.split(";");
+      for (String con : newConfigs) {
+        String[] vals = con.split("=");
+        conf.setProperty(vals[0], vals[0]);
+      }
     }
-    extractorsList = extractors.split(";");
-    any23 = new Any23(conf, extractors);
-    format = Any23OutputFormat.valueOf(outputFormat);
+    if (extractors != null) {
+      extractorsList = extractors.split(";");
+    }
+    if (configurations == null && extractors == null) {
+      any23 = new Any23();
+    } else if (configurations != null && extractors == null) {
+      any23 = new Any23(conf);
+    } else if (configurations == null && extractors != null) {
+      any23 = new Any23(extractors);
+    } else if (configurations != null && extractors != null) {
+      any23 = new Any23(conf, extractors);
+    }
+    if (outputFormat != null) {
+      format = Any23OutputFormat.valueOf(outputFormat);
+    }
   }
 
   @Override
