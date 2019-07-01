@@ -49,10 +49,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-linkedin-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Camel annotations in runtime scope to avoid compile errors in IDEs -->
@@ -98,6 +100,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
