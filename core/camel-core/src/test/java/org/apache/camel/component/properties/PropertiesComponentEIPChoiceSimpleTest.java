@@ -25,11 +25,12 @@ public class PropertiesComponentEIPChoiceSimpleTest extends ContextTestSupport {
 
     @Test
     public void testChoice() throws Exception {
-        getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel", "Hi Camel");
+        getMockEndpoint("mock:other").expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello Camel");
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{cool.name}}"));
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hi {{cool.name}}"));
+        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
