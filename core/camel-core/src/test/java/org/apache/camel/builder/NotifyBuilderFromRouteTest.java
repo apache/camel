@@ -42,6 +42,29 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
         assertTrue(builder.matchesMockWaitTime());
     }
 
+    @Test
+    public void testDoneFromCurrentRoute() throws Exception {
+        // notify when exchange is done
+        NotifyBuilder builder =
+                new NotifyBuilder(context).fromCurrentRoute("bar").whenDone(1);
+        builder.create();
+
+        template.sendBody("seda:foo", "Hello world!");
+
+        assertTrue(builder.matchesMockWaitTime());
+    }
+
+    @Test
+    public void testDoneFromCurrentRouteStartRoute() throws Exception {
+        // notify when exchange is done
+        NotifyBuilder builder =
+                new NotifyBuilder(context).fromCurrentRoute("foo").whenDone(1);
+        builder.create();
+
+        template.sendBody("seda:foo", "Hello world!");
+
+        assertTrue(builder.matchesMockWaitTime());
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -57,7 +80,12 @@ public class NotifyBuilderFromRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("proxy:seda:foo")
                     .routeId("foo")
+                    .to("direct:bar")
                     .to("mock:foo");
+
+                from("direct:bar")
+                    .routeId("bar")
+                    .to("mock:bar");
             }
         };
     }
