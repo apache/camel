@@ -17,18 +17,23 @@
 package org.apache.camel.dataformat.any23;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.io.IOUtils;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.junit.Test;
 
 public class Any23DataFormatBasicTest extends CamelTestSupport {
 
   @Test
-  public void testUnMarshalToStringOfXml() throws Exception {
+  public void testMarshalToRDFXMLFromHTML() throws Exception {
     MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
     template.sendBody("direct:start", contenhtml);
@@ -36,10 +41,9 @@ public class Any23DataFormatBasicTest extends CamelTestSupport {
     for (Exchange exchange : list) {
       Message in = exchange.getIn();
       String resultingRDF = in.getBody(String.class);
-      System.out.println(resultingRDF);
-      //InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
-      //Model parse = Rio.parse(toInputStream, "http://mock.foo/bar", RDFFormat.RDFXML);
-      //assertEquals(parse.size(), 10);
+      InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
+      Model parse = Rio.parse(toInputStream, "http://mock.foo/bar", RDFFormat.RDFXML);
+      assertEquals(parse.size(), 28);
     }
   }
 

@@ -96,6 +96,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         handler = new NTriplesWriter(outputStream);
     }
     any23.extract(source, handler);
+    handler.close();
   }
 
   /**
