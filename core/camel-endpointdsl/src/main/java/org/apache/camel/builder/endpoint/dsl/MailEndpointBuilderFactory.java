@@ -763,28 +763,6 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option is a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointConsumerBuilder dummyTrustManager(
-                boolean dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
-            return this;
-        }
-        /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointConsumerBuilder dummyTrustManager(
-                String dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
-            return this;
-        }
-        /**
          * The password for login.
          * The option is a <code>java.lang.String</code> type.
          * @group security
@@ -1491,28 +1469,6 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option is a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointProducerBuilder dummyTrustManager(
-                boolean dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
-            return this;
-        }
-        /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointProducerBuilder dummyTrustManager(
-                String dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
-            return this;
-        }
-        /**
          * The password for login.
          * The option is a <code>java.lang.String</code> type.
          * @group security
@@ -1951,26 +1907,6 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder port(String port) {
             setProperty("port", port);
-            return this;
-        }
-        /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option is a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointBuilder dummyTrustManager(boolean dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
-            return this;
-        }
-        /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group security
-         */
-        default MailEndpointBuilder dummyTrustManager(String dummyTrustManager) {
-            setProperty("dummyTrustManager", dummyTrustManager);
             return this;
         }
         /**

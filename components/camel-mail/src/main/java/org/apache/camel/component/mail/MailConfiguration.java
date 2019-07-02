@@ -88,8 +88,6 @@ public class MailConfiguration implements Cloneable {
     private boolean debugMode;
     @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam(label = "security")
-    private boolean dummyTrustManager;
     @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
     @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
@@ -254,17 +252,6 @@ public class MailConfiguration implements Cloneable {
             properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext().getSocketFactory());
             properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
         }
-        if (dummyTrustManager && isSecureProtocol()) {
-            // set the custom SSL properties
-            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
-            properties.put("mail." + protocol + ".socketFactory.fallback", "false");
-            properties.put("mail." + protocol + ".socketFactory.port", "" + port);
-        }
-        if (dummyTrustManager && isStartTlsEnabled()) {
-            // set the custom SSL properties
-            properties.put("mail." + protocol + ".ssl.socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
-            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
-        }
 
         return properties;
     }
@@ -297,7 +284,7 @@ public class MailConfiguration implements Cloneable {
     public String getMailStoreLogInformation() {
         String ssl = "";
         if (isSecureProtocol()) {
-            ssl = " (SSL enabled" + (dummyTrustManager ? " using DummyTrustManager)" : ")");
+            ssl = " (SSL enabled)";
         }
 
         return protocol + "://" + host + ":" + port + ssl + ", folder=" + folderName;
@@ -589,17 +576,6 @@ public class MailConfiguration implements Cloneable {
      */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
-    }
-
-    public boolean isDummyTrustManager() {
-        return dummyTrustManager;
-    }
-
-    /**
-     * To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production.
-     */
-    public void setDummyTrustManager(boolean dummyTrustManager) {
-        this.dummyTrustManager = dummyTrustManager;
     }
 
     public String getContentType() {

@@ -250,11 +250,6 @@ public class MailComponentConfiguration
          */
         private Integer connectionTimeout = 30000;
         /**
-         * To use a dummy security setting for trusting all certificates. Should
-         * only be used for development mode, and not production.
-         */
-        private Boolean dummyTrustManager = false;
-        /**
          * The mail message content type. Use text/html for HTML mails.
          */
         private String contentType = "text/plain";
@@ -518,14 +513,6 @@ public class MailComponentConfiguration
 
         public void setConnectionTimeout(Integer connectionTimeout) {
             this.connectionTimeout = connectionTimeout;
-        }
-
-        public Boolean getDummyTrustManager() {
-            return dummyTrustManager;
-        }
-
-        public void setDummyTrustManager(Boolean dummyTrustManager) {
-            this.dummyTrustManager = dummyTrustManager;
         }
 
         public String getContentType() {
