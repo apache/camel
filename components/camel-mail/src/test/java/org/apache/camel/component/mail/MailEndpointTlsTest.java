@@ -47,7 +47,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointTslConfig() throws Exception {
+    public void testMailEndpointTlsConfig() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -67,7 +67,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointNoTslConfig() throws Exception {
+    public void testMailEndpointNoTlsConfig() throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
         cfg.setProtocol(protocol);
@@ -94,7 +94,7 @@ public class MailEndpointTlsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testMailEndpointTslSslContextParametersConfig() throws Exception {
+    public void testMailEndpointTlsSslContextParametersConfig() throws Exception {
         Properties properties = new Properties();
         properties.setProperty("mail." + protocol + ".starttls.enable", "true");
 
@@ -114,24 +114,4 @@ public class MailEndpointTlsTest extends CamelTestSupport {
         assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
     }
 
-    @Test
-    public void testMailEndpointTslDummyTrustManagerConfig() throws Exception {
-        Properties properties = new Properties();
-        properties.setProperty("mail." + protocol + ".starttls.enable", "true");
-
-        MailConfiguration cfg = new MailConfiguration();
-        cfg.setPort(21);
-        cfg.setProtocol(protocol);
-        cfg.setHost("myhost");
-        cfg.setUsername("james");
-        cfg.setPassword("secret");
-        cfg.setDummyTrustManager(true);
-        cfg.setAdditionalJavaMailProperties(properties);
-
-        assertTrue(cfg.isStartTlsEnabled());
-
-        Properties javaMailProperties = cfg.createJavaMailSender().getJavaMailProperties();
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.class"));
-        assertNotNull(javaMailProperties.get("mail." + protocol + ".ssl.socketFactory.port"));
-    }
 }

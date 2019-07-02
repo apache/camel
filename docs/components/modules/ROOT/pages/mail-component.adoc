@@ -130,7 +130,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (64 parameters):
+==== Query Parameters (63 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -196,7 +196,6 @@ with the following path and query parameters:
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *sortTerm* (sort) | Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when IMAP server does not have the SORT capability. |  | String
-| *dummyTrustManager* (security) | To use a dummy security setting for trusting all certificates. Should only be used for development mode, and not production. | false | boolean
 | *password* (security) | The password for login |  | String
 | *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
 | *username* (security) | The username for login |  | String

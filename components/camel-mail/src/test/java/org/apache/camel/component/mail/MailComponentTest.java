@@ -125,23 +125,6 @@ public class MailComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDummyTrustManager() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost?password=secret&dummyTrustManager=true");
-        MailConfiguration config = endpoint.getConfiguration();
-        assertEquals(true, config.isDummyTrustManager());
-        assertEquals(false, config.isSecureProtocol());
-    }
-
-    @Test
-    public void testDummyTrustManagerSecure() throws Exception {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtps://james@myhost?password=secret&dummyTrustManager=true");
-        MailConfiguration config = endpoint.getConfiguration();
-        assertEquals(true, config.isDummyTrustManager());
-        assertEquals(true, config.isSecureProtocol());
-        assertEquals("smtps://myhost:465 (SSL enabled using DummyTrustManager), folder=INBOX", config.getMailStoreLogInformation());
-    }
-
-    @Test
     public void testDefaultPOP3Configuration() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("pop3://james@myhost?password=secret");
         MailConfiguration config = endpoint.getConfiguration();
@@ -274,7 +257,7 @@ public class MailComponentTest extends CamelTestSupport {
     public void testMailComponentCtr() throws Exception {
         MailComponent comp = new MailComponent();
         comp.setCamelContext(context);
-        
+
         assertNotNull(comp.getConfiguration());
         assertNull(comp.getContentTypeResolver());
 
