@@ -22,7 +22,8 @@ import java.util.UUID;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
-import org.apache.camel.impl.JndiRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
@@ -37,16 +38,11 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
     @Rule
     public final TestName testName = new TestName();
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
+    @BindToRegistry("consul")
+    public ConsulComponent getConsulComponent() {
         ConsulComponent component = new ConsulComponent();
         component.setUrl(consulUrl());
-
-        registry.bind("consul", component);
-
-        return registry;
+        return component;
     }
 
     protected Consul getConsul() {

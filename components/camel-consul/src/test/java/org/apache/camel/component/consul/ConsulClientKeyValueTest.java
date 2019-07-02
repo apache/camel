@@ -18,10 +18,12 @@ package org.apache.camel.component.consul;
 
 import java.util.Optional;
 
+import com.orbitz.consul.Consul;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class ConsulClientKeyValueTest extends ConsulTestSupport {
@@ -50,17 +52,15 @@ public class ConsulClientKeyValueTest extends ConsulTestSupport {
         assertTrue(keyVal.isPresent());
         assertEquals(val, keyVal.get());
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("consulClient", getConsul());
-        return registry;
-    }
 
+    @BindToRegistry("consulClient")
+    public Consul getConsulClient() {
+        return getConsul();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:kv")
