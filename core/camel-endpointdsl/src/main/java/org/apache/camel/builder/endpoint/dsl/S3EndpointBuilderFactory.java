@@ -1159,6 +1159,16 @@ public interface S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Setting the key name for an element in the bucket through endpoint
+         * parameter.
+         * The option is a <code>java.lang.String</code> type.
+         * @group producer
+         */
+        default S3EndpointProducerBuilder keyName(String keyName) {
+            setProperty("keyName", keyName);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

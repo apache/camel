@@ -279,6 +279,11 @@ public class S3ComponentConfiguration
          * Setting the autocreation of the bucket
          */
         private Boolean autoCreateBucket = true;
+        /**
+         * Setting the key name for an element in the bucket through endpoint
+         * parameter
+         */
+        private String keyName;
 
         public Long getPartSize() {
             return partSize;
@@ -536,6 +541,14 @@ public class S3ComponentConfiguration
 
         public void setAutoCreateBucket(Boolean autoCreateBucket) {
             this.autoCreateBucket = autoCreateBucket;
+        }
+
+        public String getKeyName() {
+            return keyName;
+        }
+
+        public void setKeyName(String keyName) {
+            this.keyName = keyName;
         }
     }
 }
