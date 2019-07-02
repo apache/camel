@@ -47,7 +47,7 @@ The Javax Websocket component supports 2 options, which are listed below.
 The Javax Websocket endpoint is configured using URI syntax:
 
 ----
-websocket-jsr356:/resourceUri
+websocket-jsr356:websocketPathOrUri
 ----
 
 with the following path and query parameters:

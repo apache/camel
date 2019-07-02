@@ -48,7 +48,7 @@ The corda component supports 3 options, which are listed below.
 The corda endpoint is configured using URI syntax:
 
 ----
-corda:url
+corda:configuration
 ----
 
 with the following path and query parameters:
