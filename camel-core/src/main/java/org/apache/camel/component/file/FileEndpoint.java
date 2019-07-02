@@ -120,6 +120,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             }
         }
 
+        if ("fileLock".equals(readLock) && FileUtil.isWindows()) {
+            throw new IllegalArgumentException("The readLock=fileLock option is not supported on Windows");
+        }
+
         // set max messages per poll
         result.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         result.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());

@@ -843,7 +843,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      *     <li>changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec
      *     to determine this, so this option cannot consume files as fast as the others, but can be more reliable as the JDK IO API cannot
      *     always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency.</li>
-     *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail for the FTP component. This approach should be avoided when accessing
+     *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail on Windows or the FTP component. This approach should be avoided when accessing
      *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
      *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
      *     <li>idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock.
