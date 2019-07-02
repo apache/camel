@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 287 in 226 JAR artifacts (0 deprecated)
+Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -106,6 +106,9 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 | link:camel-aws-msk/src/main/docs/aws-msk-component.adoc[AWS MSK] (camel-aws-msk) +
 `aws-msk:label` | 3.0 | The aws-kms is used for managing Amazon KMS
 
+| link:camel-aws-s3/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws-s3) +
+`aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
+
 | link:camel-aws-ses/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws-ses) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
 
@@ -177,6 +180,9 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 
 | link:camel-cometd/src/main/docs/cometd-component.adoc[CometD] (camel-cometd) +
 `cometd:host:port/channelName` | 2.0 | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
+
+| link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
+`consul:apiEndpoint` | 2.18 | The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
 
 | link:camel-controlbus/src/main/docs/controlbus-component.adoc[Control Bus] (camel-controlbus) +
 `controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
@@ -316,6 +322,12 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
 
+| link:camel-google-sheets/src/main/docs/google-sheets-component.adoc[Google Sheets] (camel-google-sheets) +
+`google-sheets:apiName/methodName` | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| link:camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) +
+`google-sheets-stream:apiName` | 2.23 | The google-sheets component provides access to Google Sheets.
+
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
@@ -433,6 +445,9 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 | link:camel-jcr/src/main/docs/jcr-component.adoc[JCR] (camel-jcr) +
 `jcr:host/base` | 1.3 | The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
 
+| link:camel-jdbc/src/main/docs/jdbc-component.adoc[JDBC] (camel-jdbc) +
+`jdbc:dataSourceName` | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
+
 | link:camel-jetty/src/main/docs/jetty-component.adoc[Jetty] (camel-jetty) +
 `jetty:httpUri` | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
@@ -471,6 +486,9 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 
 | link:camel-jt400/src/main/docs/jt400-component.adoc[JT400] (camel-jt400) +
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+
+| link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
+`kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
@@ -582,6 +600,9 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 
 | link:camel-nagios/src/main/docs/nagios-component.adoc[Nagios] (camel-nagios) +
 `nagios:host:port` | 2.3 | To send passive checks to Nagios using JSendNSCA.
+
+| link:camel-nats/src/main/docs/nats-component.adoc[Nats] (camel-nats) +
+`nats:servers` | 2.17 | The nats component allows you produce and consume messages from NATS.
 
 | link:camel-netty4/src/main/docs/netty4-component.adoc[Netty4] (camel-netty4) +
 `netty4:protocol:host:port` | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
@@ -768,6 +789,12 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 
 | link:camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring WebService] (camel-spring-ws) +
 `spring-ws:type:lookupKey:webServiceEndpointUri` | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
+
+| link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
+`sql:query` | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
+
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
+`sql-stored:template` | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
 `ssh:host:port` | 2.10 | The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
