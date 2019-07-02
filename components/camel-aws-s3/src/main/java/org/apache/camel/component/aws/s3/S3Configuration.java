@@ -90,6 +90,8 @@ public class S3Configuration implements Cloneable {
     private String awsKMSKeyId;
     @UriParam(defaultValue = "false")
     private boolean useIAMCredentials;
+    @UriParam(label = "producer")
+    private String keyName;
 
     public long getPartSize() {
         return partSize;
@@ -475,7 +477,18 @@ public class S3Configuration implements Cloneable {
         this.autoCreateBucket = autoCreateBucket;
     }
 
-    public boolean hasProxyConfiguration() {
+    public String getKeyName() {
+		return keyName;
+	}
+
+    /**
+     * Setting the key name for an element in the bucket through endpoint parameter
+     */
+	public void setKeyName(String keyName) {
+		this.keyName = keyName;
+	}
+
+	public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
 
