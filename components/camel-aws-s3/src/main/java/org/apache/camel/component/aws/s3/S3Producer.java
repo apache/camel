@@ -471,8 +471,11 @@ public class S3Producer extends DefaultProducer {
 
     private String determineKey(final Exchange exchange) {
         String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
+        if (ObjectHelper.isEmpty(key)) {
+        	key = getConfiguration().getKeyName();
+        }
         if (key == null) {
-            throw new IllegalArgumentException("AWS S3 Key header missing.");
+        	throw new IllegalArgumentException("AWS S3 Key header missing.");
         }
         return key;
     }
