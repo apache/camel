@@ -28,14 +28,14 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class CMConfiguration {
 
-    @UriParam @Metadata(required = true)
     @NotNull
+    @UriParam(javaType = "java.lang.String") @Metadata(required = true)
     private String productToken;
-    @UriParam
     @NotNull @Size(min = 1, max = 11)
+    @UriParam(javaType = "java.lang.String") @Metadata(required = true)
     private String defaultFrom;
-    @UriParam(defaultValue = "8")
     @Min(1) @Max(8)
+    @UriParam(defaultValue = "8", javaType = "int")
     private int defaultMaxNumberOfParts = 8;
     @UriParam
     private boolean testConnectionOnStartup;

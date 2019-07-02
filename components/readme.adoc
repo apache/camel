@@ -1004,7 +1004,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
+Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1038,6 +1038,8 @@ Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
 
 | link:camel-base/src/main/docs/tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
+| link:camel-jaxp/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
 | link:camel-xpath/src/main/docs/xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
@@ -1061,8 +1063,6 @@ Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
-
-| link:camel-ignite/src/main/docs/ignite.adoc[Ignite] (camel-ignite) |  | Camel Ignite component
 
 | link:camel-jasypt/src/main/docs/jasypt.adoc[Jasypt] (camel-jasypt) | 2.5 | Security using Jasypt
 
