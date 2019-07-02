@@ -76,7 +76,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends Tc
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
+        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
         assertTrue("Exchange should have completed", done.matches(5, TimeUnit.SECONDS));
     }
