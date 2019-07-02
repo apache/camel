@@ -30,7 +30,7 @@ public final class CommonCreationStrategyImpl {
     public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
-        return pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getTopic()).subscriptionName(endpointConfiguration.getSubscriptionName())
+        return pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getTopicUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name)
             .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
     }
