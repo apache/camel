@@ -2635,6 +2635,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
+        // we need also to include routes which failed to start to ensure all resources get stopped when stopping Camel
+        for (BaseRouteService routeService : routeServices.values()) {
+            boolean found = routeStartupOrder.stream().anyMatch(o -> o.getRoute().getId().equals(routeService.getId()));
+            if (!found) {
+                log.debug("Route: {} which failed to startup will be stopped", routeService.getId());
+                routeStartupOrder.add(doPrepareRouteToBeStarted(routeService));
+            }
+        }
+
         routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
         List<BaseRouteService> list = new ArrayList<>();
         for (RouteStartupOrder startupOrder : routeStartupOrder) {
