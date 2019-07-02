@@ -272,11 +272,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
 
         log.trace("Parsing uri {} with properties: {}", uri, prop);
+
+        PropertiesLookup properties = new DefaultPropertiesLookup(prop);
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
                 uri,
-                prop,
+                properties,
                 prefixToken,
                 suffixToken,
                 propertyPrefixResolved,
@@ -284,7 +286,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                 fallbackToUnaugmentedProperty,
                 defaultFallbackEnabled);
         } else {
-            return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
+            return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken);
         }
     }
 

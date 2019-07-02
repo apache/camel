@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
 /**
  * Interface for property parses that can attempt parsing property names using a fixed property name prefix and suffix.
  */
@@ -49,6 +47,6 @@ public interface AugmentedPropertyNameAwarePropertiesParser extends PropertiesPa
      * @throws IllegalArgumentException if uri syntax is not valid or a property
      *             is not found
      */
-    String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
+    String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken,
                     String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException;
 }

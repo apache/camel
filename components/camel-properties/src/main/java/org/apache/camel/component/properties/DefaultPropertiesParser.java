@@ -53,19 +53,19 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
     }
 
     @Override
-    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
         return parseUri(text, properties, prefixToken, suffixToken, null, null, false, false);
     }
 
     @Override
-    public String parseUri(String text, Properties properties,
+    public String parseUri(String text, PropertiesLookup properties,
                            String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
             boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
         ParsingContext context = new ParsingContext(properties, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
         return context.parse(text);
     }
 
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         return value;
     }
 
@@ -73,7 +73,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
      * This inner class helps replacing properties.
      */
     private final class ParsingContext {
-        private final Properties properties;
+        private final PropertiesLookup properties;
         private final String prefixToken;
         private final String suffixToken;
         private final String propertyPrefix;
@@ -81,7 +81,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         private final boolean fallbackToUnaugmentedProperty;
         private final boolean defaultFallbackEnabled;
 
-        ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+        ParsingContext(PropertiesLookup properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
                               boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) {
             this.properties = properties;
             this.prefixToken = prefixToken;
@@ -327,7 +327,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             }
 
             if (value == null && properties != null) {
-                value = properties.getProperty(key);
+                value = properties.lookup(key);
                 if (value != null) {
                     log.debug("Found property: {} with value: {} to be used.", key, value);
                 }
