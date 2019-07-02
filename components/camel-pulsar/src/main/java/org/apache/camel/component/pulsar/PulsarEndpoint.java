@@ -28,18 +28,18 @@ import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 
-@UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Apache Pulsar", syntax = "pulsar:uri", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
     @UriPath(label = "consumer,producer", description = "The Topic's full URI path including type, tenant and namespace")
-    private final String topic;
+    private final String topicUri;
 
     public PulsarEndpoint(String uri, String path, PulsarConfiguration pulsarConfiguration, PulsarComponent component, PulsarClient pulsarClient) throws PulsarClientException {
         super(uri, component);
-        this.topic = path;
+        this.topicUri = path;
         this.pulsarConfiguration = pulsarConfiguration;
         this.pulsarClient = pulsarClient;
     }
@@ -85,8 +85,8 @@ public class PulsarEndpoint extends DefaultEndpoint {
         return pulsarConfiguration;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getTopicUri() {
+        return topicUri;
     }
 
 }
