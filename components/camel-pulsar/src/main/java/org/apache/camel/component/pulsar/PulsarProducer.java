@@ -52,16 +52,16 @@ public class PulsarProducer extends DefaultProducer {
 
     private synchronized void createProducer() throws org.apache.pulsar.client.api.PulsarClientException {
         if (producer == null) {
-            final String topic = pulsarEndpoint.getTopic();
+            final String topicUri = pulsarEndpoint.getTopicUri();
             String producerName = pulsarEndpoint.getPulsarConfiguration().getProducerName();
             if (producerName == null) {
-                producerName = topic + "-" + Thread.currentThread().getId();
+                producerName = topicUri + "-" + Thread.currentThread().getId();
             }
             final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint
                     .getPulsarClient()
                     .newProducer()
                     .producerName(producerName)
-                    .topic(topic);
+                    .topic(topicUri);
             producer = producerBuilder.create();
         }
     }
