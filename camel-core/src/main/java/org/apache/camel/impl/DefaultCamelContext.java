@@ -43,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.naming.Context;
@@ -3510,13 +3509,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // shutdown await manager to trigger interrupt of blocked threads to attempt to free these threads graceful
         shutdownServices(asyncProcessorAwaitManager);
 
-        routeStartupOrder.sort(new Comparator<RouteStartupOrder>() {
-            @Override
-            public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
-                // Reversed order
-                return Integer.compare(o2.getStartupOrder(), o1.getStartupOrder());
+        // we ned also to include routes which failed to start to ensure all resources get stopped when stopping Camel
+        for (RouteService routeService : routeServices.values()) {
+            boolean found = routeStartupOrder.stream().anyMatch(o -> o.getRoute().getId().equals(routeService.getId()));
+            if (!found) {
+                log.debug("Route: {} which failed to startup will be stopped", routeService.getId());
+                routeStartupOrder.add(doPrepareRouteToBeStarted(routeService));
             }
-        });
+        }
+        routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
         List<RouteService> list = new ArrayList<>();
         for (RouteStartupOrder startupOrder : routeStartupOrder) {
             DefaultRouteStartupOrder order = (DefaultRouteStartupOrder) startupOrder;
