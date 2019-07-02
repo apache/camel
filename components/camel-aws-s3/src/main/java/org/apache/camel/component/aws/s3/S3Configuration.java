@@ -144,8 +144,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Reference to a `com.amazonaws.services.s3.AmazonS3` in the
-     * registry.
+     * Reference to a `com.amazonaws.services.s3.AmazonS3` in the registry.
      */
     public void setAmazonS3Client(AmazonS3 amazonS3Client) {
         this.amazonS3Client = amazonS3Client;
@@ -478,17 +477,18 @@ public class S3Configuration implements Cloneable {
     }
 
     public String getKeyName() {
-		return keyName;
-	}
+        return keyName;
+    }
 
     /**
-     * Setting the key name for an element in the bucket through endpoint parameter
+     * Setting the key name for an element in the bucket through endpoint
+     * parameter
      */
-	public void setKeyName(String keyName) {
-		this.keyName = keyName;
-	}
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
 
-	public boolean hasProxyConfiguration() {
+    public boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
 
