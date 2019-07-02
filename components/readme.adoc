@@ -875,7 +875,7 @@ Number of Components: 287 in 226 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -919,11 +919,15 @@ Number of Data Formats: 43 in 35 JAR artifacts (0 deprecated)
 
 | link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | The iCal dataformat is used for working with iCalendar messages.
 
+| link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
 
 | link:camel-fastjson/src/main/docs/json-fastjson-dataformat.adoc[JSon Fastjson] (camel-fastjson) | 2.20 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-gson/src/main/docs/json-gson-dataformat.adoc[JSon GSon] (camel-gson) | 2.10 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+
+| link:camel-jackson/src/main/docs/json-jackson-dataformat.adoc[JSon Jackson] (camel-jackson) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
