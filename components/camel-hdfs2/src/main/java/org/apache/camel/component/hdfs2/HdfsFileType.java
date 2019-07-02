@@ -140,6 +140,12 @@ public enum HdfsFileType {
             try {
                 String fname = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
 
+                // [CAMEL-13711] Files.createTempFile not equivalent to File.createTempFile
+                int dotIndex = fname.indexOf('.');
+                if (dotIndex > 0) {
+                    fname = fname.substring(0, dotIndex);
+                }
+
                 File outputDest = Files.createTempFile(fname, ".hdfs").toFile();
                 if (outputDest.exists()) {
                     outputDest.delete();
