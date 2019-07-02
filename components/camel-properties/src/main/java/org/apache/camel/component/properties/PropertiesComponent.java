@@ -53,8 +53,6 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
-
     /**
      *  Never check system properties.
      */
@@ -98,6 +96,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * in the OSGi service registry
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
