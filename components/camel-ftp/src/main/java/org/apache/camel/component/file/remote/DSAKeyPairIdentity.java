@@ -102,8 +102,7 @@ public class DSAKeyPairIdentity implements Identity {
     public byte[] getSignature(byte[] data) {
         try {
             PrivateKey prvKey = keyPair.getPrivate();
-            Signature sig;
-            sig = Signature.getInstance("SHA1withDSA");
+            Signature sig = Signature.getInstance("SHA1withDSA");
             sig.initSign(prvKey);
             sig.update(data);
             byte[] sshDss = ALGORITHM_TYPE.getBytes();
@@ -147,7 +146,7 @@ public class DSAKeyPairIdentity implements Identity {
      * Java (which uses a DER encoding of a signature)." [taken from <a href=
      * "http://www.codeproject.com/Articles/25590/Cryptographic-Interoperability-Digital-Signatures"
      * >Cryptographic Interoperability Digital Signatures</a>]
-     * 
+     *
      * @param sig
      *            signature in DER format
      * @return signature in P1363 format; SEQUENCE ::= { r INTEGER, s INTEGER }

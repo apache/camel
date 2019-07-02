@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -35,7 +36,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -219,11 +219,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             LOG.debug("Using private key information from byte array");
             byte[] passphrase = null;
             if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {
-                try {
-                    passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes("UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new JSchException("Cannot transform passphrase to byte[]", e);
-                }
+                passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes(StandardCharsets.UTF_8);
             }
             jsch.addIdentity("ID", sftpConfig.getPrivateKey(), null, passphrase);
         }
@@ -232,11 +228,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             LOG.debug("Using private key uri : {}", sftpConfig.getPrivateKeyUri());
             byte[] passphrase = null;
             if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {
-                try {
-                    passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes("UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new JSchException("Cannot transform passphrase to byte[]", e);
-                }
+                passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes(StandardCharsets.UTF_8);
             }
             try {
                 InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), sftpConfig.getPrivateKeyUri());
@@ -247,6 +239,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 throw new JSchException("Cannot read resource: " + sftpConfig.getPrivateKeyUri(), e);
             }
         }
+
 
         if (sftpConfig.getKeyPair() != null) {
             LOG.debug("Using private key information from key pair");
@@ -689,7 +682,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             final List<SftpRemoteFile> list = new ArrayList<>();
 
             @SuppressWarnings("rawtypes")
-            Vector files = channel.ls(path);
+            List files = channel.ls(path);
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
                 for (Object file : files) {
@@ -1020,7 +1013,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         try {
             @SuppressWarnings("rawtypes")
-            Vector files = channel.ls(directory);
+            List files = channel.ls(directory);
             // can return either null or an empty list depending on FTP servers
             if (files == null) {
                 return false;
@@ -1050,7 +1043,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         LOG.trace("fastExistsFile({})", name);
         try {
             @SuppressWarnings("rawtypes")
-            Vector files = channel.ls(name);
+            List files = channel.ls(name);
             if (files == null) {
                 return false;
             }
@@ -1099,7 +1092,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             } catch (Exception e) {
                 String message = e.toString();
                 if (e instanceof Throwable) {
-                    throw new RuntimeCamelException(message, (Throwable)e);
+                    throw new RuntimeCamelException(message, e);
                 }
                 throw new RuntimeCamelException(message);
             }

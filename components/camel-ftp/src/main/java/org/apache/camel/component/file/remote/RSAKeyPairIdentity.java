@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class RSAKeyPairIdentity implements Identity {
     private static final String ALGORITHM_TYPE = "ssh-rsa";
     private final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     private KeyPair keyPair;
     private String name;
 
@@ -85,9 +85,8 @@ public class RSAKeyPairIdentity implements Identity {
     @Override
     public byte[] getSignature(byte[] data) {
         PrivateKey prvKey = keyPair.getPrivate();
-        Signature sig;
         try {
-            sig = Signature.getInstance("SHA1withRSA");
+            Signature sig = Signature.getInstance("SHA1withRSA");
             sig.initSign(prvKey);
             sig.update(data);
             byte[] sshRsa = ALGORITHM_TYPE.getBytes();
