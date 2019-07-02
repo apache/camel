@@ -56,13 +56,13 @@ public class Hl7UtilTest {
 
     static final String EXPECTED_MESSAGE =
         "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + "<0x0D CR>"
-            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"+ "<0x0D CR>"
-            + "NTE|1||Free text for entering clinical details|"+ "<0x0D CR>"
-            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|"+ "<0x0D CR>"
-            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"+ "<0x0D CR>"
-            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"+ "<0x0D CR>"
-            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"+ "<0x0D CR>"
-            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"+ "<0x0D CR>";
+            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||" + "<0x0D CR>"
+            + "NTE|1||Free text for entering clinical details|" + "<0x0D CR>"
+            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + "<0x0D CR>"
+            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||" + "<0x0D CR>"
+            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>"
+            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>"
+            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>";
     // @formatter:on
 
     static final String MSH_SEGMENT = "MSH|^~\\&|0|90100053675|INHOUSE|RTH00|20131125122938||ORM|28785|D|2.3";
