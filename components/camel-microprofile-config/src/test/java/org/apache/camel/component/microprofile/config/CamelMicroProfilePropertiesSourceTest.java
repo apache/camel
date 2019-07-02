@@ -54,11 +54,11 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
 
     @Test
     public void testMicroProfileConfig() throws Exception {
-          getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-          template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}}"));
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}}"));
 
-          assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
