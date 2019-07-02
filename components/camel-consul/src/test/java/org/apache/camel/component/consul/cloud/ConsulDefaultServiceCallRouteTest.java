@@ -25,12 +25,12 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 
 public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
-    private static final int SERVICE_PORT_BASE = 8080;
 
     private AgentClient client;
     private List<Registration> registrations;
@@ -54,7 +54,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
                 .id("service-" + i)
                 .name(SERVICE_NAME)
                 .address("127.0.0.1")
-                .port(SERVICE_PORT_BASE + i)
+                .port(AvailablePortFinder.getNextAvailable())
                 .build();
 
             client.register(r);
