@@ -34,64 +34,49 @@ import static org.junit.Assert.fail;
 public class Hl7UtilTest {
     // @formatter:off
     static final String TEST_MESSAGE =
-        "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||" + '\r'
-            + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r'
-            + "PID|1|2100355^^^MRN^MRN|2100355^^^MRN^MRN||MDCLS9^MC9||19700109|F||U|111 HOVER STREET^^LOS ANGELES^CA^90032^USA^P^^LOS ANGELE|"
-            + "LOS ANGELE|(310)725-6952^P^PH^^^310^7256952||ENGLISH|U||60000013647|565-33-2222|||U||||||||N||" + '\r'
-            + "PD1|||UCLA HEALTH SYSTEM^^10|10002116^ADAMS^JOHN^D^^^^^EPIC^^^^PROVID||||||||||||||" + '\r'
-            + "NK1|1|DOE^MC9^^|OTH|^^^^^USA|(310)888-9999^^^^^310^8889999|(310)999-2222^^^^^310^9992222|Emergency Contact 1|||||||||||||||||||||||||||" + '\r'
-            + "PV1|1|OUTPATIENT|RR CT^^^1000^^^^^^^DEPID|EL|||017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID|017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID||||||"
-            + "CLR|||||60000013647|SELF|||||||||||||||||||||HOV_CONF|^^^1000^^^^^^^||20150107161438||||||||||" + '\r'
-            + "PV2||||||||20150107161438||||CT BRAIN W WO CONTRAST||||||||||N|||||||||||||||||||||||||||" + '\r'
-            + "ZPV||||||||||||20150107161438|||||||||" + '\r'
-            + "AL1|1||33361^NO KNOWN ALLERGIES^^NOTCOMPUTRITION^NO KNOWN ALLERGIES^EXTELG||||||" + '\r'
-            + "DG1|1|DX|784.0^Headache^DX|Headache||VISIT" + '\r'
-            + "GT1|1|1000235129|MDCLS9^MC9^^||111 HOVER STREET^^LOS ANGELES^CA^90032^USA^^^LOS ANGELE|(310)725-6952^^^^^310^7256952||19700109|F|P/F|SLF|"
-            + "565-33-2222|||||^^^^^USA|||UNKNOWN|||||||||||||||||||||||||||||" + '\r'
-            + "UB2||||||||" + '\r';
+        "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
+            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||" + '\r'
+            + "NTE|1||Free text for entering clinical details|" + '\r'
+            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||" + '\r'
+            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
+            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
+            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r';
 
-    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START = MllpProtocolConstants.START_OF_BLOCK + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|";
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START = MllpProtocolConstants.START_OF_BLOCK + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|";
 
-    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END = "||ACK^A08|00001A|D|2.3^^|||||||\r"
-        + "MSA|AA|00001\r"
+    static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_END = "||ACK^O01|00001A|D|2.3|||||||" + '\r'
+        + "MSA|AA|00001" + '\r'
         + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
 
     static final String EXPECTED_ACKNOWLEDGEMENT_PAYLOAD =
         MllpProtocolConstants.START_OF_BLOCK
-        + "MSH|^~\\&|JCAPS|CC|ADT|EPIC|20161206193919||ACK^A08|00001A|D|2.3^^|||||||\r"
-        + "MSA|AA|00001\r"
+        + "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001A|D|2.3|||||||" + '\r'
+        + "MSA|AA|00001" + '\r'
         + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA;
 
     static final String EXPECTED_MESSAGE =
-        "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||" + "<0x0D CR>"
-            + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + "<0x0D CR>"
-            + "PID|1|2100355^^^MRN^MRN|2100355^^^MRN^MRN||MDCLS9^MC9||19700109|F||U|111 HOVER STREET^^LOS ANGELES^CA^90032^USA^P^^LOS ANGELE|LOS ANGELE|(310)725-6952^P^PH^^^310^7256952"
-            +     "||ENGLISH|U||60000013647|565-33-2222|||U||||||||N||" + "<0x0D CR>"
-            + "PD1|||UCLA HEALTH SYSTEM^^10|10002116^ADAMS^JOHN^D^^^^^EPIC^^^^PROVID||||||||||||||" + "<0x0D CR>"
-            + "NK1|1|DOE^MC9^^|OTH|^^^^^USA|(310)888-9999^^^^^310^8889999|(310)999-2222^^^^^310^9992222|Emergency Contact 1|||||||||||||||||||||||||||" + "<0x0D CR>"
-            + "PV1|1|OUTPATIENT|RR CT^^^1000^^^^^^^DEPID|EL|||017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID|017511^TOBIAS^JONATHAN^^^^^^EPIC^^^^PROVID||||||CLR|||||60000013647|SELF"
-            +     "|||||||||||||||||||||HOV_CONF|^^^1000^^^^^^^||20150107161438||||||||||" + "<0x0D CR>"
-            + "PV2||||||||20150107161438||||CT BRAIN W WO CONTRAST||||||||||N|||||||||||||||||||||||||||" + "<0x0D CR>"
-            + "ZPV||||||||||||20150107161438|||||||||" + "<0x0D CR>"
-            + "AL1|1||33361^NO KNOWN ALLERGIES^^NOTCOMPUTRITION^NO KNOWN ALLERGIES^EXTELG||||||" + "<0x0D CR>"
-            + "DG1|1|DX|784.0^Headache^DX|Headache||VISIT" + "<0x0D CR>"
-            + "GT1|1|1000235129|MDCLS9^MC9^^||111 HOVER STREET^^LOS ANGELES^CA^90032^USA^^^LOS ANGELE|(310)725-6952^^^^^310^7256952||19700109|F|P/F|SLF|565-33-2222|||||^^^^^USA|||UNKNOWN"
-            +     "|||||||||||||||||||||||||||||" + "<0x0D CR>"
-            + "UB2||||||||" + "<0x0D CR>";
+        "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + "<0x0D CR>"
+            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||" + "<0x0D CR>"
+            + "NTE|1||Free text for entering clinical details|" + "<0x0D CR>"
+            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + "<0x0D CR>"
+            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||" + "<0x0D CR>"
+            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>"
+            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>"
+            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + "<0x0D CR>";
     // @formatter:on
 
-    static final String MSH_SEGMENT = "MSH|^~\\&|0|90100053675|JCAPS|CC|20131125122938|RISMD|ORM|28785|D|2.3";
+    static final String MSH_SEGMENT = "MSH|^~\\&|0|90100053675|INHOUSE|RTH00|20131125122938||ORM|28785|D|2.3";
 
     // @formatter:off
     static final String REMAINING_SEGMENTS =
-        "PID|1||4507626^^^MRN^MRN||RAD VALIDATE^ROBERT||19650916|M||U|1818 UNIVERSITY AVE^^MADISON^WI^53703^USA^^^||(608)251-9999|||M|||579-85-3510||| " + '\r'
-            + "PV1||OUTPATIENT|NMPCT^^^WWNMD^^^^^^^DEPID||||011463^ZARAGOZA^EDWARD^J.^^^^^EPIC^^^^PROVID|011463^ZARAGOZA^EDWARD^J.^^^^^EPIC^^^^PROVID"
-            +     "|||||||||||90100053686|SELF||||||||||||||||||||||||201311251218|||||||V" + '\r'
-            + "ORC|RE|9007395^EPC|9007395^EPC||Final||^^^201311251221^201311251222^R||201311251229|RISMD^RADIOLOGY^RADIOLOGIST^^|||SMO PET^^^7044^^^^^SMO PET CT||||||||||||||||I" + '\r'
-            + "OBR|1|9007395^EPC|9007395^EPC|IMG7118^PET CT LIMITED CHEST W CONTRAST^IMGPROC^^PET CT CHEST||20131125|||||Ancillary Pe|||||||NMPCT|MP2 NM INJ01^MP2 NM INJECTION ROOM 01^PROVID"
-            +     "|||201311251229||NM|Final||^^^201311251221^201311251222^R||||^test|E200003^RADIOLOGY^RESIDENT^^^^^^EPIC^^^^PROVID"
-            +     "|812644^RADIOLOGY^GENERIC^ATTENDING 1^^^^^EPIC^^^^PROVID~000043^RADIOLOGY^RADIOLOGISTTWO^^^^^^EPIC^^^^PROVID|U0058489^SWAIN^CYNTHIA^LEE^||201311251245" + '\r'
-            + "OBX|1|ST|&GDT|1|[11/25/2013 12:28:14 PM - PHYS, FIFTYFOUR]50||||||Final||||" + '\r';
+        "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||" + '\r'
+            + "NTE|1||Free text for entering clinical details|" + '\r'
+            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||" + '\r'
+            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
+            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
+            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r';
     // @formatter:on
 
     static final byte[] TEST_MESSAGE_BYTES = TEST_MESSAGE.getBytes();
@@ -226,7 +211,7 @@ public class Hl7UtilTest {
      */
     @Test(expected = MllpAcknowledgementGenerationException.class)
     public void testGenerateAcknowledgementPayloadWithoutEnoughFields() throws Exception {
-        final byte[] testMessage = TEST_MESSAGE.replace("|RISTECH|ADT^A08|00001|D|2.3^^|||||||", "").getBytes();
+        final byte[] testMessage = TEST_MESSAGE.replace("||ORM^O01|00001|D|2.3|||||||", "").getBytes();
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, testMessage, "AA");
@@ -239,8 +224,8 @@ public class Hl7UtilTest {
      */
     @Test
     public void testGenerateAcknowledgementPayloadWithoutEndOfSegment() throws Exception {
-        String junkMessage = "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||"
-            + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||";
+        String junkMessage = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||"
+            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||";
 
         MllpSocketBuffer mllpSocketBuffer = new MllpSocketBuffer(new MllpEndpointStub());
         Hl7Util.generateAcknowledgementPayload(mllpSocketBuffer, junkMessage.getBytes(), "AA");
@@ -248,7 +233,7 @@ public class Hl7UtilTest {
         String actual = mllpSocketBuffer.toString();
 
         assertThat(actual, startsWith(EXPECTED_ACKNOWLEDGEMENT_PAYLOAD_START));
-        assertThat(actual, endsWith("|EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC|\r"
+        assertThat(actual, endsWith("PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2|||||||||||||\r"
                                     + "MSA|AA|00001\r"
                                     + MllpProtocolConstants.END_OF_BLOCK + MllpProtocolConstants.END_OF_DATA));
     }
@@ -390,7 +375,7 @@ public class Hl7UtilTest {
         assertEquals("", Hl7Util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, -14).toString());
         assertEquals("", Hl7Util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 1000000, 1000000).toString());
 
-        assertEquals("ADT^A08|00001|D|2.3^^|||||||<0x0D CR>EVN|A08|2015010716144", Hl7Util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 50, 100).toString());
+        assertEquals("ORM^O01|00001|D|2.3|||||||<0x0D CR>PID|1||ICE999999^^^", Hl7Util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES, 54, 100).toString());
     }
 
     /**
@@ -570,8 +555,8 @@ public class Hl7UtilTest {
 
 
         builder = new StringBuilder();
-        Hl7Util.appendBytesAsPrintFriendlyString(builder, TEST_MESSAGE_BYTES, 50, 100);
-        assertEquals("ADT^A08|00001|D|2.3^^|||||||<0x0D CR>EVN|A08|2015010716144", builder.toString());
+        Hl7Util.appendBytesAsPrintFriendlyString(builder, TEST_MESSAGE_BYTES, 54, 100);
+        assertEquals("ORM^O01|00001|D|2.3|||||||<0x0D CR>PID|1||ICE999999^^^", builder.toString());
     }
 
     /**

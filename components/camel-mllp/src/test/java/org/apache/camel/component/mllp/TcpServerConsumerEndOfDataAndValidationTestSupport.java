@@ -307,7 +307,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage().replaceFirst("EVN", "EVN" + MllpProtocolConstants.START_OF_BLOCK));
+        mllpClient.sendMessageAndWaitForAcknowledgement(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.START_OF_BLOCK));
 
         assertTrue("Exchange should have completed", done.matches(15, TimeUnit.SECONDS));
     }
@@ -325,7 +325,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount / 2))
-                ? Hl7TestMessageGenerator.generateMessage(i + 1).replaceFirst("EVN", "EVN" + MllpProtocolConstants.START_OF_BLOCK)
+                ? Hl7TestMessageGenerator.generateMessage(i + 1).replaceFirst("PID", "PID" + MllpProtocolConstants.START_OF_BLOCK)
                 : Hl7TestMessageGenerator.generateMessage(i + 1);
 
             log.debug("Sending message {}", Hl7Util.convertToPrintFriendlyString(message));
@@ -355,7 +355,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
             String message = Hl7TestMessageGenerator.generateMessage(i);
 
             if (i == invalidMessageNumber) {
-                mllpClient.sendFramedData(message.replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
+                mllpClient.sendFramedData(message.replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
                 assertTrue("Exchange containing invalid message should have completed", invalidMessageDone.matches(5, TimeUnit.SECONDS));
                 // The component may reset the connection in this case, so reconnect if needed
                 /*
@@ -390,7 +390,7 @@ public abstract class TcpServerConsumerEndOfDataAndValidationTestSupport extends
         for (int i = 1; i <= messageCount; ++i) {
             String message = Hl7TestMessageGenerator.generateMessage(i);
             if (i == messageCount / 2) {
-                mllpClient.sendFramedData(message.replaceFirst("EVN", "EVN" + MllpProtocolConstants.END_OF_BLOCK));
+                mllpClient.sendFramedData(message.replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
                 assertTrue("Invalid message should have completed", done.matches(15, TimeUnit.SECONDS));
                 mllpClient.disconnect();
                 mllpClient.connect();
