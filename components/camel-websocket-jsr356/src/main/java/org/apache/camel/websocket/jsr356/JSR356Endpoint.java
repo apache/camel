@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:/resourceUri", label = "jsr356")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "websocket-jsr356", title = "Javax Websocket", syntax = "websocket-jsr356:websocketPathOrUri", label = "jsr356")
 public class JSR356Endpoint extends DefaultEndpoint {
     @UriPath(description = "If a path (/foo) it will deploy locally the endpoint, " + "if an uri it will connect to the corresponding server")
     private String websocketPathOrUri;
