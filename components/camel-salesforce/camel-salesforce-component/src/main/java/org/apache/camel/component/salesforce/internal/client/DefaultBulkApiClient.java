@@ -29,7 +29,10 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -50,6 +53,8 @@ import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.StringUtil;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiClient {
 
@@ -201,7 +206,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    public void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum, 
+    public void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum,
         Map<String, List<String>> headers, final BatchInfoResponseCallback callback) {
         final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
         post.content(new InputStreamContentProvider(batchStream));
@@ -419,9 +424,23 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         throws SalesforceException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            JAXBElement<T> result = unmarshaller.unmarshal(new StreamSource(response), resultClass);
+
+            // Disable XXE
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            try {
+                spf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+                spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            } catch (ParserConfigurationException | SAXException ex) {
+                // LOG.debug("Error setting feature on parser: " + ex.getMessage());
+            }
+            Source xmlSource =
+                new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(response));
+
+            JAXBElement<T> result = unmarshaller.unmarshal(xmlSource, resultClass);
             return result.getValue();
-        } catch (JAXBException e) {
+        } catch (JAXBException | SAXException | ParserConfigurationException e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s",
                             request.getMethod(), request.getURI(), e.getMessage()),
