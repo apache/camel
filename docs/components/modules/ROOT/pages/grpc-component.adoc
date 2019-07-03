@@ -270,7 +270,7 @@ It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol
 
 Following steps are required:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set \${os.detected.classifier} parameter manually
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>

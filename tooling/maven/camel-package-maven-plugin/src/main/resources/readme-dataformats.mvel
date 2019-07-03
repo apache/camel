@@ -6,7 +6,7 @@ Number of Data Formats: @{dataformats.size} in @{numberOfArtifacts} JAR artifact
 |===
 | Data Format | Available From | Description
 @foreach{row : dataformats}
-| link:@{row.docLink}/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+| link:@{row.docLink}/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description.replaceAll("\\$", "\\\\\\$")}
 @end{}|===
 
 @end{}

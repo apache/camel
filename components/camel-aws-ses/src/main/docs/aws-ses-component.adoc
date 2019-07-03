@@ -216,7 +216,7 @@ This may be really useful for smarter configuration of the endpoint.
 </dependency>
 ---------------------------------------
 
-where `${camel-version}` must be replaced by the actual version of Camel.
+where `\${camel-version}` must be replaced by the actual version of Camel.
 
 ### See Also
 
