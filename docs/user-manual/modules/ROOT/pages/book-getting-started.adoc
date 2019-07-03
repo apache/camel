@@ -236,7 +236,7 @@ the relationship between URI and URL, or indeed its relationship with
 other acronyms such as IRI and URN.
 
 Most people are familiar with _URLs_ (uniform resource locators), such
-as `http://...`, `ftp://...`, `mailto:...`. Put simply, a URL specifies
+as `\http://...`, `\ftp://...`, `\mailto:...:`. Put simply, a URL specifies
 the _location_ of a resource.
 
 A _URI_ (uniform resource identifier) is a URL _or_ a URN. So, to fully

@@ -11,8 +11,8 @@ from("jetty://0.0.0.0:8123/foo").to("mock:foo");
 
 In the route above xref:jetty-component.adoc[Jetty] will only match if the uri is
 an exact match, so it will match if you enter
-`http://0.0.0.0:8123/foo` but not match if you do
-`http://0.0.0.0:8123/foo/bar`.
+`\http://0.0.0.0:8123/foo` but not match if you do
+`\http://0.0.0.0:8123/foo/bar`.
 
 So if you want to enable wildcard matching you do as follows:
 

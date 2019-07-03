@@ -66,7 +66,7 @@ Namespaces helper class.
 === Variables
 
 Variables in XPath is defined in different namespaces. The default
-namespace is `http://camel.apache.org/schema/spring`.
+namespace is `\http://camel.apache.org/schema/spring`.
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===

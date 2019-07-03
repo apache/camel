@@ -250,7 +250,7 @@ Input parameters are taken from the body:
 
 ==== Security policies
 
-When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
+When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `\http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
 or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
 
 The known security policy URIs and enum literals are can be seen here: https://github.com/eclipse/milo/blob/master/opc-ua-stack/stack-core/src/main/java/org/eclipse/milo/opcua/stack/core/security/SecurityPolicy.java[SecurityPolicy.java] 

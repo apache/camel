@@ -488,7 +488,7 @@ bindings.
                     will let Camel fail on startup and report the error(s).
 
                     The location of the api document is loaded from classpath by default, but you can use
-                    `file:` or `http:` to refer to resources to load from file or http url.
+                    `file:` or `\http:` to refer to resources to load from file or http url.
 |scheme | http|The scheme to use for exposing the REST service. Usually http or https is supported
 |host |- |The hostname to use for exposing the REST service.
 |useXForwardHeaders |true |Whether to use X-Forwarded-Host (or Host) from incoming HTTP Header to set the hostname

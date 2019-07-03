@@ -66,7 +66,7 @@ The command will produce the following output:
 } ]
 ----
 
-The Swagger documentation is located at: `http://localhost:8080/api/api-doc` and can be retrieved with the following command:
+The Swagger documentation is located at: `\http://localhost:8080/api/api-doc` and can be retrieved with the following command:
 
 [source,text]
 ----

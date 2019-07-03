@@ -317,10 +317,13 @@ from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:fo
 
 === Examples
 
-`ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true` +
+----
+ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
 
-`ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false` +
- `ftp://publicftpserver.com/download`
+ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false
+
+ftp://publicftpserver.com/download
+----
 
 === Concurrency
 

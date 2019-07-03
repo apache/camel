@@ -5,7 +5,7 @@ You can find general information how to secure your Camel CXF Consumer
 with HTTPS
 http://cxf.apache.org/docs/client-http-transport-including-ssl-support.html[here].
 
-A simple Camel CXF Consumer configuration which use the `http:conduit`
+A simple Camel CXF Consumer configuration which use the `\http:conduit`
 configuration to enable SSL and an external properties file for all
 environment specific configurations could looks like:
 
@@ -83,6 +83,6 @@ With this configuration, you Camel CXF consumer connects with HTTPS to
 the web service provider.
 If you need to change the protocol to HTTP, maybe for tracing/debugging
 reasons, change the `endpointUri` property in your properties file to
-e.g. `http://localhost:8080/OrderEntry`. That's all! Isn't it easy?
+e.g. `\http://localhost:8080/OrderEntry`. That's all! Isn't it easy?
 Apache CXF detects that you "only" use HTTP and instantiates a
 `HttpURLConnectionFactoryImpl` instead of a `HttpsURLConnectionFactory`.

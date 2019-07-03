@@ -94,7 +94,7 @@ BusFactory.setDefaultBus(bus);
 ==== Namespace
 
 The elements used to configure a Camel transport endpoint are defined
-in the namespace `http://cxf.apache.org/transports/camel`. It is
+in the namespace `\http://cxf.apache.org/transports/camel`. It is
 commonly referred to using the prefix `camel`. In order to use the Camel
 transport configuration elements, you will need to add the lines shown
 below to the beans element of your endpoint's configuration file. In
@@ -125,7 +125,7 @@ attribute takes the form _portQName_`.camel-destination`. The example
 below shows the `camel:destination` element that would be used to add
 configuration for an endpoint that was specified by the WSDL fragment
 `<port binding="widgetSOAPBinding" name="widgetSOAPPort">` if the
-endpoint's target namespace was `http://widgets.widgetvendor.net`.
+endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *camel:destination Element*
 
@@ -173,7 +173,7 @@ _portQName_`.camel-conduit`. For example, the code below shows the
 `camel:conduit` element that would be used to add configuration for an
 endpoint that was specified by the WSDL fragment
 `<port binding="widgetSOAPBinding" name="widgetSOAPPort">` if the
-endpoint's target namespace was `http://widgets.widgetvendor.net`.
+endpoint's target namespace was `\http://widgets.widgetvendor.net`.
 
 *http-conf:conduit Element*
 
@@ -218,7 +218,7 @@ The camel context id which you want inject into the camel conduit
 Camel Transport for CXF supports configuration with Blueprint.
 
 If you are using blueprint, you should use the namespace
-`http://cxf.apache.org/transports/camel/blueprint` and import the schema
+`\http://cxf.apache.org/transports/camel/blueprint` and import the schema
 like the blow.
 
 *Adding the Configuration Namespace for blueprint*
