@@ -551,6 +551,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         } catch (Exception e) {
             LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
         }
+
+        ServiceHelper.initService(locationSources);
+        ServiceHelper.initService(sources);
     }
 
     @Override
