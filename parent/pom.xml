@@ -560,6 +560,7 @@
         <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
         <pax-logging-version>1.8.6</pax-logging-version>
         <pdfbox-version>2.0.16</pdfbox-version>
+        <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.2</pgjdbc-ng-driver-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.7.1</protobuf-version>
@@ -1899,6 +1900,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pdf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pg-replication-slot</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3403,6 +3409,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pdf-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pg-replication-slot-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

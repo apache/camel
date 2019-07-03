@@ -258,6 +258,7 @@
         <module>camel-paho</module>
         <module>camel-paxlogging</module>
         <module>camel-pdf</module>
+        <module>camel-pg-replication-slot</module>
         <module>camel-pgevent</module>
         <module>camel-printer</module>
         <module>camel-protobuf</module>

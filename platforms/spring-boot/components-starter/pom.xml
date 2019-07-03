@@ -292,6 +292,7 @@
     <module>camel-optaplanner-starter</module>
     <module>camel-paho-starter</module>
     <module>camel-pdf-starter</module>
+    <module>camel-pg-replication-slot-starter</module>
     <module>camel-pgevent-starter</module>
     <module>camel-printer-starter</module>
     <module>camel-properties-starter</module>

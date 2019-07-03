@@ -243,6 +243,7 @@
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-pdf</include>
+        <include>org.apache.camel:camel-pg-replication-slot</include>
         <include>org.apache.camel:camel-pgevent</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-properties</include>
@@ -579,6 +580,7 @@
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
+        <include>org.apache.camel:camel-pg-replication-slot-starter</include>
         <include>org.apache.camel:camel-pgevent-starter</include>
         <include>org.apache.camel:camel-printer-starter</include>
         <include>org.apache.camel:camel-properties-starter</include>
