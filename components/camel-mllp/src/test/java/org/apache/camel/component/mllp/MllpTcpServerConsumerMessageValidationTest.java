@@ -252,7 +252,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
         timeout.expectedMessageCount(0);
         invalid.expectedMessageCount(1);
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + START_OF_BLOCK));
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("PID", "PID" + START_OF_BLOCK));
 
         assertMockEndpointsSatisfied();
     }
@@ -268,7 +268,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount / 2))
-                    ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + START_OF_BLOCK)
+                    ? generateMessage(i + 1).replaceFirst("PID", "PID" + START_OF_BLOCK)
                     : generateMessage(i + 1);
 
             log.debug("Sending message {}", MllpComponent.covertToPrintFriendlyString(message));
@@ -286,7 +286,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
         timeout.expectedMessageCount(0);
         invalid.expectedMessageCount(1);
 
-        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + END_OF_BLOCK));
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("PID", "PID" + END_OF_BLOCK));
 
         assertMockEndpointsSatisfied();
     }
@@ -302,7 +302,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount / 2))
-                    ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + END_OF_BLOCK)
+                    ? generateMessage(i + 1).replaceFirst("PID", "PID" + END_OF_BLOCK)
                     : generateMessage(i + 1);
 
             log.debug("Sending message {}", MllpComponent.covertToPrintFriendlyString(message));
