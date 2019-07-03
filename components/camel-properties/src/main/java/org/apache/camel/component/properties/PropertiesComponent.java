@@ -18,12 +18,14 @@ package org.apache.camel.component.properties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -145,6 +147,18 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     public PropertiesComponent(String... locations) {
         this();
         setLocations(locations);
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String endpointUri = parseUri(remaining);
+        log.debug("Endpoint uri parsed as: {}", endpointUri);
+
+        Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
+        PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
+
+        setProperties(answer, parameters);
+        return answer;
     }
 
     public String parseUri(String uri) {
@@ -567,11 +581,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     protected void doStop() throws Exception {
         cachedLoadedProperties = null;
         ServiceHelper.stopAndShutdownServices(locationSources, sources);
-    }
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        throw new UnsupportedOperationException("Properties component does not support endpoints");
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {

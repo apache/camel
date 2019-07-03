@@ -43,6 +43,37 @@ The Properties component supports 16 options, which are listed below.
 
 
 // endpoint options: START
+The Properties endpoint is configured using URI syntax:
+
+----
+properties:key
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *key* | *Required* Property key to use as placeholder |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
@@ -302,8 +333,9 @@ properties for the Registry.
 
 === Examples using properties component
 
-When using property placeholders in the endpoint URIs you use the placeholders
-directly in the endpoint uri using the `{{ key }}` style as shown below:
+When using property placeholders in the endpoint URIs you can either use
+the `properties:` component or define the placeholders directly in the
+URI. We will show example of both cases, starting with the former.
 
 [source,java]
 ----
@@ -311,7 +343,7 @@ directly in the endpoint uri using the `{{ key }}` style as shown below:
 cool.end=mock:result
 
 // route
-from("direct:start").to("{{cool.end}}");
+from("direct:start").to("properties:{{cool.end}}");
 ----
 
 You can also use placeholders as a part of the endpoint uri:
@@ -322,7 +354,7 @@ You can also use placeholders as a part of the endpoint uri:
 cool.foo=result
 
 // route
-from("direct:start").to("mock:{{cool.foo}}");
+from("direct:start").to("properties:mock:{{cool.foo}}");
 ----
 
 In the example above the to endpoint will be resolved to `mock:result`.
@@ -336,10 +368,47 @@ cool.foo=result
 cool.concat=mock:{{cool.foo}}
 
 // route
-from("direct:start").to("mock:{{cool.concat}}");
+from("direct:start").to("properties:mock:{{cool.concat}}");
 ----
 
 Notice how `cool.concat` refer to another property.
+
+=== Examples
+
+You can also use property placeholders directly in the endpoint uris
+without having to use `properties:`.
+
+[source,java]
+----
+// properties
+cool.foo=result
+
+// route
+from("direct:start").to("mock:{{cool.foo}}");
+----
+
+And you can use them in multiple wherever you want them:
+
+[source,java]
+----
+// properties
+cool.start=direct:start
+cool.showid=true
+cool.result=result
+
+// route
+from("{{cool.start}}")
+    .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
+    .to("mock:{{cool.result}}");
+----
+
+You can also your property placeholders when using
+ProducerTemplate for example:
+
+[source,java]
+----
+template.sendBody("{{cool.start}}", "Hello World");
+----
 
 === Example with xref:simple-language.adoc[Simple] language
 
