@@ -145,6 +145,22 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         addFunction(new ServicePortPropertiesFunction());
     }
 
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     */
+    public PropertiesComponent(String location) {
+        this();
+        setLocation(location);
+    }
+
+    /**
+     * A list of locations to load properties.
+     */
+    public PropertiesComponent(String... locations) {
+        this();
+        setLocations(locations);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String endpointUri = parseUri(remaining);

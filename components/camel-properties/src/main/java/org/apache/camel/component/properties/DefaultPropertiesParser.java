@@ -238,7 +238,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
 
             if (value == null) {
                 StringBuilder esb = new StringBuilder();
-                if (propertiesComponent == null || propertiesComponent.getCamelContext().getGlobalOption(PropertiesComponent.DEFAULT_CREATED) == null) {
+                if (propertiesComponent == null || "true".equals(propertiesComponent.getCamelContext().getGlobalOption(PropertiesComponent.DEFAULT_CREATED))) {
                     // if the component was auto created then include more information that the end user should define it
                     esb.append("PropertiesComponent with name properties must be defined in CamelContext to support property placeholders. ");
                 }

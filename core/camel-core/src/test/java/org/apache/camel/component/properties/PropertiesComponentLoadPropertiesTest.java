@@ -46,7 +46,9 @@ public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties"));
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.addComponent("properties", pc);
         return context;
     }
 
