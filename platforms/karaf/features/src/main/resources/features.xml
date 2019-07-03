@@ -1998,6 +1998,12 @@
     <bundle dependency='true'>mvn:org.apache.pdfbox/fontbox/${pdfbox-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pdf/${project.version}</bundle>
   </feature>
+  <feature name='camel-pg-replication-slot' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature>jdbc</feature>
+    <bundle dependency='true'>mvn:org.postgresql/postgresql/${pgjdbc-driver-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-pg-replication-slot/${project.version}</bundle>
+  </feature>
   <feature name='camel-pgevent' version='${project.version}' start-level='50'>
     <details>installing camel-pgevent may output an error in the log but it is installed correctly</details>
     <feature version='${project.version}'>camel-core</feature>
