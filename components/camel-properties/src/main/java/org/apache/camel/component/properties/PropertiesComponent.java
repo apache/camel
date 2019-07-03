@@ -102,13 +102,15 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
-    private transient Properties cachedLoadedProperties;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private List<PropertiesLocation> locations = Collections.emptyList();
     private final List<PropertiesSource> sources = new ArrayList<>();
     private final List<LocationPropertiesSource> locationSources = new ArrayList<>();
+
+    private transient Properties cachedLoadedProperties;
+    private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(locationSources, sources);
 
     @Metadata
     private boolean ignoreMissingLocation;
@@ -166,16 +168,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     public String parseUri(String uri) {
-        // optimise to only load properties once as we use the configured locations
-        if (cache) {
-            if (cachedLoadedProperties == null) {
-                cachedLoadedProperties = doLoadProperties();
-            }
-            return parseUri(uri, new DefaultPropertiesLookup(cachedLoadedProperties, sources));
-        } else {
-            Properties prop = doLoadProperties();
-            return parseUri(uri, new DefaultPropertiesLookup(prop, sources));
-        }
+        return parseUri(uri, propertiesLookup);
     }
 
     public Properties loadProperties() {
