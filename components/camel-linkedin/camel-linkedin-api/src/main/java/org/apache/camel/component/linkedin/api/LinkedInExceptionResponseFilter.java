@@ -30,7 +30,12 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.apache.camel.component.linkedin.api.model.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +64,20 @@ public class LinkedInExceptionResponseFilter implements ClientResponseFilter {
         if (responseContext.getStatus() != Response.Status.OK.getStatusCode() && responseContext.hasEntity()) {
             try {
                 final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                final Error error = (Error) unmarshaller.unmarshal(responseContext.getEntityStream());
+
+                // Disable XXE
+                SAXParserFactory spf = SAXParserFactory.newInstance();
+                try {
+                    spf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+                    spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                    spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                    spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                } catch (ParserConfigurationException | SAXException ex) {
+                    LOG.debug("Error setting feature on parser: " + ex.getMessage());
+                }
+                Source xmlSource =
+                    new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(responseContext.getEntityStream()));
+                final Error error = (Error) unmarshaller.unmarshal(xmlSource);
 
                 final Response.ResponseBuilder builder = Response.status(responseContext.getStatusInfo());
                 builder.entity(error);
@@ -69,7 +87,7 @@ public class LinkedInExceptionResponseFilter implements ClientResponseFilter {
                 }
 
                 throw new LinkedInException(error, builder.build());
-            } catch (JAXBException e) {
+            } catch (JAXBException | ParserConfigurationException | SAXException e) {
                 // log and ignore
                 LOG.warn("Unable to parse LinkedIn error: {}", e.getMessage(), e);
             }
