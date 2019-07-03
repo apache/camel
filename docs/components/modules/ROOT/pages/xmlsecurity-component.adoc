@@ -208,7 +208,7 @@ https://github.com/apache/camel/blob/master/components/camel-xmlsecurity/src/mai
 which reads the public key from a keystore.
 
 In the example, the default signature algorithm
-`http://www.w3.org/2000/09/xmldsig#rsa-sha1` is used. You can set the
+`\http://www.w3.org/2000/09/xmldsig#rsa-sha1` is used. You can set the
 signature algorithm of your choice by the option `signatureAlgorithm`
 (see below). The signer endpoint creates an _enveloping_ XML signature.
 If you want to create an _enveloped_ XML signature then you must specify

@@ -229,13 +229,13 @@ There are operations that requires `id` for fields suchs as: issue type, priorit
 Required:
 
 * `ProjectKey`: The project key, example: CAMEL, HHH, MYP.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
+* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
 * `IssueSummary`: The summary of the issue.
 
 Optional:
 
 * `IssueAssignee`: the assignee user
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `http://jira_server/rest/api/2/priority`.
+* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
 * `IssueComponents`: A list of string with the valid component names.
 * `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
 * `IssueDescription`: The description of the issue.
@@ -273,10 +273,10 @@ Required:
 ### UpdateIssue
 
 * `IssueKey`: The issue key identifier.
-* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
+* `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
 * `IssueSummary`: The summary of the issue.
 * `IssueAssignee`: the assignee user
-* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `http://jira_server/rest/api/2/priority`.
+* `IssuePriorityId` or `IssuePriorityName`: The priority of the issue, you can see the valid list in `\http://jira_server/rest/api/2/priority`.
 * `IssueComponents`: A list of string with the valid component names.
 * `IssueDescription`: The description of the issue.
 

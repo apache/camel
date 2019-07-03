@@ -199,7 +199,7 @@ from("direct:login")
   .removeHeader(Exchange.HTTP_QUERY);
 ----
 
-Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`http:myloginserver:8080`).
+Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`\http:myloginserver:8080`).
 This optimisation allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
 This yields much lower resource overhead as the same http producer will be used for all the different variations of userid's.
 

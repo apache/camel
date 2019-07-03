@@ -335,7 +335,7 @@ from("activemq:queue:foo")
 
 Now suppose the route above and a failure happens in the `foo` bean.
 Then the `Exchange.TO_ENDPOINT` and `Exchange.FAILURE_ENDPOINT` will
-still contain the value of `http://someserver/somepath`.
+still contain the value of `\http://someserver/somepath`.
 
 [[deadLetterChannel-OnPrepareFailure]]
 === OnPrepareFailure

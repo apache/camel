@@ -489,7 +489,7 @@ placeholder key. This is now possible from Camel 2.7 on using a special
 placeholder namespace.
 
 In the example below we use the `prop` prefix for the namespace
-`http://camel.apache.org/schema/placeholder` by which we can use the
+`\http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use
 that in the xref:multicast.adoc[Multicast] to indicate that the option
 `stopOnException` should be the value of the placeholder with the key

@@ -335,7 +335,7 @@ The description in the table takes offset in a route having:
 |`CamelHttpMethod` |`String` |The HTTP method used, such as GET, POST, TRACE etc.
 
 |`CamelHttpUrl` |`String` |The URL including protocol, host and port, etc: 
-`http://0.0.0.0:8080/myapp`
+`\http://0.0.0.0:8080/myapp`
 
 |`CamelHttpUri` |`String` |The URI without protocol, host and port, etc:
 `/myapp`
@@ -407,8 +407,8 @@ from("netty4-http:http://0.0.0.0:8123/foo").to("mock:foo");
 
 In the route above Netty4 HTTP will only match if the uri is an exact
 match, so it will match if you enter +
- `http://0.0.0.0:8123/foo` but not match if you do
-`http://0.0.0.0:8123/foo/bar`.
+ `\http://0.0.0.0:8123/foo` but not match if you do
+`\http://0.0.0.0:8123/foo/bar`.
 
 So if you want to enable wildcard matching you do as follows:
 

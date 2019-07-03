@@ -217,7 +217,7 @@ faultAction option if present
 
 ### Accessing web services
 
-To call a web service at `http://foo.com/bar` simply define a route:
+To call a web service at `\http://foo.com/bar` simply define a route:
 
 [source,java]
 ---------------------------------------------------------
@@ -526,7 +526,7 @@ With the XML configuration in-place you can now use Camel's DSL to
 define what web service requests are handled by your endpoint:
 
 The following route will receive all web service requests that have a
-root element named "GetFoo" within the `http://example.com/` namespace.
+root element named "GetFoo" within the `\http://example.com/` namespace.
 
 [source,java]
 ----------------------------------------------------------------------------------------
@@ -535,7 +535,7 @@ from("spring-ws:rootqname:{http://example.com/}GetFoo?endpointMapping=#endpointM
 ----------------------------------------------------------------------------------------
 
 The following route will receive web service requests containing the
-`http://example.com/GetFoo` SOAP action.
+`\http://example.com/GetFoo` SOAP action.
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -544,7 +544,7 @@ from("spring-ws:soapaction:http://example.com/GetFoo?endpointMapping=#endpointMa
 ---------------------------------------------------------------------------------------
 
 The following route will receive all requests sent to
-`http://example.com/foobar`.
+`\http://example.com/foobar`.
 
 [source,java]
 --------------------------------------------------------------------------------

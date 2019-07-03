@@ -399,7 +399,7 @@ And add this to your web.xml;
 ----
 
 You will then be able to access the deployed route at
-`http://localhost:8080/mywebapp/rs/demo/1234` where;
+`\http://localhost:8080/mywebapp/rs/demo/1234` where;
 
 `localhost:8080` is the server and port of your servlet container +
  `mywebapp` is the name of your deployed webapp +
