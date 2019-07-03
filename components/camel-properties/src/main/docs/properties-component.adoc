@@ -94,7 +94,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 20 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -107,7 +107,6 @@ The component supports 20 options, which are listed below.
 | *camel.component.properties.enabled* | Whether to enable auto configuration of the properties component. This is enabled by default. |  | Boolean
 | *camel.component.properties.encoding* | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
 | *camel.component.properties.environment-variable-mode* | Sets the OS environment variables mode. The default mode (override) is to use OS environment variables if present, and override any existing properties. | 1 | Integer
-| *camel.component.properties.fallback-to-unaugmented-property* | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | Boolean
 | *camel.component.properties.ignore-missing-location* | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | Boolean
 | *camel.component.properties.initial-properties* | Sets initial properties which will be used before any locations are resolved. The option is a java.util.Properties type. |  | String
 | *camel.component.properties.location* | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
@@ -116,8 +115,6 @@ The component supports 20 options, which are listed below.
 | *camel.component.properties.prefix-token* | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
 | *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
 | *camel.component.properties.properties-resolver* | To use a custom PropertiesResolver. The option is a org.apache.camel.component.properties.PropertiesResolver type. |  | String
-| *camel.component.properties.property-prefix* | Optional prefix prepended to property names before resolution. |  | String
-| *camel.component.properties.property-suffix* | Optional suffix appended to property names before resolution. |  | String
 | *camel.component.properties.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.properties.suffix-token* | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *camel.component.properties.system-properties-mode* | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | Integer
