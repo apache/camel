@@ -17,27 +17,19 @@
 package org.apache.camel.component.microprofile.config;
 
 import java.util.Optional;
-import java.util.Properties;
 
-import org.apache.camel.component.properties.LoadablePropertiesSource;
+import org.apache.camel.component.properties.PropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.OrderedProperties;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
  * properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.
  */
-public class CamelMicroProfilePropertiesSource extends ServiceSupport implements LoadablePropertiesSource {
+public class CamelMicroProfilePropertiesSource extends ServiceSupport implements PropertiesSource {
 
-    // TODO: Should not be loadable but regular source so we lookup on demand
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfilePropertiesSource.class);
-
-    private final Properties properties = new OrderedProperties();
+    private Config config;
 
     @Override
     public String getName() {
@@ -46,29 +38,16 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
     @Override
     public String getProperty(String name) {
-        return properties.getProperty(name);
-    }
-
-    @Override
-    public Properties loadProperties() {
-        return properties;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        Config config = ConfigProvider.getConfig();
-
-        for (String name : config.getPropertyNames()) {
-            Optional<String> value = config.getOptionalValue(name, String.class);
-            value.ifPresent(s -> properties.put(name, s));
+        if (config == null) {
+            config = ConfigProvider.getConfig();
         }
-
-        LOG.info("Initialized CamelMicroProfilePropertiesSource with {} properties loaded", properties.size());
+        Optional<String> value = config.getOptionalValue(name, String.class);
+        return value.orElse(null);
     }
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        config = ConfigProvider.getConfig();
     }
 
     @Override

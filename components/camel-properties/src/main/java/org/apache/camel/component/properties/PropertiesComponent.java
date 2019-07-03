@@ -105,12 +105,12 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
-    private List<PropertiesLocation> locations = Collections.emptyList();
+    private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
     private final List<LocationPropertiesSource> locationSources = new ArrayList<>();
 
+    private List<PropertiesLocation> locations = Collections.emptyList();
     private transient Properties cachedLoadedProperties;
-    private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(locationSources, sources);
 
     @Metadata
     private boolean ignoreMissingLocation;
@@ -522,6 +522,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         } else {
             sources.add(propertiesSource);
         }
+    }
+
+    public List<PropertiesSource> getSources() {
+        return sources;
+    }
+
+    public List<LocationPropertiesSource> getLocationSources() {
+        return locationSources;
     }
 
     @Override

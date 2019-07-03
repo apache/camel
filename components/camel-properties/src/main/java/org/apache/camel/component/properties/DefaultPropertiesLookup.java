@@ -17,36 +17,44 @@
 package org.apache.camel.component.properties;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing properties.
  */
 public class DefaultPropertiesLookup implements PropertiesLookup {
 
-    private final List<LocationPropertiesSource> locationSources;
-    private final List<PropertiesSource> sources;
+    private final PropertiesComponent component;
 
-    public DefaultPropertiesLookup(List<LocationPropertiesSource> locationSources, List<PropertiesSource> sources) {
-        this.locationSources = locationSources;
-        this.sources = sources;
+    public DefaultPropertiesLookup(PropertiesComponent component) {
+        this.component = component;
     }
 
     @Override
     public String lookup(String name) {
         String answer = null;
-        // try till first found source
-        Iterator<LocationPropertiesSource> it = locationSources.iterator();
-        while (answer == null && it.hasNext()) {
-            answer = it.next().getProperty(name);
+
+        // override takes precedence
+        if (component.getOverrideProperties() != null) {
+            answer = component.getOverrideProperties().getProperty(name);
         }
-        if (answer == null && sources != null) {
+        if (answer == null) {
             // try till first found source
-            Iterator<PropertiesSource> it2 = sources.iterator();
+            Iterator<PropertiesSource> it2 = component.getSources().iterator();
             while (answer == null && it2.hasNext()) {
                 answer = it2.next().getProperty(name);
             }
         }
+        if (answer == null) {
+            // try till first found location source
+            Iterator<LocationPropertiesSource> it = component.getLocationSources().iterator();
+            while (answer == null && it.hasNext()) {
+                answer = it.next().getProperty(name);
+            }
+        }
+        if (answer == null && component.getInitialProperties() != null) {
+            answer = component.getInitialProperties().getProperty(name);
+        }
+
         return answer;
     }
 }
