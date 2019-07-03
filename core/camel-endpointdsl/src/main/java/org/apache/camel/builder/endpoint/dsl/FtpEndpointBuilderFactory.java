@@ -956,12 +956,12 @@ public interface FtpEndpointBuilderFactory {
          * JDK IO API cannot always determine whether a file is currently being
          * used by another process. The option readLockCheckInterval can be used
          * to set the check frequency. fileLock - is for using
-         * java.nio.channels.FileLock. This option is not avail for the FTP
-         * component. This approach should be avoided when accessing a remote
-         * file system via a mount/share unless that file system supports
-         * distributed file locks. rename - rename is for using a try to rename
-         * the file as a test if we can get exclusive read-lock. idempotent -
-         * (only for file component) idempotent is for using a
+         * java.nio.channels.FileLock. This option is not avail for Windows OS
+         * and the FTP component. This approach should be avoided when accessing
+         * a remote file system via a mount/share unless that file system
+         * supports distributed file locks. rename - rename is for using a try
+         * to rename the file as a test if we can get exclusive read-lock.
+         * idempotent - (only for file component) idempotent is for using a
          * idempotentRepository as the read-lock. This allows to use read locks
          * that supports clustering if the idempotent repository implementation
          * supports that. idempotent-changed - (only for file component)

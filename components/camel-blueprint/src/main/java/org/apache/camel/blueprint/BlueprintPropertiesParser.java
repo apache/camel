@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
@@ -30,6 +29,7 @@ import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
 import org.apache.aries.blueprint.ext.PropertyPlaceholder;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.support.ObjectHelper;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -85,8 +85,6 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
 
     /**
      * Obtains a {@link Class} instance for "org.apache.aries.blueprint.ext.AbstractPropertyPlaceholderExt"
-     * @param clazz
-     * @return
      */
     private Class<?> newPlaceholderClass(Class<?> clazz) {
         Class<?> c = clazz;
@@ -146,7 +144,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     }
 
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         log.trace("Parsing property key: {} with value: {}", key, value);
 
         String answer = null;

@@ -22,7 +22,9 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.AugmentedPropertyNameAwarePropertiesParser;
+import org.apache.camel.component.properties.DefaultPropertiesLookup;
 import org.apache.camel.component.properties.PropertiesLocation;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.beans.BeansException;
@@ -125,7 +127,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         String value = props.getProperty(placeholder);
         if (parser != null) {
             // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
-            return parser.parseProperty(placeholder, value, props);
+            return parser.parseProperty(placeholder, value, new DefaultPropertiesLookup(props));
         } else {
             return value;
         }
@@ -155,7 +157,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
+    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken,
                            String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
 
         // first let Camel parse the text as it may contain Camel placeholders
@@ -177,7 +179,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
         String answer = parser.parseUri(text, properties, prefixToken, suffixToken);
         if (answer != null) {
             answer = springResolvePlaceholders(answer, properties);
@@ -188,7 +190,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         String answer = parser.parseProperty(key, value, properties);
         if (answer != null) {
             answer = springResolvePlaceholders(answer, properties);
@@ -205,7 +207,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
      * @param properties the properties
      * @return the parsed text with replaced placeholders, or the original text as is
      */
-    protected String springResolvePlaceholders(String text, Properties properties) {
+    protected String springResolvePlaceholders(String text, PropertiesLookup properties) {
         return helper.replacePlaceholders(text, new BridgePropertyPlaceholderResolver(properties));
     }
 
@@ -224,9 +226,9 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
 
-        private final Properties properties;
+        private final PropertiesLookup properties;
 
-        BridgePropertyPlaceholderResolver(Properties properties) {
+        BridgePropertyPlaceholderResolver(PropertiesLookup properties) {
             this.properties = properties;
         }
 
@@ -236,7 +238,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 propVal = resolveSystemProperty(placeholderName);
             }
             if (propVal == null) {
-                propVal = properties.getProperty(placeholderName);
+                propVal = properties.lookup(placeholderName);
             }
             if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
                 propVal = resolveSystemProperty(placeholderName);
@@ -256,7 +258,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseUri(String text, Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
                                boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
             String answer = null;
             if (delegate != null) {
@@ -280,7 +282,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
             String answer = null;
             if (delegate != null) {
                 answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
@@ -292,7 +294,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseProperty(String key, String value, Properties properties) {
+        public String parseProperty(String key, String value, PropertiesLookup properties) {
             String answer = null;
             if (delegate != null) {
                 answer = delegate.parseProperty(key, value, properties);

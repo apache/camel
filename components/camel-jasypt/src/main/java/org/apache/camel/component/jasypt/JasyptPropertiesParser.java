@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jasypt;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
 import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.jasypt.encryption.StringEncryptor;
@@ -50,7 +50,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     }
 
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         log.trace(format("Parsing property '%s=%s'", key, value));
         if (value != null) {
             initEncryptor();
