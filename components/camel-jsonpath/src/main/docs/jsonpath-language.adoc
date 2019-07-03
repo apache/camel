@@ -200,7 +200,7 @@ This option is also available on the `@JsonPath` annotation.
 
 *Available as of Camel 2.18*
 
-Its now possible to inlined Simple language expressions in the JSonPath expression using the simple syntax ${xxx}.
+Its now possible to inlined Simple language expressions in the JSonPath expression using the simple syntax \${xxx}.
 An example is shown below:
 
 [source,java]

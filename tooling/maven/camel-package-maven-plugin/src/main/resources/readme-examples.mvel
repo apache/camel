@@ -6,7 +6,7 @@ Number of Examples: @{examples.size} (@{numberOfDeprecated} deprecated)
 |===
 | Example | Category | Description
 @foreach{row : examples}
-| link:@{row.docLink}[@{row.title}] (@{row.fileName}) | @{row.category} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+| link:@{row.docLink}[@{row.title}] (@{row.fileName}) | @{row.category} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description.replaceAll("\\$", "\\\\\\$")}
 @end{}|===
 
 @end{}

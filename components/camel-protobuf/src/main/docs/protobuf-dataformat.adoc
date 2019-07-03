@@ -122,7 +122,7 @@ classes for the format we defined in our .proto file.
 If your operating system is supporting by https://www.xolstice.org/protobuf-maven-plugin[Protobuf Java code generator maven plugin],
 you can automate protobuf Java code generating by adding following configurations to your pom.xml:
 
-Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set ${os.detected.classifier} parameter manually 
+Insert operating system and CPU architecture detection extension inside **<build>** tag of the project pom.xml or set \${os.detected.classifier} parameter manually 
 [source,xml]
 -------------------------------------------------------------------------
 <extensions>
