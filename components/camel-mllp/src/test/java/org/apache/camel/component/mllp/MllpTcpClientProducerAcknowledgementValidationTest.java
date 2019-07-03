@@ -230,7 +230,7 @@ public class MllpTcpClientProducerAcknowledgementValidationTest extends CamelTes
 
     @Test
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
-        final String badAcknowledgement = EXPECTED_AA.replaceFirst("|ORM", START_OF_BLOCK + "|ORM" );
+        final String badAcknowledgement = EXPECTED_AA.replaceFirst("|ORM", START_OF_BLOCK + "|ORM");
 
         invalid.expectedBodiesReceived(TEST_MESSAGE);
         aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
@@ -253,7 +253,7 @@ public class MllpTcpClientProducerAcknowledgementValidationTest extends CamelTes
 
     @Test
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlock() throws Exception {
-        final String badAcknowledgement = EXPECTED_AA.replaceFirst("|ORM", END_OF_BLOCK + "|ORM" );
+        final String badAcknowledgement = EXPECTED_AA.replaceFirst("|ORM", END_OF_BLOCK + "|ORM");
 
         invalid.expectedBodiesReceived(TEST_MESSAGE);
         aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
