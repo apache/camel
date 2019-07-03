@@ -28,8 +28,6 @@
 * xref:#components.adoc[Components]
 * xref:#data-formats.adoc[Data Formats]
 * xref:#languages.adoc[Languages]
-* xref:security.adoc[Security]
-* xref:security-advisories.adoc[Security Advisories]
 
 === User Guide
 
