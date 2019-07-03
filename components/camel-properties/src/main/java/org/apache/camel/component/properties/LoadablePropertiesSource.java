@@ -18,9 +18,14 @@ package org.apache.camel.component.properties;
 
 import java.util.Properties;
 
+import org.apache.camel.Ordered;
+
 /**
  * A source for properties that can be loaded all at once during initialization,
  * such as loading .properties files.
+ * <p/>
+ * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel
+ * properties component. The source with the highest precedence (lowest number) will be used first.
  */
 public interface LoadablePropertiesSource extends PropertiesSource {
 

@@ -39,6 +39,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -101,14 +102,12 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
-    private transient Properties cachedProperties;
+    private transient Properties cachedLoadedProperties;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private List<PropertiesLocation> locations = Collections.emptyList();
-    private List<PropertiesSource> sources = new ArrayList<>();
-
-    private transient String propertyPrefixResolved;
+    private final List<PropertiesSource> sources = new ArrayList<>();
 
     @Metadata
     private boolean ignoreMissingLocation;
@@ -179,10 +178,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     public String parseUri(String uri) {
         // optimise to only load properties once as we use the configured locations
-        if (cachedProperties == null) {
-            cachedProperties = doLoadProperties(locations);
+        if (cache && cachedLoadedProperties == null) {
+            cachedLoadedProperties = doLoadProperties(locations);
         }
-        return parseUri(uri, cachedProperties);
+        return cachedLoadedProperties != null ? parseUri(uri, cachedLoadedProperties) : parseUri(uri, doLoadProperties(locations));
     }
 
     public String parseUri(String uri, String... locations) {
@@ -194,7 +193,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     public Properties loadProperties() {
-        return doLoadProperties(locations);
+        if (cache && cachedLoadedProperties == null) {
+            cachedLoadedProperties = doLoadProperties(locations);
+        }
+        return cachedLoadedProperties != null ? cachedLoadedProperties : doLoadProperties(locations);
     }
 
     public Properties loadProperties(String... locations) {
@@ -451,8 +453,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     /**
      * Sets initial properties which will be used before any locations are resolved.
-     *
-     * @param initialProperties properties that are added first
      */
     public void setInitialProperties(Properties initialProperties) {
         this.initialProperties = initialProperties;
@@ -465,8 +465,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     /**
      * Sets a special list of override properties that take precedence
      * and will use first, if a property exist.
-     *
-     * @param overrideProperties properties that is used first
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
@@ -543,6 +541,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @ManagedOperation(description = "Clears the cache")
     public void clearCache() {
         this.cacheMap.clear();
+        this.cachedLoadedProperties = null;
     }
 
     /**
@@ -585,6 +584,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // sort the sources
+        sources.sort(OrderedComparator.get());
         ServiceHelper.startService(sources);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
@@ -607,7 +609,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @Override
     protected void doStop() throws Exception {
         cacheMap.clear();
-        cachedProperties = null;
+        cachedLoadedProperties = null;
         ServiceHelper.stopAndShutdownService(sources);
         super.doStop();
     }
