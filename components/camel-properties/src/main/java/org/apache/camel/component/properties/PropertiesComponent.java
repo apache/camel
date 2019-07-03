@@ -105,7 +105,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
-    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
+    private PropertiesResolver propertiesResolver;
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
@@ -198,6 +198,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                     Properties p = lps.loadProperties();
                     prop.putAll(p);
                 }
+            }
+        }
+
+        // use legacy properties resolver
+        if (propertiesResolver != null) {
+            Properties p = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
+            if (p != null && !p.isEmpty()) {
+                prop.putAll(p);
             }
         }
 
@@ -513,6 +521,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             locationSources.add((LocationPropertiesSource) propertiesSource);
         } else {
             sources.add(propertiesSource);
+        }
+        if (isInit()) {
+            // if we are already initialized we need to init the properties source also
+            ServiceHelper.initService(propertiesSource);
         }
     }
 

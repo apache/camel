@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 /**
  * Used by {@link PropertiesParser} to lookup properties by their name
  */
+@FunctionalInterface
 public interface PropertiesLookup {
 
     /**
