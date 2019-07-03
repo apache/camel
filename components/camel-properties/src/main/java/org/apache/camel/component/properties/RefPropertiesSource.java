@@ -23,10 +23,16 @@ import java.util.Properties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.OrderedProperties;
 
-public class RefPropertiesSource extends LocationPropertiesSourceSupport  {
+public class RefPropertiesSource implements LocationPropertiesSource  {
+
+    private final PropertiesComponent propertiesComponent;
+    private final PropertiesLocation location;
+    private final boolean ignoreMissingLocation;
 
     public RefPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
-        super(propertiesComponent, location, ignoreMissingLocation);
+        this.propertiesComponent = propertiesComponent;
+        this.location = location;
+        this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
     @Override
@@ -34,7 +40,23 @@ public class RefPropertiesSource extends LocationPropertiesSourceSupport  {
         return "RefPropertiesSource[" + getLocation().getPath() + "]";
     }
 
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location) {
+    @Override
+    public PropertiesLocation getLocation() {
+        return location;
+    }
+
+    @Override
+    public String getProperty(String name) {
+        // this will lookup the property on-demand
+        Properties properties = lookupPropertiesInRegistry(propertiesComponent, ignoreMissingLocation, location);
+        if (properties != null) {
+            return properties.getProperty(name);
+        } else {
+            return null;
+        }
+    }
+
+    protected Properties lookupPropertiesInRegistry(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location) {
         String path = location.getPath();
         Properties answer;
         try {
@@ -48,7 +70,6 @@ public class RefPropertiesSource extends LocationPropertiesSourceSupport  {
         if (answer == null && (!ignoreMissingLocation && !location.isOptional())) {
             throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }
-        return answer != null ? answer : new OrderedProperties();
+        return answer;
     }
-
 }

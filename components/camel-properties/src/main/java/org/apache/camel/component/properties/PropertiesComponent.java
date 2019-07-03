@@ -39,11 +39,13 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,7 +154,9 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String endpointUri = parseUri(remaining);
-        log.debug("Endpoint uri parsed as: {}", endpointUri);
+        if (LOG.isDebugEnabled()) {
+            log.debug("Endpoint uri parsed as: {}", URISupport.sanitizeUri(endpointUri));
+        }
 
         Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
         PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
@@ -167,10 +171,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             if (cachedLoadedProperties == null) {
                 cachedLoadedProperties = doLoadProperties();
             }
-            return parseUri(uri, cachedLoadedProperties);
+            return parseUri(uri, new DefaultPropertiesLookup(cachedLoadedProperties, sources));
         } else {
             Properties prop = doLoadProperties();
-            return parseUri(uri, prop);
+            return parseUri(uri, new DefaultPropertiesLookup(prop, sources));
         }
     }
 
@@ -224,7 +228,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return prop;
     }
 
-    protected String parseUri(String uri, Properties prop) {
+    protected String parseUri(String uri, PropertiesLookup properties) {
         // enclose tokens if missing
         if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
             uri = prefixToken + uri;
@@ -233,8 +237,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             uri = uri + suffixToken;
         }
 
-        log.trace("Parsing uri {} with properties: {}", uri, prop);
-        PropertiesLookup properties = new DefaultPropertiesLookup(prop);
+        log.trace("Parsing uri {}", uri);
         return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken, defaultFallbackEnabled);
     }
 
@@ -625,42 +628,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
         // must return a not-null answer
         return answer;
-    }
-
-    /**
-     * Key used in the locations cache
-     */
-    private static final class CacheKey implements Serializable {
-        private static final long serialVersionUID = 1L;
-        private final List<PropertiesLocation> locations;
-
-        private CacheKey(List<PropertiesLocation> locations) {
-            this.locations = new ArrayList<>(locations);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            CacheKey that = (CacheKey) o;
-
-            return locations.equals(that.locations);
-        }
-
-        @Override
-        public int hashCode() {
-            return locations.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "LocationKey[" + locations.toString() + "]";
-        }
     }
 
 }

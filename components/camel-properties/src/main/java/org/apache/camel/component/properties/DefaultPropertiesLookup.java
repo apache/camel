@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -23,14 +25,24 @@ import java.util.Properties;
  */
 public class DefaultPropertiesLookup implements PropertiesLookup {
 
-    private final Properties properties;
+    private final Properties loadedProperties;
+    private final List<PropertiesSource> sources;
 
-    public DefaultPropertiesLookup(Properties properties) {
-        this.properties = properties;
+    public DefaultPropertiesLookup(Properties loadedProperties, List<PropertiesSource> sources) {
+        this.loadedProperties = loadedProperties;
+        this.sources = sources;
     }
 
     @Override
     public String lookup(String name) {
-        return properties.getProperty(name);
+        String answer = loadedProperties.getProperty(name);
+        if (answer == null && sources != null) {
+            // try till first found source
+            Iterator<PropertiesSource> it = sources.iterator();
+            while (answer == null && it.hasNext()) {
+                answer = it.next().getProperty(name);
+            }
+        }
+        return answer;
     }
 }
