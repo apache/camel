@@ -29,7 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 
-public class FilePropertiesSource extends LocationPropertiesSourceSupport {
+public class FilePropertiesSource extends AbstractLocationPropertiesSource {
 
     protected FilePropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
         super(propertiesComponent, location, ignoreMissingLocation);

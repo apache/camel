@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -39,7 +36,6 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
@@ -55,6 +51,12 @@ import org.slf4j.LoggerFactory;
 @Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
+
+    // TODO: PropertySource / LoadablePropertySource to camel-api
+    // TODO: sources and locationSources merged into 1
+    // TODO: cache to DefaultPropertiesLookup
+    // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
+    // TODO: Remove PropertiesResolver
 
     /**
      *  Never check system properties.
@@ -141,16 +143,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         addFunction(new ServicePropertiesFunction());
         addFunction(new ServiceHostPropertiesFunction());
         addFunction(new ServicePortPropertiesFunction());
-    }
-
-    public PropertiesComponent(String location) {
-        this();
-        setLocation(location);
-    }
-
-    public PropertiesComponent(String... locations) {
-        this();
-        setLocations(locations);
     }
 
     @Override

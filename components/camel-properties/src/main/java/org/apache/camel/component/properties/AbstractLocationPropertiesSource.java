@@ -22,14 +22,17 @@ import java.util.Properties;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
 
-public abstract class LocationPropertiesSourceSupport extends ServiceSupport implements LoadablePropertiesSource, LocationPropertiesSource {
+/**
+ * Base class for {@link LoadablePropertiesSource} which can load properties from a source such as classpath or file system.
+ */
+public abstract class AbstractLocationPropertiesSource extends ServiceSupport implements LoadablePropertiesSource, LocationPropertiesSource {
 
     private final Properties properties = new OrderedProperties();
     private final PropertiesComponent propertiesComponent;
     private final PropertiesLocation location;
     private final boolean ignoreMissingLocation;
 
-    protected LocationPropertiesSourceSupport(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
+    protected AbstractLocationPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
         this.propertiesComponent = propertiesComponent;
         this.location = location;
         this.ignoreMissingLocation = ignoreMissingLocation;

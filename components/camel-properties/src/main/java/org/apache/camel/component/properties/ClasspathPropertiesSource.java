@@ -28,7 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
 
-public class ClasspathPropertiesSource extends LocationPropertiesSourceSupport {
+public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource {
 
     public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
         super(propertiesComponent, location, ignoreMissingLocation);
