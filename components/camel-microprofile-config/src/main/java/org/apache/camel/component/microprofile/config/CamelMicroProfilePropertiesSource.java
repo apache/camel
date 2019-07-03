@@ -19,7 +19,7 @@ package org.apache.camel.component.microprofile.config;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.apache.camel.component.properties.PropertiesSource;
+import org.apache.camel.component.properties.LoadablePropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
 import org.eclipse.microprofile.config.Config;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
  * properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.
  */
-public class CamelMicroProfilePropertiesSource extends ServiceSupport implements PropertiesSource {
+public class CamelMicroProfilePropertiesSource extends ServiceSupport implements LoadablePropertiesSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfilePropertiesSource.class);
 
@@ -40,6 +40,11 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
     @Override
     public String getName() {
         return "CamelMicroProfilePropertiesSource";
+    }
+
+    @Override
+    public String getProperty(String name) {
+        return properties.getProperty(name);
     }
 
     @Override

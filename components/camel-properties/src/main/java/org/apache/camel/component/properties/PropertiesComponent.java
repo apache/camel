@@ -222,8 +222,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         // add 3rd party sources
         if (!sources.isEmpty()) {
             for (PropertiesSource ps : sources) {
-                Properties p = ps.loadProperties();
-                prop.putAll(p);
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties();
+                    prop.putAll(p);
+                }
             }
         }
 
@@ -609,14 +612,12 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * Adds a custom {@link PropertiesSource}
      */
     public void addPropertiesSource(PropertiesSource propertiesSource) {
-        sources.add(propertiesSource);
         // prepare properties sources which we must do eager
-        for (PropertiesSource ps : sources) {
-            if (ps instanceof CamelContextAware) {
-                ((CamelContextAware) ps).setCamelContext(getCamelContext());
-            }
+        if (propertiesSource instanceof CamelContextAware) {
+            ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
         ServiceHelper.initService(propertiesSource);
+        sources.add(propertiesSource);
     }
 
     @Override
@@ -628,14 +629,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel");
             Class<?> type = factoryFinder.findClass("properties-source-factory");
             if (type != null) {
-                Object ps = getCamelContext().getInjector().newInstance(type, false);
-                if (ps != null) {
-                    if (ps instanceof PropertiesSource) {
-                        LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
-                        addPropertiesSource((PropertiesSource) ps);
-                    } else {
-                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
-                    }
+                Object obj = getCamelContext().getInjector().newInstance(type, false);
+                if (obj instanceof PropertiesSource) {
+                    PropertiesSource ps = (PropertiesSource) obj;
+                    addPropertiesSource(ps);
+                    LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
+                } else if (obj != null) {
+                    LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
                 }
             }
         } catch (NoFactoryAvailableException e) {

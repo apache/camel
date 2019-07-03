@@ -1,13 +1,13 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,22 +16,18 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.Properties;
+
 /**
- * A source for properties.
+ * A source for properties that can be loaded all at once during initialization,
+ * such as loading .properties files.
  */
-public interface PropertiesSource {
+public interface LoadablePropertiesSource extends PropertiesSource {
 
     /**
-     * Name of properties source
-     */
-    String getName();
-
-    /**
-     * Gets the property with the name
+     * Loads the properties from the source
      *
-     * @param name name of property
-     * @return the property value, or <tt>null</tt> if no property exists
+     * @return the loaded properties
      */
-    String getProperty(String name);
-
+    Properties loadProperties();
 }
