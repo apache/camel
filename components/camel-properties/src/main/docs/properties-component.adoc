@@ -43,39 +43,6 @@ The Properties component supports 16 options, which are listed below.
 
 
 // endpoint options: START
-The Properties endpoint is configured using URI syntax:
-
-----
-properties:key
-----
-
-with the following path and query parameters:
-
-==== Path Parameters (1 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *key* | *Required* Property key to use as placeholder |  | String
-|===
-
-
-==== Query Parameters (8 parameters):
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
-| *locations* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-|===
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
@@ -253,43 +220,6 @@ You can have multiple placeholders in the same location, such as:
 location=file:${env:APP_HOME}/etc/${prop.name}.properties
 ----
 
-=== Using system and environment variables to configure property prefixes and suffixes
-
-*Available as of Camel 2.12.5, 2.13.3, 2.14.0*
-
-`propertyPrefix`, `propertySuffix` configuration properties support
-using placeholders for JVM system properties and OS environments
-variables.
-
-For example. if `PropertiesComponent` is configured with the following
-properties file:
-
-[source]
-----
-dev.endpoint = result1
-test.endpoint = result2
-----
-
-Then with the following route definition:
-
-[source,java]
-----
-PropertiesComponent pc = context.getComponentComponent();
-pc.setPropertyPrefix("${stage}.");
-// ...
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("direct:start").to("properties:mock:{{endpoint}}");
-    }
-});
-----
-
-it is possible to change the target endpoint by changing system
-property `stage` either to `dev` (the message will be routed
-to `mock:result1`) or `test` (the message will be routed
-to `mock:result2`).
-
 === Configuring in Java DSL
 
 You have to create and register the `PropertiesComponent` under the name
@@ -372,9 +302,8 @@ properties for the Registry.
 
 === Examples using properties component
 
-When using property placeholders in the endpoint URIs you can either use
-the `properties:` component or define the placeholders directly in the
-URI. We will show example of both cases, starting with the former.
+When using property placeholders in the endpoint URIs you use the placeholders
+directly in the endpoint uri using the `{{ key }}` style as shown below:
 
 [source,java]
 ----
@@ -382,7 +311,7 @@ URI. We will show example of both cases, starting with the former.
 cool.end=mock:result
 
 // route
-from("direct:start").to("properties:{{cool.end}}");
+from("direct:start").to("{{cool.end}}");
 ----
 
 You can also use placeholders as a part of the endpoint uri:
@@ -393,7 +322,7 @@ You can also use placeholders as a part of the endpoint uri:
 cool.foo=result
 
 // route
-from("direct:start").to("properties:mock:{{cool.foo}}");
+from("direct:start").to("mock:{{cool.foo}}");
 ----
 
 In the example above the to endpoint will be resolved to `mock:result`.
@@ -407,55 +336,10 @@ cool.foo=result
 cool.concat=mock:{{cool.foo}}
 
 // route
-from("direct:start").to("properties:mock:{{cool.concat}}");
+from("direct:start").to("mock:{{cool.concat}}");
 ----
 
 Notice how `cool.concat` refer to another property.
-
-The `properties:` component also offers you to override and provide a
-location in the given uri using the `locations` option:
-
-[source,java]
-----
-   from("direct:start").to("properties:bar.end?locations=com/mycompany/bar.properties");
-----
-
-=== Examples
-
-You can also use property placeholders directly in the endpoint uris
-without having to use `properties:`.
-
-[source,java]
-----
-// properties
-cool.foo=result
-
-// route
-from("direct:start").to("mock:{{cool.foo}}");
-----
-
-And you can use them in multiple wherever you want them:
-
-[source,java]
-----
-// properties
-cool.start=direct:start
-cool.showid=true
-cool.result=result
-
-// route
-from("{{cool.start}}")
-    .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
-    .to("mock:{{cool.result}}");
-----
-
-You can also your property placeholders when using
-ProducerTemplate for example:
-
-[source,java]
-----
-template.sendBody("{{cool.start}}", "Hello World");
-----
 
 === Example with xref:simple-language.adoc[Simple] language
 
@@ -470,19 +354,6 @@ cheese.quote=Camel rocks
 // route
 from("direct:start")
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
-----
-
-You can also specify the location in the xref:simple-language.adoc[Simple]
-language for example:
-
-[source,java]
-----
-// bar.properties
-bar.quote=Beer tastes good
-
-// route
-from("direct:start")
-    .transform().simple("Hi ${body}. ${properties:com/mycompany/bar.properties:bar.quote}.");
 ----
 
 === Additional property placeholder supported in Spring XML
@@ -510,43 +381,6 @@ which means that if a OS environment variable exists, then it will be used.
 
 You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
 options on the properties component.
-
-=== Overriding a property setting using a JVM System Property
-
-*Available as of Camel 2.5* +
-It is possible to override a property value at runtime using a JVM
-System property without the need to restart the application to pick up
-the change. This may also be accomplished from the command line by
-creating a JVM System property of the same name as the property it
-replaces with a new value. An example of this is given below
-
-[source,java]
-----
-PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-pc.setCache(false);
-
-System.setProperty("cool.end", "mock:override");
-System.setProperty("cool.result", "override");
-
-context.addRoutes(new RouteBuilder() {
-    @Override
-    public void configure() throws Exception {
-        from("direct:start").to("properties:cool.end");
-        from("direct:foo").to("properties:mock:{{cool.result}}");
-    }
-});
-context.start();
-
-getMockEndpoint("mock:override").expectedMessageCount(2);
-
-template.sendBody("direct:start", "Hello World");
-template.sendBody("direct:foo", "Hello Foo");
-
-System.clearProperty("cool.end");
-System.clearProperty("cool.result");
-
-assertMockEndpointsSatisfied();
-----
 
 === Using property placeholders for any kind of attribute in the XML DSL
 
@@ -644,15 +478,13 @@ placeholder by its id. For that you need to use the Camel's
 
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
-        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
-                             prefixToken="[[" suffixToken="]]"
-                             propertyPrefix="prefix."/>
+        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"/>
 
         <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
         <route>
             <from uri="direct:start"/>
             <to uri="mock:foo"/>
-            <to uri="[[result]]"/>
+            <to uri="{{prefix.result}}"/>
         </route>
     </camelContext>
 </blueprint>
