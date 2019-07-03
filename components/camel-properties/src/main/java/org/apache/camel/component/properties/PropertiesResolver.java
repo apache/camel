@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
  * <p/>
  * Implementations can also load properties from another source source as JNDI.
  */
+@Deprecated
 public interface PropertiesResolver {
 
     /**
@@ -37,5 +38,6 @@ public interface PropertiesResolver {
      * @return the properties
      * @throws java.io.IOError is thrown if resolving the properties failed
      */
+    @Deprecated
     Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations);
 }
