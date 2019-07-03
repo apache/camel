@@ -1384,6 +1384,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
                 Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
                 Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
                 double num = (double) val;
