@@ -664,6 +664,9 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
+| link:camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc[PostgresSQL Replication Slot] (camel-pg-replication-slot) +
+`pg-replication-slot:host:port/database/slot` | 2.25 | The pg-replication-slot component allows for consuming PostgreSQL Streaming Replication change events.
+
 | link:camel-pgevent/src/main/docs/pgevent-component.adoc[PostgresSQL Event] (camel-pgevent) +
 `pgevent:host:port/database/channel` | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
 

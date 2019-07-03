@@ -1114,6 +1114,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pg-replication-slot</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-pgevent</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2594,6 +2599,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-pdf-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-pg-replication-slot-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
