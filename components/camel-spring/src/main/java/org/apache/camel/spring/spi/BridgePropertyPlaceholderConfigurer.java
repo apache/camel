@@ -158,7 +158,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     @Override
     public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException {
         // first let Camel parse the text as it may contain Camel placeholders
-        String answer = parser.parseUri(text, properties, prefixToken, suffixToken, false);
+        String answer = parser.parseUri(text, properties, prefixToken, suffixToken, fallback);
 
         // then let Spring parse it to resolve any Spring placeholders
         if (answer != null) {
