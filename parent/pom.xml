@@ -326,8 +326,8 @@
         <jandex-version>2.1.1.Final</jandex-version>
         <jasn1-version>1.11.2</jasn1-version>
         <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
-        <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
-        <jasypt-version>1.9.2</jasypt-version>
+        <jasypt-bundle-version>1.9.3_1</jasypt-bundle-version>
+        <jasypt-version>1.9.3</jasypt-version>
         <java-apns-bundle-version>1.0.0.Beta6_1</java-apns-bundle-version>
         <java-apns-version>1.0.0.Beta6</java-apns-version>
         <java-ewah-version>1.1.6</java-ewah-version>
