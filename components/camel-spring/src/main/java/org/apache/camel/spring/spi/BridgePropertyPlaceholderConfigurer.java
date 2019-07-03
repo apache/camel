@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.AugmentedPropertyNameAwarePropertiesParser;
 import org.apache.camel.component.properties.DefaultPropertiesLookup;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesLookup;
@@ -37,7 +36,7 @@ import org.springframework.util.PropertyPlaceholderHelper;
  * A {@link PropertyPlaceholderConfigurer} that bridges Camel's <a href="http://camel.apache.org/using-propertyplaceholder.html">
  * property placeholder</a> with the Spring property placeholder mechanism.
  */
-public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver, AugmentedPropertyNameAwarePropertiesParser {
+public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver, PropertiesParser {
 
     // NOTE: this class must be in the spi package as if its in the root package, then Spring fails to parse the XML
     // files due some weird spring issue. But that is okay as having this class in the spi package is fine anyway.
@@ -157,30 +156,11 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken,
-                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
-
+    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException {
         // first let Camel parse the text as it may contain Camel placeholders
-        String answer;
-        if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            answer = ((AugmentedPropertyNameAwarePropertiesParser) parser).parseUri(text, properties, prefixToken, suffixToken,
-                    propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
-        } else {
-            answer = parser.parseUri(text, properties, prefixToken, suffixToken);
-        }
+        String answer = parser.parseUri(text, properties, prefixToken, suffixToken, false);
 
         // then let Spring parse it to resolve any Spring placeholders
-        if (answer != null) {
-            answer = springResolvePlaceholders(answer, properties);
-        } else {
-            answer = springResolvePlaceholders(text, properties);
-        }
-        return answer;
-    }
-
-    @Override
-    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
-        String answer = parser.parseUri(text, properties, prefixToken, suffixToken);
         if (answer != null) {
             answer = springResolvePlaceholders(answer, properties);
         } else {
@@ -247,7 +227,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
     }
 
-    private final class BridgePropertiesParser implements PropertiesParser, AugmentedPropertyNameAwarePropertiesParser {
+    private final class BridgePropertiesParser implements PropertiesParser {
 
         private final PropertiesParser delegate;
         private final PropertiesParser parser;
@@ -258,39 +238,15 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
-                               boolean fallbackToUnaugmentedProperty, boolean defaultFallbackEnabled) throws IllegalArgumentException {
+        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException {
             String answer = null;
             if (delegate != null) {
-                if (delegate instanceof AugmentedPropertyNameAwarePropertiesParser) {
-                    answer = ((AugmentedPropertyNameAwarePropertiesParser)this.delegate).parseUri(text, properties,
-                        prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
-                } else {
-                    answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
-                }
+                answer = delegate.parseUri(text, properties, prefixToken, suffixToken, fallback);
             }
             if (answer != null) {
                 text = answer;
             }
-            if (parser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-                answer = ((AugmentedPropertyNameAwarePropertiesParser)this.parser).parseUri(text, properties,
-                    prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty, defaultFallbackEnabled);
-            } else {
-                answer = parser.parseUri(text, properties, prefixToken, suffixToken);
-            }
-            return answer;
-        }
-
-        @Override
-        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
-            String answer = null;
-            if (delegate != null) {
-                answer = delegate.parseUri(text, properties, prefixToken, suffixToken);
-            }
-            if (answer != null) {
-                text = answer;
-            }
-            return parser.parseUri(text, properties, prefixToken, suffixToken);
+            return parser.parseUri(text, properties, prefixToken, suffixToken, fallback);
         }
 
         @Override

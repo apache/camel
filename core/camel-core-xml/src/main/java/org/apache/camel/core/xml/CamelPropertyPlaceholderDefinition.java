@@ -46,12 +46,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String propertiesResolverRef;
     @XmlAttribute
     private String propertiesParserRef;
-    @XmlAttribute
-    private String propertyPrefix;
-    @XmlAttribute
-    private String propertySuffix;
-    @XmlAttribute @Metadata(defaultValue = "true")
-    private Boolean fallbackToUnaugmentedProperty;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean defaultFallbackEnabled;
     @XmlAttribute @Metadata(defaultValue = "{{")
@@ -120,40 +114,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setPropertiesParserRef(String propertiesParserRef) {
         this.propertiesParserRef = propertiesParserRef;
-    }
-
-    public String getPropertyPrefix() {
-        return propertyPrefix;
-    }
-
-    /**
-     * Optional prefix prepended to property names before resolution.
-     */
-    public void setPropertyPrefix(String propertyPrefix) {
-        this.propertyPrefix = propertyPrefix;
-    }
-
-    public String getPropertySuffix() {
-        return propertySuffix;
-    }
-
-    /**
-     * Optional suffix appended to property names before resolution.
-     */
-    public void setPropertySuffix(String propertySuffix) {
-        this.propertySuffix = propertySuffix;
-    }
-
-    public Boolean isFallbackToUnaugmentedProperty() {
-        return fallbackToUnaugmentedProperty;
-    }
-
-    /**
-     * If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix
-     * before falling back the plain property name specified. If false, only the augmented property name is searched.
-     */
-    public void setFallbackToUnaugmentedProperty(Boolean fallbackToUnaugmentedProperty) {
-        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
     public Boolean getDefaultFallbackEnabled() {

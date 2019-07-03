@@ -656,12 +656,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 pc.setPropertiesParser(parser);
             }
             
-            pc.setPropertyPrefix(def.getPropertyPrefix());
-            pc.setPropertySuffix(def.getPropertySuffix());
-            
-            if (def.isFallbackToUnaugmentedProperty() != null) {
-                pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
-            }
             if (def.getDefaultFallbackEnabled() != null) {
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }

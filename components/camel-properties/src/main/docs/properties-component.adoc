@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 === Options
 
 // component options: START
-The Properties component supports 19 options, which are listed below.
+The Properties component supports 16 options, which are listed below.
 
 
 
@@ -28,9 +28,6 @@ The Properties component supports 19 options, which are listed below.
 | *propertiesResolver* (common) | To use a custom PropertiesResolver |  | PropertiesResolver
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
 | *cache* (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
-| *propertyPrefix* (advanced) | Optional prefix prepended to property names before resolution. |  | String
-| *propertySuffix* (advanced) | Optional suffix appended to property names before resolution. |  | String
-| *fallbackToUnaugmented Property* (advanced) | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | boolean
 | *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
 | *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
 | *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String

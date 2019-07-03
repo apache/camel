@@ -116,13 +116,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean cache = true;
-    @Metadata(label = "advanced")
-    private String propertyPrefix;
-    @Metadata(label = "advanced")
-    private String propertySuffix;
-    private transient String propertySuffixResolved;
-    @Metadata(label = "advanced", defaultValue = "true")
-    private boolean fallbackToUnaugmentedProperty = true;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
     @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
@@ -275,22 +268,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
 
         log.trace("Parsing uri {} with properties: {}", uri, prop);
-
         PropertiesLookup properties = new DefaultPropertiesLookup(prop);
-        
-        if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
-                uri,
-                properties,
-                prefixToken,
-                suffixToken,
-                propertyPrefixResolved,
-                propertySuffixResolved,
-                fallbackToUnaugmentedProperty,
-                defaultFallbackEnabled);
-        } else {
-            return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken);
-        }
+        return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken, defaultFallbackEnabled);
     }
 
     public List<PropertiesLocation> getLocations() {
@@ -408,48 +387,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.cache = cache;
     }
     
-    public String getPropertyPrefix() {
-        return propertyPrefix;
-    }
-
-    /**
-     * Optional prefix prepended to property names before resolution.
-     */
-    public void setPropertyPrefix(String propertyPrefix) {
-        this.propertyPrefix = propertyPrefix;
-        this.propertyPrefixResolved = propertyPrefix;
-        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {
-            this.propertyPrefixResolved = FilePathResolver.resolvePath(this.propertyPrefix);
-        }
-    }
-
-    public String getPropertySuffix() {
-        return propertySuffix;
-    }
-
-    /**
-     * Optional suffix appended to property names before resolution.
-     */
-    public void setPropertySuffix(String propertySuffix) {
-        this.propertySuffix = propertySuffix;
-        this.propertySuffixResolved = propertySuffix;
-        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {
-            this.propertySuffixResolved = FilePathResolver.resolvePath(this.propertySuffix);
-        }
-    }
-
-    public boolean isFallbackToUnaugmentedProperty() {
-        return fallbackToUnaugmentedProperty;
-    }
-
-    /**
-     * If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix
-     * before falling back the plain property name specified. If false, only the augmented property name is searched.
-     */
-    public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
-        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
-    }
-
     @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")
     public boolean isDefaultFallbackEnabled() {
         return defaultFallbackEnabled;
