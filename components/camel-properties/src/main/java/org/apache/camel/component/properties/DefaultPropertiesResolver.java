@@ -39,6 +39,7 @@ import org.apache.camel.util.OrderedProperties;
  * You can denote <tt>classpath:</tt> or <tt>file:</tt> as prefix in the uri to select whether the file
  * is located in the classpath or on the file system.
  */
+@Deprecated
 public class DefaultPropertiesResolver implements PropertiesResolver {
 
     private final PropertiesComponent propertiesComponent;

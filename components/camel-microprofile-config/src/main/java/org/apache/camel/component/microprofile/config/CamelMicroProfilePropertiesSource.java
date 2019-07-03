@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelMicroProfilePropertiesSource extends ServiceSupport implements LoadablePropertiesSource {
 
+    // TODO: Should not be loadable but regular source so we lookup on demand
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelMicroProfilePropertiesSource.class);
 
     private final Properties properties = new OrderedProperties();

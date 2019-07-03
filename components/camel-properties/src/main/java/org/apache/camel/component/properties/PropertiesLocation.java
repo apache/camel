@@ -18,7 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.util.StringHelper;
 
-public class PropertiesLocation {
+public final class PropertiesLocation {
     private final String resolver;
     private final String path;
     private final boolean optional;
