@@ -18,19 +18,18 @@ package org.apache.camel.component.properties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -38,7 +37,6 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
@@ -52,7 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
-public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent {
+public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
 
     /**
      *  Never check system properties.
@@ -100,8 +98,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
-    // TODO: Get rid of cacheMap
-    private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
     private transient Properties cachedLoadedProperties;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
@@ -151,75 +147,31 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         setLocations(locations);
     }
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        List<PropertiesLocation> paths = locations;
-
-        Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
-        if (ignoreMissingLocationLoc != null) {
-            ignoreMissingLocation = ignoreMissingLocationLoc;
-        }
-
-        // override default locations
-        String locations = getAndRemoveParameter(parameters, "locations", String.class);
-        if (locations != null) {
-            log.trace("Overriding default locations with location: {}", locations);
-            paths = Arrays.stream(locations.split(",")).map(PropertiesLocation::new).collect(Collectors.toList());
-        }
-
-        String endpointUri = parseUri(remaining, paths);
-        log.debug("Endpoint uri parsed as: {}", endpointUri);
-
-        Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
-        PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
-
-        setProperties(answer, parameters);
-        return answer;
-    }
-
     public String parseUri(String uri) {
         // optimise to only load properties once as we use the configured locations
         if (cache) {
             if (cachedLoadedProperties == null) {
-                cachedLoadedProperties = doLoadProperties(null);
+                cachedLoadedProperties = doLoadProperties();
             }
             return parseUri(uri, cachedLoadedProperties);
         } else {
-            Properties prop = doLoadProperties(null);
+            Properties prop = doLoadProperties();
             return parseUri(uri, prop);
         }
-    }
-
-    @Deprecated
-    public String parseUri(String uri, String... locations) {
-        return parseUri(
-            uri,
-            locations != null
-                ? Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList())
-                : Collections.emptyList());
     }
 
     public Properties loadProperties() {
         if (cache) {
             if (cachedLoadedProperties == null) {
-                cachedLoadedProperties = doLoadProperties(null);
+                cachedLoadedProperties = doLoadProperties();
             }
             return cachedLoadedProperties;
         } else {
-            return doLoadProperties(null);
+            return doLoadProperties();
         }
     }
 
-    @Deprecated
-    public Properties loadProperties(String... locations) {
-        if (locations != null) {
-            return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
-        } else {
-            return new OrderedProperties();
-        }
-    }
-
-    protected Properties doLoadProperties(List<PropertiesLocation> extraLocations) {
+    protected Properties doLoadProperties() {
         Properties prop = new OrderedProperties();
 
         // use initial properties
@@ -227,40 +179,21 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             prop.putAll(initialProperties);
         }
 
-        // use the old way with locations
-        if (extraLocations != null) {
-            // location may contain JVM system property or OS environment variables
-            // so we need to parse those
-            List<PropertiesLocation> locations = parseLocations(extraLocations);
-
-            // check cache first
-            CacheKey key = new CacheKey(locations);
-            Properties locationsProp = cache ? cacheMap.get(key) : null;
-            if (locationsProp == null) {
-                locationsProp = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
-                if (cache) {
-                    cacheMap.put(key, locationsProp);
+        if (!locationSources.isEmpty()) {
+            for (PropertiesSource ps : locationSources) {
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties();
+                    prop.putAll(p);
                 }
             }
-            prop.putAll(locationsProp);
-        } else {
-            // else use the new way with property sources
-            if (!locationSources.isEmpty()) {
-                for (PropertiesSource ps : locationSources) {
-                    if (ps instanceof LoadablePropertiesSource) {
-                        LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
-                        Properties p = lps.loadProperties();
-                        prop.putAll(p);
-                    }
-                }
-            }
-            if (!sources.isEmpty()) {
-                for (PropertiesSource ps : sources) {
-                    if (ps instanceof LoadablePropertiesSource) {
-                        LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
-                        Properties p = lps.loadProperties();
-                        prop.putAll(p);
-                    }
+        }
+        if (!sources.isEmpty()) {
+            for (PropertiesSource ps : sources) {
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties();
+                    prop.putAll(p);
                 }
             }
         }
@@ -275,11 +208,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
 
         return prop;
-    }
-
-    protected String parseUri(String uri, List<PropertiesLocation> paths) {
-        Properties prop = doLoadProperties(paths);
-        return parseUri(uri, prop);
     }
 
     protected String parseUri(String uri, Properties prop) {
@@ -564,18 +492,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.environmentVariableMode = environmentVariableMode;
     }
 
-    @Override
-    public boolean isResolvePropertyPlaceholders() {
-        // its chicken and egg, we cannot resolve placeholders on ourselves
-        return false;
-    }
-
     /**
      * Clears the cache
      */
     @ManagedOperation(description = "Clears the cache")
     public void clearCache() {
-        this.cacheMap.clear();
         this.cachedLoadedProperties = null;
     }
 
@@ -620,8 +541,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         // sort the sources
         locationSources.sort(OrderedComparator.get());
         sources.sort(OrderedComparator.get());
@@ -646,10 +565,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStop() throws Exception {
-        cacheMap.clear();
         cachedLoadedProperties = null;
         ServiceHelper.stopAndShutdownServices(locationSources, sources);
-        super.doStop();
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        throw new UnsupportedOperationException("Properties component does not support endpoints");
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {

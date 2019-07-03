@@ -20,8 +20,9 @@ import java.io.IOError;
 import java.util.Properties;
 
 import org.apache.camel.Component;
+import org.apache.camel.StaticService;
 
-public interface PropertiesComponent extends Component {
+public interface PropertiesComponent extends Component, StaticService {
 
     // TODO: addPropertiesSource to make it easier to add custom sources
 
@@ -54,33 +55,12 @@ public interface PropertiesComponent extends Component {
     String parseUri(String uri);
 
     /**
-     * Parses the input text and resolve all property placeholders.
-     *
-     * @param uri  input text
-     * @param locations locations to load as properties (will not use the default locations)
-     * @return text with resolved property placeholders
-     * @throws IllegalArgumentException is thrown if error during parsing
-     */
-    @Deprecated
-    String parseUri(String uri, String... locations);
-
-    /**
      * Loads the properties from the default locations.
      *
      * @return the properties loaded.
      * @throws IOError is thrown if error loading properties
      */
     Properties loadProperties();
-
-    /**
-     * Loads the properties from the given locations
-     *
-     * @param locations locations to load as properties (will not use the default locations)
-     * @return the properties loaded.
-     * @throws IOError is thrown if error loading properties
-     */
-    @Deprecated
-    Properties loadProperties(String... locations);
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations.

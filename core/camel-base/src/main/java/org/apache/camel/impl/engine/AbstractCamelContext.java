@@ -484,9 +484,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             if (component != null && created.get() && autoStart && (isStarted() || isStarting())) {
                 // If the component is looked up after the context is started,
                 // lets start it up.
-                if (component instanceof Service) {
-                    startService((Service)component);
-                }
+                startService(component);
             }
 
             return component;
