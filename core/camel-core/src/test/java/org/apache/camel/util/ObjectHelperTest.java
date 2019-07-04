@@ -959,16 +959,16 @@ public class ObjectHelperTest extends Assert {
     
     @Test
     public void testAsList() {
-        List<Object> out0 = ObjectHelper.asList(null);
+        List<Object> out0 = org.apache.camel.util.ObjectHelper.asList(null);
         assertNotNull(out0);
         assertTrue(out0 instanceof List && out0.size() == 0);
 
-        List<Object> out1 = ObjectHelper.asList(new Object[0]);
+        List<Object> out1 = org.apache.camel.util.ObjectHelper.asList(new Object[0]);
         assertNotNull(out1);
         assertTrue(out1 instanceof List && out1.size() == 0);
 
         String[] args = new String[] {"foo", "bar"};
-        List<Object> out2 = ObjectHelper.asList(args);
+        List<Object> out2 = org.apache.camel.util.ObjectHelper.asList(args);
         assertNotNull(out2);
         assertTrue(out2 instanceof List && out2.size() == 2);
         assertEquals("foo", out2.get(0));
