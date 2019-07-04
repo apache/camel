@@ -334,20 +334,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
             // use the spring system properties mode which has a different value than Camel may have
             pc.setSystemPropertiesMode(configurer.getSystemPropertiesMode());
+
             // replace existing resolver with us
-            configurer.setResolver(pc.getPropertiesResolver());
             configurer.setParser(pc.getPropertiesParser());
             // use the bridge to handle the resolve and parsing
-            pc.setPropertiesResolver(configurer);
             pc.setPropertiesParser(configurer);
-
+            // use the bridge as property source
             pc.addPropertiesSource(configurer);
 
-            // and update locations to have our as ref first
-//            List<PropertiesLocation> locations = new ArrayList<>(pc.getLocations());
-//            locations.add(0, new PropertiesLocation("ref", id));
-
-            //pc.setLocations(locations);
         } else if (beans.size() > 1) {
             LOG.warn("Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
                     + " must be defined, was {} beans defined.", beans.size());
