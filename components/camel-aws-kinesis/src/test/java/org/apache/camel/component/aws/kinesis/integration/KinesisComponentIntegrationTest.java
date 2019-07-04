@@ -36,11 +36,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-//@Ignore("Must be manually tested.")
+@Ignore("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonKinesisClient")
-    AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_WEST_1).withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("AKIAIHMCLOA573Z7SKYQ", "DC1Ow3nyac3/2OHV7zLl57oC7hnLPOB1BTtrUQGI"))).build();
+    AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
