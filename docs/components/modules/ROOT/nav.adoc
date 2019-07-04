@@ -257,6 +257,7 @@
 * xref:paho-component.adoc[Paho Component]
 * xref:paxlogging-component.adoc[OSGi PAX Logging Component]
 * xref:pdf-component.adoc[PDF Component]
+* xref:pg-replication-slot-component.adoc[PostgresSQL Replication Slot Component]
 * xref:pgevent-component.adoc[PostgresSQL Event Component]
 * xref:lpr-component.adoc[Printer Component]
 * xref:properties-component.adoc[Properties Component]
