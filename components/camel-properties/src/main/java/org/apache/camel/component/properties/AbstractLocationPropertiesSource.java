@@ -30,15 +30,13 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     private final Properties properties = new OrderedProperties();
     private final PropertiesComponent propertiesComponent;
     private final PropertiesLocation location;
-    private final boolean ignoreMissingLocation;
 
-    protected AbstractLocationPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
+    protected AbstractLocationPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         this.propertiesComponent = propertiesComponent;
         this.location = location;
-        this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
-    abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location);
+    abstract Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location);
 
     public PropertiesLocation getLocation() {
         return location;
@@ -58,7 +56,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
     protected void doInit() throws Exception {
         super.doInit();
 
-        Properties prop = loadPropertiesFromLocation(propertiesComponent, ignoreMissingLocation, location);
+        Properties prop = loadPropertiesFromLocation(propertiesComponent, location);
         prop = prepareLoadedProperties(prop);
         properties.putAll(prop);
     }

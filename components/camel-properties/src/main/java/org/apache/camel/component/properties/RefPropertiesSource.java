@@ -27,12 +27,10 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
 
     private final PropertiesComponent propertiesComponent;
     private final PropertiesLocation location;
-    private final boolean ignoreMissingLocation;
 
-    public RefPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
+    public RefPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         this.propertiesComponent = propertiesComponent;
         this.location = location;
-        this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
     @Override
@@ -48,7 +46,7 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
     @Override
     public String getProperty(String name) {
         // this will lookup the property on-demand
-        Properties properties = lookupPropertiesInRegistry(propertiesComponent, ignoreMissingLocation, location);
+        Properties properties = lookupPropertiesInRegistry(propertiesComponent, location);
         if (properties != null) {
             return properties.getProperty(name);
         } else {
@@ -56,20 +54,22 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
         }
     }
 
-    protected Properties lookupPropertiesInRegistry(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location) {
+    protected Properties lookupPropertiesInRegistry(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         String path = location.getPath();
-        Properties answer;
-        try {
-            answer = propertiesComponent.getCamelContext().getRegistry().lookupByNameAndType(path, Properties.class);
-        } catch (Exception ex) {
-            // just look up the Map as a fault back
-            Map map = propertiesComponent.getCamelContext().getRegistry().lookupByNameAndType(path, Map.class);
+        Properties answer = null;
+
+        Object obj = propertiesComponent.getCamelContext().getRegistry().lookupByName(path);
+        if (obj instanceof Properties) {
+            answer = (Properties) obj;
+        } else if (obj instanceof Map) {
             answer = new OrderedProperties();
-            answer.putAll(map);
-        }
-        if (answer == null && (!ignoreMissingLocation && !location.isOptional())) {
+            answer.putAll((Map<?, ?>) obj);
+        } else if (obj instanceof PropertiesResolver) {
+            // ignore
+        } else if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
             throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }
+
         return answer;
     }
 }

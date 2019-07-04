@@ -31,8 +31,8 @@ import org.apache.camel.util.OrderedProperties;
 
 public class FilePropertiesSource extends AbstractLocationPropertiesSource {
 
-    protected FilePropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
-        super(propertiesComponent, location, ignoreMissingLocation);
+    protected FilePropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+        super(propertiesComponent, location);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class FilePropertiesSource extends AbstractLocationPropertiesSource {
         return "FilePropertiesSource[" + getLocation().getPath() + "]";
     }
 
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location) {
+    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
@@ -55,7 +55,7 @@ public class FilePropertiesSource extends AbstractLocationPropertiesSource {
                 answer.load(is);
             }
         } catch (FileNotFoundException e) {
-            if (!ignoreMissingLocation && !location.isOptional()) {
+            if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         } catch (IOException e) {

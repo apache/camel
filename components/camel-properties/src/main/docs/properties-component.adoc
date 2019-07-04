@@ -112,10 +112,10 @@ The component supports 17 options, which are listed below.
 | *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exist. The option is a java.util.Properties type. |  | String
 | *camel.component.properties.prefix-token* | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
 | *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
-| *camel.component.properties.properties-resolver* | To use a custom PropertiesResolver. The option is a org.apache.camel.component.properties.PropertiesResolver type. |  | String
 | *camel.component.properties.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.properties.suffix-token* | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *camel.component.properties.system-properties-mode* | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | Integer
+| *camel.component.properties.properties-resolver* | *Deprecated* To use a custom PropertiesResolver. The option is a org.apache.camel.component.properties.PropertiesResolver type. |  | String
 |===
 // spring-boot-auto-configure options: END
 

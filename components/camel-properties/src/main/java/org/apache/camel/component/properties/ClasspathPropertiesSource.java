@@ -30,8 +30,8 @@ import org.apache.camel.util.OrderedProperties;
 
 public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource {
 
-    public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location, boolean ignoreMissingLocation) {
-        super(propertiesComponent, location, ignoreMissingLocation);
+    public ClasspathPropertiesSource(PropertiesComponent propertiesComponent, PropertiesLocation location) {
+        super(propertiesComponent, location);
     }
 
     @Override
@@ -40,14 +40,14 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
     }
 
     @Override
-    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, boolean ignoreMissingLocation, PropertiesLocation location) {
+    protected Properties loadPropertiesFromLocation(PropertiesComponent propertiesComponent, PropertiesLocation location) {
         Properties answer = new OrderedProperties();
         String path = location.getPath();
 
         InputStream is = propertiesComponent.getCamelContext().getClassResolver().loadResourceAsStream(path);
         Reader reader = null;
         if (is == null) {
-            if (!ignoreMissingLocation && !location.isOptional()) {
+            if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties file " + path + " not found in classpath"));
             }
         } else {

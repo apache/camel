@@ -26,6 +26,7 @@ import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.apache.camel.component.properties.PropertiesSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -36,7 +37,7 @@ import org.springframework.util.PropertyPlaceholderHelper;
  * A {@link PropertyPlaceholderConfigurer} that bridges Camel's <a href="http://camel.apache.org/using-propertyplaceholder.html">
  * property placeholder</a> with the Spring property placeholder mechanism.
  */
-public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver, PropertiesParser {
+public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements PropertiesResolver, PropertiesParser, PropertiesSource {
 
     // NOTE: this class must be in the spi package as if its in the root package, then Spring fails to parse the XML
     // files due some weird spring issue. But that is okay as having this class in the spi package is fine anyway.
@@ -126,7 +127,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         String value = props.getProperty(placeholder);
         if (parser != null) {
             // Just apply the parser to the place holder value to avoid configuring the other placeholder configure twice for the inside and outside camel context
-            return parser.parseProperty(placeholder, value, new DefaultPropertiesLookup(props));
+            return parser.parseProperty(placeholder, value, props::getProperty);
         } else {
             return value;
         }
@@ -202,6 +203,16 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         } else {
             this.parser = parser;
         }
+    }
+
+    @Override
+    public String getName() {
+        return "BridgePropertyPlaceholderConfigurer";
+    }
+
+    @Override
+    public String getProperty(String name) {
+        return properties.getProperty(name);
     }
 
     private class BridgePropertyPlaceholderResolver implements PropertyPlaceholderHelper.PlaceholderResolver {
