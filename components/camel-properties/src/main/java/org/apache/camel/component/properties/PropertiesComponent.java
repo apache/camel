@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -218,11 +219,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken, defaultFallbackEnabled);
     }
 
-    /**
-     * Gets the configured locations
-     */
-    public List<PropertiesLocation> getLocations() {
-        return locations;
+    @SuppressWarnings("unchecked")
+    public List<String> getLocations() {
+        if (locations.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return locations.stream().map(PropertiesLocation::toString).collect(Collectors.toList());
+        }
     }
 
     /**
@@ -277,7 +280,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             for (String loc : location.split(",")) {
                 newLocations.add(new PropertiesLocation(loc));
             }
-            List<PropertiesLocation> current = getLocations();
+            List<PropertiesLocation> current = locations;
             if (!current.isEmpty()) {
                 newLocations.addAll(0, current);
             }

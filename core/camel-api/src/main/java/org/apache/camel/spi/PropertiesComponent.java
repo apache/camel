@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -78,6 +79,12 @@ public interface PropertiesComponent extends Component, StaticService {
      * @return the properties loaded.
      */
     Properties loadProperties();
+
+    /**
+     * Gets the configured properties locations.
+     * This may be empty if the properties component has only been configured with {@link PropertiesSource}.
+     */
+    List<String> getLocations();
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations.

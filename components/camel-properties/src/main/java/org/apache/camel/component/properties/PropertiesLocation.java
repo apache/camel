@@ -108,10 +108,6 @@ public final class PropertiesLocation {
 
     @Override
     public String toString() {
-        return "PropertiesLocation{"
-            + "resolver='" + resolver + '\''
-            + ", path='" + path + '\''
-            + ", optional=" + optional
-            + '}';
+        return resolver + ":" + path + (optional ? ";optional=true" : "");
     }
 }
