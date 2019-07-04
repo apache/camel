@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.kinesis.integration;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
@@ -34,11 +36,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Must be manually tested.")
+//@Ignore("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonKinesisClient")
-    AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
+    AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_WEST_1).withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("AKIAIHMCLOA573Z7SKYQ", "DC1Ow3nyac3/2OHV7zLl57oC7hnLPOB1BTtrUQGI"))).build();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -83,11 +85,9 @@ public class KinesisComponentIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String kinesisEndpointUri = "aws-kinesis://etl?amazonKinesisClient=#amazonKinesisClient";
+                String kinesisEndpointUri = "aws-kinesis://kinesis1?amazonKinesisClient=#amazonKinesisClient";
 
                 from("direct:start").to(kinesisEndpointUri);
-
-                from(kinesisEndpointUri).to("mock:result");
             }
         };
     }
