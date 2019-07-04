@@ -593,7 +593,7 @@
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
         <roaster-version>2.20.1.Final</roaster-version>
-        <rome-version>1.12.0</rome-version>
+        <rome-version>1.12.1</rome-version>
         <rxjava-version>1.3.8</rxjava-version>
         <rxjava2-version>2.2.10</rxjava2-version>
         <saaj-impl-version>1.3.2_2</saaj-impl-version>
