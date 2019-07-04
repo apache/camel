@@ -29,11 +29,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -240,20 +237,19 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
         }
 
-
         if (sftpConfig.getKeyPair() != null) {
             LOG.debug("Using private key information from key pair");
             KeyPair keyPair = sftpConfig.getKeyPair();
-            if (keyPair.getPrivate() != null && keyPair.getPublic() != null) {
-                if (keyPair.getPrivate() instanceof RSAPrivateKey && keyPair.getPublic() instanceof RSAPublicKey) {
-                    jsch.addIdentity(new RSAKeyPairIdentity("ID", keyPair), null);
-                } else if (keyPair.getPrivate() instanceof DSAPrivateKey && keyPair.getPublic() instanceof DSAPublicKey) {
-                    jsch.addIdentity(new DSAKeyPairIdentity("ID", keyPair), null);
-                } else {
-                    LOG.warn("Only RSA and DSA key pairs are supported");
-                }
+            if (keyPair.getPrivate() != null) {
+                // Encode the private key in PEM format for JSCH
+                StringBuilder sb = new StringBuilder(256);
+                sb.append("-----BEGIN PRIVATE KEY-----").append("\n");
+                sb.append(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())).append("\n");
+                sb.append("-----END PRIVATE KEY-----").append("\n");
+
+                jsch.addIdentity("ID", sb.toString().getBytes(StandardCharsets.UTF_8), null, null);
             } else {
-                LOG.warn("PrivateKey and PublicKey in the KeyPair must be filled");
+                LOG.warn("PrivateKey in the KeyPair must be filled");
             }
         }
 

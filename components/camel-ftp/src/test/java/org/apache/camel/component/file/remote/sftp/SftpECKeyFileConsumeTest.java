@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.Test;
 
-public class SftpKeyFileConsumeTest extends SftpServerTestSupport {
+public class SftpECKeyFileConsumeTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -49,7 +49,7 @@ public class SftpKeyFileConsumeTest extends SftpServerTestSupport {
 
     @Override
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
-        return (username, key, session) -> key instanceof RSAPublicKey;
+        return (username, key, session) -> key instanceof ECPublicKey;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SftpKeyFileConsumeTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                    + "?username=admin&knownHostsFile=./src/test/resources/known_hosts&privateKeyFile=./src/test/resources/id_rsa&privateKeyPassphrase=secret&delay=10s&disconnect=true")
+                    + "?username=admin&knownHostsFile=./src/test/resources/known_hosts&privateKeyFile=./src/test/resources/ec.pem&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
