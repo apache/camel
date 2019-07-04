@@ -65,27 +65,6 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testPropertiesComponentMandatory() throws Exception {
-        context.removeComponent("properties");
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("{{cool.start}}")
-                        .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
-                        .to("mock:{{cool.result}}");
-                }
-            });
-            context.start();
-            fail("Should throw exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            String msg = "PropertiesComponent with name properties must be defined in CamelContext to support property placeholders.";
-            assertTrue(cause.getMessage().startsWith(msg));
-        }
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();

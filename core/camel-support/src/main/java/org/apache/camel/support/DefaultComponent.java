@@ -34,6 +34,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.extension.ComponentExtension;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -338,7 +339,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
         if (isResolvePropertyPlaceholders()) {
             // only resolve property placeholders if its in use
-            Component existing = camelContext.getPropertiesComponent(false);
+            PropertiesComponent existing = camelContext.getPropertiesComponent(false);
             if (existing != null) {
                 log.debug("Resolving property placeholders on component: {}", this);
                 PropertyPlaceholdersHelper.resolvePropertyPlaceholders(camelContext, this);

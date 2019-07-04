@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -50,53 +49,6 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointConsumerBuilder key(String key) {
             setProperty("key", key);
-            return this;
-        }
-        /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option is a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
-                boolean ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointConsumerBuilder ignoreMissingLocation(
-                String ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option is a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointConsumerBuilder locations(
-                List<Object> locations) {
-            setProperty("locations", locations);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointConsumerBuilder locations(String locations) {
-            setProperty("locations", locations);
             return this;
         }
         /**
@@ -256,53 +208,6 @@ public interface PropertiesEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option is a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointProducerBuilder ignoreMissingLocation(
-                boolean ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointProducerBuilder ignoreMissingLocation(
-                String ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option is a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointProducerBuilder locations(
-                List<Object> locations) {
-            setProperty("locations", locations);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointProducerBuilder locations(String locations) {
-            setProperty("locations", locations);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -411,52 +316,6 @@ public interface PropertiesEndpointBuilderFactory {
          */
         default PropertiesEndpointBuilder key(String key) {
             setProperty("key", key);
-            return this;
-        }
-        /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option is a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointBuilder ignoreMissingLocation(
-                boolean ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * Whether to silently ignore if a location cannot be located, such as a
-         * properties file not found.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group common
-         */
-        default PropertiesEndpointBuilder ignoreMissingLocation(
-                String ignoreMissingLocation) {
-            setProperty("ignoreMissingLocation", ignoreMissingLocation);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option is a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointBuilder locations(List<Object> locations) {
-            setProperty("locations", locations);
-            return this;
-        }
-        /**
-         * A list of locations to load properties. You can use comma to separate
-         * multiple locations. This option will override any default locations
-         * and only use the locations from this option.
-         * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.camel.component.properties.PropertiesLocation&gt;</code> type.
-         * @group common
-         */
-        default PropertiesEndpointBuilder locations(String locations) {
-            setProperty("locations", locations);
             return this;
         }
     }

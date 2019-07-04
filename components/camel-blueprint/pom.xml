@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -53,7 +53,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-properties</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>

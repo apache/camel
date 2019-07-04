@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.Properties;
-
 /**
  * A parser to parse properties for a given input
  */
@@ -30,13 +28,14 @@ public interface PropertiesParser {
      * @param properties  the properties resolved which values should be looked up
      * @param prefixToken the prefix token
      * @param suffixToken the suffix token
+     * @param fallback    whether to support using fallback values if a property cannot be found
      * @return the parsed text with replaced placeholders
      * @throws IllegalArgumentException if uri syntax is not valid or a property is not found
      */
-    String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException;
+    String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException;
 
     /**
-     * While parsing the uri using {@link #parseUri(String, java.util.Properties, String, String) parseUri} each
+     * While parsing the uri using {@link #parseUri(String, PropertiesLookup, String, String) parseUri} each
      * parsed property found invokes this callback.
      * <p/>
      * This strategy method allows you to hook into the parsing and do custom lookup and return the actual value to use.
@@ -46,5 +45,5 @@ public interface PropertiesParser {
      * @param properties the properties resolved which values should be looked up
      * @return the value to use
      */
-    String parseProperty(String key, String value, Properties properties);
+    String parseProperty(String key, String value, PropertiesLookup properties);
 }

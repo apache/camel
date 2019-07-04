@@ -24,7 +24,6 @@ import org.junit.Test;
  * A test showing that Blueprint XML property placeholders work correctly with
  * placeholders containing colon in the key.
  */
-
 public class BlueprintDefaultValuesTest extends CamelBlueprintTestSupport {
 
     @Override

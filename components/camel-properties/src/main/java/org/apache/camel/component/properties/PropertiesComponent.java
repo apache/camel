@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -31,18 +30,21 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
-public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent {
+public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
 
     /**
      *  Never check system properties.
@@ -99,30 +101,17 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
-    @SuppressWarnings("unchecked")
-    private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
-    private transient Properties cachedProperties;
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
-    private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver(this);
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
-    private List<PropertiesLocation> locations = Collections.emptyList();
-    private List<PropertiesSource> sources = new ArrayList<>();
+    private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
+    private final List<PropertiesSource> sources = new ArrayList<>();
 
-    private transient String propertyPrefixResolved;
+    private List<PropertiesLocation> locations = Collections.emptyList();
 
     @Metadata
     private boolean ignoreMissingLocation;
     @Metadata
     private String encoding;
-    @Metadata(defaultValue = "true")
-    private boolean cache = true;
-    @Metadata(label = "advanced")
-    private String propertyPrefix;
-    @Metadata(label = "advanced")
-    private String propertySuffix;
-    private transient String propertySuffixResolved;
-    @Metadata(label = "advanced", defaultValue = "true")
-    private boolean fallbackToUnaugmentedProperty = true;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
     @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
@@ -148,11 +137,17 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         addFunction(new ServicePortPropertiesFunction());
     }
 
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     */
     public PropertiesComponent(String location) {
         this();
         setLocation(location);
     }
 
+    /**
+     * A list of locations to load properties.
+     */
     public PropertiesComponent(String... locations) {
         this();
         setLocations(locations);
@@ -160,22 +155,10 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        List<PropertiesLocation> paths = locations;
-
-        Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
-        if (ignoreMissingLocationLoc != null) {
-            ignoreMissingLocation = ignoreMissingLocationLoc;
+        String endpointUri = parseUri(remaining);
+        if (LOG.isDebugEnabled()) {
+            log.debug("Endpoint uri parsed as: {}", URISupport.sanitizeUri(endpointUri));
         }
-
-        // override default locations
-        String locations = getAndRemoveParameter(parameters, "locations", String.class);
-        if (locations != null) {
-            log.trace("Overriding default locations with location: {}", locations);
-            paths = Arrays.stream(locations.split(",")).map(PropertiesLocation::new).collect(Collectors.toList());
-        }
-
-        String endpointUri = parseUri(remaining, paths);
-        log.debug("Endpoint uri parsed as: {}", endpointUri);
 
         Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
         PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
@@ -185,33 +168,15 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     public String parseUri(String uri) {
-        // optimise to only load properties once as we use the configured locations
-        if (cachedProperties == null) {
-            cachedProperties = doLoadProperties(locations);
-        }
-        return parseUri(uri, cachedProperties);
+        return parseUri(uri, propertiesLookup);
     }
 
-    public String parseUri(String uri, String... locations) {
-        return parseUri(
-            uri,
-            locations != null
-                ? Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList())
-                : Collections.emptyList());
+    public Optional<String> resolveProperty(String key) {
+        String value = parseUri(key, propertiesLookup);
+        return Optional.of(value);
     }
 
     public Properties loadProperties() {
-        return doLoadProperties(locations);
-    }
-
-    public Properties loadProperties(String... locations) {
-        if (locations != null) {
-            return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
-        }
-        return new OrderedProperties();
-    }
-
-    protected Properties doLoadProperties(List<PropertiesLocation> paths) {
         Properties prop = new OrderedProperties();
 
         // use initial properties
@@ -219,30 +184,14 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             prop.putAll(initialProperties);
         }
 
-        // add 3rd party sources
         if (!sources.isEmpty()) {
             for (PropertiesSource ps : sources) {
-                Properties p = ps.loadProperties();
-                prop.putAll(p);
-            }
-        }
-
-        // use locations
-        if (paths != null) {
-            // location may contain JVM system property or OS environment variables
-            // so we need to parse those
-            List<PropertiesLocation> locations = parseLocations(paths);
-
-            // check cache first
-            CacheKey key = new CacheKey(locations);
-            Properties locationsProp = cache ? cacheMap.get(key) : null;
-            if (locationsProp == null) {
-                locationsProp = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
-                if (cache) {
-                    cacheMap.put(key, locationsProp);
+                if (ps instanceof LoadablePropertiesSource) {
+                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
+                    Properties p = lps.loadProperties();
+                    prop.putAll(p);
                 }
             }
-            prop.putAll(locationsProp);
         }
 
         // use override properties
@@ -257,12 +206,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return prop;
     }
 
-    protected String parseUri(String uri, List<PropertiesLocation> paths) {
-        Properties prop = doLoadProperties(paths);
-        return parseUri(uri, prop);
-    }
-
-    protected String parseUri(String uri, Properties prop) {
+    protected String parseUri(String uri, PropertiesLookup properties) {
         // enclose tokens if missing
         if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
             uri = prefixToken + uri;
@@ -271,25 +215,17 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             uri = uri + suffixToken;
         }
 
-        log.trace("Parsing uri {} with properties: {}", uri, prop);
-        
-        if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
-            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
-                uri,
-                prop,
-                prefixToken,
-                suffixToken,
-                propertyPrefixResolved,
-                propertySuffixResolved,
-                fallbackToUnaugmentedProperty,
-                defaultFallbackEnabled);
-        } else {
-            return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
-        }
+        log.trace("Parsing uri {}", uri);
+        return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken, defaultFallbackEnabled);
     }
 
-    public List<PropertiesLocation> getLocations() {
-        return locations;
+    @SuppressWarnings("unchecked")
+    public List<String> getLocations() {
+        if (locations.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        } else {
+            return locations.stream().map(PropertiesLocation::toString).collect(Collectors.toList());
+        }
     }
 
     /**
@@ -297,7 +233,15 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      * This option will override any default locations and only use the locations from this option.
      */
     public void setLocations(List<PropertiesLocation> locations) {
+        // reset locations
+        locations = parseLocations(locations);
         this.locations = Collections.unmodifiableList(locations);
+
+        // we need to re-create the property sources which may have already been created from locations
+        this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
+        for (PropertiesLocation loc : locations) {
+            addPropertiesLocationsAsPropertiesSource(loc);
+        }
     }
 
     /**
@@ -336,7 +280,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             for (String loc : location.split(",")) {
                 newLocations.add(new PropertiesLocation(loc));
             }
-            List<PropertiesLocation> current = getLocations();
+            List<PropertiesLocation> current = locations;
             if (!current.isEmpty()) {
                 newLocations.addAll(0, current);
             }
@@ -369,17 +313,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.encoding = encoding;
     }
 
-    public PropertiesResolver getPropertiesResolver() {
-        return propertiesResolver;
-    }
-
-    /**
-     * To use a custom PropertiesResolver
-     */
-    public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
-        this.propertiesResolver = propertiesResolver;
-    }
-
     public PropertiesParser getPropertiesParser() {
         return propertiesParser;
     }
@@ -389,60 +322,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      */
     public void setPropertiesParser(PropertiesParser propertiesParser) {
         this.propertiesParser = propertiesParser;
-    }
-
-    @ManagedAttribute(description = "Whether to cache loaded properties")
-    public boolean isCache() {
-        return cache;
-    }
-
-    /**
-     * Whether or not to cache loaded properties. The default value is true.
-     */
-    public void setCache(boolean cache) {
-        this.cache = cache;
-    }
-    
-    public String getPropertyPrefix() {
-        return propertyPrefix;
-    }
-
-    /**
-     * Optional prefix prepended to property names before resolution.
-     */
-    public void setPropertyPrefix(String propertyPrefix) {
-        this.propertyPrefix = propertyPrefix;
-        this.propertyPrefixResolved = propertyPrefix;
-        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {
-            this.propertyPrefixResolved = FilePathResolver.resolvePath(this.propertyPrefix);
-        }
-    }
-
-    public String getPropertySuffix() {
-        return propertySuffix;
-    }
-
-    /**
-     * Optional suffix appended to property names before resolution.
-     */
-    public void setPropertySuffix(String propertySuffix) {
-        this.propertySuffix = propertySuffix;
-        this.propertySuffixResolved = propertySuffix;
-        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {
-            this.propertySuffixResolved = FilePathResolver.resolvePath(this.propertySuffix);
-        }
-    }
-
-    public boolean isFallbackToUnaugmentedProperty() {
-        return fallbackToUnaugmentedProperty;
-    }
-
-    /**
-     * If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix
-     * before falling back the plain property name specified. If false, only the augmented property name is searched.
-     */
-    public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
-        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
     @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")
@@ -509,8 +388,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     /**
      * Sets initial properties which will be used before any locations are resolved.
-     *
-     * @param initialProperties properties that are added first
      */
     public void setInitialProperties(Properties initialProperties) {
         this.initialProperties = initialProperties;
@@ -523,8 +400,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     /**
      * Sets a special list of override properties that take precedence
      * and will use first, if a property exist.
-     *
-     * @param overrideProperties properties that is used first
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
@@ -589,32 +464,19 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.environmentVariableMode = environmentVariableMode;
     }
 
-    @Override
-    public boolean isResolvePropertyPlaceholders() {
-        // its chicken and egg, we cannot resolve placeholders on ourselves
-        return false;
-    }
-
-    /**
-     * Clears the cache
-     */
-    @ManagedOperation(description = "Clears the cache")
-    public void clearCache() {
-        this.cacheMap.clear();
-    }
-
-    /**
-     * Adds a custom {@link PropertiesSource}
-     */
     public void addPropertiesSource(PropertiesSource propertiesSource) {
-        sources.add(propertiesSource);
-        // prepare properties sources which we must do eager
-        for (PropertiesSource ps : sources) {
-            if (ps instanceof CamelContextAware) {
-                ((CamelContextAware) ps).setCamelContext(getCamelContext());
-            }
+        if (propertiesSource instanceof CamelContextAware) {
+            ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
-        ServiceHelper.initService(propertiesSource);
+        sources.add(propertiesSource);
+        if (!this.isNew()) {
+            // if we have already initialized or started then we should also init the source
+            ServiceHelper.initService(propertiesSource);
+        }
+    }
+
+    public List<PropertiesSource> getSources() {
+        return sources;
     }
 
     @Override
@@ -626,14 +488,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel");
             Class<?> type = factoryFinder.findClass("properties-source-factory");
             if (type != null) {
-                Object ps = getCamelContext().getInjector().newInstance(type, false);
-                if (ps != null) {
-                    if (ps instanceof PropertiesSource) {
-                        LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
-                        addPropertiesSource((PropertiesSource) ps);
-                    } else {
-                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
-                    }
+                Object obj = getCamelContext().getInjector().newInstance(type, false);
+                if (obj instanceof PropertiesSource) {
+                    PropertiesSource ps = (PropertiesSource) obj;
+                    addPropertiesSource(ps);
+                    LOG.info("PropertiesComponent added custom PropertiesSource: {}", ps);
+                } else if (obj != null) {
+                    LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
                 }
             }
         } catch (NoFactoryAvailableException e) {
@@ -641,11 +502,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         } catch (Exception e) {
             LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
         }
+
+        ServiceHelper.initService(sources);
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        sources.sort(OrderedComparator.get());
         ServiceHelper.startService(sources);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
@@ -667,12 +530,18 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStop() throws Exception {
-        cacheMap.clear();
-        cachedProperties = null;
-        ServiceHelper.stopAndShutdownService(sources);
-        super.doStop();
+        ServiceHelper.stopAndShutdownServices(sources);
     }
 
+    private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {
+        if ("ref".equals(location.getResolver())) {
+            addPropertiesSource(new RefPropertiesSource(this, location));
+        } else if ("file".equals(location.getResolver())) {
+            addPropertiesSource(new FilePropertiesSource(this, location));
+        } else if ("classpath".equals(location.getResolver())) {
+            addPropertiesSource(new ClasspathPropertiesSource(this, location));
+        }
+    }
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
         List<PropertiesLocation> answer = new ArrayList<>();
 
@@ -700,42 +569,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
         // must return a not-null answer
         return answer;
-    }
-
-    /**
-     * Key used in the locations cache
-     */
-    private static final class CacheKey implements Serializable {
-        private static final long serialVersionUID = 1L;
-        private final List<PropertiesLocation> locations;
-
-        private CacheKey(List<PropertiesLocation> locations) {
-            this.locations = new ArrayList<>(locations);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            CacheKey that = (CacheKey) o;
-
-            return locations.equals(that.locations);
-        }
-
-        @Override
-        public int hashCode() {
-            return locations.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return "LocationKey[" + locations.toString() + "]";
-        }
     }
 
 }

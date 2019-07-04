@@ -48,23 +48,6 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testPropertiesComponentLocationsOverride() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:{{bar.end}}?locations=ref:coolBar");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();

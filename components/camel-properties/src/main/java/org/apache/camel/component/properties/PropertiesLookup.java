@@ -16,25 +16,18 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+/**
+ * Used by {@link PropertiesParser} to lookup properties by their name
+ */
+@FunctionalInterface
+public interface PropertiesLookup {
 
-public class SpringPropertiesResolverTest extends SpringTestSupport {
-
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesResolverTest.xml");
-    }
-
-    @Test
-    public void testSpringPropertiesResolver() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
+    /**
+     * Lookup the property with the given name
+     *
+     * @param name  property name
+     * @return the property value, or <tt>null</tt> if the properties does not exist.
+     */
+    String lookup(String name);
 
 }

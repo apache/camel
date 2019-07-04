@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.properties;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.spi.PropertiesSource;
 
-public class SpringPropertiesResolver3Test extends SpringPropertiesResolverTest {
+/**
+ * A {@link PropertiesSource} which was created from a {@link PropertiesLocation}.
+ */
+public interface LocationPropertiesSource extends PropertiesSource {
 
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesResolver3Test.xml");
-    }
-
+    /**
+     * Gets the location of the properties
+     */
+    PropertiesLocation getLocation();
 }

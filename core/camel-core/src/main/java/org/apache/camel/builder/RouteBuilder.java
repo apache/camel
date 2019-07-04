@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -274,11 +275,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // the properties component is mandatory
         PropertiesComponent pc = getContext().getPropertiesComponent();
-        // enclose key with {{ }} to force parsing
-        Object value = pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
+        // resolve property
+        Optional<String> value = pc.resolveProperty(key);
 
-        if (value != null) {
-            return getContext().getTypeConverter().mandatoryConvertTo(type, value);
+        if (value.isPresent()) {
+            return getContext().getTypeConverter().mandatoryConvertTo(type, value.get());
         } else {
             return null;
         }

@@ -14,16 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.properties;
+package org.apache.camel.spi;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.Properties;
 
-public class SpringPropertiesResolver2Test extends SpringPropertiesResolverTest {
+import org.apache.camel.Ordered;
 
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesResolver2Test.xml");
-    }
+/**
+ * A source for properties that can be loaded all at once during initialization,
+ * such as loading .properties files.
+ * <p/>
+ * A source can implement {@link Ordered} to control the ordering of which sources are used by the Camel
+ * properties component. The source with the highest precedence (lowest number) will be used first.
+ */
+public interface LoadablePropertiesSource extends PropertiesSource {
 
+    /**
+     * Loads the properties from the source
+     *
+     * @return the loaded properties
+     */
+    Properties loadProperties();
 }
