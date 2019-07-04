@@ -28,10 +28,10 @@ import org.testcontainers.containers.Network;
 
 public class NsqTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_NSQLOOKUPD_IMAGE = "nsqio/nsq";
+    public static final String CONTAINER_NSQLOOKUPD_IMAGE = "nsqio/nsq:v1.1.0";
     public static final String CONTAINER_NSQLOOKUPD_NAME = "nsqlookupd";
 
-    public static final String CONTAINER_NSQD_IMAGE = "nsqio/nsq";
+    public static final String CONTAINER_NSQD_IMAGE = "nsqio/nsq:v1.1.0";
     public static final String CONTAINER_NSQD_NAME = "nsqd";
 
     Network network;
