@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
@@ -39,10 +38,6 @@ public class PropertiesEndpoint extends DefaultEndpoint implements DelegateEndpo
     @UriPath
     @Metadata(required = true)
     private String key;
-    @UriParam
-    private String locations;
-    @UriParam
-    private boolean ignoreMissingLocation;
 
     public PropertiesEndpoint(String endpointUri, Endpoint delegate, Component component) {
         super(endpointUri, component);
@@ -58,29 +53,6 @@ public class PropertiesEndpoint extends DefaultEndpoint implements DelegateEndpo
      */
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getLocations() {
-        return locations;
-    }
-
-    /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
-     */
-    public void setLocations(String locations) {
-        this.locations = locations;
-    }
-
-    public boolean isIgnoreMissingLocation() {
-        return ignoreMissingLocation;
-    }
-
-    /**
-     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
-     */
-    public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
-        this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
     @Override

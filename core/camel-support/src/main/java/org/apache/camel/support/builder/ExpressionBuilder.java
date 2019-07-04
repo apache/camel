@@ -1546,29 +1546,19 @@ public class ExpressionBuilder {
         return constantExpression(str);
     }
 
-    public static Expression propertiesComponentExpression(final String key, final String locations, final String defaultValue) {
+    public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(key).evaluate(exchange, String.class);
-                String text2 = simpleExpression(locations).evaluate(exchange, String.class);
                 try {
-                    if (text2 != null) {
-                        // the properties component is optional as we got locations
-                        // getComponent will create a new component if none already exists
-                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(true);
-                        // enclose key with {{ }} to force parsing
-                        String[] paths = text2.split(",");
-                        return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken(), paths);
-                    } else {
-                        // the properties component is mandatory if no locations provided
-                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
-                        if (pc == null) {
-                            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                                + " in CamelContext to support property placeholders in expressions");
-                        }
-                        // enclose key with {{ }} to force parsing
-                        return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
+                    // the properties component is mandatory if no locations provided
+                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
+                    if (pc == null) {
+                        throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                            + " in CamelContext to support property placeholders in expressions");
                     }
+                    // enclose key with {{ }} to force parsing as key can be a nested expression too
+                    return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                 } catch (Exception e) {
                     // property with key not found, use default value if provided
                     if (defaultValue != null) {

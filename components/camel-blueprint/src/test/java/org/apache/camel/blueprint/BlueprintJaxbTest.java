@@ -60,7 +60,6 @@ public class BlueprintJaxbTest extends TestSupport {
         assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getInput());
         assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs());
         assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs().size());
-        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isCache());
         assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isIgnoreMissingLocation());
     }
 }

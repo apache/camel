@@ -164,44 +164,6 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentLocationOverride() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:{{bar.end}}?locations=org/apache/camel/component/properties/bar.properties");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testPropertiesComponentLocationsOverride() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:bar.end?locations=org/apache/camel/component/properties/bar.properties");
-                from("direct:cheese").to("properties:cheese.end?locations=org/apache/camel/component/properties/bar.properties,"
-                        + "classpath:org/apache/camel/component/properties/cheese.properties");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:cheese").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:cheese", "Hello Cheese");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testPropertiesComponentInvalidKey() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -258,230 +220,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentCacheDisabled() throws Exception {
+    public void testManyParseUri() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setCache(false);
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-                from("direct:foo").to("properties:mock:{{cool.result}}");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertyPrefix() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertyPrefix("cool.");
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:end");
-                from("direct:foo").to("properties:mock:{{result}}");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testPropertiesComponentParameterizedPropertyPrefix() throws Exception {
-        System.setProperty("myPrefix", "cool");
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertyPrefix("${myPrefix}.");
-        pc.setPropertySuffix(".xx");
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:end");
-                from("direct:foo").to("properties:mock:{{result}}");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-
-        System.clearProperty("myPrefix");
-    }
-
-    @Test
-    public void testPropertiesComponentPropertyPrefixFallbackDefault() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertyPrefix("cool.");
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-                from("direct:foo").to("properties:mock:{{result}}");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertyPrefixFallbackDefaultNotFound() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertyPrefix("cool.");
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:doesnotexist");
-            }
-        });
-        
-        try {
-            context.start();
-            
-            fail("Should throw exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [cool.doesnotexist] (and original key [doesnotexist]) not found in properties from text: {{doesnotexist}}", iae.getMessage());
-        }
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertyPrefixFallbackFalse() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertyPrefix("cool.");
-        pc.setFallbackToUnaugmentedProperty(false);
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-                from("direct:foo").to("properties:mock:{{result}}");
-            }
-        });
-        
-        try {
-            context.start();
-            
-            fail("Should throw exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [cool.cool.end] not found in properties from text: {{cool.end}}", iae.getMessage());
-        }
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertySuffix() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertySuffix(".end");
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertySuffixFallbackDefault() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertySuffix(".end");
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    @Test
-    public void testPropertiesComponentPropertySuffixFallbackFalse() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPropertySuffix(".end");
-        pc.setFallbackToUnaugmentedProperty(false);
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-            }
-        });
-        
-        try {
-            context.start();
-            
-            fail("Should throw exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Property with key [cool.end.end] not found in properties from text: {{cool.end}}", iae.getMessage());
-        }
-    }
-
-    @Test
-    public void testJvmSystemPropertyNotFound() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:start").to("properties:xxx?locations=foo/${xxx}");
-                }
-            });
-            context.start();
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Cannot find JVM system property with key: xxx", cause.getMessage());
-        }
-    }
-
-    @Test
-    public void testCache() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        assertTrue(pc.isCache());
         assertNotNull(pc);
 
         for (int i = 0; i < 2000; i++) {
@@ -491,7 +231,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheRoute() throws Exception {
+    public void testManySendMessages() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -728,7 +468,9 @@ public class PropertiesComponentTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("classpath:org/apache/camel/component/properties/myproperties.properties"));
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.addComponent("properties", pc);
         return context;
     }
 

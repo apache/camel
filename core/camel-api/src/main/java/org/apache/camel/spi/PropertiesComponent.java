@@ -16,12 +16,18 @@
  */
 package org.apache.camel.spi;
 
-import java.io.IOError;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.camel.Component;
+import org.apache.camel.StaticService;
 
-public interface PropertiesComponent extends Component {
+/**
+ * Component for property placeholders and loading properties from sources
+ * (such as .properties file from classpath or file system)
+ */
+public interface PropertiesComponent extends Component, StaticService {
 
     /**
      * The default prefix token.
@@ -38,12 +44,20 @@ public interface PropertiesComponent extends Component {
      */
     String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
 
+    /**
+     * The value of the prefix token used to identify properties to replace.
+     * Is default {@link #DEFAULT_PREFIX_TOKEN}
+     */
     String getPrefixToken();
 
+    /**
+     * The value of the suffix token used to identify properties to replace.
+     * Is default {@link #DEFAULT_SUFFIX_TOKEN}
+     */
     String getSuffixToken();
 
     /**
-     * Parses the input text and resolve all property placeholders.
+     * Parses the input text and resolve all property placeholders from within the text.
      *
      * @param uri  input text
      * @return text with resolved property placeholders
@@ -52,31 +66,25 @@ public interface PropertiesComponent extends Component {
     String parseUri(String uri);
 
     /**
-     * Parses the input text and resolve all property placeholders.
+     * Looks up the property with the given key
      *
-     * @param uri  input text
-     * @param locations locations to load as properties (will not use the default locations)
-     * @return text with resolved property placeholders
-     * @throws IllegalArgumentException is thrown if error during parsing
+     * @param key  the name of the property
+     * @return the property value if present
      */
-    String parseUri(String uri, String... locations);
+    Optional<String> resolveProperty(String key);
 
     /**
      * Loads the properties from the default locations.
      *
      * @return the properties loaded.
-     * @throws IOError is thrown if error loading properties
      */
     Properties loadProperties();
 
     /**
-     * Loads the properties from the given locations
-     *
-     * @param locations locations to load as properties (will not use the default locations)
-     * @return the properties loaded.
-     * @throws IOError is thrown if error loading properties
+     * Gets the configured properties locations.
+     * This may be empty if the properties component has only been configured with {@link PropertiesSource}.
      */
-    Properties loadProperties(String... locations);
+    List<String> getLocations();
 
     /**
      * A list of locations to load properties. You can use comma to separate multiple locations.
@@ -87,9 +95,13 @@ public interface PropertiesComponent extends Component {
     /**
      * Adds the list of locations to the current locations, where to load properties.
      * You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
      */
     void addLocation(String location);
+
+    /**
+     * Adds a custom {@link PropertiesSource} to use as source for loading and/or looking up property values.
+     */
+    void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.

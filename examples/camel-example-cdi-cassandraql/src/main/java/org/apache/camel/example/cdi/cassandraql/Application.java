@@ -17,7 +17,6 @@
 package org.apache.camel.example.cdi.cassandraql;
 
 import java.util.Arrays;
-import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -27,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.deltaspike.core.api.config.ConfigResolver;
 
@@ -65,7 +65,7 @@ public class Application {
     static class DeltaSpikeParser extends DefaultPropertiesParser {
 
         @Override
-        public String parseProperty(String key, String value, Properties properties) {
+        public String parseProperty(String key, String value, PropertiesLookup properties) {
             return ConfigResolver.getPropertyValue(key);
         }
     }

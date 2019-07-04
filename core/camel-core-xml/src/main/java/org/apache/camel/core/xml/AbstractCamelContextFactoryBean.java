@@ -46,7 +46,6 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesFunction;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
-import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
@@ -634,19 +633,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             pc.setLocations(locations);
             pc.setEncoding(def.getEncoding());
 
-            if (def.isCache() != null) {
-                pc.setCache(def.isCache());
-            }
-
             if (def.isIgnoreMissingLocation() != null) {
                 pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
-            }
-
-            // if using a custom resolver
-            if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
-                PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
-                                                                                 PropertiesResolver.class);
-                pc.setPropertiesResolver(resolver);
             }
 
             // if using a custom parser
@@ -656,12 +644,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 pc.setPropertiesParser(parser);
             }
             
-            pc.setPropertyPrefix(def.getPropertyPrefix());
-            pc.setPropertySuffix(def.getPropertySuffix());
-            
-            if (def.isFallbackToUnaugmentedProperty() != null) {
-                pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
-            }
             if (def.getDefaultFallbackEnabled() != null) {
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }

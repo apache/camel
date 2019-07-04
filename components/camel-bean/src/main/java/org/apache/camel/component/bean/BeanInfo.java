@@ -985,7 +985,7 @@ public class BeanInfo {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
         } else if (annotation instanceof PropertyInject) {
             PropertyInject propertyAnnotation = (PropertyInject) annotation;
-            Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(), null, propertyAnnotation.defaultValue());
+            Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(), propertyAnnotation.defaultValue());
             return ExpressionBuilder.convertToExpression(inject, parameterType);
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);

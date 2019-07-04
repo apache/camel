@@ -220,26 +220,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 defaultValue = parts[1];
             }
             String key = parts[0];
-            return ExpressionBuilder.propertiesComponentExpression(key, null, defaultValue);
-        }
-
-        // properties-location: prefix
-        remainder = ifStartsWithReturnRemainder("properties-location:", function);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length > 3) {
-                throw new SimpleParserException("Valid syntax: ${properties-location:location:key[:default]} was: " + function, token.getIndex());
-            }
-            String defaultValue = null;
-            if (parts.length >= 3) {
-                defaultValue = parts[2];
-            }
-            String key = null;
-            if (parts.length >= 2) {
-                key = parts[1];
-            }
-            String locations = parts[0];
-            return ExpressionBuilder.propertiesComponentExpression(key, locations, null);
+            return ExpressionBuilder.propertiesComponentExpression(key, defaultValue);
         }
 
         // ref: prefix

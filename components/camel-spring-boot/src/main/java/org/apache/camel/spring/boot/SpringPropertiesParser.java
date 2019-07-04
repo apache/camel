@@ -16,9 +16,8 @@
  */
 package org.apache.camel.spring.boot;
 
-import java.util.Properties;
-
 import org.apache.camel.component.properties.DefaultPropertiesParser;
+import org.apache.camel.component.properties.PropertiesLookup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.PropertyResolver;
 
@@ -32,7 +31,7 @@ class SpringPropertiesParser extends DefaultPropertiesParser {
     // Overridden
 
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value, PropertiesLookup properties) {
         return propertyResolver.getProperty(key);
     }
 

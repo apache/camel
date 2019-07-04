@@ -712,9 +712,11 @@ public abstract class MainSupport extends ServiceSupport {
             LOG.info("Using properties from: {}", propertyPlaceholderLocations);
         } else {
             // lets default to application.properties and ignore if its missing
+            // if there are no existing locations configured
             PropertiesComponent pc = camelContext.getPropertiesComponent();
-            pc.addLocation("classpath:application.properties");
-            pc.setIgnoreMissingLocation(true);
+            if (pc.getLocations().isEmpty()) {
+                pc.addLocation("classpath:application.properties;optional=true");
+            }
             if (initialProperties != null) {
                 pc.setInitialProperties(initialProperties);
             }

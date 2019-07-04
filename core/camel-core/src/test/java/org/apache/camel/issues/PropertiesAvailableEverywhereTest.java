@@ -16,15 +16,12 @@
  */
 package org.apache.camel.issues;
 
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesLocation;
-import org.apache.camel.component.properties.PropertiesResolver;
 import org.junit.Test;
 
 public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
@@ -35,14 +32,11 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
 
         final Properties properties = new Properties();
         properties.put("foo", "bar");
+
+        camelContext.getRegistry().bind("myProp", properties);
+
         PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
-        pc.setLocations(new String[0]);
-        pc.setPropertiesResolver(new PropertiesResolver() {
-            @Override
-            public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
-                return properties;
-            }
-        });
+        pc.addLocation("ref:myProp");
 
         return camelContext;
     }

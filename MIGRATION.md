@@ -87,6 +87,10 @@ Migrating Camel applications
 
 The Camel `Main` class has been moved out of `camel-core` into `camel-main` so you should add that as dependency if you use Main.
 
+### Properties component
+
+The `properties` component has some advanced options removed: `propertyPrefix`, `propertySuffix`, and `fallbackToUnaugmented`; these options was never really useable for end users anyway. The option `propertiesResolver` has also been removed as you should use `PropertiesSource` instead.
+
 ### Removed components
 
 We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.

@@ -58,33 +58,10 @@ public class PropertiesComponentConfiguration
      */
     private String encoding;
     /**
-     * To use a custom PropertiesResolver. The option is a
-     * org.apache.camel.component.properties.PropertiesResolver type.
-     */
-    private String propertiesResolver;
-    /**
      * To use a custom PropertiesParser. The option is a
      * org.apache.camel.component.properties.PropertiesParser type.
      */
     private String propertiesParser;
-    /**
-     * Whether or not to cache loaded properties. The default value is true.
-     */
-    private Boolean cache = true;
-    /**
-     * Optional prefix prepended to property names before resolution.
-     */
-    private String propertyPrefix;
-    /**
-     * Optional suffix appended to property names before resolution.
-     */
-    private String propertySuffix;
-    /**
-     * If true, first attempt resolution of property name augmented with
-     * propertyPrefix and propertySuffix before falling back the plain property
-     * name specified. If false, only the augmented property name is searched.
-     */
-    private Boolean fallbackToUnaugmentedProperty = true;
     /**
      * If false, the component does not attempt to find a default for the key by
      * looking after the colon separator.
@@ -165,53 +142,12 @@ public class PropertiesComponentConfiguration
         this.encoding = encoding;
     }
 
-    public String getPropertiesResolver() {
-        return propertiesResolver;
-    }
-
-    public void setPropertiesResolver(String propertiesResolver) {
-        this.propertiesResolver = propertiesResolver;
-    }
-
     public String getPropertiesParser() {
         return propertiesParser;
     }
 
     public void setPropertiesParser(String propertiesParser) {
         this.propertiesParser = propertiesParser;
-    }
-
-    public Boolean getCache() {
-        return cache;
-    }
-
-    public void setCache(Boolean cache) {
-        this.cache = cache;
-    }
-
-    public String getPropertyPrefix() {
-        return propertyPrefix;
-    }
-
-    public void setPropertyPrefix(String propertyPrefix) {
-        this.propertyPrefix = propertyPrefix;
-    }
-
-    public String getPropertySuffix() {
-        return propertySuffix;
-    }
-
-    public void setPropertySuffix(String propertySuffix) {
-        this.propertySuffix = propertySuffix;
-    }
-
-    public Boolean getFallbackToUnaugmentedProperty() {
-        return fallbackToUnaugmentedProperty;
-    }
-
-    public void setFallbackToUnaugmentedProperty(
-            Boolean fallbackToUnaugmentedProperty) {
-        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
     public Boolean getDefaultFallbackEnabled() {

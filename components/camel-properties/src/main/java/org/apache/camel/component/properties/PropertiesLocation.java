@@ -18,7 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.util.StringHelper;
 
-public class PropertiesLocation {
+public final class PropertiesLocation {
     private final String resolver;
     private final String path;
     private final boolean optional;
@@ -108,10 +108,6 @@ public class PropertiesLocation {
 
     @Override
     public String toString() {
-        return "PropertiesLocation{"
-            + "resolver='" + resolver + '\''
-            + ", path='" + path + '\''
-            + ", optional=" + optional
-            + '}';
+        return resolver + ":" + path + (optional ? ";optional=true" : "");
     }
 }
