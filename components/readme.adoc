@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 296 in 233 JAR artifacts (0 deprecated)
+Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -664,11 +664,11 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 | link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
-| link:camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc[PostgresSQL Replication Slot] (camel-pg-replication-slot) +
-`pg-replication-slot:host:port/database/slot` | 2.25 | The pg-replication-slot component allows for consuming PostgreSQL Streaming Replication change events.
-
 | link:camel-pgevent/src/main/docs/pgevent-component.adoc[PostgresSQL Event] (camel-pgevent) +
 `pgevent:host:port/database/channel` | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
+
+| link:camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc[PostgresSQL Replication Slot] (camel-pg-replication-slot) +
+`pg-replication-slot:host:port/database/slot:plugin` | 3.0 | Consumer endpoint to receive from PostgreSQL Replication Slot.
 
 | link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1 | The printer component is used for sending messages to printers as print jobs.
