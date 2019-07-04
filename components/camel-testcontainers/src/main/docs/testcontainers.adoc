@@ -22,7 +22,7 @@ In order to define leverage testcontainers, add the following dependency to your
 To learn more about testcontainers, please have a look at the official documentation https://www.testcontainers.org
 ====
 
-To leverage testcontaners in your tests, you can use `ContainerAwareTestSupport` which is an extension of `CamelTestSupport` which:
+To leverage testcontainers in your tests, you can use `ContainerAwareTestSupport` which is an extension of `CamelTestSupport` which:
 
 - create/destroy containers according to camel context lifecycle
 - inject a custom `PropertiesFunction` to access container specific options from properties
