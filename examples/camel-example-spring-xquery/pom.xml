@@ -46,21 +46,18 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- xquery support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-saxon</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- jms support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jms</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>

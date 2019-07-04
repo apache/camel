@@ -40,14 +40,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- JSON is vital to MongoDB, so we absolutely require camel-jackson -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- MongoDB driver dependency -->
@@ -61,7 +59,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

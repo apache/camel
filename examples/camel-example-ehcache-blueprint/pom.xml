@@ -51,22 +51,18 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-blueprint</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ehcache</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- logging -->

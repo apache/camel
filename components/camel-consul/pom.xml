@@ -40,7 +40,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.orbitz.consul</groupId>
@@ -52,37 +51,31 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-testcontainers-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http4</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jetty</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-undertow</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-master</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-service</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -94,7 +87,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-ribbon</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

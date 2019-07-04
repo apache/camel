@@ -39,7 +39,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
@@ -73,13 +72,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http4</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

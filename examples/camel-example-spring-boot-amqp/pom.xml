@@ -84,20 +84,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp-starter</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
 
@@ -110,7 +107,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

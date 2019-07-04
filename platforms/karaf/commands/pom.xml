@@ -47,7 +47,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-commands-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

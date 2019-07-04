@@ -53,7 +53,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
     /**
      * The parent/pom
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../bom/camel-bom/pom.xml")
+    @Parameter(defaultValue = "${project.build.directory}/../../../parent/pom.xml")
     protected File parentPom;
 
     /**

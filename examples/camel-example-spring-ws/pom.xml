@@ -43,17 +43,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-ws</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jaxb</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- for running inside a servlet container -->

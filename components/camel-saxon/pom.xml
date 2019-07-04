@@ -43,12 +43,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xpath</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xslt</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -60,7 +58,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

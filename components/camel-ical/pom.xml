@@ -45,7 +45,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mnode.ical4j</groupId>
@@ -55,7 +54,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

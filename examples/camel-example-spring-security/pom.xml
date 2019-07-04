@@ -41,12 +41,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-security</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -56,7 +54,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

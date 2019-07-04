@@ -38,13 +38,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- this is an extension to the bean component -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-bean</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- testing -->
@@ -63,7 +61,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- relying on the xbean-asm5-shaded version (currently 4.2) transitively through -->
