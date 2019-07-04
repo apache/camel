@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 /**
  * Helper for introspections of beans.
@@ -267,8 +268,7 @@ public final class IntrospectionSupport {
                 String name = info.getterOrSetterShorthandName;
                 try {
                     // we may want to set options on classes that has package view visibility, so override the accessible
-                    method.setAccessible(true);
-                    Object value = method.invoke(target);
+                    Object value = invokeMethodSafe(method, target, null);
                     if (value != null || includeNull) {
                         properties.put(optionPrefix + name, value);
                         rc = true;
