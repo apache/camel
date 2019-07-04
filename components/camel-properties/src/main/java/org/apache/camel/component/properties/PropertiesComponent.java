@@ -466,8 +466,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
         sources.add(propertiesSource);
-        if (isInit()) {
-            // if we are already initialized we need to init the properties source also
+        if (!this.isNew()) {
+            // if we have already initialized or started then we should also init the source
             ServiceHelper.initService(propertiesSource);
         }
     }
