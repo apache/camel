@@ -16,7 +16,16 @@
  */
 package org.apache.camel.component.properties;
 
+/**
+ * A {@link PropertiesSource} which was created from a {@link PropertiesLocation}.
+ */
 public interface LocationPropertiesSource extends PropertiesSource {
 
+    // TODO: We can make some special for this and remove this interface
+    // as this is an implementation details only internally
+
+    /**
+     * Gets the location of the properties
+     */
     PropertiesLocation getLocation();
 }

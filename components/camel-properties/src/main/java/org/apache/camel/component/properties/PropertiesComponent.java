@@ -53,9 +53,10 @@ import org.slf4j.LoggerFactory;
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
 
     // TODO: PropertySource / LoadablePropertySource to camel-api
-    // TODO: sources and locationSources merged into 1
+    // TODO: Remove LocationPropertiesSource
     // TODO: cache to DefaultPropertiesLookup
     // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
+    // TODO: Add docs about `PropertiesSource`
 
     /**
      *  Never check system properties.
