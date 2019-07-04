@@ -31,6 +31,7 @@ import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
 import org.apache.sshd.server.SshServer;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.After;
@@ -78,7 +79,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator((username, password, session) -> true);
-            sshd.setPublickeyAuthenticator((username, password, session) -> true);
+            sshd.setPublickeyAuthenticator(getPublickeyAuthenticator());
             if (rootDirMode) {
                 sshd.setFileSystemFactory(new VirtualFileSystemFactory(FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
             }
@@ -97,6 +98,10 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
                 throw e;
             }
         }
+    }
+
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> true;
     }
 
     @Override

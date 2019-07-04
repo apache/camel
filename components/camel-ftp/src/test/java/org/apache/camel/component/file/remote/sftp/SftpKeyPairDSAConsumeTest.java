@@ -29,9 +29,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
+import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
+
+    private static KeyPair keyPair;
+
+    @BeforeClass
+    public static void createKeys() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+        keyGen.initialize(1024);
+        keyPair = keyGen.generateKeyPair();
+    }
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
@@ -63,16 +74,16 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
     }
 
     @Override
+    protected PublickeyAuthenticator getPublickeyAuthenticator() {
+        return (username, key, session) -> key.equals(keyPair.getPublic());
+    }
+
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
-        keyGen.initialize(1024);
-        KeyPair pair = keyGen.generateKeyPair();
-        registry.bind("keyPair", pair);
-        registry.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
-
-        return registry;
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("keyPair", keyPair);
+        jndi.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        return jndi;
     }
 
     @Override
