@@ -2083,5 +2083,36 @@ public final class ObjectHelper {
 
         return object;
     }
+
+    /**
+     * Turns the input array to a list of objects.
+     * 
+     * @param args an array of objects or null
+     * @return an object list
+     */
+    public static List<Object> asList(Object[] objects) {
+        return objects != null ? Arrays.asList(objects) : Collections.emptyList();
+    }
+
+    /**
+     * A helper method to invoke a method via reflection in a safe way by allowing to invoke
+     * methods that are not accessible by default and wrap any exceptions
+     * as {@link RuntimeCamelException} instances
+     *
+     * @param method the method to invoke
+     * @param instance the object instance (or null for static methods)
+     * @param parameters the parameters to the method
+     * @return the result of the method invocation
+     */
+    public static Object invokeMethodSafe(Method method, Object instance, Object... parameters) throws InvocationTargetException, IllegalAccessException {
+        Object answer;
+        method.setAccessible(true);
+        if (parameters != null) {
+            answer = method.invoke(instance, parameters);
+        } else {
+            answer = method.invoke(instance);
+        }
+        return answer;
+    }
     
 }
