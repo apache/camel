@@ -21,9 +21,6 @@ package org.apache.camel.component.properties;
  */
 public interface LocationPropertiesSource extends PropertiesSource {
 
-    // TODO: We can make some special for this and remove this interface
-    // as this is an implementation details only internally
-
     /**
      * Gets the location of the properties
      */

@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
 
     // TODO: PropertySource / LoadablePropertySource to camel-api
-    // TODO: Remove LocationPropertiesSource
     // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
     // TODO: Add docs about `PropertiesSource`
 
@@ -106,7 +105,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
-    private final List<LocationPropertiesSource> locationSources = new ArrayList<>();
 
     private List<PropertiesLocation> locations = Collections.emptyList();
 
@@ -181,15 +179,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             prop.putAll(initialProperties);
         }
 
-        if (!locationSources.isEmpty()) {
-            for (PropertiesSource ps : locationSources) {
-                if (ps instanceof LoadablePropertiesSource) {
-                    LoadablePropertiesSource lps = (LoadablePropertiesSource) ps;
-                    Properties p = lps.loadProperties();
-                    prop.putAll(p);
-                }
-            }
-        }
         if (!sources.isEmpty()) {
             for (PropertiesSource ps : sources) {
                 if (ps instanceof LoadablePropertiesSource) {
@@ -241,8 +230,8 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         locations = parseLocations(locations);
         this.locations = Collections.unmodifiableList(locations);
 
-        // we need to reset them as sources as well
-        this.locationSources.clear();
+        // we need to re-create the property sources which may have already been created from locations
+        this.sources.removeIf(s -> s instanceof LocationPropertiesSource);
         for (PropertiesLocation loc : locations) {
             addPropertiesLocationsAsPropertiesSource(loc);
         }
@@ -475,11 +464,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
-        if (propertiesSource instanceof LocationPropertiesSource) {
-            locationSources.add((LocationPropertiesSource) propertiesSource);
-        } else {
-            sources.add(propertiesSource);
-        }
+        sources.add(propertiesSource);
         if (isInit()) {
             // if we are already initialized we need to init the properties source also
             ServiceHelper.initService(propertiesSource);
@@ -488,10 +473,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     public List<PropertiesSource> getSources() {
         return sources;
-    }
-
-    public List<LocationPropertiesSource> getLocationSources() {
-        return locationSources;
     }
 
     @Override
@@ -518,16 +499,13 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
         }
 
-        ServiceHelper.initService(locationSources);
         ServiceHelper.initService(sources);
     }
 
     @Override
     protected void doStart() throws Exception {
-        // sort the sources
-        locationSources.sort(OrderedComparator.get());
         sources.sort(OrderedComparator.get());
-        ServiceHelper.startService(locationSources, sources);
+        ServiceHelper.startService(sources);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -548,7 +526,7 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopAndShutdownServices(locationSources, sources);
+        ServiceHelper.stopAndShutdownServices(sources);
     }
 
     private void addPropertiesLocationsAsPropertiesSource(PropertiesLocation location) {

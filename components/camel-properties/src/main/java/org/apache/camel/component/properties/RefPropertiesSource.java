@@ -38,7 +38,6 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
         return "RefPropertiesSource[" + getLocation().getPath() + "]";
     }
 
-    @Override
     public PropertiesLocation getLocation() {
         return location;
     }

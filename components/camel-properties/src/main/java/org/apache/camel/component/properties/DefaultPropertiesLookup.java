@@ -44,13 +44,6 @@ public class DefaultPropertiesLookup implements PropertiesLookup {
                 answer = it2.next().getProperty(name);
             }
         }
-        if (answer == null) {
-            // then try till first found location source
-            Iterator<LocationPropertiesSource> it = component.getLocationSources().iterator();
-            while (answer == null && it.hasNext()) {
-                answer = it.next().getProperty(name);
-            }
-        }
         // initial properties are last
         if (answer == null && component.getInitialProperties() != null) {
             answer = component.getInitialProperties().getProperty(name);

@@ -57,8 +57,10 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport im
         super.doInit();
 
         Properties prop = loadPropertiesFromLocation(propertiesComponent, location);
-        prop = prepareLoadedProperties(prop);
-        properties.putAll(prop);
+        if (prop != null) {
+            prop = prepareLoadedProperties(prop);
+            properties.putAll(prop);
+        }
     }
 
     @Override
