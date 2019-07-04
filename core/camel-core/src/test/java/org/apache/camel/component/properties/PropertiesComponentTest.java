@@ -220,31 +220,8 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesComponentCacheDisabled() throws Exception {
+    public void testManyParseUri() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setCache(false);
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:cool.end");
-                from("direct:foo").to("properties:mock:{{cool.result}}");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:foo", "Hello Foo");
-
-        assertMockEndpointsSatisfied();
-    }
-    
-    @Test
-    public void testCache() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        assertTrue(pc.isCache());
         assertNotNull(pc);
 
         for (int i = 0; i < 2000; i++) {
@@ -254,7 +231,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
-    public void testCacheRoute() throws Exception {
+    public void testManySendMessages() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

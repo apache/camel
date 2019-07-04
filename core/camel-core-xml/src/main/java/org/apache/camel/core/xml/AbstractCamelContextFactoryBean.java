@@ -633,10 +633,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             pc.setLocations(locations);
             pc.setEncoding(def.getEncoding());
 
-            if (def.isCache() != null) {
-                pc.setCache(def.isCache());
-            }
-
             if (def.isIgnoreMissingLocation() != null) {
                 pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
             }

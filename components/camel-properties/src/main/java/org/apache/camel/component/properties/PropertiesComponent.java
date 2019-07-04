@@ -30,7 +30,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
@@ -54,7 +53,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     // TODO: PropertySource / LoadablePropertySource to camel-api
     // TODO: Remove LocationPropertiesSource
-    // TODO: cache to DefaultPropertiesLookup
     // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
     // TODO: Add docs about `PropertiesSource`
 
@@ -111,14 +109,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private final List<LocationPropertiesSource> locationSources = new ArrayList<>();
 
     private List<PropertiesLocation> locations = Collections.emptyList();
-    private transient Properties cachedLoadedProperties;
 
     @Metadata
     private boolean ignoreMissingLocation;
     @Metadata
     private String encoding;
-    @Metadata(defaultValue = "true")
-    private boolean cache = true;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
     @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
@@ -179,17 +174,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     public Properties loadProperties() {
-        if (cache) {
-            if (cachedLoadedProperties == null) {
-                cachedLoadedProperties = doLoadProperties();
-            }
-            return cachedLoadedProperties;
-        } else {
-            return doLoadProperties();
-        }
-    }
-
-    protected Properties doLoadProperties() {
         Properties prop = new OrderedProperties();
 
         // use initial properties
@@ -344,18 +328,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.propertiesParser = propertiesParser;
     }
 
-    @ManagedAttribute(description = "Whether to cache loaded properties")
-    public boolean isCache() {
-        return cache;
-    }
-
-    /**
-     * Whether or not to cache loaded properties. The default value is true.
-     */
-    public void setCache(boolean cache) {
-        this.cache = cache;
-    }
-    
     @ManagedAttribute(description = "Whether to support using fallback values if a property cannot be found")
     public boolean isDefaultFallbackEnabled() {
         return defaultFallbackEnabled;
@@ -497,14 +469,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     }
 
     /**
-     * Clears the cache
-     */
-    @ManagedOperation(description = "Clears the cache")
-    public void clearCache() {
-        this.cachedLoadedProperties = null;
-    }
-
-    /**
      * Adds a custom {@link PropertiesSource}
      */
     public void addPropertiesSource(PropertiesSource propertiesSource) {
@@ -584,7 +548,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     @Override
     protected void doStop() throws Exception {
-        cachedLoadedProperties = null;
         ServiceHelper.stopAndShutdownServices(locationSources, sources);
     }
 

@@ -63,10 +63,6 @@ public class PropertiesComponentConfiguration
      */
     private String propertiesParser;
     /**
-     * Whether or not to cache loaded properties. The default value is true.
-     */
-    private Boolean cache = true;
-    /**
      * If false, the component does not attempt to find a default for the key by
      * looking after the colon separator.
      */
@@ -152,14 +148,6 @@ public class PropertiesComponentConfiguration
 
     public void setPropertiesParser(String propertiesParser) {
         this.propertiesParser = propertiesParser;
-    }
-
-    public Boolean getCache() {
-        return cache;
-    }
-
-    public void setCache(Boolean cache) {
-        this.cache = cache;
     }
 
     public Boolean getDefaultFallbackEnabled() {

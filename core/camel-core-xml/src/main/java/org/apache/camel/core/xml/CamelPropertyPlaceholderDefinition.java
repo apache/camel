@@ -38,8 +38,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String location;
     @XmlAttribute
     private String encoding;
-    @XmlAttribute @Metadata(defaultValue = "true")
-    private Boolean cache;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
     @XmlAttribute
@@ -79,17 +77,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    public Boolean isCache() {
-        return cache;
-    }
-
-    /**
-     * Whether or not to cache loaded properties. The default value is true.
-     */
-    public void setCache(Boolean cache) {
-        this.cache = cache;
     }
 
     public String getPropertiesParserRef() {
