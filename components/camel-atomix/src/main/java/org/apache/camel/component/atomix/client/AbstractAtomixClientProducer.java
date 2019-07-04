@@ -24,20 +24,17 @@ import java.util.concurrent.ConcurrentMap;
 
 import io.atomix.resource.Resource;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource> extends DefaultAsyncProducer {
 
@@ -128,7 +125,6 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
 
     private void bind(InvokeOnHeader annotation, final Method method) {
         if (method.getParameterCount() == 2) {
-            method.setAccessible(true);
 
             if (!Message.class.isAssignableFrom(method.getParameterTypes()[0])) {
                 throw new IllegalArgumentException("First argument should be of type Message");
@@ -140,7 +136,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
             log.debug("bind key={}, class={}, method={}",
                 annotation.value(), this.getClass(), method.getName());
 
-            this.processors.put(annotation.value(), (m, c) -> (boolean)method.invoke(this, m, c));
+            this.processors.put(annotation.value(), (m, c) -> (boolean)invokeMethodSafe(method, this, m, c));
         } else {
             throw new IllegalArgumentException(
                 "Illegal number of parameters for method: " + method.getName() + ", required: 2, found: " + method.getParameterCount()
