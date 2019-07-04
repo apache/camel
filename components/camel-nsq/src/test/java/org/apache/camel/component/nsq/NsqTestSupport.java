@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
+import org.apache.camel.test.testcontainers.Wait;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -43,12 +44,12 @@ public class NsqTestSupport extends ContainerAwareTestSupport {
 
     public static GenericContainer<?> nsqlookupdContainer(Network network) {
         return new FixedHostPortGenericContainer<>(CONTAINER_NSQLOOKUPD_IMAGE).withFixedExposedPort(4160, 4160).withFixedExposedPort(4161, 4161)
-            .withNetworkAliases(CONTAINER_NSQLOOKUPD_NAME).withCommand("/nsqlookupd").withNetwork(network);
+            .withNetworkAliases(CONTAINER_NSQLOOKUPD_NAME).withCommand("/nsqlookupd").withNetwork(network).waitingFor(Wait.forLogMessageContaining("TCP: listening on", 1));
     }
 
     public static GenericContainer<?> nsqdContainer(Network network) {
         return new FixedHostPortGenericContainer<>(CONTAINER_NSQD_IMAGE).withFixedExposedPort(4150, 4150).withFixedExposedPort(4151, 4151).withNetworkAliases(CONTAINER_NSQD_NAME)
-            .withCommand(String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160", "localhost", CONTAINER_NSQLOOKUPD_NAME)).withNetwork(network);
+            .withCommand(String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160", "localhost", CONTAINER_NSQLOOKUPD_NAME)).withNetwork(network).waitingFor(Wait.forLogMessageContaining("TCP: listening on", 1));
     }
 
     public String getNsqConsumerUrl() {
