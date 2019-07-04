@@ -956,4 +956,23 @@ public class ObjectHelperTest extends Assert {
         Method m2 = InterfaceSize.class.getMethod("size");
         assertFalse(org.apache.camel.util.ObjectHelper.isOverridingMethod(InterfaceSize.class, m2, m1, false));
     }
+    
+    @Test
+    public void testAsList() {
+        List<Object> out0 = ObjectHelper.asList(null);
+        assertNotNull(out0);
+        assertTrue(out0 instanceof List && out0.size() == 0);
+
+        List<Object> out1 = ObjectHelper.asList(new Object[0]);
+        assertNotNull(out1);
+        assertTrue(out1 instanceof List && out1.size() == 0);
+
+        String[] args = new String[] {"foo", "bar"};
+        List<Object> out2 = ObjectHelper.asList(args);
+        assertNotNull(out2);
+        assertTrue(out2 instanceof List && out2.size() == 2);
+        assertEquals("foo", out2.get(0));
+        assertEquals("bar", out2.get(1));
+    }
+
 }
