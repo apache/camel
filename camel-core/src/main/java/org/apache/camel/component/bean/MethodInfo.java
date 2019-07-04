@@ -24,6 +24,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
+import static org.apache.camel.util.ObjectHelper.asList;
 
 /**
  * Information about a method to be used for invocation.
@@ -480,9 +483,9 @@ public class MethodInfo {
         try {
             return mth.invoke(pojo, arguments);
         } catch (IllegalAccessException e) {
-            throw new RuntimeExchangeException("IllegalAccessException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
+            throw new RuntimeExchangeException("IllegalAccessException occurred invoking method: " + mth + " using arguments: " + asList(arguments), exchange, e);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeExchangeException("IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
+            throw new RuntimeExchangeException("IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments), exchange, e);
         }
     }
 

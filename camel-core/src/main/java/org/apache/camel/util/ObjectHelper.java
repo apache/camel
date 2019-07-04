@@ -2083,5 +2083,15 @@ public final class ObjectHelper {
 
         return object;
     }
+
+    /**
+     * Turns the input array to a list of objects.
+     * 
+     * @param args an array of objects or null
+     * @return an object list
+     */
+    public static List<Object> asList(Object[] objects) {
+        return objects != null ? Arrays.asList(objects) : Collections.emptyList();
+    }
     
 }
