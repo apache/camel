@@ -56,7 +56,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     // TODO: sources and locationSources merged into 1
     // TODO: cache to DefaultPropertiesLookup
     // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
-    // TODO: Remove PropertiesResolver
 
     /**
      *  Never check system properties.
@@ -105,7 +104,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
     private final Map<String, PropertiesFunction> functions = new LinkedHashMap<>();
-    private PropertiesResolver propertiesResolver;
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private final PropertiesLookup propertiesLookup = new DefaultPropertiesLookup(this);
     private final List<PropertiesSource> sources = new ArrayList<>();
@@ -214,14 +212,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
                     Properties p = lps.loadProperties();
                     prop.putAll(p);
                 }
-            }
-        }
-
-        // use legacy properties resolver
-        if (propertiesResolver != null) {
-            Properties p = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
-            if (p != null && !p.isEmpty()) {
-                prop.putAll(p);
             }
         }
 
@@ -340,19 +330,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    @Deprecated
-    public PropertiesResolver getPropertiesResolver() {
-        return propertiesResolver;
-    }
-
-    /**
-     * To use a custom PropertiesResolver
-     */
-    @Deprecated
-    public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
-        this.propertiesResolver = propertiesResolver;
     }
 
     public PropertiesParser getPropertiesParser() {

@@ -64,8 +64,6 @@ public class RefPropertiesSource implements LocationPropertiesSource  {
         } else if (obj instanceof Map) {
             answer = new OrderedProperties();
             answer.putAll((Map<?, ?>) obj);
-        } else if (obj instanceof PropertiesResolver) {
-            // ignore
         } else if (!propertiesComponent.isIgnoreMissingLocation() && !location.isOptional()) {
             throw RuntimeCamelException.wrapRuntimeCamelException(new FileNotFoundException("Properties " + path + " not found in registry"));
         }

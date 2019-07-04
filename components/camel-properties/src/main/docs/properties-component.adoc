@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 === Options
 
 // component options: START
-The Properties component supports 16 options, which are listed below.
+The Properties component supports 15 options, which are listed below.
 
 
 
@@ -25,7 +25,6 @@ The Properties component supports 16 options, which are listed below.
 | *locations* (common) | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
 | *location* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
 | *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
-| *propertiesResolver* (common) | *Deprecated* To use a custom PropertiesResolver |  | PropertiesResolver
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
 | *cache* (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
 | *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean

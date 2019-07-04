@@ -43,8 +43,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean ignoreMissingLocation;
     @XmlAttribute
-    private String propertiesResolverRef;
-    @XmlAttribute
     private String propertiesParserRef;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean defaultFallbackEnabled;
@@ -92,17 +90,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setCache(Boolean cache) {
         this.cache = cache;
-    }
-
-    public String getPropertiesResolverRef() {
-        return propertiesResolverRef;
-    }
-
-    /**
-     * Reference to a custom PropertiesResolver to be used
-     */
-    public void setPropertiesResolverRef(String propertiesResolverRef) {
-        this.propertiesResolverRef = propertiesResolverRef;
     }
 
     public String getPropertiesParserRef() {

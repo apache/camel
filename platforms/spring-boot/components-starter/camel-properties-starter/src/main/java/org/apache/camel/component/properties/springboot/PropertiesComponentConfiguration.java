@@ -21,7 +21,6 @@ import javax.annotation.Generated;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The properties component is used for using property placeholders in endpoint
@@ -58,12 +57,6 @@ public class PropertiesComponentConfiguration
      * java.util.Properties#load(java.io.InputStream)
      */
     private String encoding;
-    /**
-     * To use a custom PropertiesResolver. The option is a
-     * org.apache.camel.component.properties.PropertiesResolver type.
-     */
-    @Deprecated
-    private String propertiesResolver;
     /**
      * To use a custom PropertiesParser. The option is a
      * org.apache.camel.component.properties.PropertiesParser type.
@@ -151,17 +144,6 @@ public class PropertiesComponentConfiguration
 
     public void setEncoding(String encoding) {
         this.encoding = encoding;
-    }
-
-    @Deprecated
-    @DeprecatedConfigurationProperty
-    public String getPropertiesResolver() {
-        return propertiesResolver;
-    }
-
-    @Deprecated
-    public void setPropertiesResolver(String propertiesResolver) {
-        this.propertiesResolver = propertiesResolver;
     }
 
     public String getPropertiesParser() {
