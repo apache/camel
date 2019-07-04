@@ -1557,7 +1557,7 @@ public class ExpressionBuilder {
                         throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                             + " in CamelContext to support property placeholders in expressions");
                     }
-                    // enclose key with {{ }} to force parsing
+                    // enclose key with {{ }} to force parsing as key can be a nested expression too
                     return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                 } catch (Exception e) {
                     // property with key not found, use default value if provided

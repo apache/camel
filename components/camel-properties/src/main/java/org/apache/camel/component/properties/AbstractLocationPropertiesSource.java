@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.OrderedProperties;
 

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.spi;
 
-import java.io.IOError;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.camel.Component;
 import org.apache.camel.StaticService;
 
+/**
+ * Component for property placeholders and loading properties from sources
+ * (such as .properties file from classpath or file system)
+ */
 public interface PropertiesComponent extends Component, StaticService {
-
-    // TODO: addPropertiesSource to make it easier to add custom sources
 
     /**
      * The default prefix token.
@@ -41,12 +43,20 @@ public interface PropertiesComponent extends Component, StaticService {
      */
     String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
 
+    /**
+     * The value of the prefix token used to identify properties to replace.
+     * Is default {@link #DEFAULT_PREFIX_TOKEN}
+     */
     String getPrefixToken();
 
+    /**
+     * The value of the suffix token used to identify properties to replace.
+     * Is default {@link #DEFAULT_SUFFIX_TOKEN}
+     */
     String getSuffixToken();
 
     /**
-     * Parses the input text and resolve all property placeholders.
+     * Parses the input text and resolve all property placeholders from within the text.
      *
      * @param uri  input text
      * @return text with resolved property placeholders
@@ -55,10 +65,17 @@ public interface PropertiesComponent extends Component, StaticService {
     String parseUri(String uri);
 
     /**
+     * Looks up the property with the given key
+     *
+     * @param key  the name of the property
+     * @return the property value if present
+     */
+    Optional<String> resolveProperty(String key);
+
+    /**
      * Loads the properties from the default locations.
      *
      * @return the properties loaded.
-     * @throws IOError is thrown if error loading properties
      */
     Properties loadProperties();
 
@@ -73,6 +90,11 @@ public interface PropertiesComponent extends Component, StaticService {
      * You can use comma to separate multiple locations.
      */
     void addLocation(String location);
+
+    /**
+     * Adds a custom {@link PropertiesSource} to use as source for loading and/or looking up property values.
+     */
+    void addPropertiesSource(PropertiesSource propertiesSource);
 
     /**
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.

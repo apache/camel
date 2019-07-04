@@ -18,6 +18,8 @@ package org.apache.camel.component.properties;
 
 import java.util.Iterator;
 
+import org.apache.camel.spi.PropertiesSource;
+
 /**
  * Default {@link PropertiesLookup} which lookup properties from a {@link java.util.Properties} with all existing properties.
  */

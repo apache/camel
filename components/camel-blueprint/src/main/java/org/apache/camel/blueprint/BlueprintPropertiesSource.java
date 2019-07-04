@@ -17,14 +17,13 @@
 package org.apache.camel.blueprint;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.aries.blueprint.ext.PropertyPlaceholderExt;
-import org.apache.camel.component.properties.PropertiesSource;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ReflectionHelper;

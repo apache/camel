@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.camel.CamelContextAware;
@@ -32,7 +33,9 @@ import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.OrderedComparator;
@@ -50,10 +53,6 @@ import org.slf4j.LoggerFactory;
 @Component("properties")
 @ManagedResource(description = "Managed PropertiesComponent")
 public class PropertiesComponent extends DefaultComponent implements org.apache.camel.spi.PropertiesComponent, StaticService {
-
-    // TODO: PropertySource / LoadablePropertySource to camel-api
-    // TODO: API on PropertiesComponent in SPI to Optional<String> lookupProperty(String name);
-    // TODO: Add docs about `PropertiesSource`
 
     /**
      *  Never check system properties.
@@ -169,6 +168,11 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     public String parseUri(String uri) {
         return parseUri(uri, propertiesLookup);
+    }
+
+    public Optional<String> resolveProperty(String key) {
+        String value = parseUri(key, propertiesLookup);
+        return Optional.of(value);
     }
 
     public Properties loadProperties() {
@@ -457,9 +461,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.environmentVariableMode = environmentVariableMode;
     }
 
-    /**
-     * Adds a custom {@link PropertiesSource}
-     */
     public void addPropertiesSource(PropertiesSource propertiesSource) {
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());

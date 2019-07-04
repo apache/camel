@@ -925,6 +925,35 @@ pc.addFunction(new MyBeerFunction());
 ----
  
 
+=== Using 3rd-party properties sources
+
+The properties component allows to plugin 3rd party sources to load and lookup properties via the `PropertySource`
+API from camel-api. For example the `camel-microprofile-config` component is implemented using this.
+The 3rd-party `PropertySource` can automatic be discoverd from classpath when Camel is starting up.
+This is done by include the file `META-INF/services/org/apache/camel/property-source-factory` file
+which refers to the fully qualified class name of the `PropertySource` implementation.
+See the `camel-microprofile-config` for an example.
+
+You can also register 3rd-part property sources via Java API
+
+[source,java]
+----
+PropertiesComponent pc = ...
+pc.addPropertySource(myPropertySource);
+----
+
+==== LoadablePropertySource
+
+A `PropertySource` can define that it supports loading all its properties from the source at once,
+for example from file system. This allows Camel properties component to load these properties at once
+during startup.
+
+==== PropertySource
+
+The regular `PropertySource` will lookup the property on-demand, for example to lookup
+values from a backend source such as a database or HashiCorp Vault etc.
+
+
 === See Also
 
 * xref:properties-component.adoc[Properties] component

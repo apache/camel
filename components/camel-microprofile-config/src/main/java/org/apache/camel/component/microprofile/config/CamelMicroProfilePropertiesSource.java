@@ -18,7 +18,7 @@ package org.apache.camel.component.microprofile.config;
 
 import java.util.Optional;
 
-import org.apache.camel.component.properties.PropertiesSource;
+import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.support.service.ServiceSupport;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;

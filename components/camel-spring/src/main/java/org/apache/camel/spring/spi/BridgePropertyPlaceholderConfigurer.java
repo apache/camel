@@ -20,7 +20,7 @@ import java.util.Properties;
 
 import org.apache.camel.component.properties.PropertiesLookup;
 import org.apache.camel.component.properties.PropertiesParser;
-import org.apache.camel.component.properties.PropertiesSource;
+import org.apache.camel.spi.PropertiesSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;

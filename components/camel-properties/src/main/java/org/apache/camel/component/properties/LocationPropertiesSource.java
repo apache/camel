@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.apache.camel.spi.PropertiesSource;
+
 /**
  * A {@link PropertiesSource} which was created from a {@link PropertiesLocation}.
  */
