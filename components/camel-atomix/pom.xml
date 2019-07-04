@@ -41,7 +41,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- atomix -->
@@ -102,7 +101,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -114,7 +112,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -79,12 +79,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-main</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- DeltaSpike is only used to provide Main support thus optional -->
@@ -133,7 +131,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -114,7 +114,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-salesforce</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.cometd.java</groupId>
@@ -199,7 +198,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

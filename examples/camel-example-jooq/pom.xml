@@ -46,12 +46,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jooq</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- logging -->

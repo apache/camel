@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>${project.version}</version>
+        <version>${camel-version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -55,7 +55,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${project.version}</version>
+      <version>${camel-version}</version>
     </dependency>
 
     <!-- logging -->

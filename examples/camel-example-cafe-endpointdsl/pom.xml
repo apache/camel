@@ -44,7 +44,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-endpointdsl</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- logging -->
@@ -68,7 +67,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -47,17 +47,14 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-blueprint</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-netty4-http</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Embbeded Artemis AMQP JMS Broker -->
@@ -96,14 +93,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-blueprint</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

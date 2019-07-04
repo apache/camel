@@ -46,7 +46,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- PAX CDI -->
