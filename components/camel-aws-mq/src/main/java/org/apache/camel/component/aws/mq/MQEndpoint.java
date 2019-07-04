@@ -21,6 +21,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.AmazonMQClient;
 import com.amazonaws.services.mq.AmazonMQClientBuilder;
@@ -110,7 +111,7 @@ public class MQEndpoint extends ScheduledPollEndpoint {
             }
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.withRegion(configuration.getRegion());
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
         }
         client = clientBuilder.build();
         return client;
