@@ -28,6 +28,7 @@ import org.apache.camel.component.spark.RddCallback;
 import org.apache.spark.api.java.JavaRDDLike;
 
 import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
+import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 class AnnotatedRddCallbackProxy implements RddCallback {
 
@@ -61,7 +62,6 @@ class AnnotatedRddCallbackProxy implements RddCallback {
             }
 
             Method callbackMethod = rddCallbacks.get(0);
-            callbackMethod.setAccessible(true);
 
             if (camelContext != null) {
                 for (int i = 1; i < arguments.size(); i++) {
@@ -69,7 +69,8 @@ class AnnotatedRddCallbackProxy implements RddCallback {
                 }
             }
 
-            return callbackMethod.invoke(objectWithCallback, arguments.toArray(new Object[arguments.size()]));
+            Object[] args = arguments.toArray(new Object[arguments.size()]);
+            return invokeMethodSafe(callbackMethod, objectWithCallback, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
