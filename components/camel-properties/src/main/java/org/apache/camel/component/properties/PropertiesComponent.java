@@ -617,9 +617,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             addPropertiesSource(new FilePropertiesSource(this, location));
         } else if ("classpath".equals(location.getResolver())) {
             addPropertiesSource(new ClasspathPropertiesSource(this, location));
-        } else {
-            // classpath is also default
-            addPropertiesSource(new ClasspathPropertiesSource(this, location));
         }
     }
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {

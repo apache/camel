@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +31,8 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.aries.blueprint.ExtendedBeanMetadata;
+import org.apache.aries.blueprint.ext.PropertyPlaceholderExt;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
@@ -35,6 +40,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
@@ -69,6 +75,7 @@ import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -264,9 +271,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             // lookup existing configured properties component
             PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
 
-            BlueprintPropertiesParser parser = new BlueprintPropertiesParser(pc, blueprintContainer, pc.getPropertiesParser());
-            BlueprintPropertiesResolver resolver = new BlueprintPropertiesResolver(pc.getPropertiesResolver(), parser);
-
             // any extra properties
             ServiceReference<?> ref = bundleContext.getServiceReference(PropertiesComponent.OVERRIDE_PROPERTIES);
             if (ref != null) {
@@ -276,26 +280,41 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
                 }
             }
 
-            // no locations has been set, so its a default component
-            if (pc.getLocations() == null) {
-                String[] ids = parser.lookupPropertyPlaceholderIds();
-                for (int i = 0; i < ids.length; i++) {
-                    if (!ids[i].startsWith("blueprint:")) {
-                        ids[i] = "blueprint:" + ids[i];
-                    }
-                }
-                if (ids.length > 0) {
-                    // location supports multiple separated by comma
-                    pc.setLocations(ids);
+            List<String> ids = new ArrayList<>();
+            for (PropertiesLocation bp : pc.getLocations()) {
+                if ("blueprint".equals(bp.getResolver())) {
+                    ids.add(bp.getPath());
                 }
             }
+            if (ids.isEmpty()) {
+                // no blueprint locations has been set, so auto-detect the blueprint property placeholders to use (convention over configuration)
+                ids = lookupPropertyPlaceholderIds();
+            }
+            pc.addPropertiesSource(new BlueprintPropertiesSource(blueprintContainer, ids));
+        }
+    }
 
-            if (pc.getLocations() != null) {
-                // bridge camel properties with blueprint
-                pc.setPropertiesParser(parser);
-                pc.setPropertiesResolver(resolver);
+    /**
+     * Lookup the ids of the Blueprint property placeholder services in the
+     * Blueprint container.
+     *
+     * @return the ids, will be an empty if none found.
+     */
+    private List<String> lookupPropertyPlaceholderIds() {
+        List<String> ids = new ArrayList<>();
+
+        for (Object componentId : blueprintContainer.getComponentIds()) {
+            String id = (String) componentId;
+            ComponentMetadata meta = blueprintContainer.getComponentMetadata(id);
+            if (meta instanceof ExtendedBeanMetadata) {
+                Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
+                if (clazz != null && PropertyPlaceholderExt.class.isAssignableFrom(clazz)) {
+                    ids.add(id);
+                }
             }
         }
+
+        return ids;
     }
 
     @Override
