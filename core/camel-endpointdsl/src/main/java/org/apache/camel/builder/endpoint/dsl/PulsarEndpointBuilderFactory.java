@@ -287,8 +287,8 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a <code>java.lang.String</code> type.
          * @group producer
          */
-        default PulsarEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
+        default PulsarEndpointProducerBuilder topicUri(String topicUri) {
+            setProperty("topicUri", topicUri);
             return this;
         }
         /**
