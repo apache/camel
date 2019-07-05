@@ -770,13 +770,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
-     * ACL,LIST,CALENDARS,CHANNELS,COLORS,FREEBUSY,EVENTS,SETTINGS
+     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
+     * FREEBUSY, EVENTS, SETTINGS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of:
-     * calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch
+     * The value can be one of: calendarImport, clear, delete, get, insert,
+     * instances, list, move, patch, query, quickAdd, stop, update, watch
      */
     default GoogleCalendarEndpointBuilder googleCalendar(String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {

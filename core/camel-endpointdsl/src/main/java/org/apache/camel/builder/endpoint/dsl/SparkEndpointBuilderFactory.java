@@ -309,8 +309,8 @@ public interface SparkEndpointBuilderFactory {
      * 
      * Path parameter: verb (required)
      * get, post, put, patch, delete, head, trace, connect, or options.
-     * The value can be one of:
-     * get,post,put,patch,delete,head,trace,connect,options
+     * The value can be one of: get, post, put, patch, delete, head, trace,
+     * connect, options
      * 
      * Path parameter: path (required)
      * The content path which support Spark syntax.

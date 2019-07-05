@@ -258,7 +258,7 @@ public interface MetricsEndpointBuilderFactory {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: GAUGE,COUNTER,HISTOGRAM,METER,TIMER
+     * The value can be one of: GAUGE, COUNTER, HISTOGRAM, METER, TIMER
      * 
      * Path parameter: metricsName (required)
      * Name of metrics

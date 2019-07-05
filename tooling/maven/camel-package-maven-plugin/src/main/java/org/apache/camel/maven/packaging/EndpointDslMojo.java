@@ -435,7 +435,7 @@ public class EndpointDslMojo extends AbstractMojo {
                     desc += "\nDefault value: " + option.getDefaultValue();
                 }
                 if (!StringHelper.isEmpty(option.getEnumValues())) {
-                    desc += "\nThe value can be one of: " + option.getEnumValues();
+                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnumValues(), 120);
                 }
             }
         }
@@ -443,6 +443,15 @@ public class EndpointDslMojo extends AbstractMojo {
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);
+    }
+
+    private String wrapEnumValues(String enumValues, int watermark) {
+        // comma to space so we can wrap words (which uses space)
+        String text = enumValues.replace(',', ' ');
+        String wrapped = StringHelper.wrapWords(text, "\n", watermark, true);
+        // back to comma again
+        wrapped = wrapped.replaceAll("\\s", ", ");
+        return wrapped;
     }
 
     private String getMethodName(String type) {

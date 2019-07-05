@@ -1061,7 +1061,7 @@ public interface RestletEndpointBuilderFactory {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which is http or https
-     * The value can be one of: http,https
+     * The value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The hostname of the restlet service

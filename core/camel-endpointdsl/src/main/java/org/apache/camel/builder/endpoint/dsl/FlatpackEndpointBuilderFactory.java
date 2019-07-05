@@ -1251,7 +1251,7 @@ public interface FlatpackEndpointBuilderFactory {
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
-     * The value can be one of: fixed,delim
+     * The value can be one of: fixed, delim
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system

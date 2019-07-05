@@ -1260,7 +1260,8 @@ public interface SoroushBotEndpointBuilderFactory {
      * 
      * Path parameter: action (required)
      * The action to do.
-     * The value can be one of: sendMessage,getMessage,uploadFile,downloadFile
+     * The value can be one of: sendMessage, getMessage, uploadFile,
+     * downloadFile
      */
     default SoroushBotEndpointBuilder soroushBot(String path) {
         class SoroushBotEndpointBuilderImpl extends AbstractEndpointBuilder implements SoroushBotEndpointBuilder, AdvancedSoroushBotEndpointBuilder {

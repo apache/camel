@@ -1271,7 +1271,7 @@ public interface SWFEndpointBuilderFactory {
      * 
      * Path parameter: type (required)
      * Activity or workflow
-     * The value can be one of: activity,workflow
+     * The value can be one of: activity, workflow
      */
     default SWFEndpointBuilder sWF(String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {

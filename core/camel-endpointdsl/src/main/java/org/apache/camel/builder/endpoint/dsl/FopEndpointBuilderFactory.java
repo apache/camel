@@ -151,7 +151,7 @@ public interface FopEndpointBuilderFactory {
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
-     * The value can be one of: pdf,ps,pcl,png,jpeg,svg,xml,mif,rtf,txt
+     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
      */
     default FopEndpointBuilder fop(String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {

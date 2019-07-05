@@ -617,11 +617,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS,DATA
+     * The value can be one of: SPREADSHEETS, DATA
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create,get,update,append,batchUpdate,clear
+     * The value can be one of: create, get, update, append, batchUpdate, clear
      */
     default GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {

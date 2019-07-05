@@ -529,7 +529,7 @@ public interface PulsarEndpointBuilderFactory {
      * 
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent,non-persistent
+     * The value can be one of: persistent, non-persistent
      * 
      * Path parameter: tenant (required)
      * The tenant

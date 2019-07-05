@@ -235,7 +235,7 @@ public interface FlinkEndpointBuilderFactory {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset,datastream
+     * The value can be one of: dataset, datastream
      */
     default FlinkEndpointBuilder flink(String path) {
         class FlinkEndpointBuilderImpl extends AbstractEndpointBuilder implements FlinkEndpointBuilder, AdvancedFlinkEndpointBuilder {

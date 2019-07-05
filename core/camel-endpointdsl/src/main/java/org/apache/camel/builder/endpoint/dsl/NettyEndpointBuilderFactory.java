@@ -4110,7 +4110,7 @@ public interface NettyEndpointBuilderFactory {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
-     * The value can be one of: tcp,udp
+     * The value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For

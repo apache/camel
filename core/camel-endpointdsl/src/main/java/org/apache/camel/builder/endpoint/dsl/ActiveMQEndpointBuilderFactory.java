@@ -5281,7 +5281,7 @@ public interface ActiveMQEndpointBuilderFactory {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue,topic,temp-queue,temp-topic
+     * The value can be one of: queue, topic, temp-queue, temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination

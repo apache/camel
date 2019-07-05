@@ -624,7 +624,7 @@ public interface CouchDbEndpointBuilderFactory {
      * 
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
-     * The value can be one of: http,https
+     * The value can be one of: http, https
      * 
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance

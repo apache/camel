@@ -2029,7 +2029,7 @@ public interface SjmsEndpointBuilderFactory {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue,topic
+     * The value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the

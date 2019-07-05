@@ -600,8 +600,9 @@ public interface GitHubEndpointBuilderFactory {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * The value can be one of:
-     * CLOSEPULLREQUEST,PULLREQUESTCOMMENT,COMMIT,PULLREQUEST,TAG,PULLREQUESTSTATE,PULLREQUESTFILES,GETCOMMITFILE,CREATEISSUE
+     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
+     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
+     * CREATEISSUE
      * 
      * Path parameter: branchName
      * Name of branch

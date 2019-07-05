@@ -727,7 +727,7 @@ public interface AvroEndpointBuilderFactory {
      * 
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
-     * The value can be one of: http,netty
+     * The value can be one of: http, netty
      * 
      * Path parameter: port (required)
      * Port number to use
