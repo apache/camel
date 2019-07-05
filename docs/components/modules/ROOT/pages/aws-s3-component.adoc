@@ -93,7 +93,7 @@ with the following path and query parameters:
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
-| *region* (common) | The region in which S3 client needs to work |  | String
+| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
 | *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
@@ -195,7 +195,7 @@ The component supports 39 options, which are listed below.
 | *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
 | *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | Integer
-| *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String
+| *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-s3.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-s3.configuration.server-side-encryption* | Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use <tt>AES256</tt>. |  | String
 | *camel.component.aws-s3.configuration.storage-class* | The storage class to set in the `com.amazonaws.services.s3.model.PutObjectRequest` request. |  | String

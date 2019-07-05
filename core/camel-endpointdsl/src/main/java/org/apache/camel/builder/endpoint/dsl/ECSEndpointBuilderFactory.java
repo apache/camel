@@ -38,17 +38,6 @@ public interface ECSEndpointBuilderFactory {
             return (AdvancedECSEndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ECSEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which ECS client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name

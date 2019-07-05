@@ -74,7 +74,7 @@ with the following path and query parameters:
 | *dataConverter* (common) | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
 | *domainName* (common) | The workflow domain to use. |  | String
 | *eventName* (common) | The workflow or activity event name to use. |  | String
-| *region* (common) | Amazon AWS Region. |  | String
+| *region* (common) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *version* (common) | The workflow or activity event version to use. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -143,7 +143,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.aws-swf.configuration.event-name* | The workflow or activity event name to use. |  | String
 | *camel.component.aws-swf.configuration.execution-start-to-close-timeout* | Set the execution start to close timeout. | 3600 | String
 | *camel.component.aws-swf.configuration.operation* | Workflow operation | START | String
-| *camel.component.aws-swf.configuration.region* | Amazon AWS Region. |  | String
+| *camel.component.aws-swf.configuration.region* | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-swf.configuration.s-w-client-parameters* | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
 | *camel.component.aws-swf.configuration.secret-key* | Amazon AWS Secret Key. |  | String
 | *camel.component.aws-swf.configuration.signal-name* | The name of the signal to send to the workflow. |  | String

@@ -119,7 +119,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.aws-cw.configuration.namespace* | The metric namespace |  | String
 | *camel.component.aws-cw.configuration.proxy-host* | To define a proxy host when instantiating the CW client |  | String
 | *camel.component.aws-cw.configuration.proxy-port* | To define a proxy port when instantiating the CW client |  | Integer
-| *camel.component.aws-cw.configuration.region* | The region in which CW client needs to work |  | String
+| *camel.component.aws-cw.configuration.region* | The region in which CW client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-cw.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-cw.configuration.timestamp* | The metric timestamp |  | Date
 | *camel.component.aws-cw.configuration.unit* | The metric unit |  | String
