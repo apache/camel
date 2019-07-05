@@ -38,17 +38,6 @@ public interface MQEndpointBuilderFactory {
             return (AdvancedMQEndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MQEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which MQ client needs to work. When using this
          * parameter, the configuration will expect the capitalized name of the
          * region (for example AP_EAST_1) You'll need to use the name

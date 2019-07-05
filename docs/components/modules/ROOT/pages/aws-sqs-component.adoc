@@ -80,7 +80,7 @@ with the following path and query parameters:
 | *autoCreateQueue* (common) | Setting the autocreation of the queue | true | boolean
 | *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *queueOwnerAWSAccountId* (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
-| *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
+| *region* (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *attributeNames* (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *concurrentConsumers* (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
@@ -185,7 +185,7 @@ The component supports 39 options, which are listed below.
 | *camel.component.aws-sqs.configuration.queue-url* | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String
 | *camel.component.aws-sqs.configuration.receive-message-wait-time-seconds* | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
 | *camel.component.aws-sqs.configuration.redrive-policy* | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
-| *camel.component.aws-sqs.configuration.region* | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
+| *camel.component.aws-sqs.configuration.region* | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-sqs.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-sqs.configuration.server-side-encryption-enabled* | Define if Server Side Encryption is enabled or not on the queue | false | Boolean
 | *camel.component.aws-sqs.configuration.visibility-timeout* | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently. |  | Integer

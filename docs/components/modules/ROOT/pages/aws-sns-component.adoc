@@ -85,7 +85,7 @@ with the following path and query parameters:
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
-| *region* (producer) | The region in which SNS client needs to work |  | String
+| *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
@@ -130,7 +130,7 @@ The component supports 23 options, which are listed below.
 | *camel.component.aws-sns.configuration.proxy-host* | To define a proxy host when instantiating the SNS client |  | String
 | *camel.component.aws-sns.configuration.proxy-port* | To define a proxy port when instantiating the SNS client |  | Integer
 | *camel.component.aws-sns.configuration.queue-url* | The queueUrl to subscribe to |  | String
-| *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work |  | String
+| *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-sns.configuration.server-side-encryption-enabled* | Define if Server Side Encryption is enabled or not on the topic | false | Boolean
 | *camel.component.aws-sns.configuration.subject* | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String

@@ -76,7 +76,7 @@ with the following path and query parameters:
 | *operation* (producer) | *Required* The operation to perform. It can be listBrokers,createBroker,deleteBroker |  | MQOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the MQ client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the MQ client |  | Integer
-| *region* (producer) | The region in which MQ client needs to work |  | String
+| *region* (producer) | The region in which MQ client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -112,7 +112,7 @@ The component supports 13 options, which are listed below.
 | *camel.component.aws-mq.configuration.operation* | The operation to perform. It can be listBrokers,createBroker,deleteBroker |  | MQOperations
 | *camel.component.aws-mq.configuration.proxy-host* | To define a proxy host when instantiating the MQ client |  | String
 | *camel.component.aws-mq.configuration.proxy-port* | To define a proxy port when instantiating the MQ client |  | Integer
-| *camel.component.aws-mq.configuration.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-mq.configuration.region* | The region in which MQ client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-mq.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-mq.enabled* | Whether to enable auto configuration of the aws-mq component. This is enabled by default. |  | Boolean
 | *camel.component.aws-mq.region* | The region in which MQ client needs to work |  | String

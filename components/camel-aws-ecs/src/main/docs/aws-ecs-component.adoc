@@ -112,7 +112,7 @@ The component supports 13 options, which are listed below.
 | *camel.component.aws-ecs.configuration.operation* | The operation to perform |  | ECSOperations
 | *camel.component.aws-ecs.configuration.proxy-host* | To define a proxy host when instantiating the ECS client |  | String
 | *camel.component.aws-ecs.configuration.proxy-port* | To define a proxy port when instantiating the ECS client |  | Integer
-| *camel.component.aws-ecs.configuration.region* | The region in which ECS client needs to work |  | String
+| *camel.component.aws-ecs.configuration.region* | The region in which ECS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-ecs.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ecs.enabled* | Whether to enable auto configuration of the aws-ecs component. This is enabled by default. |  | Boolean
 | *camel.component.aws-ecs.region* | The region in which ECS client needs to work |  | String

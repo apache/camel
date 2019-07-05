@@ -113,7 +113,7 @@ The component supports 13 options, which are listed below.
 | *camel.component.aws-kinesis-firehose.configuration.amazon-kinesis-firehose-client* | Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
 | *camel.component.aws-kinesis-firehose.configuration.proxy-host* | To define a proxy host when instantiating the DDBStreams client |  | String
 | *camel.component.aws-kinesis-firehose.configuration.proxy-port* | To define a proxy port when instantiating the DDBStreams client |  | Integer
-| *camel.component.aws-kinesis-firehose.configuration.region* | The region in which Kinesis client needs to work |  | String
+| *camel.component.aws-kinesis-firehose.configuration.region* | The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-kinesis-firehose.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-kinesis-firehose.configuration.stream-name* | Name of the stream |  | String
 | *camel.component.aws-kinesis-firehose.enabled* | Whether to enable auto configuration of the aws-kinesis-firehose component. This is enabled by default. |  | Boolean
